@@ -227,7 +227,7 @@
   <div class="container">
     <div class="header-title">🛡️ امانت‌داری کریمی مرکزی</div>
     
-    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات زنده از گوگل شیت...</div>
+    <div id="loadingSheet" class="loading">در حال اتصال به پایگاه داده مرکزی...</div>
 
     <div id="phoneSection" class="hidden">
       <div style="text-align: center; margin-bottom: 12px; font-weight: 800; color: #1e1b4b; font-size: 17px;">ورود به حساب کاربری</div>
@@ -277,7 +277,7 @@
       <div id="activeCurrencyCard"></div>
 
       <div style="font-size: 13px; font-weight: 800; color: #334155; margin: 20px 0 10px 0; display: flex; justify-content: space-between; align-items: center;">
-        <span>📋 ریز سوابق و تراکنش‌ها (نمایش کامل از شیت)</span>
+        <span>📋 ریز سوابق و تراکنش‌ها</span>
         <span id="txCountBadge" style="font-size: 11px; background: #e2e8f0; color: #1e293b; padding: 3px 8px; border-radius: 6px; font-weight: 700;" class="eng-num">0</span>
       </div>
       <div id="transactionsContainer" style="max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
@@ -336,9 +336,19 @@
         }
 
         document.getElementById('loadingSheet').classList.add('hidden');
-        document.getElementById('phoneSection').classList.remove('hidden');
+
+        // بررسی ذخیره نشست قبلی (Session persistence)
+        const savedPhone = localStorage.getItem('karimi_phone');
+        const savedAccId = localStorage.getItem('karimi_accId');
+
+        if (savedPhone && savedAccId) {
+          autoLogin(savedPhone, savedAccId);
+        } else {
+          document.getElementById('phoneSection').classList.remove('hidden');
+        }
+
       } catch (err) {
-        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات از سرور. لطفاً صفحه را رفرش کنید.</div>';
+        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات. لطفاً صفحه را رفرش کنید.</div>';
       }
     });
 
@@ -360,7 +370,9 @@
       const found = accountsList.find(u => {
         let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
         const sheetPhone = cleanDigits(phoneVal);
-        return sheetPhone && (sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone.slice(-7)));
+        if (!sheetPhone) return false;
+        // تطابق هوشمند با ۷ رقم آخر یا کل ارقام برای هر کشوری
+        return sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone) || (userDigits.length >= 7 && sheetPhone.slice(-7) === userDigits.slice(-7));
       });
 
       btn.innerText = 'شناسایی شماره';
@@ -375,6 +387,26 @@
         document.getElementById('phoneErrorMsg').innerText = 'شماره شما در سیستم یافت نشد.';
         errBox.classList.remove('hidden');
       }
+    }
+
+    function autoLogin(phone, accId) {
+      const userDigits = cleanDigits(phone);
+      const found = accountsList.find(u => {
+        let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
+        const sheetPhone = cleanDigits(phoneVal);
+        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone));
+      });
+
+      if (found) {
+        let sheetAccId = String(found.AccountID || found.accountid || found.ID || '').trim().toLowerCase();
+        if (sheetAccId === accId.toLowerCase()) {
+          currentFoundUser = found;
+          processDashboard(sheetAccId);
+          return;
+        }
+      }
+      localStorage.clear();
+      document.getElementById('phoneSection').classList.remove('hidden');
     }
 
     function retryPhone() {
@@ -395,57 +427,66 @@
       btn.innerText = 'ورود به حساب کاربری';
 
       if (currentFoundUser && sheetAccId === accIdInput) {
-        document.getElementById('accountSection').classList.add('hidden');
-        document.getElementById('dashboardSection').classList.remove('hidden');
-        
-        let nameVal = currentFoundUser.Name || currentFoundUser.name || '---';
-        let phoneVal = currentFoundUser.Phone || currentFoundUser.phone || '---';
-        let accIdVal = currentFoundUser.AccountID || currentFoundUser.accountid || '---';
+        // ذخیره در حافظه برای عدم نیاز به ورود مجدد
+        localStorage.setItem('karimi_phone', currentFoundUser.Phone || currentFoundUser.phone || '');
+        localStorage.setItem('karimi_accId', sheetAccId);
 
-        document.getElementById('dashName').innerText = nameVal;
-        document.getElementById('dashPhone').innerText = phoneVal;
-        document.getElementById('dashAccId').innerText = `ID: ${accIdVal}`;
-
-        customerTransactions = transactionsList.filter(tx => {
-          let rowAccId = String(tx.AccountID || tx.accountid || tx.ID || '').trim().toLowerCase();
-          return rowAccId === sheetAccId;
-        });
-
-        customerBalances = {};
-        customerTransactions.forEach(tx => {
-          let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
-          let amount = parseFloat(tx.Amount || tx.amount) || 0;
-          let dir = String(tx.Direction || tx.direction || '').trim();
-
-          if (!customerBalances[curr]) {
-            customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
-          }
-
-          if (dir.includes('بستانکار') || dir.includes('دریافت')) {
-            customerBalances[curr].credit += amount;
-          } else if (dir.includes('بدهکار') || dir.includes('پرداخت')) {
-            customerBalances[curr].debit += amount;
-          }
-        });
-
-        for (let c in customerBalances) {
-          customerBalances[c].net = customerBalances[c].credit - customerBalances[c].debit;
-        }
-
-        currencyList = Object.keys(customerBalances);
-        if (currencyList.length === 0) {
-          currencyList = ['AFN'];
-          customerBalances['AFN'] = { credit: 0, debit: 0, net: 0 };
-        }
-
-        activeCurrencyIndex = 0;
-        renderCurrencyTabs();
-        renderTransactions();
-
+        processDashboard(sheetAccId);
       } else {
         accErr.innerText = 'کد حساب (Account ID) اشتباه است.';
         accErr.classList.remove('hidden');
       }
+    }
+
+    function processDashboard(sheetAccId) {
+      document.getElementById('phoneSection').classList.add('hidden');
+      document.getElementById('accountSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.remove('hidden');
+      
+      let nameVal = currentFoundUser.Name || currentFoundUser.name || '---';
+      let phoneVal = currentFoundUser.Phone || currentFoundUser.phone || '---';
+      let accIdVal = currentFoundUser.AccountID || currentFoundUser.accountid || '---';
+
+      document.getElementById('dashName').innerText = nameVal;
+      document.getElementById('dashPhone').innerText = phoneVal;
+      document.getElementById('dashAccId').innerText = `ID: ${accIdVal}`;
+
+      // فیلتر تراکنش‌ها و معکوس کردن برای نمایش جدیدترین‌ها در بالا
+      customerTransactions = transactionsList.filter(tx => {
+        let rowAccId = String(tx.AccountID || tx.accountid || tx.ID || '').trim().toLowerCase();
+        return rowAccId === sheetAccId;
+      }).reverse();
+
+      customerBalances = {};
+      customerTransactions.forEach(tx => {
+        let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
+        let amount = parseFloat(tx.Amount || tx.amount) || 0;
+        let dir = String(tx.Direction || tx.direction || '').trim();
+
+        if (!customerBalances[curr]) {
+          customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
+        }
+
+        if (dir.includes('بستانکار') || dir.includes('دریافت')) {
+          customerBalances[curr].credit += amount;
+        } else if (dir.includes('بدهکار') || dir.includes('پرداخت')) {
+          customerBalances[curr].debit += amount;
+        }
+      });
+
+      for (let c in customerBalances) {
+        customerBalances[c].net = customerBalances[c].credit - customerBalances[c].debit;
+      }
+
+      currencyList = Object.keys(customerBalances);
+      if (currencyList.length === 0) {
+        currencyList = ['AFN'];
+        customerBalances['AFN'] = { credit: 0, debit: 0, net: 0 };
+      }
+
+      activeCurrencyIndex = 0;
+      renderCurrencyTabs();
+      renderTransactions();
     }
 
     function renderCurrencyTabs() {
@@ -542,6 +583,7 @@
     }
 
     function logout() {
+      localStorage.clear();
       document.getElementById('dashboardSection').classList.add('hidden');
       document.getElementById('phoneSection').classList.remove('hidden');
       document.getElementById('phoneInput').value = '';
