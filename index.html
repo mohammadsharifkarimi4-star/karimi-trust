@@ -96,7 +96,7 @@
       background-color: #22c55e;
       color: white;
       text-decoration: none;
-      padding: 10px;
+      padding: 12px;
       border-radius: 10px;
       font-weight: bold;
       font-size: 14px;
@@ -108,11 +108,11 @@
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: #dc2626;
-      padding: 12px;
+      padding: 15px;
       border-radius: 10px;
       text-align: center;
       font-size: 13px;
-      margin-top: 10px;
+      margin-top: 15px;
     }
     .welcome-header {
       display: flex;
@@ -127,44 +127,71 @@
   <div class="container">
     <h2>صرافی و امانت‌داری کریمی</h2>
     
-    <div id="loadingSheet" class="loading">در حال اتصال به سامانه صرافی...</div>
+    <!-- لودینگ اولیه -->
+    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات از سامانه...</div>
 
+    <!-- مرحله ۱: ورود شماره تلفن -->
     <div id="phoneSection" class="hidden">
       <div class="form-group">
         <label>شماره تلفن خود را وارد کنید:</label>
         <input type="text" id="phoneInput" placeholder="مثال: 9647721878997+">
       </div>
       <button onclick="checkPhone()">ادامه</button>
-      <div id="phoneError" class="hidden error-box"></div>
+      
+      <!-- باکس خطا با دو گزینه: تلاش مجدد و واتساپ -->
+      <div id="phoneError" class="hidden error-box">
+        <p style="margin-bottom: 10px; font-weight: bold;">شماره شما در سیستم یافت نشد.</p>
+        <div style="display: flex; gap: 8px;">
+          <button onclick="retryPhone()" style="background: #64748b; margin-top:0;">تلاش مجدد</button>
+          <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20در%20سامانه%20نیست" target="_blank" class="whatsapp-btn" style="margin-top:0; flex:1; text-decoration:none; padding:10px; font-size:13px;">پیام به کریمی</a>
+        </div>
+      </div>
     </div>
 
+    <!-- مرحله ۲: ورود اکانت آیدی -->
     <div id="accountSection" class="hidden">
-      <div id="greetingMsg" style="text-align:center; font-weight:bold; color:#16a34a; margin-bottom:15px; font-size:15px;"></div>
+      <div id="greetingMsg" style="text-align:center; font-weight:bold; color:#16a34a; margin-bottom:15px; font-size:16px;"></div>
       <div class="form-group">
         <label>کد حساب (Account ID) اختصاصی:</label>
         <input type="password" id="accountIdInput" placeholder="کد حساب خود را وارد کنید">
       </div>
       <button onclick="verifyAccount()">ورود به حساب</button>
       <button onclick="backToPhone()" style="background:#64748b; margin-top:8px;">تغییر شماره تلفن</button>
-      <div id="accountError" class="hidden error-box"></div>
+      <div id="accountError" class="hidden error-box" style="padding: 10px; color: #dc2626;">کد حساب (Account ID) وارد شده اشتباه است.</div>
     </div>
 
+    <!-- مرحله ۳: داشبورد اختصاصی مشتری -->
     <div id="dashboardSection" class="hidden">
       <div class="welcome-header">
         <h3 id="dashWelcome" style="font-size: 15px; color: #0f172a;"></h3>
         <button onclick="logout()" style="width: auto; padding: 6px 12px; font-size: 12px; background: #ef4444; margin:0;">خروج</button>
       </div>
       
+      <!-- ۱. اطلاعات حساب در بالا -->
       <div class="card">
-        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">وضعیت حساب</h4>
-        <div id="balancesContainer"></div>
+        <h4 style="margin-bottom: 6px; color: #334155; font-size: 14px;">اطلاعات حساب</h4>
+        <div class="balance-box"><span>نام مشتری:</span><b id="infoName">---</b></div>
+        <div class="balance-box"><span>کد حساب:</span><b id="infoAccId">---</b></div>
+        <div class="balance-box"><span>شماره تماس:</span><b id="infoPhone">---</b></div>
       </div>
 
+      <!-- ۲. آمار مالی به تفکیک ارز (بدهکار / بستانکار) -->
       <div class="card">
-        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">جزئیات حساب</h4>
-        <div id="transactionsContainer" style="max-height: 220px; overflow-y: auto;"></div>
+        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">وضعیت مالی (بدهکار / بستانکار)</h4>
+        <div id="balancesContainer">
+          <div class="balance-box"><span>ارز: <b>افغانی (AFN)</b></span><span style="color:#ef4444; font-weight:bold;">ثبت شده در سیستم</span></div>
+        </div>
       </div>
 
+      <!-- ۳. جزئیات کامل تراکنش‌ها -->
+      <div class="card">
+        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">جزئیات کامل تراکنش‌ها</h4>
+        <div id="transactionsContainer" style="max-height: 240px; overflow-y: auto;">
+          <div class="tx-item"><div><strong>اتصال موفق</strong> - <span style="color:#16a34a; font-weight:bold;">فعال</span></div><div style="color:#64748b; margin-top:2px;">تمام اطلاعات مستقیماً از گوگل شیت بارگذاری شد.</div></div>
+        </div>
+      </div>
+
+      <!-- دکمه واتساپ پشتیبانی کریمی در پایین -->
       <a href="https://wa.me/9647721878997" target="_blank" class="whatsapp-btn">
         💬 ارسال پیام به کریمی در واتساپ
       </a>
@@ -220,8 +247,6 @@
       errBox.classList.add('hidden');
 
       if (!rawInput) {
-        errBox.innerText = 'لطفاً شماره تلفن را وارد کنید.';
-        errBox.classList.remove('hidden');
         return;
       }
 
@@ -234,9 +259,13 @@
         document.getElementById('accountSection').classList.remove('hidden');
         document.getElementById('greetingMsg').innerText = `سلام ${found.Name}، خوش آمدید!`;
       } else {
-        errBox.innerHTML = 'شماره شما در سیستم یافت نشد.<br><a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20در%20سامانه%20نیست" target="_blank" style="color:#2563eb; font-weight:bold; text-decoration:underline; display:inline-block; margin-top:5px;">ارسال پیام واتساپ به کریمی برای ثبت حساب</a>';
         errBox.classList.remove('hidden');
       }
+    }
+
+    function retryPhone() {
+      document.getElementById('phoneError').classList.add('hidden');
+      document.getElementById('phoneInput').value = '';
     }
 
     function verifyAccount() {
@@ -249,15 +278,12 @@
         document.getElementById('dashboardSection').classList.remove('hidden');
         document.getElementById('dashWelcome').innerText = `حساب کاربری: ${currentFoundUser.Name}`;
 
-        document.getElementById('balancesContainer').innerHTML = `
-          <div class="balance-box"><span>کد حساب: <b>${currentFoundUser.AccountID}</b></span><span style="color:#16a34a; font-weight:bold;">فعال</span></div>
-        `;
+        // پر کردن اطلاعات حساب در بالا
+        document.getElementById('infoName').innerText = currentFoundUser.Name;
+        document.getElementById('infoAccId').innerText = currentFoundUser.AccountID;
+        document.getElementById('infoPhone').innerText = currentFoundUser.Phone;
 
-        document.getElementById('transactionsContainer').innerHTML = `
-          <div class="tx-item"><div><strong>وضعیت دسترسی</strong> - <span style="color:#16a34a; font-weight:bold;">تایید موفقیت‌آمیز</span></div><div style="color:#64748b; margin-top:2px;">اطلاعات از سامانه مرکزی صرافی کریمی خوانده شد.</div></div>
-        `;
       } else {
-        accErr.innerText = 'کد حساب (Account ID) وارد شده اشتباه است.';
         accErr.classList.remove('hidden');
       }
     }
