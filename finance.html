@@ -106,7 +106,6 @@
     .section-box { display: none; }
     .section-box.active { display: block; animation: fadeIn 0.3s ease-out; }
 
-    /* آمار بزرگ و درشت در بالا */
     .card-stats {
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
       color: white;
@@ -119,7 +118,6 @@
     .stats-title { font-size: 12px; font-weight: 700; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; }
     .stats-content { font-size: 16px; font-weight: 800; line-height: 1.8; }
 
-    /* دکمه باز کردن فرم ثبت تراکنش */
     .btn-open-modal {
       width: 100%;
       padding: 14px;
@@ -136,9 +134,21 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      transition: transform 0.2s ease;
+    }
+    .btn-open-modal:active { transform: scale(0.97); }
+
+    /* انیمیشن بسیار زیبا و نرم برای باز و بسته شدن پنجره پاپ‌آپ */
+    @keyframes modalPopIn {
+      0% { opacity: 0; transform: scale(0.85) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    /* مودال (پنجره پاپ‌آپ ثبت تراکنش) */
+    @keyframes modalPopOut {
+      0% { opacity: 1; transform: scale(1) translateY(0); }
+      100% { opacity: 0; transform: scale(0.85) translateY(20px); }
+    }
+
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -149,7 +159,22 @@
       align-items: center;
       z-index: 1000;
       padding: 15px;
-      animation: fadeIn 0.3s ease-out;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-overlay.show .modal-content {
+      animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .modal-overlay.closing .modal-content {
+      animation: modalPopOut 0.25s ease-in forwards;
     }
 
     .modal-content {
@@ -196,7 +221,6 @@
       margin-top: 5px;
     }
 
-    /* لیست تراکنش‌ها در نیمه پایین */
     .list-section-title { font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #1e1b4b; }
     
     .transactions-scroll-area {
@@ -244,7 +268,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- بخش تنظیمات اولیه پروفایل -->
+    <!-- تنظیمات اولیه پروفایل -->
     <div id="setupSection" class="hidden">
       <div style="text-align:center; margin-bottom: 20px;">
         <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
@@ -253,7 +277,7 @@
       </div>
       <div class="form-group">
         <label>نام و لقب شما:</label>
-        <input type="text" id="ownerNameInput" placeholder="مثلاً علی صالحی">
+        <input type="text" id="ownerNameInput" placeholder="مثلاً محمد شریف">
       </div>
       <div class="form-group">
         <label>عکس پروفایل:</label>
@@ -312,7 +336,7 @@
   </div>
 
   <!-- مودال ثبت تراکنش طلب و بدهی -->
-  <div id="debtModal" class="modal-overlay hidden">
+  <div id="debtModal" class="modal-overlay">
     <div class="modal-content">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;" id="debtFormTitle">➕ ثبت تراکنش جدید</h3>
@@ -322,11 +346,11 @@
       <div class="form-grid">
         <div class="form-group">
           <label>نام شخص:</label>
-          <input type="text" id="debtName" placeholder="نام شخص">
+          <input type="text" id="debtName" placeholder="مثلاً احمد">
         </div>
         <div class="form-group">
           <label>شماره واتساپ:</label>
-          <input type="text" id="debtPhone" placeholder="077..." class="eng-num">
+          <input type="text" id="debtPhone" placeholder="077xxxxxxxx" class="eng-num">
         </div>
         <div class="form-group">
           <label>نوع:</label>
@@ -355,7 +379,7 @@
         </div>
         <div class="form-group full">
           <label>توضیحات:</label>
-          <input type="text" id="debtDesc" placeholder="بابت...">
+          <input type="text" id="debtDesc" placeholder="بابت بستانکاری یا بدهی...">
         </div>
         <div class="form-group full">
           <label>عکس رسید:</label>
@@ -367,7 +391,7 @@
   </div>
 
   <!-- مودال ثبت خرج و درآمد -->
-  <div id="expenseModal" class="modal-overlay hidden">
+  <div id="expenseModal" class="modal-overlay">
     <div class="modal-content">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</h3>
@@ -394,7 +418,7 @@
         </div>
         <div class="form-group full">
           <label>عنوان:</label>
-          <input type="text" id="expenseTitle" placeholder="عنوان خرج یا درآمد">
+          <input type="text" id="expenseTitle" placeholder="مثلاً حقوق، کرایه، خرید...">
         </div>
         <div class="form-group">
           <label>مبلغ:</label>
@@ -406,7 +430,7 @@
         </div>
         <div class="form-group full">
           <label>توضیحات:</label>
-          <input type="text" id="expenseDesc" placeholder="جزئیات...">
+          <input type="text" id="expenseDesc" placeholder="جزئیات بیشتر...">
         </div>
         <div class="form-group full">
           <label>عکس رسید:</label>
@@ -491,20 +515,32 @@
       return phone.replace(/\D/g, '');
     }
 
-    // Modal Controls
+    // Modal Controls با انیمیشن روان
     function openDebtModal() {
       resetDebtForm();
-      document.getElementById('debtModal').classList.remove('hidden');
+      let modal = document.getElementById('debtModal');
+      modal.classList.remove('closing');
+      modal.classList.add('show');
     }
     function closeDebtModal() {
-      document.getElementById('debtModal').classList.add('hidden');
+      let modal = document.getElementById('debtModal');
+      modal.classList.add('closing');
+      setTimeout(() => {
+        modal.classList.remove('show', 'closing');
+      }, 250);
     }
     function openExpenseModal() {
       resetExpenseForm();
-      document.getElementById('expenseModal').classList.remove('hidden');
+      let modal = document.getElementById('expenseModal');
+      modal.classList.remove('closing');
+      modal.classList.add('show');
     }
     function closeExpenseModal() {
-      document.getElementById('expenseModal').classList.add('hidden');
+      let modal = document.getElementById('expenseModal');
+      modal.classList.add('closing');
+      setTimeout(() => {
+        modal.classList.remove('show', 'closing');
+      }, 250);
     }
 
     // --- طلب و بدهی ---
@@ -616,7 +652,10 @@
       document.getElementById('debtDate').value = item.date;
       document.getElementById('debtDesc').value = item.desc;
       document.getElementById('debtFormTitle').innerText = '✏️ ویرایش تراکنش';
-      document.getElementById('debtModal').classList.remove('hidden');
+      
+      let modal = document.getElementById('debtModal');
+      modal.classList.remove('closing');
+      modal.classList.add('show');
     }
 
     function deleteDebt(id) {
@@ -729,7 +768,10 @@
       document.getElementById('expenseDate').value = item.date;
       document.getElementById('expenseDesc').value = item.desc;
       document.getElementById('expenseFormTitle').innerText = '✏️ ویرایش رکورد';
-      document.getElementById('expenseModal').classList.remove('hidden');
+      
+      let modal = document.getElementById('expenseModal');
+      modal.classList.remove('closing');
+      modal.classList.add('show');
     }
 
     function deleteExpense(id) {
