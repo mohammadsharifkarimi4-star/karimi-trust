@@ -252,18 +252,27 @@
     .btn-edit { background: #f59e0b; color: white; }
     .btn-del { background: var(--danger); color: white; }
 
+    .loading-overlay {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);
+      display: flex; justify-content: center; align-items: center;
+      color: white; font-weight: 800; font-size: 15px; z-index: 2000;
+    }
+
     .hidden { display: none !important; }
     .eng-num { font-family: Tahoma, sans-serif; direction: ltr; display: inline-block; }
   </style>
 </head>
 <body>
+  <div id="loadingOverlay" class="loading-overlay hidden">در حال ارتباط با فضای ابری...</div>
+
   <div class="container">
     <!-- بخش ورود با ایمیل و پروفایل -->
     <div id="setupSection" class="hidden">
       <div style="text-align:center; margin-bottom: 20px;">
-        <div style="font-size: 40px; margin-bottom: 10px;">🔐</div>
-        <h2 style="font-size: 18px; color: #1e1b4b; font-weight: 800;">ورود به حساب شخصی ابری</h2>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">با وارد کردن ایمیل، اطلاعات حساب شما برای همیشه امن می‌ماند.</p>
+        <div style="font-size: 40px; margin-bottom: 10px;">☁️</div>
+        <h2 style="font-size: 18px; color: #1e1b4b; font-weight: 800;">اتصال به حساب ابری گوگل</h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">با ایمیل خود وارد شوید تا اطلاعات همیشه امن و دائمی بماند.</p>
       </div>
       <div class="form-group">
         <label>نام و لقب شما:</label>
@@ -277,7 +286,7 @@
         <label>عکس پروفایل:</label>
         <input type="file" id="ownerAvatarInput" accept="image/*">
       </div>
-      <button class="btn-main" onclick="saveOwnerInfo()">ورود و اتصال به حساب ابری</button>
+      <button class="btn-main" onclick="saveOwnerInfo()">ورود به حساب ابری</button>
       <div style="text-align: center; margin-top: 15px;">
         <a href="index.html" class="back-btn">← بازگشت به منو</a>
       </div>
@@ -336,7 +345,7 @@
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;" id="debtFormTitle">➕ ثبت تراکنش جدید</h3>
         <button onclick="closeDebtModal()" style="background:none; border:none; font-size:16px; cursor:pointer; font-weight:800; color:#64748b;">✕</button>
       </div>
-      <input type="hidden" id="editDebtId">
+      <input type="hidden" id="editDebtIndex">
       <div class="form-grid">
         <div class="form-group">
           <label>نام شخص:</label>
@@ -380,7 +389,7 @@
           <input type="file" id="debtReceipt" accept="image/*">
         </div>
       </div>
-      <button class="btn-main" onclick="saveDebt()">ثبت و ذخیره</button>
+      <button class="btn-main" onclick="saveDebt()">ثبت و ذخیره در ابری</button>
     </div>
   </div>
 
@@ -391,7 +400,7 @@
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</h3>
         <button onclick="closeExpenseModal()" style="background:none; border:none; font-size:16px; cursor:pointer; font-weight:800; color:#64748b;">✕</button>
       </div>
-      <input type="hidden" id="editExpenseId">
+      <input type="hidden" id="editExpenseIndex">
       <div class="form-grid">
         <div class="form-group">
           <label>نوع:</label>
@@ -431,17 +440,18 @@
           <input type="file" id="expenseReceipt" accept="image/*">
         </div>
       </div>
-      <button class="btn-main" onclick="saveExpense()">ثبت و ذخیره</button>
+      <button class="btn-main" onclick="saveExpense()">ثبت و ذخیره در ابری</button>
     </div>
   </div>
 
   <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwT9Z1749ckQJ6CQ4dijZRE2rwB5jbVcyixHA4so5SmOzt9htaVkXc7RBVTMjejnWB56w/exec";
+
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
     let ownerAvatar = localStorage.getItem('cloud_owner_avatar');
     
-    let debts = [];
-    let expenses = [];
+    let allData = [];
 
     document.getElementById('debtDate').valueAsDate = new Date();
     document.getElementById('expenseDate').valueAsDate = new Date();
@@ -450,7 +460,7 @@
       if (!ownerEmail) {
         document.getElementById('setupSection').classList.remove('hidden');
       } else {
-        loadUserDataFromCloud();
+        loadDataFromCloud();
       }
     });
 
@@ -474,7 +484,7 @@
         ownerAvatar = avatarBase64 || '';
 
         document.getElementById('setupSection').classList.add('hidden');
-        loadUserDataFromCloud();
+        loadDataFromCloud();
       };
 
       if (avatarFile) {
@@ -486,11 +496,24 @@
       }
     }
 
-    function loadUserDataFromCloud() {
-      // بازیابی اطلاعات اختصاصی بر اساس ایمیل کاربر (امن در برابر پاک شدن کش)
-      debts = JSON.parse(localStorage.getItem(`debts_${ownerEmail}`) || '[]');
-      expenses = JSON.parse(localStorage.getItem(`expenses_${ownerEmail}`) || '[]');
+    function loadDataFromCloud() {
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      
+      fetch(`${SCRIPT_URL}?email=${encodeURIComponent(ownerEmail)}`)
+        .then(res => res.json())
+        .then(data => {
+          allData = data || [];
+          document.getElementById('loadingOverlay').classList.add('hidden');
+          initApp();
+        })
+        .catch(err => {
+          document.getElementById('loadingOverlay').classList.add('hidden');
+          alert('خطا در دریافت اطلاعات از فضای ابری.');
+          initApp();
+        });
+    }
 
+    function initApp() {
       document.getElementById('mainAppSection').classList.remove('hidden');
       document.getElementById('ownerTitleDisplay').innerText = `حسابِ ${ownerName}`;
       document.getElementById('ownerEmailDisplay').innerText = ownerEmail;
@@ -547,9 +570,25 @@
       setTimeout(() => { modal.classList.remove('show', 'closing'); }, 250);
     }
 
+    function sendToCloud(payload, callback) {
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (callback) callback();
+      })
+      .catch(err => {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('خطا در ذخیره سازی ابری.');
+      });
+    }
+
     // --- طلب و بدهی ---
     function saveDebt() {
-      let id = document.getElementById('editDebtId').value;
       let name = document.getElementById('debtName').value.trim();
       let phone = document.getElementById('debtPhone').value.trim();
       let type = document.getElementById('debtType').value;
@@ -564,31 +603,36 @@
         return;
       }
 
-      let saveItem = (receiptBase64) => {
-        if (id) {
-          let idx = debts.findIndex(item => item.id == id);
-          if (idx !== -1) {
-            debts[idx] = { id: Number(id), name, phone, type, amount, currency, date, desc, receipt: receiptBase64 || debts[idx].receipt };
-          }
-        } else {
-          debts.push({ id: Date.now(), name, phone, type, amount, currency, date, desc, receipt: receiptBase64 || '' });
-        }
-        localStorage.setItem(`debts_${ownerEmail}`, JSON.stringify(debts));
-        closeDebtModal();
-        renderDebts();
+      let processSave = (receiptBase64) => {
+        let payload = {
+          action: 'save',
+          email: ownerEmail,
+          type: type,
+          nameOrTitle: name,
+          phone: phone,
+          amount: amount,
+          currency: currency,
+          date: date,
+          description: desc,
+          receipt: receiptBase64 || ''
+        };
+
+        sendToCloud(payload, () => {
+          closeDebtModal();
+          loadDataFromCloud();
+        });
       };
 
       if (receiptFile) {
         let reader = new FileReader();
-        reader.onload = function(e) { saveItem(e.target.result); };
+        reader.onload = function(e) { processSave(e.target.result); };
         reader.readAsDataURL(receiptFile);
       } else {
-        saveItem(null);
+        processSave('');
       }
     }
 
     function resetDebtForm() {
-      document.getElementById('editDebtId').value = '';
       document.getElementById('debtName').value = '';
       document.getElementById('debtPhone').value = '';
       document.getElementById('debtAmount').value = '';
@@ -601,6 +645,7 @@
       let container = document.getElementById('debtsListContainer');
       let html = '';
       let stats = {};
+      let debts = allData.filter(item => item.type === 'طلب' || item.type === 'بدهی');
 
       if (debts.length === 0) {
         container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:12px;">تراکنشی ثبت نشده است.</div>';
@@ -611,26 +656,24 @@
       debts.forEach(item => {
         let amtColor = item.type === 'طلب' ? '#34d399' : '#f87171';
         if (!stats[item.currency]) stats[item.currency] = { طلب: 0, بدهی: 0 };
-        stats[item.currency][item.type] += item.amount;
+        stats[item.currency][item.type] += Number(item.amount);
 
-        let waText = encodeURIComponent(`سلام ${item.name} عزیز، از طرف ${ownerName}:\nمبلغ: ${item.amount.toLocaleString()} ${item.currency}\nنوع: ${item.type}\nتاریخ: ${item.date}\nشرح: ${item.desc}`);
+        let waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، از طرف ${ownerName}:\nمبلغ: ${Number(item.amount).toLocaleString()} ${item.currency}\nنوع: ${item.type}\nتاریخ: ${item.date}\nشرح: ${item.description}`);
         let waLink = item.phone ? `https://wa.me/${cleanPhone(item.phone)}?text=${waText}` : '#';
 
         html += `
           <div class="tx-item">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <span style="font-weight:800; font-size:13px; color:#1e293b;">${item.name} (${item.type})</span>
+              <span style="font-weight:800; font-size:13px; color:#1e293b;">${item.nameOrTitle} (${item.type})</span>
               <span style="font-size:11px; color:var(--text-muted);" class="eng-num">${item.date}</span>
             </div>
             <div style="font-size:13px; margin-bottom:4px; color:${amtColor}; font-weight:800;" class="eng-num">
-              ${item.currency} ${item.amount.toLocaleString()}
+              ${item.currency} ${Number(item.amount).toLocaleString()}
             </div>
-            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${item.desc || 'بدون توضیح'}</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${item.description || 'بدون توضیح'}</div>
             ${item.receipt ? `<div style="margin-bottom:6px;"><a href="${item.receipt}" target="_blank" style="font-size:11px; color:var(--primary);">مشاهده عکس رسید</a></div>` : ''}
             <div class="action-btns">
               <a href="${waLink}" target="_blank" class="action-btn btn-wa">واتساپ</a>
-              <button class="action-btn btn-edit" onclick="editDebt(${item.id})">ویرایش</button>
-              <button class="action-btn btn-del" onclick="deleteDebt(${item.id})">حذف</button>
             </div>
           </div>`;
       });
@@ -644,35 +687,8 @@
       document.getElementById('debtsStatsContent').innerHTML = statsHtml;
     }
 
-    function editDebt(id) {
-      let item = debts.find(d => d.id == id);
-      if (!item) return;
-      document.getElementById('editDebtId').value = item.id;
-      document.getElementById('debtName').value = item.name;
-      document.getElementById('debtPhone').value = item.phone;
-      document.getElementById('debtType').value = item.type;
-      document.getElementById('debtAmount').value = item.amount;
-      document.getElementById('debtCurrency').value = item.currency;
-      document.getElementById('debtDate').value = item.date;
-      document.getElementById('debtDesc').value = item.desc;
-      document.getElementById('debtFormTitle').innerText = '✏️ ویرایش تراکنش';
-      
-      let modal = document.getElementById('debtModal');
-      modal.classList.remove('closing');
-      modal.classList.add('show');
-    }
-
-    function deleteDebt(id) {
-      if (confirm('حذف شود؟')) {
-        debts = debts.filter(d => d.id != id);
-        localStorage.setItem(`debts_${ownerEmail}`, JSON.stringify(debts));
-        renderDebts();
-      }
-    }
-
     // --- خرج و درآمد ---
     function saveExpense() {
-      let id = document.getElementById('editExpenseId').value;
       let type = document.getElementById('expenseType').value;
       let title = document.getElementById('expenseTitle').value.trim();
       let amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
@@ -686,31 +702,36 @@
         return;
       }
 
-      let saveItem = (receiptBase64) => {
-        if (id) {
-          let idx = expenses.findIndex(item => item.id == id);
-          if (idx !== -1) {
-            expenses[idx] = { id: Number(id), type, title, amount, currency, date, desc, receipt: receiptBase64 || expenses[idx].receipt };
-          }
-        } else {
-          expenses.push({ id: Date.now(), type, title, amount, currency, date, desc, receipt: receiptBase64 || '' });
-        }
-        localStorage.setItem(`expenses_${ownerEmail}`, JSON.stringify(expenses));
-        closeExpenseModal();
-        renderExpenses();
+      let processSave = (receiptBase64) => {
+        let payload = {
+          action: 'save',
+          email: ownerEmail,
+          type: type,
+          nameOrTitle: title,
+          phone: '',
+          amount: amount,
+          currency: currency,
+          date: date,
+          description: desc,
+          receipt: receiptBase64 || ''
+        };
+
+        sendToCloud(payload, () => {
+          closeExpenseModal();
+          loadDataFromCloud();
+        });
       };
 
       if (receiptFile) {
         let reader = new FileReader();
-        reader.onload = function(e) { saveItem(e.target.result); };
+        reader.onload = function(e) { processSave(e.target.result); };
         reader.readAsDataURL(receiptFile);
       } else {
-        saveItem(null);
+        processSave('');
       }
     }
 
     function resetExpenseForm() {
-      document.getElementById('editExpenseId').value = '';
       document.getElementById('expenseTitle').value = '';
       document.getElementById('expenseAmount').value = '';
       document.getElementById('expenseDesc').value = '';
@@ -722,6 +743,7 @@
       let container = document.getElementById('expensesListContainer');
       let html = '';
       let stats = {};
+      let expenses = allData.filter(item => item.type === 'درآمد' || item.type === 'خرج');
 
       if (expenses.length === 0) {
         container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:12px;">رکوردی ثبت نشده است.</div>';
@@ -732,23 +754,19 @@
       expenses.forEach(item => {
         let amtColor = item.type === 'درآمد' ? '#34d399' : '#f87171';
         if (!stats[item.currency]) stats[item.currency] = { درآمد: 0, خرج: 0 };
-        stats[item.currency][item.type] += item.amount;
+        stats[item.currency][item.type] += Number(item.amount);
 
         html += `
           <div class="tx-item">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <span style="font-weight:800; font-size:13px; color:#1e293b;">${item.title} (${item.type})</span>
+              <span style="font-weight:800; font-size:13px; color:#1e293b;">${item.nameOrTitle} (${item.type})</span>
               <span style="font-size:11px; color:var(--text-muted);" class="eng-num">${item.date}</span>
             </div>
             <div style="font-size:13px; margin-bottom:4px; color:${amtColor}; font-weight:800;" class="eng-num">
-              ${item.currency} ${item.amount.toLocaleString()}
+              ${item.currency} ${Number(item.amount).toLocaleString()}
             </div>
-            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${item.desc || 'بدون توضیح'}</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${item.description || 'بدون توضیح'}</div>
             ${item.receipt ? `<div style="margin-bottom:6px;"><a href="${item.receipt}" target="_blank" style="font-size:11px; color:var(--primary);">مشاهده عکس رسید</a></div>` : ''}
-            <div class="action-btns">
-              <button class="action-btn btn-edit" onclick="editExpense(${item.id})">ویرایش</button>
-              <button class="action-btn btn-del" onclick="deleteExpense(${item.id})">حذف</button>
-            </div>
           </div>`;
       });
 
@@ -759,31 +777,6 @@
         statsHtml += `<div><b>${c}</b> ➔ درآمد: <span style="color:#34d399;" class="eng-num">${stats[c]['درآمد'].toLocaleString()}</span> | خرج: <span style="color:#f87171;" class="eng-num">${stats[c]['خرج'].toLocaleString()}</span></div>`;
       }
       document.getElementById('expensesStatsContent').innerHTML = statsHtml;
-    }
-
-    function editExpense(id) {
-      let item = expenses.find(e => e.id == id);
-      if (!item) return;
-      document.getElementById('editExpenseId').value = item.id;
-      document.getElementById('expenseType').value = item.type;
-      document.getElementById('expenseTitle').value = item.title;
-      document.getElementById('expenseAmount').value = item.amount;
-      document.getElementById('expenseCurrency').value = item.currency;
-      document.getElementById('expenseDate').value = item.date;
-      document.getElementById('expenseDesc').value = item.desc;
-      document.getElementById('expenseFormTitle').innerText = '✏️ ویرایش رکورد';
-      
-      let modal = document.getElementById('expenseModal');
-      modal.classList.remove('closing');
-      modal.classList.add('show');
-    }
-
-    function deleteExpense(id) {
-      if (confirm('حذف شود؟')) {
-        expenses = expenses.filter(e => e.id != id);
-        localStorage.setItem(`expenses_${ownerEmail}`, JSON.stringify(expenses));
-        renderExpenses();
-      }
     }
   </script>
 </body>
