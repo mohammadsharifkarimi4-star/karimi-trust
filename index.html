@@ -9,10 +9,9 @@
 
     :root {
       --primary: #4f46e5;
-      --primary-hover: #4338ca;
       --success: #059669;
       --danger: #dc2626;
-      --glass-bg: rgba(255, 255, 255, 0.82);
+      --glass-bg: rgba(255, 255, 255, 0.85);
       --glass-border: rgba(255, 255, 255, 0.95);
       --card-bg: rgba(255, 255, 255, 0.92);
       --text-main: #0f172a;
@@ -57,7 +56,6 @@
       margin-bottom: 22px;
       font-size: 21px;
       font-weight: 800;
-      letter-spacing: -0.5px;
     }
 
     .form-group { margin-bottom: 18px; }
@@ -72,16 +70,11 @@
       text-align: center;
       outline: none;
       background: rgba(255, 255, 255, 0.95);
-      transition: all 0.3s ease;
       direction: ltr;
       color: #0f172a;
     }
 
-    input:focus {
-      border-color: var(--primary);
-      background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
-    }
+    input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15); }
 
     button {
       width: 100%;
@@ -93,13 +86,11 @@
       font-size: 16px;
       cursor: pointer;
       font-weight: 800;
-      transition: all 0.25s ease;
       box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
       margin-top: 5px;
     }
 
     button:active { transform: scale(0.97); }
-    button:hover { opacity: 0.95; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.5); }
 
     .user-profile-header {
       display: flex;
@@ -119,7 +110,6 @@
       background: rgba(255, 255, 255, 0.5);
       padding: 5px;
       border-radius: 14px;
-      backdrop-filter: blur(10px);
       overflow-x: auto;
     }
 
@@ -132,12 +122,12 @@
       font-weight: 800;
       cursor: pointer;
       border-radius: 10px;
-      transition: all 0.3s ease;
       color: var(--text-muted);
       background: transparent;
       border: none;
       box-shadow: none;
       margin-top: 0;
+      transition: all 0.3s ease;
     }
 
     .currency-tab.active {
@@ -148,13 +138,11 @@
 
     .currency-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
       border-radius: 20px;
       padding: 20px;
       margin-bottom: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
       border-right: 6px solid var(--primary);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
       animation: fadeIn 0.4s ease-out;
     }
 
@@ -166,9 +154,8 @@
       margin-bottom: 14px;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
       cursor: pointer;
-      transition: all 0.25s ease;
       position: relative;
-      overflow: hidden;
+      transition: all 0.25s ease;
     }
 
     .tx-card::before {
@@ -200,8 +187,6 @@
       border-radius: 24px;
       padding: 24px;
       box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-      position: relative;
-      animation: fadeIn 0.3s ease-out;
     }
 
     .hidden { display: none !important; }
@@ -220,9 +205,7 @@
       font-size: 15px;
       margin-top: 18px;
       box-shadow: 0 8px 22px rgba(16, 185, 129, 0.35);
-      transition: all 0.25s ease;
     }
-    .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(16, 185, 129, 0.45); }
 
     .error-box {
       background: #fef2f2;
@@ -237,27 +220,24 @@
     }
 
     .eng-num { font-family: Tahoma, Arial, sans-serif; direction: ltr; display: inline-block; }
-    .loading { text-align: center; padding: 40px; color: #ffffff; font-size: 16px; font-weight: 700; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-title">🛡️ امانت‌داری کریمی مرکزی</div>
-    
-    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات زنده از گوگل شیت...</div>
 
     <!-- مرحله ۱: ورود شماره همراه -->
-    <div id="phoneSection" class="hidden">
+    <div id="phoneSection">
       <div style="text-align: center; margin-bottom: 12px; font-weight: 800; color: #1e1b4b; font-size: 17px;">ورود به حساب کاربری</div>
       <div style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 22px;">لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.</div>
       <div class="form-group">
         <label>شماره همراه:</label>
         <input type="text" id="phoneInput" placeholder="7721878997">
       </div>
-      <button onclick="checkPhone()">شناسایی شماره</button>
+      <button id="btnCheckPhone" onclick="checkPhone()">شناسایی شماره</button>
       
       <div id="phoneError" class="hidden error-box">
-        <p style="margin-bottom: 12px;">شماره شما در سیستم یافت نشد.</p>
+        <p style="margin-bottom: 12px;" id="phoneErrorMsg">شماره شما در سیستم یافت نشد.</p>
         <div style="display: flex; gap: 10px;">
           <button onclick="retryPhone()" style="background: #64748b; margin-top:0; padding: 12px;">تلاش مجدد</button>
           <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20در%20سامانه%20نیست" target="_blank" class="whatsapp-btn" style="margin-top:0; flex:1; text-decoration:none; padding:12px; font-size:13px;">پیام به کریمی</a>
@@ -272,7 +252,7 @@
         <label>کد اختصاصی حساب (AccountID):</label>
         <input type="password" id="accountIdInput" placeholder="Account ID">
       </div>
-      <button onclick="verifyAccount()">ورود به حساب کاربری</button>
+      <button id="btnVerifyAcc" onclick="verifyAccount()">ورود به حساب کاربری</button>
       <button onclick="backToPhone()" style="background: #64748b; margin-top:10px;">تغییر شماره همراه</button>
       <div id="accountError" class="hidden error-box">کد حساب (Account ID) اشتباه است.</div>
     </div>
@@ -297,7 +277,7 @@
       <div id="activeCurrencyCard"></div>
 
       <div style="font-size: 13px; font-weight: 800; color: #334155; margin: 20px 0 10px 0; display: flex; justify-content: space-between; align-items: center;">
-        <span>📋 ریز سوابق و تراکنش‌ها (نمایش کامل و نامحدود از شیت)</span>
+        <span>📋 ریز سوابق و تراکنش‌ها (نمایش کامل از شیت)</span>
         <span id="txCountBadge" style="font-size: 11px; background: #e2e8f0; color: #1e293b; padding: 3px 8px; border-radius: 6px; font-weight: 700;" class="eng-num">0</span>
       </div>
       <div id="transactionsContainer" style="max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
@@ -308,7 +288,6 @@
     </div>
   </div>
 
-  <!-- پنجره مودال جزئیات تراکنش -->
   <div id="txModal" class="modal-overlay hidden">
     <div class="modal-content">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
@@ -321,80 +300,37 @@
   </div>
 
   <script>
-    const ACCOUNTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbZuehG4hJ9oVt1rhT-bgNdY1Jqr_0JuzjTC5ysF6eMmoj0mqhT6rhsHCm8aSeKDAU4jdmUQj0-B0/pub?output=csv&sheet=Accounts";
-    const TRANSACTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbZuehG4hJ9oVt1rhT-bgNdY1Jqr_0JuzjTC5ysF6eMmoj0mqhT6rhsHCm8aSeKDAU4jdmUQj0-B0/pub?output=csv&sheet=Transactions";
-
-    let accountsData = [];
-    let transactionsData = [];
-    let currentFoundUser = null;
-    let customerTransactions = [];
-    let customerBalances = {};
+    let currentPhone = '';
+    let customerData = null;
     let currencyList = [];
     let activeCurrencyIndex = 0;
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const [accRes, txRes] = await Promise.all([
-          fetch(ACCOUNTS_CSV_URL),
-          fetch(TRANSACTIONS_CSV_URL)
-        ]);
-
-        const accCsv = await accRes.text();
-        const txCsv = await txRes.text();
-
-        accountsData = parseCSV(accCsv);
-        transactionsData = parseCSV(txCsv);
-
-        document.getElementById('loadingSheet').classList.add('hidden');
-        document.getElementById('phoneSection').classList.remove('hidden');
-      } catch (err) {
-        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات از گوگل شیت. لطفاً اتصال اینترنت یا انتشار شیت را بررسی کنید.</div>';
-      }
-    });
-
-    function parseCSV(text) {
-      const lines = text.split('\n');
-      const result = [];
-      if (lines.length === 0) return result;
-      
-      const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
-      
-      for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        const currentline = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        let obj = {};
-        for (let j = 0; j < headers.length; j++) {
-          obj[headers[j]] = currentline[j] ? currentline[j].trim().replace(/^["']|["']$/g, '') : '';
-        }
-        result.push(obj);
-      }
-      return result;
-    }
-
-    function cleanDigits(str) {
-      if (!str) return '';
-      return String(str).replace(/\D/g, '');
-    }
-
-    function checkPhone() {
-      const rawInput = document.getElementById('phoneInput').value.trim();
+    async function checkPhone() {
+      const phone = document.getElementById('phoneInput').value.trim();
       const errBox = document.getElementById('phoneError');
+      const btn = document.getElementById('btnCheckPhone');
       errBox.classList.add('hidden');
 
-      if (!rawInput) return;
-      const userDigits = cleanDigits(rawInput);
+      if (!phone) return;
+      currentPhone = phone;
+      btn.innerText = 'در حال بررسی...';
 
-      const found = accountsData.find(u => {
-        const sheetPhone = cleanDigits(u.Phone || '');
-        return sheetPhone && (sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone.slice(-7)));
-      });
+      try {
+        const res = await fetch(`/api/check-phone?phone=${encodeURIComponent(phone)}`);
+        const data = await res.json();
+        btn.innerText = 'شناسایی شماره';
 
-      if (found) {
-        currentFoundUser = found;
-        document.getElementById('phoneSection').classList.add('hidden');
-        document.getElementById('accountSection').classList.remove('hidden');
-        document.getElementById('greetingMsg').innerText = `سلام ${found.Name || 'مشتری عزیز'}، خوش آمدید!`;
-      } else {
+        if (data && data.found) {
+          document.getElementById('phoneSection').classList.add('hidden');
+          document.getElementById('accountSection').classList.remove('hidden');
+          document.getElementById('greetingMsg').innerText = `سلام ${data.name} عزیز، خوش آمدید!`;
+        } else {
+          document.getElementById('phoneErrorMsg').innerText = 'شماره شما در سیستم یافت نشد.';
+          errBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        btn.innerText = 'شناسایی شماره';
+        document.getElementById('phoneErrorMsg').innerText = 'خطا در ارتباط با سرور.';
         errBox.classList.remove('hidden');
       }
     }
@@ -404,59 +340,46 @@
       document.getElementById('phoneInput').value = '';
     }
 
-    function verifyAccount() {
-      const accIdInput = document.getElementById('accountIdInput').value.trim().toLowerCase();
+    async function verifyAccount() {
+      const accountId = document.getElementById('accountIdInput').value.trim();
       const accErr = document.getElementById('accountError');
+      const btn = document.getElementById('btnVerifyAcc');
       accErr.classList.add('hidden');
 
-      const sheetAccId = String(currentFoundUser.AccountID || '').trim().toLowerCase();
+      if (!accountId) return;
+      btn.innerText = 'در حال ورود...';
 
-      if (currentFoundUser && sheetAccId === accIdInput) {
-        document.getElementById('accountSection').classList.add('hidden');
-        document.getElementById('dashboardSection').classList.remove('hidden');
-        
-        document.getElementById('dashName').innerText = currentFoundUser.Name || '---';
-        document.getElementById('dashPhone').innerText = currentFoundUser.Phone || '---';
-        document.getElementById('dashAccId').innerText = `ID: ${currentFoundUser.AccountID}`;
+      try {
+        const res = await fetch(`/api/verify-account?phone=${encodeURIComponent(currentPhone)}&accountId=${encodeURIComponent(accountId)}`);
+        const data = await res.json();
+        btn.innerText = 'ورود به حساب کاربری';
 
-        // فیلتر کردن تراکنش‌های واقعی این مشتری از شیت Transactions بر اساس AccountID
-        customerTransactions = transactionsData.filter(tx => {
-          return String(tx.AccountID || '').trim().toLowerCase() === sheetAccId;
-        });
+        if (data && data.success) {
+          customerData = data;
+          document.getElementById('accountSection').classList.add('hidden');
+          document.getElementById('dashboardSection').classList.remove('hidden');
 
-        // محاسبه موجودی‌ها و تفکیک ارزها از روی تراکنش‌های واقعی
-        customerBalances = {};
-        customerTransactions.forEach(tx => {
-          let curr = (tx.Currency || 'AFN').toUpperCase();
-          let amount = parseFloat(tx.Amount) || 0;
-          let dir = String(tx.Direction || '').trim();
+          document.getElementById('dashName').innerText = data.customer.Name;
+          document.getElementById('dashPhone').innerText = data.customer.Phone;
+          document.getElementById('dashAccId').innerText = `ID: ${data.customer.AccountID}`;
 
-          if (!customerBalances[curr]) {
-            customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
+          currencyList = Object.keys(data.balances);
+          if (currencyList.length === 0) {
+            currencyList = ['AFN'];
+            data.balances['AFN'] = { credit: 0, debit: 0, net: 0 };
           }
 
-          if (dir.includes('بستانکار') || dir.includes('دریافت')) {
-            customerBalances[curr].credit += amount;
-          } else if (dir.includes('بدهکار') || dir.includes('پرداخت')) {
-            customerBalances[curr].debit += amount;
-          }
-        });
+          activeCurrencyIndex = 0;
+          renderCurrencyTabs();
+          renderTransactions();
 
-        for (let c in customerBalances) {
-          customerBalances[c].net = customerBalances[c].credit - customerBalances[c].debit;
+        } else {
+          accErr.innerText = data.message || 'کد حساب (Account ID) اشتباه است.';
+          accErr.classList.remove('hidden');
         }
-
-        currencyList = Object.keys(customerBalances);
-        if (currencyList.length === 0) {
-          currencyList = ['AFN'];
-          customerBalances['AFN'] = { credit: 0, debit: 0, net: 0 };
-        }
-
-        activeCurrencyIndex = 0;
-        renderCurrencyTabs();
-        renderTransactions();
-
-      } else {
+      } catch (err) {
+        btn.innerText = 'ورود به حساب کاربری';
+        accErr.innerText = 'خطا در برقراری ارتباط.';
         accErr.classList.remove('hidden');
       }
     }
@@ -478,7 +401,7 @@
 
     function renderActiveCurrencyCard() {
       let currName = currencyList[activeCurrencyIndex];
-      let b = customerBalances[currName] || { credit: 0, debit: 0, net: 0 };
+      let b = customerData.balances[currName] || { credit: 0, debit: 0, net: 0 };
       let netColor = b.net >= 0 ? 'var(--success)' : 'var(--danger)';
       
       let cardHtml = `
@@ -497,10 +420,12 @@
 
     function renderTransactions() {
       let txHtml = '';
-      if (customerTransactions.length === 0) {
-        txHtml = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی در گوگل شیت برای این حساب ثبت نشده است.</div>';
+      let txs = customerData.transactions || [];
+
+      if (txs.length === 0) {
+        txHtml = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی در گوگل شیت یافت نشد.</div>';
       } else {
-        customerTransactions.forEach((tx, idx) => {
+        txs.forEach((tx, idx) => {
           let dir = String(tx.Direction || '');
           let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
           let amountVal = parseFloat(tx.Amount) || 0;
@@ -508,7 +433,7 @@
           txHtml += `
             <div class="tx-card" onclick="openModal(${idx})">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:800; font-size:14px; color:#1e293b;">${tx.OperationType || tx.Type || 'عملیات مالی'}</span>
+                <span style="font-weight:800; font-size:14px; color:#1e293b;">${tx.OperationType || 'عملیات مالی'}</span>
                 <span style="font-size:11px; background:#f1f5f9; padding:3px 8px; border-radius:6px; color:var(--text-muted); font-weight: 700;" class="eng-num">${tx.Date || '---'}</span>
               </div>
               <div style="font-size:12px; color:#334155; margin-bottom:10px; line-height:1.6;">
@@ -524,11 +449,11 @@
       }
 
       document.getElementById('transactionsContainer').innerHTML = txHtml;
-      document.getElementById('txCountBadge').innerText = customerTransactions.length;
+      document.getElementById('txCountBadge').innerText = txs.length;
     }
 
     function openModal(idx) {
-      let tx = customerTransactions[idx];
+      let tx = customerData.transactions[idx];
       let bodyHtml = `
         <p><b>شناسه تراکنش:</b> <span class="eng-num">${tx.TransID || '---'}</span></p>
         <p><b>نوع عملیات:</b> ${tx.OperationType || '---'}</p>
@@ -559,7 +484,7 @@
       document.getElementById('phoneSection').classList.remove('hidden');
       document.getElementById('phoneInput').value = '';
       document.getElementById('accountIdInput').value = '';
-      currentFoundUser = null;
+      customerData = null;
     }
   </script>
 </body>
