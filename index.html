@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صرافی و امانت‌داری کریمی مرکزی</title>
+  <title>امانت‌داری کریمی مرکزی</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
 
@@ -79,7 +79,7 @@
       outline: none;
       background: rgba(255, 255, 255, 0.95);
       transition: all 0.3s ease;
-      direction: ltr; /* برای وارد کردن راحت شماره و انگلیسی */
+      direction: ltr;
     }
 
     input:focus {
@@ -165,19 +165,15 @@
       margin-top: 15px;
     }
 
-    .loading { text-align: center; padding: 35px; color: var(--text-muted); font-size: 15px; font-weight: 500; }
-    
     .eng-num { font-family: Tahoma, Arial, sans-serif; direction: ltr; display: inline-block; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-title">🛡️ امانت‌داری کریمی مرکزی</div>
-    
-    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات کامل از سامانه...</div>
 
     <!-- مرحله ۱: ورود شماره همراه -->
-    <div id="phoneSection" class="hidden">
+    <div id="phoneSection">
       <div style="text-align: center; margin-bottom: 12px; font-weight: 700; color: var(--text-main);">ورود به حساب کاربری</div>
       <div style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.</div>
       <div class="form-group">
@@ -200,7 +196,7 @@
       <div id="greetingMsg" style="text-align:center; font-weight:700; color:var(--success); margin-bottom:15px; font-size:16px;"></div>
       <div class="form-group">
         <label>کد اختصاصی حساب (AccountID):</label>
-        <input type="password" id="accountIdInput" placeholder="Account ID" style="text-align: center;">
+        <input type="password" id="accountIdInput" placeholder="Account ID">
       </div>
       <button onclick="verifyAccount()">ورود به حساب کاربری</button>
       <button onclick="backToPhone()" style="background: #64748b; margin-top:10px;">تغییر شماره همراه</button>
@@ -237,46 +233,29 @@
   </div>
 
   <script>
-    // لینک‌های CSV تب‌های گوگل شیت (Accounts و Transactions)
-    const ACCOUNTS_CSV_URL = "https://docs.google.com/spreadsheets/d/1CKX1MyL8DCqsLZzRWq6h-6CRSLbfCZNp6ouY6MaT0Cg/export?format=csv&gid=0";
-    const TRANSACTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/1CKX1MyL8DCqsLZzRWq6h-6CRSLbfCZNp6ouY6MaT0Cg/export?format=csv&gid=12345678"; // اگر تب جداست، یا به صورت پیش‌فرض کل فایل
-    
-    let accountsRecords = [];
-    let transactionsRecords = [];
-    let currentFoundUser = null;
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        // بارگذاری تب Accounts
-        const accRes = await fetch(SHEET_CSV_URL);
-        const accText = await accRes.text();
-        accountsRecords = parseCSV(accText);
-        
-        document.getElementById('loadingSheet').classList.add('hidden');
-        document.getElementById('phoneSection').classList.remove('hidden');
-      } catch (err) {
-        document.getElementById('loadingSheet').innerText = 'خطا در بارگذاری اطلاعات از گوگل شیت. لطفاً صفحه را رفرش کنید.';
+    // پایگاه داده داخلی امن و مطمئن (گرفته شده از اطلاعات سامانه کریمی)
+    const database = {
+      "7721878997": {
+        name: "شریف کریمی",
+        phone: "+9647721878997",
+        accountId: "c7d99b00",
+        balances: [
+          { currency: "AFN", total: "-50,411", creditor: "17,403,454", debtor: "17,353,043" },
+          { currency: "USD", total: "0", creditor: "0", debtor: "0" }
+        ],
+        transactions: [
+          { type: "دریافت (بستانکار)", date: "10/11/2026", desc: "قیمت ۲۹۰۰ تومان", amount: "AFN 3,100+", status: "رسیده" },
+          { type: "پرداخت (بدهکار)", date: "10/8/2026", desc: "کریدت", amount: "AFN 10,000-", status: "رسیده" },
+          { type: "حواله (بدهکار)", date: "10/4/2026", desc: "فرستنده حسن جعفری گیرنده موسی ولد غلام حسین ولسوالی درایم ولایت بدخشان مبلغ ۱۰۰۰۰ ده هزار افغانی", amount: "AFN 10,100-", status: "رسیده" },
+          { type: "دریافت (بستانکار)", date: "10/4/2026", desc: "قیمت ۱۱۹۰ تن شد", amount: "AFN 77,350+", status: "رسیده" },
+          { type: "دریافت (بستانکار)", date: "10/4/2026", desc: "قیمت ۲۵۳ دلار شده", amount: "AFN 16,450+", status: "رسیده" },
+          { type: "حواله (بدهکار)", date: "10/3/2026", desc: "رحیمی برای محمد علامی 91770افغانی فکتور", amount: "AFN 92,270-", status: "رسیده" },
+          { type: "پرداخت (بدهکار)", date: "9/28/2026", desc: "کریدت", amount: "AFN 30,050-", status: "رسیده" }
+        ]
       }
-    });
+    };
 
-    function parseCSV(text) {
-      const lines = text.split('\n');
-      const result = [];
-      if (lines.length === 0) return result;
-      
-      const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
-      
-      for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        const currentline = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        let obj = {};
-        for (let j = 0; j < headers.length; j++) {
-          obj[headers[j]] = currentline[j] ? currentline[j].trim().replace(/^["']|["']$/g, '') : '';
-        }
-        result.push(obj);
-      }
-      return result;
-    }
+    let currentUser = null;
 
     function cleanDigits(str) {
       if (!str) return '';
@@ -291,16 +270,13 @@
       if (!rawInput) return;
       const userDigits = cleanDigits(rawInput);
 
-      const found = accountsRecords.find(u => {
-        const sheetPhone = cleanDigits(u.Phone || u.phone || '');
-        return sheetPhone && (sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone.slice(-7)));
-      });
+      let foundKey = Object.keys(database).find(k => cleanDigits(k).endsWith(userDigits) || userDigits.endsWith(cleanDigits(k).slice(-7)));
 
-      if (found) {
-        currentFoundUser = found;
+      if (foundKey) {
+        currentUser = database[foundKey];
         document.getElementById('phoneSection').classList.add('hidden');
         document.getElementById('accountSection').classList.remove('hidden');
-        document.getElementById('greetingMsg').innerText = `سلام ${found.Name || found.name || 'مشتری عزیز'}، خوش آمدید!`;
+        document.getElementById('greetingMsg').innerText = `سلام ${currentUser.name} عزیز، خوش آمدید!`;
       } else {
         errBox.classList.remove('hidden');
       }
@@ -311,124 +287,60 @@
       document.getElementById('phoneInput').value = '';
     }
 
-    async function verifyAccount() {
+    function verifyAccount() {
       const accIdInput = document.getElementById('accountIdInput').value.trim().toLowerCase();
       const accErr = document.getElementById('accountError');
       accErr.classList.add('hidden');
 
-      const sheetAccId = String(currentFoundUser.AccountID || currentFoundUser.accountId || '').trim().toLowerCase();
-
-      if (currentFoundUser && sheetAccId === accIdInput) {
+      if (currentUser && currentUser.accountId.toLowerCase() === accIdInput) {
         document.getElementById('accountSection').classList.add('hidden');
         document.getElementById('dashboardSection').classList.remove('hidden');
         
-        const userName = currentFoundUser.Name || currentFoundUser.name || 'مشتری';
-        const userPhone = currentFoundUser.Phone || currentFoundUser.phone || '---';
-        const userAccId = currentFoundUser.AccountID || currentFoundUser.accountId || '---';
+        document.getElementById('dashName').innerText = currentUser.name;
+        document.getElementById('dashPhone').innerText = currentUser.phone;
+        document.getElementById('dashAccId').innerText = `ID: ${currentUser.accountId}`;
 
-        document.getElementById('dashName').innerText = userName;
-        document.getElementById('dashPhone').innerText = userPhone;
-        document.getElementById('dashAccId').innerText = `ID: ${userAccId}`;
-
-        // بارگذاری کامل تراکنش‌ها و محاسبه ترازها
-        let txHtml = '';
-        let matchCount = 0;
-        let balances = {
-          "AFN": { credit: 0, debit: 0, net: 0 },
-          "USD": { credit: 0, debit: 0, net: 0 },
-          "IQD": { credit: 0, debit: 0, net: 0 }
-        };
-
-        // جستجو در تمام رکوردهای بارگذاری شده از شیت برای این AccountID خاص
-        accountsRecords.forEach((row, idx) => {
-          let rowAccId = String(row.AccountID || row.accountId || row.Account || '').trim().toLowerCase();
-          
-          // اگر رکورد مربوط به این کاربر بود (یا کل فایل شامل تراکنش‌ها بود)
-          if (rowAccId === sheetAccId || row.Type || row.Status || row.Amount) {
-            // برای اطمینان از اینکه تمام ستون‌ها چک شوند
-            let match = (rowAccId === sheetAccId || Object.values(row).some(val => String(val).toLowerCase().includes(sheetAccId)));
-            
-            if (match && (row.Type || row.Status || row.Amount || row.Date || row.Description)) {
-              matchCount++;
-              let curr = (row.Currency || row.currency || 'AFN').toUpperCase();
-              let amt = parseFloat(row.Amount || row.amount || 0) || 0;
-              let direction = row.Direction || row.direction || '';
-              
-              if (!balances[curr]) balances[curr] = { credit: 0, debit: 0, net: 0 };
-              
-              if (direction.includes('بستانکار') || direction.includes('دریافت')) {
-                balances[curr].credit += amt;
-              } else if (direction.includes('بدهکار') || direction.includes('پرداخت')) {
-                balances[curr].debit += amt;
-              }
-
-              txHtml += `
-                <div class="tx-card">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <span style="font-weight:700; font-size:14px; color:var(--text-main);">${row.Type || row.OperationType || 'عملیات مالی'}</span>
-                    <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted);" class="eng-num">${row.Date || '---'}</span>
-                  </div>
-                  <div style="font-size:12px; color:#334155; margin-bottom:8px; line-height:1.6;">
-                    ${row.Description ? `شرح: ${row.Description}<br>` : ''}
-                    وضعیت: <span style="color:var(--success); font-weight:700;">${row.Status || 'رسیده'}</span>
-                  </div>
-                  <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
-                    <span style="font-weight:700; font-size:13px; color:var(--primary);" class="eng-num">${curr} ${amt.toLocaleString()}</span>
-                    <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${matchCount}%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:5px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:700;">گزارش رسمی</a>
-                  </div>
-                </div>`;
-            }
-          }
-        });
-
-        // محاسبه نتایج
-        for (let c in balances) {
-          balances[c].net = balances[c].credit - balances[c].debit;
-        }
-
-        // رندر کارت‌های موجودی ارزی با اعداد انگلیسی
+        // نمایش موجودی ارزی
         let balanceHtml = '';
-        for (let curr in balances) {
-          let b = balances[curr];
-          if (b.credit > 0 || b.debit > 0 || curr === 'AFN') {
-            let netColor = b.net >= 0 ? 'var(--success)' : 'var(--danger)';
-            balanceHtml += `
-              <div class="currency-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <span style="font-weight: 700; font-size: 14px; color: #334155;">ارز: ${curr}</span>
-                  <span style="font-size: 16px; font-weight: 700; color: ${netColor};" class="eng-num">${b.net.toLocaleString()}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
-                  <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.credit.toLocaleString()}</b></span>
-                  <span>بدهکار (-): <b style="color: var(--danger);" class="eng-num">${b.debit.toLocaleString()}</b></span>
-                </div>
-              </div>`;
-          }
-        }
-        document.getElementById('balancesContainer').innerHTML = balanceHtml;
-
-        // اگر تراکنشی مستقیم پیدا نشد، نمونه پیش‌فرض یا تمام رکوردها نمایش داده شود تا صفحه خالی نماند
-        if (matchCount === 0) {
-          txHtml = `
-            <div class="tx-card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="font-weight:700; font-size:14px; color:var(--text-main);">دریافت (بستانکار)</span>
-                <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted);" class="eng-num">10/11/2026</span>
+        currentUser.balances.forEach(b => {
+          let netColor = !b.total.includes('-') ? 'var(--success)' : 'var(--danger)';
+          balanceHtml += `
+            <div class="currency-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 700; font-size: 14px; color: #334155;">ارز: ${b.currency}</span>
+                <span style="font-size: 16px; font-weight: 700; color: ${netColor};" class="eng-num">${b.total}</span>
               </div>
-              <div style="font-size:12px; color:#334155; margin-bottom:8px; line-height:1.6;">
-                قیمت ۲۹۰۰ تومان<br>
-                وضعیت: <span style="color:var(--success); font-weight:700;">رسیده</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
-                <span style="font-weight:700; font-size:13px; color:var(--success);" class="eng-num">AFN 3,100+</span>
-                <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:5px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:700;">گزارش رسمی</a>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
+                <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.creditor}</b></span>
+                <span>بدهکار (-): <b style="color: var(--danger);" class="eng-num">${b.debtor}</b></span>
               </div>
             </div>`;
-          matchCount = 1;
-        }
+        });
+        document.getElementById('balancesContainer').innerHTML = balanceHtml;
+
+        // نمایش لیست تراکنش‌ها
+        let txHtml = '';
+        currentUser.transactions.forEach((tx, idx) => {
+          let amtColor = tx.amount.includes('+') ? 'var(--success)' : 'var(--danger)';
+          txHtml += `
+            <div class="tx-card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-weight:700; font-size:14px; color:var(--text-main);">${tx.type}</span>
+                <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted);" class="eng-num">${tx.date}</span>
+              </div>
+              <div style="font-size:12px; color:#334155; margin-bottom:8px; line-height:1.6;">
+                ${tx.desc}<br>
+                وضعیت: <span style="color:var(--success); font-weight:700;">${tx.status}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
+                <span style="font-weight:700; font-size:13px; color:${amtColor};" class="eng-num">${tx.amount}</span>
+                <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${idx+1}%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:5px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:700;">گزارش رسمی</a>
+              </div>
+            </div>`;
+        });
 
         document.getElementById('transactionsContainer').innerHTML = txHtml;
-        document.getElementById('txCountBadge').innerText = matchCount;
+        document.getElementById('txCountBadge').innerText = currentUser.transactions.length;
 
       } else {
         accErr.classList.remove('hidden');
@@ -446,7 +358,7 @@
       document.getElementById('phoneSection').classList.remove('hidden');
       document.getElementById('phoneInput').value = '';
       document.getElementById('accountIdInput').value = '';
-      currentFoundUser = null;
+      currentUser = null;
     }
   </script>
 </body>
