@@ -249,14 +249,27 @@
     }
 
     .btn-wa { background: #10b981; color: white; }
-    .btn-edit { background: #f59e0b; color: white; }
-    .btn-del { background: var(--danger); color: white; }
 
+    /* لودینگ چرخان زیبا و مدرن جایگزین متن ثابت */
     .loading-overlay {
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);
-      display: flex; justify-content: center; align-items: center;
-      color: white; font-weight: 800; font-size: 15px; z-index: 2000;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      color: white; font-weight: 700; font-size: 14px; z-index: 2000; gap: 12px;
+    }
+
+    .spinner {
+      width: 45px;
+      height: 45px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #6366f1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .hidden { display: none !important; }
@@ -264,29 +277,33 @@
   </style>
 </head>
 <body>
-  <div id="loadingOverlay" class="loading-overlay hidden">در حال ارتباط با فضای ابری...</div>
+  <!-- لودینگ چرخان ابری -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="spinner"></div>
+    <div>در حال پردازش ابری...</div>
+  </div>
 
   <div class="container">
-    <!-- بخش ورود با ایمیل و پروفایل -->
+    <!-- ورود با ایمیل منحصربه‌فرد -->
     <div id="setupSection" class="hidden">
       <div style="text-align:center; margin-bottom: 20px;">
         <div style="font-size: 40px; margin-bottom: 10px;">☁️</div>
-        <h2 style="font-size: 18px; color: #1e1b4b; font-weight: 800;">اتصال به حساب ابری گوگل</h2>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">با ایمیل خود وارد شوید تا اطلاعات همیشه امن و دائمی بماند.</p>
+        <h2 style="font-size: 18px; color: #1e1b4b; font-weight: 800;">ورود به حساب شخصی</h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">لطفاً نام و ایمیل خود را برای اتصال ابری وارد کنید.</p>
       </div>
       <div class="form-group">
-        <label>نام و لقب شما:</label>
-        <input type="text" id="ownerNameInput" placeholder="مثلاً محمد شریف">
+        <label>نام و لقب:</label>
+        <input type="text" id="ownerNameInput" placeholder="نام خود را وارد کنید">
       </div>
       <div class="form-group">
-        <label>ایمیل اختصاصی شما:</label>
+        <label>ایمیل اختصاصی:</label>
         <input type="email" id="ownerEmailInput" placeholder="name@gmail.com" class="eng-num">
       </div>
       <div class="form-group">
-        <label>عکس پروفایل:</label>
+        <label>عکس پروفایل (اختیاری):</label>
         <input type="file" id="ownerAvatarInput" accept="image/*">
       </div>
-      <button class="btn-main" onclick="saveOwnerInfo()">ورود به حساب ابری</button>
+      <button class="btn-main" onclick="saveOwnerInfo()">ورود به حساب</button>
       <div style="text-align: center; margin-top: 15px;">
         <a href="index.html" class="back-btn">← بازگشت به منو</a>
       </div>
@@ -298,7 +315,7 @@
         <div class="profile-header">
           <div id="avatarContainer"></div>
           <div>
-            <div id="ownerTitleDisplay" style="font-size: 14px; font-weight: 800; color: #1e1b4b;">حساب کاربر</div>
+            <div id="ownerTitleDisplay" style="font-size: 14px; font-weight: 800; color: #1e1b4b;">حساب کاربری</div>
             <div id="ownerEmailDisplay" style="font-size: 11px; color: var(--text-muted);" class="eng-num">email@gmail.com</div>
           </div>
         </div>
@@ -345,11 +362,10 @@
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;" id="debtFormTitle">➕ ثبت تراکنش جدید</h3>
         <button onclick="closeDebtModal()" style="background:none; border:none; font-size:16px; cursor:pointer; font-weight:800; color:#64748b;">✕</button>
       </div>
-      <input type="hidden" id="editDebtIndex">
       <div class="form-grid">
         <div class="form-group">
           <label>نام شخص:</label>
-          <input type="text" id="debtName" placeholder="مثلاً احمد">
+          <input type="text" id="debtName" placeholder="نام طرف حساب">
         </div>
         <div class="form-group">
           <label>شماره واتساپ:</label>
@@ -374,7 +390,7 @@
         </div>
         <div class="form-group">
           <label>مبلغ:</label>
-          <input type="number" id="debtAmount" placeholder="1000" class="eng-num">
+          <input type="number" id="debtAmount" placeholder="مقدار مبلغ" class="eng-num">
         </div>
         <div class="form-group">
           <label>تاریخ:</label>
@@ -389,7 +405,7 @@
           <input type="file" id="debtReceipt" accept="image/*">
         </div>
       </div>
-      <button class="btn-main" onclick="saveDebt()">ثبت و ذخیره در ابری</button>
+      <button class="btn-main" onclick="saveDebt()">ثبت و ذخیره</button>
     </div>
   </div>
 
@@ -400,7 +416,6 @@
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</h3>
         <button onclick="closeExpenseModal()" style="background:none; border:none; font-size:16px; cursor:pointer; font-weight:800; color:#64748b;">✕</button>
       </div>
-      <input type="hidden" id="editExpenseIndex">
       <div class="form-grid">
         <div class="form-group">
           <label>نوع:</label>
@@ -421,11 +436,11 @@
         </div>
         <div class="form-group full">
           <label>عنوان:</label>
-          <input type="text" id="expenseTitle" placeholder="مثلاً حقوق، کرایه، خرید...">
+          <input type="text" id="expenseTitle" placeholder="عنوان خرج یا درآمد">
         </div>
         <div class="form-group">
           <label>مبلغ:</label>
-          <input type="number" id="expenseAmount" placeholder="500" class="eng-num">
+          <input type="number" id="expenseAmount" placeholder="مقدار مبلغ" class="eng-num">
         </div>
         <div class="form-group">
           <label>تاریخ:</label>
@@ -440,7 +455,7 @@
           <input type="file" id="expenseReceipt" accept="image/*">
         </div>
       </div>
-      <button class="btn-main" onclick="saveExpense()">ثبت و ذخیره در ابری</button>
+      <button class="btn-main" onclick="saveExpense()">ثبت و ذخیره</button>
     </div>
   </div>
 
@@ -475,16 +490,34 @@
       }
 
       let proceed = (avatarBase64) => {
-        localStorage.setItem('cloud_owner_email', email);
-        localStorage.setItem('cloud_owner_name', name);
-        if (avatarBase64) localStorage.setItem('cloud_owner_avatar', avatarBase64);
+        document.getElementById('loadingOverlay').classList.remove('hidden');
         
-        ownerEmail = email;
-        ownerName = name;
-        ownerAvatar = avatarBase64 || '';
+        fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'register',
+            email: email,
+            name: name,
+            avatar: avatarBase64 || ''
+          })
+        })
+        .then(res => res.json())
+        .then(res => {
+          localStorage.setItem('cloud_owner_email', email);
+          localStorage.setItem('cloud_owner_name', name);
+          if (avatarBase64) localStorage.setItem('cloud_owner_avatar', avatarBase64);
+          
+          ownerEmail = email;
+          ownerName = name;
+          ownerAvatar = avatarBase64 || '';
 
-        document.getElementById('setupSection').classList.add('hidden');
-        loadDataFromCloud();
+          document.getElementById('setupSection').classList.add('hidden');
+          loadDataFromCloud();
+        })
+        .catch(err => {
+          document.getElementById('loadingOverlay').classList.add('hidden');
+          alert('خطا در اتصال به سرور.');
+        });
       };
 
       if (avatarFile) {
@@ -508,7 +541,7 @@
         })
         .catch(err => {
           document.getElementById('loadingOverlay').classList.add('hidden');
-          alert('خطا در دریافت اطلاعات از فضای ابری.');
+          alert('خطا در دریافت اطلاعات.');
           initApp();
         });
     }
@@ -546,7 +579,6 @@
       return phone.replace(/\D/g, '');
     }
 
-    // Modal Controls
     function openDebtModal() {
       resetDebtForm();
       let modal = document.getElementById('debtModal');
@@ -583,11 +615,10 @@
       })
       .catch(err => {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('خطا در ذخیره سازی ابری.');
+        alert('خطا در ذخیره سازی.');
       });
     }
 
-    // --- طلب و بدهی ---
     function saveDebt() {
       let name = document.getElementById('debtName').value.trim();
       let phone = document.getElementById('debtPhone').value.trim();
@@ -658,7 +689,7 @@
         if (!stats[item.currency]) stats[item.currency] = { طلب: 0, بدهی: 0 };
         stats[item.currency][item.type] += Number(item.amount);
 
-        let waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، از طرف ${ownerName}:\nمبلغ: ${Number(item.amount).toLocaleString()} ${item.currency}\nنوع: ${item.type}\nتاریخ: ${item.date}\nشرح: ${item.description}`);
+        let waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز:\nمبلغ: ${Number(item.amount).toLocaleString()} ${item.currency}\nنوع: ${item.type}\nتاریخ: ${item.date}\nشرح: ${item.description}`);
         let waLink = item.phone ? `https://wa.me/${cleanPhone(item.phone)}?text=${waText}` : '#';
 
         html += `
@@ -687,7 +718,6 @@
       document.getElementById('debtsStatsContent').innerHTML = statsHtml;
     }
 
-    // --- خرج و درآمد ---
     function saveExpense() {
       let type = document.getElementById('expenseType').value;
       let title = document.getElementById('expenseTitle').value.trim();
