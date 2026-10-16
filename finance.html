@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حساب‌کتاب‌های من - مدیریت مالی شخصی</title>
+  <title>حساب‌کتاب‌های من</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
 
@@ -11,9 +11,8 @@
       --primary: #6366f1;
       --success: #059669;
       --danger: #dc2626;
-      --glass-bg: rgba(255, 255, 255, 0.9);
+      --glass-bg: rgba(255, 255, 255, 0.92);
       --glass-border: rgba(255, 255, 255, 0.95);
-      --card-bg: rgba(255, 255, 255, 0.95);
       --text-main: #0f172a;
       --text-muted: #64748b;
     }
@@ -25,27 +24,27 @@
       background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
-      padding: 15px;
+      padding: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .container {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border);
-      padding: 24px;
-      border-radius: 30px;
-      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 20px;
+      border-radius: 28px;
+      animation: fadeIn 0.5s ease-out;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     }
 
@@ -53,74 +52,76 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
     }
 
-    .back-btn {
-      color: var(--primary);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .header-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #1e1b4b;
-    }
+    .back-btn { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 800; }
+    .header-title { font-size: 17px; font-weight: 800; color: #1e1b4b; }
 
     .sub-tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      background: rgba(226, 232, 240, 0.6);
-      padding: 5px;
-      border-radius: 16px;
+      gap: 6px;
+      margin-bottom: 16px;
+      background: rgba(226, 232, 240, 0.7);
+      padding: 4px;
+      border-radius: 14px;
     }
 
     .sub-tab {
       flex: 1;
-      padding: 12px;
+      padding: 10px;
       text-align: center;
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
-      border-radius: 12px;
+      border-radius: 10px;
       border: none;
       background: transparent;
       color: var(--text-muted);
       transition: all 0.3s ease;
     }
 
-    .sub-tab.active {
-      background: #ffffff;
-      color: var(--primary);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
+    .sub-tab.active { background: #ffffff; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
 
     .section-box { display: none; }
-    .section-box.active { display: block; animation: fadeIn 0.4s ease-out; }
+    .section-box.active { display: block; animation: fadeIn 0.3s ease-out; }
 
+    /* استایل آمار بزرگ و خوانا در بالا */
     .card-stats {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      color: white;
       border-radius: 18px;
       padding: 16px;
-      margin-bottom: 18px;
-      border-right: 5px solid var(--primary);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      margin-bottom: 15px;
+      box-shadow: 0 10px 25px rgba(49, 46, 129, 0.3);
     }
 
-    .form-group { margin-bottom: 14px; }
-    label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 12px; color: #334155; }
+    .stats-title { font-size: 13px; font-weight: 700; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; }
+    .stats-content { font-size: 15px; font-weight: 800; line-height: 1.8; }
+
+    /* فرم جمع‌وجور */
+    .form-container {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 14px;
+      border-radius: 18px;
+      margin-bottom: 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .form-group { margin-bottom: 10px; }
+    .form-group.full { grid-column: span 2; }
+    
+    label { display: block; margin-bottom: 4px; font-weight: 700; font-size: 11px; color: #334155; }
     
     input, select, textarea {
       width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e2e8f0;
-      border-radius: 14px;
-      font-size: 14px;
+      padding: 10px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 13px;
       outline: none;
       background: #ffffff;
       color: #0f172a;
@@ -130,41 +131,47 @@
 
     .btn-main {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
       color: white;
       border: none;
-      border-radius: 14px;
-      font-size: 15px;
+      border-radius: 12px;
+      font-size: 14px;
       cursor: pointer;
       font-weight: 800;
-      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-      margin-top: 5px;
+      box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
+      margin-top: 4px;
     }
 
-    .btn-main:active { transform: scale(0.97); }
+    /* بخش لیست تراکنش‌ها (نیمه پایین صفحه با اسکرول منظم) */
+    .list-section-title { font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #1e1b4b; display: flex; justify-content: space-between; align-items: center; }
+    
+    .transactions-scroll-area {
+      max-height: 240px;
+      overflow-y: auto;
+      padding-left: 4px;
+    }
 
     .tx-item {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-      position: relative;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
     }
 
     .action-btns {
       display: flex;
       gap: 6px;
-      margin-top: 10px;
+      margin-top: 8px;
       border-top: 1px solid #f1f5f9;
-      padding-top: 10px;
+      padding-top: 8px;
     }
 
     .action-btn {
       flex: 1;
-      padding: 6px;
+      padding: 5px;
       font-size: 11px;
       font-weight: 700;
       border-radius: 8px;
@@ -178,7 +185,6 @@
     .btn-edit { background: #f59e0b; color: white; }
     .btn-del { background: var(--danger); color: white; }
 
-    .hidden { display: none !important; }
     .eng-num { font-family: Tahoma, sans-serif; direction: ltr; display: inline-block; }
   </style>
 </head>
@@ -186,11 +192,10 @@
   <div class="container">
     <div class="top-bar">
       <a href="index.html" class="back-btn">← بازگشت به منو</a>
-      <div class="header-title">📊 حساب‌کتاب‌های من</div>
+      <div class="header-title">📊 حساب‌کتاب‌های شخصی</div>
       <div></div>
     </div>
 
-    <!-- تب‌های اصلی بین طلب‌ها و خرج‌ها -->
     <div class="sub-tabs">
       <button class="sub-tab active" onclick="switchMainTab('debtsTab', this)">طلب‌ها و بدهی‌ها</button>
       <button class="sub-tab" onclick="switchMainTab('expensesTab', this)">خرج‌ها و درآمدها</button>
@@ -198,36 +203,32 @@
 
     <!-- بخش اول: طلب‌ها و بدهی‌ها -->
     <div id="debtsTab" class="section-box active">
-      <div class="card-stats" id="debtsStatsSummary">
-        <div style="font-weight: 800; font-size: 14px; margin-bottom: 6px; color: #1e1b4b;">آمار کل طلب و بدهی</div>
-        <div id="debtsStatsContent" style="font-size: 13px; color: var(--text-muted);">داده‌ای ثبت نشده است.</div>
+      <div class="card-stats">
+        <div class="stats-title">📈 آمار کل طلب و بدهی</div>
+        <div id="debtsStatsContent" class="stats-content eng-num">داده‌ای ثبت نشده است.</div>
       </div>
 
-      <div style="background: rgba(255,255,255,0.7); padding: 16px; border-radius: 20px; margin-bottom: 20px;">
-        <div style="font-weight: 800; font-size: 14px; margin-bottom: 12px; color: #1e1b4b;" id="debtFormTitle">➕ ثبت تراکنش جدید</div>
+      <div class="form-container">
+        <div style="font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #1e1b4b;" id="debtFormTitle">➕ ثبت تراکنش جدید</div>
         <input type="hidden" id="editDebtId">
         
-        <div class="form-group">
-          <label>نام شخص:</label>
-          <input type="text" id="debtName" placeholder="مثلاً احمد احمدی">
-        </div>
-        <div class="form-group">
-          <label>شماره واتساپ:</label>
-          <input type="text" id="debtPhone" placeholder="96477... یا 077..." class="eng-num">
-        </div>
-        <div class="form-group">
-          <label>نوع تراکنش:</label>
-          <select id="debtType">
-            <option value="طلب">از او طلبکارم (طلب)</option>
-            <option value="بدهی">به او بدهکارم (بدهی)</option>
-          </select>
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <div class="form-group" style="flex: 2;">
-            <label>مبلغ:</label>
-            <input type="number" id="debtAmount" placeholder="1000" class="eng-num">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>نام شخص:</label>
+            <input type="text" id="debtName" placeholder="نام شخص">
           </div>
-          <div class="form-group" style="flex: 1;">
+          <div class="form-group">
+            <label>شماره واتساپ:</label>
+            <input type="text" id="debtPhone" placeholder="077..." class="eng-num">
+          </div>
+          <div class="form-group">
+            <label>نوع:</label>
+            <select id="debtType">
+              <option value="طلب">طلبکارم</option>
+              <option value="بدهی">بدهکارم</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label>ارز:</label>
             <select id="debtCurrency">
               <option value="دلار">دلار ($)</option>
@@ -237,54 +238,50 @@
               <option value="کلدار">کلدار</option>
             </select>
           </div>
-        </div>
-        <div class="form-group">
-          <label>تاریخ:</label>
-          <input type="date" id="debtDate" class="eng-num">
-        </div>
-        <div class="form-group">
-          <label>توضیحات:</label>
-          <textarea id="debtDesc" rows="2" placeholder="بابت..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>بارگذاری عکس رسید (اختیاری):</label>
-          <input type="file" id="debtReceipt" accept="image/*">
+          <div class="form-group">
+            <label>مبلغ:</label>
+            <input type="number" id="debtAmount" placeholder="1000" class="eng-num">
+          </div>
+          <div class="form-group">
+            <label>تاریخ:</label>
+            <input type="date" id="debtDate" class="eng-num">
+          </div>
+          <div class="form-group full">
+            <label>توضیحات:</label>
+            <input type="text" id="debtDesc" placeholder="بابت...">
+          </div>
+          <div class="form-group full">
+            <label>عکس رسید:</label>
+            <input type="file" id="debtReceipt" accept="image/*">
+          </div>
         </div>
         <button class="btn-main" onclick="saveDebt()">ثبت تراکنش</button>
       </div>
 
-      <div style="font-weight: 800; font-size: 14px; margin-bottom: 10px; color: #1e1b4b;">📋 لیست طلب‌ها و بدهی‌ها</div>
-      <div id="debtsListContainer"></div>
+      <div class="list-section-title"><span>📋 لیست تراکنش‌ها</span></div>
+      <div class="transactions-scroll-area" id="debtsListContainer"></div>
     </div>
 
     <!-- بخش دوم: خرج‌ها و درآمدها -->
     <div id="expensesTab" class="section-box">
-      <div class="card-stats" id="expensesStatsSummary">
-        <div style="font-weight: 800; font-size: 14px; margin-bottom: 6px; color: #1e1b4b;">آمار خرج و درآمد</div>
-        <div id="expensesStatsContent" style="font-size: 13px; color: var(--text-muted);">داده‌ای ثبت نشده است.</div>
+      <div class="card-stats">
+        <div class="stats-title">📈 آمار خرج و درآمد</div>
+        <div id="expensesStatsContent" class="stats-content eng-num">داده‌ای ثبت نشده است.</div>
       </div>
 
-      <div style="background: rgba(255,255,255,0.7); padding: 16px; border-radius: 20px; margin-bottom: 20px;">
-        <div style="font-weight: 800; font-size: 14px; margin-bottom: 12px; color: #1e1b4b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</div>
+      <div class="form-container">
+        <div style="font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #1e1b4b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</div>
         <input type="hidden" id="editExpenseId">
 
-        <div class="form-group">
-          <label>نوع:</label>
-          <select id="expenseType">
-            <option value="درآمد">درآمد 🟢</option>
-            <option value="خرج">خرج و هزینه 🔴</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>عنوان:</label>
-          <input type="text" id="expenseTitle" placeholder="مثلاً حقوق، خرید مواد غذایی...">
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <div class="form-group" style="flex: 2;">
-            <label>مبلغ:</label>
-            <input type="number" id="expenseAmount" placeholder="500" class="eng-num">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>نوع:</label>
+            <select id="expenseType">
+              <option value="درآمد">درآمد 🟢</option>
+              <option value="خرج">خرج 🔴</option>
+            </select>
           </div>
-          <div class="form-group" style="flex: 1;">
+          <div class="form-group">
             <label>ارز:</label>
             <select id="expenseCurrency">
               <option value="دلار">دلار ($)</option>
@@ -294,24 +291,32 @@
               <option value="کلدار">کلدار</option>
             </select>
           </div>
-        </div>
-        <div class="form-group">
-          <label>تاریخ:</label>
-          <input type="date" id="expenseDate" class="eng-num">
-        </div>
-        <div class="form-group">
-          <label>توضیحات:</label>
-          <textarea id="expenseDesc" rows="2" placeholder="جزئیات..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>بارگذاری عکس رسید (اختیاری):</label>
-          <input type="file" id="expenseReceipt" accept="image/*">
+          <div class="form-group full">
+            <label>عنوان:</label>
+            <input type="text" id="expenseTitle" placeholder="عنوان خرج یا درآمد">
+          </div>
+          <div class="form-group">
+            <label>مبلغ:</label>
+            <input type="number" id="expenseAmount" placeholder="500" class="eng-num">
+          </div>
+          <div class="form-group">
+            <label>تاریخ:</label>
+            <input type="date" id="expenseDate" class="eng-num">
+          </div>
+          <div class="form-group full">
+            <label>توضیحات:</label>
+            <input type="text" id="expenseDesc" placeholder="جزئیات...">
+          </div>
+          <div class="form-group full">
+            <label>عکس رسید:</label>
+            <input type="file" id="expenseReceipt" accept="image/*">
+          </div>
         </div>
         <button class="btn-main" onclick="saveExpense()">ثبت رکورد</button>
       </div>
 
-      <div style="font-weight: 800; font-size: 14px; margin-bottom: 10px; color: #1e1b4b;">📋 لیست خرج‌ها و درآمدها</div>
-      <div id="expensesListContainer"></div>
+      <div class="list-section-title"><span>📋 لیست رکوردها</span></div>
+      <div class="transactions-scroll-area" id="expensesListContainer"></div>
     </div>
   </div>
 
@@ -390,30 +395,30 @@
       let stats = {};
 
       if (debts.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی ثبت نشده است.</div>';
+        container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:12px;">تراکنشی ثبت نشده است.</div>';
         document.getElementById('debtsStatsContent').innerText = 'داده‌ای ثبت نشده است.';
         return;
       }
 
       debts.forEach(item => {
-        let amtColor = item.type === 'طلب' ? 'var(--success)' : 'var(--danger)';
+        let amtColor = item.type === 'طلب' ? '#34d399' : '#f87171';
         if (!stats[item.currency]) stats[item.currency] = { طلب: 0, بدهی: 0 };
         stats[item.currency][item.type] += item.amount;
 
-        let waText = encodeURIComponent(`سلام ${item.name} عزیز، گزارش حساب شما:\nمبلغ: ${item.amount} ${item.currency}\nنوع: ${item.type}\nتاریخ: ${item.date}\nشرح: ${item.desc}`);
+        let waText = encodeURIComponent(`سلام ${item.name} عزیز، گزارش حساب:\nمبلغ: ${item.amount.toLocaleString()} ${item.currency}\nنوع: ${item.type}\nتاریخ: ${item.date}\nشرح: ${item.desc}`);
         let waLink = item.phone ? `https://wa.me/${cleanPhone(item.phone)}?text=${waText}` : '#';
 
         html += `
           <div class="tx-item">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-weight:800; font-size:14px; color:#1e293b;">${item.name} (${item.type})</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span style="font-weight:800; font-size:13px; color:#1e293b;">${item.name} (${item.type})</span>
               <span style="font-size:11px; color:var(--text-muted);" class="eng-num">${item.date}</span>
             </div>
-            <div style="font-size:13px; margin-bottom:6px; color:${amtColor}; font-weight:800;" class="eng-num">
+            <div style="font-size:13px; margin-bottom:4px; color:${amtColor}; font-weight:800;" class="eng-num">
               ${item.currency} ${item.amount.toLocaleString()}
             </div>
-            <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">${item.desc || 'بدون توضیح'}</div>
-            ${item.receipt ? `<div style="margin-bottom:8px;"><a href="${item.receipt}" target="_blank" style="font-size:11px; color:var(--primary);">مشاهده عکس رسید</a></div>` : ''}
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${item.desc || 'بدون توضیح'}</div>
+            ${item.receipt ? `<div style="margin-bottom:6px;"><a href="${item.receipt}" target="_blank" style="font-size:11px; color:var(--primary);">مشاهده عکس رسید</a></div>` : ''}
             <div class="action-btns">
               <a href="${waLink}" target="_blank" class="action-btn btn-wa">واتساپ</a>
               <button class="action-btn btn-edit" onclick="editDebt(${item.id})">ویرایش</button>
@@ -426,7 +431,7 @@
 
       let statsHtml = '';
       for (let c in stats) {
-        statsHtml += `<div><b>${c}:</b> طلبکار: <span style="color:var(--success);" class="eng-num">${stats[c]['طلب'].toLocaleString()}</span> | بدهکار: <span style="color:var(--danger);" class="eng-num">${stats[c]['بدهی'].toLocaleString()}</span></div>`;
+        statsHtml += `<div><b>${c}</b> ➔ طلبکار: <span style="color:#34d399;" class="eng-num">${stats[c]['طلب'].toLocaleString()}</span> | بدهکار: <span style="color:#f87171;" class="eng-num">${stats[c]['بدهی'].toLocaleString()}</span></div>`;
       }
       document.getElementById('debtsStatsContent').innerHTML = statsHtml;
     }
@@ -447,7 +452,7 @@
     }
 
     function deleteDebt(id) {
-      if (confirm('آیا از حذف این مورد اطمینان دارید؟')) {
+      if (confirm('حذف شود؟')) {
         debts = debts.filter(d => d.id != id);
         localStorage.setItem('my_debts', JSON.stringify(debts));
         renderDebts();
@@ -508,27 +513,27 @@
       let stats = {};
 
       if (expenses.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:13px;">هیچ رکوردی ثبت نشده است.</div>';
+        container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:12px;">رکوردی ثبت نشده است.</div>';
         document.getElementById('expensesStatsContent').innerText = 'داده‌ای ثبت نشده است.';
         return;
       }
 
       expenses.forEach(item => {
-        let amtColor = item.type === 'درآمد' ? 'var(--success)' : 'var(--danger)';
+        let amtColor = item.type === 'درآمد' ? '#34d399' : '#f87171';
         if (!stats[item.currency]) stats[item.currency] = { درآمد: 0, خرج: 0 };
         stats[item.currency][item.type] += item.amount;
 
         html += `
           <div class="tx-item">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-weight:800; font-size:14px; color:#1e293b;">${item.title} (${item.type})</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span style="font-weight:800; font-size:13px; color:#1e293b;">${item.title} (${item.type})</span>
               <span style="font-size:11px; color:var(--text-muted);" class="eng-num">${item.date}</span>
             </div>
-            <div style="font-size:13px; margin-bottom:6px; color:${amtColor}; font-weight:800;" class="eng-num">
+            <div style="font-size:13px; margin-bottom:4px; color:${amtColor}; font-weight:800;" class="eng-num">
               ${item.currency} ${item.amount.toLocaleString()}
             </div>
-            <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">${item.desc || 'بدون توضیح'}</div>
-            ${item.receipt ? `<div style="margin-bottom:8px;"><a href="${item.receipt}" target="_blank" style="font-size:11px; color:var(--primary);">مشاهده عکس رسید</a></div>` : ''}
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${item.desc || 'بدون توضیح'}</div>
+            ${item.receipt ? `<div style="margin-bottom:6px;"><a href="${item.receipt}" target="_blank" style="font-size:11px; color:var(--primary);">مشاهده عکس رسید</a></div>` : ''}
             <div class="action-btns">
               <button class="action-btn btn-edit" onclick="editExpense(${item.id})">ویرایش</button>
               <button class="action-btn btn-del" onclick="deleteExpense(${item.id})">حذف</button>
@@ -540,7 +545,7 @@
 
       let statsHtml = '';
       for (let c in stats) {
-        statsHtml += `<div><b>${c}:</b> درآمد: <span style="color:var(--success);" class="eng-num">${stats[c]['درآمد'].toLocaleString()}</span> | خرج: <span style="color:var(--danger);" class="eng-num">${stats[c]['خرج'].toLocaleString()}</span></div>`;
+        statsHtml += `<div><b>${c}</b> ➔ درآمد: <span style="color:#34d399;" class="eng-num">${stats[c]['درآمد'].toLocaleString()}</span> | خرج: <span style="color:#f87171;" class="eng-num">${stats[c]['خرج'].toLocaleString()}</span></div>`;
       }
       document.getElementById('expensesStatsContent').innerHTML = statsHtml;
     }
@@ -560,7 +565,7 @@
     }
 
     function deleteExpense(id) {
-      if (confirm('آیا از حذف این مورد اطمینان دارید؟')) {
+      if (confirm('حذف شود؟')) {
         expenses = expenses.filter(e => e.id != id);
         localStorage.setItem('my_expenses', JSON.stringify(expenses));
         renderExpenses();
