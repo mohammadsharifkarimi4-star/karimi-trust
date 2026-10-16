@@ -80,20 +80,21 @@
 
     .back-btn { color: var(--primary); text-decoration: none; font-size: 12px; font-weight: 800; }
 
+    /* استایل ۳ تب بالا */
     .sub-tabs {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       margin-bottom: 18px;
       background: rgba(226, 232, 240, 0.7);
-      padding: 5px;
+      padding: 4px;
       border-radius: 14px;
     }
 
     .sub-tab {
       flex: 1;
-      padding: 10px;
+      padding: 9px 4px;
       text-align: center;
-      font-size: 13px;
+      font-size: 11.5px;
       font-weight: 800;
       cursor: pointer;
       border-radius: 10px;
@@ -118,31 +119,7 @@
     }
 
     .stats-title { font-size: 13px; font-weight: 800; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 6px; }
-    .stats-content { font-size: 13px; font-weight: 700; line-height: 1.7; max-height: 220px; overflow-y: auto; padding-left: 4px; }
-
-    .date-filter-box {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .date-filter-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .date-filter-row label { font-size: 11px; color: #c7d2fe; min-width: 45px; }
-    .date-filter-row input {
-      padding: 6px 10px;
-      font-size: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.9);
-      color: #0f172a;
-    }
+    .stats-content { font-size: 13px; font-weight: 700; line-height: 1.7; max-height: 280px; overflow-y: auto; padding-left: 4px; }
 
     .btn-open-modal {
       width: 100%;
@@ -229,10 +206,7 @@
       box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12); 
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 75px;
-    }
+    textarea { resize: vertical; min-height: 75px; }
 
     .btn-main {
       width: 100%;
@@ -304,8 +278,7 @@
     }
 
     .spinner {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       border: 4px solid rgba(255, 255, 255, 0.2);
       border-top: 4px solid #6366f1;
       border-radius: 50%;
@@ -366,12 +339,14 @@
         <button onclick="resetOwner()" style="background:none; border:none; color:var(--danger); font-size:12px; cursor:pointer; font-weight:800;">خروج</button>
       </div>
 
+      <!-- ۳ گزینه تب در بالای صفحه -->
       <div class="sub-tabs">
         <button class="sub-tab active" onclick="switchMainTab('debtsTab', this)">طلب‌ها و بدهی‌ها</button>
         <button class="sub-tab" onclick="switchMainTab('expensesTab', this)">خرج‌ها و درآمدها</button>
+        <button class="sub-tab" onclick="switchMainTab('statsTab', this)">آمار خرج و درآمد</button>
       </div>
 
-      <!-- تب طلب‌ها و بدهی‌ها (امن و دست‌نخورده) -->
+      <!-- گزینه اول: طلب‌ها و بدهی‌ها -->
       <div id="debtsTab" class="section-box active">
         <div class="card-stats">
           <div class="stats-title">📈 آمار کل طلب و بدهی</div>
@@ -384,30 +359,30 @@
         <div class="transactions-scroll-area" id="debtsListContainer"></div>
       </div>
 
-      <!-- تب خرج‌ها و درآمدها با فیلتر بازه زمانی -->
+      <!-- گزینه دوم: خرج‌ها و درآمدها -->
       <div id="expensesTab" class="section-box">
-        <div class="card-stats">
-          <div class="stats-title">📊 آمار خرج و درآمد (با فیلتر بازه زمانی)</div>
-          
-          <!-- فیلتر بازه زمانی (از تاریخ تا تاریخ) -->
-          <div class="date-filter-box">
-            <div class="date-filter-row">
-              <label>از تاریخ:</label>
-              <input type="date" id="filterStartDate" onchange="renderExpenses()" class="eng-num">
-            </div>
-            <div class="date-filter-row">
-              <label>تا تاریخ:</label>
-              <input type="date" id="filterEndDate" onchange="renderExpenses()" class="eng-num">
-            </div>
-          </div>
-
-          <div id="expensesStatsContent" class="stats-content eng-num">داده‌ای ثبت نشده است.</div>
-        </div>
-
         <button class="btn-open-modal" onclick="openExpenseModal()">➕ ثبت خرج یا درآمد</button>
 
         <div class="list-section-title"><span>📋 لیست رکوردها (جدیدترین در بالا)</span></div>
         <div class="transactions-scroll-area" id="expensesListContainer"></div>
+      </div>
+
+      <!-- گزینه سوم: آمار خرج و درآمد (فقط نمایش گزارشات ۳۰ روزه، ۱۲ ماهه و کل) -->
+      <div id="statsTab" class="section-box">
+        <div class="card-stats" style="margin-bottom: 12px;">
+          <div class="stats-title">📅 آمار ۳۰ روز اخیر (ماهانه)</div>
+          <div id="report30Days" class="stats-content eng-num">در حال بارگذاری...</div>
+        </div>
+
+        <div class="card-stats" style="margin-bottom: 12px;">
+          <div class="stats-title">📈 آمار ۱۲ ماه گذشته (سالانه)</div>
+          <div id="report1Year" class="stats-content eng-num">در حال بارگذاری...</div>
+        </div>
+
+        <div class="card-stats">
+          <div class="stats-title">💰 مجموع کل سوابق مالی</div>
+          <div id="reportTotal" class="stats-content eng-num">در حال بارگذاری...</div>
+        </div>
       </div>
     </div>
   </div>
@@ -537,7 +512,6 @@
       }
     });
 
-    // پاک‌سازی تاریخ بدون ساعت
     function formatDate(dateStr) {
       if (!dateStr) return '';
       let str = dateStr.toString().trim();
@@ -615,6 +589,7 @@
       document.getElementById('avatarContainer').innerHTML = avatarHtml;
       renderDebts();
       renderExpenses();
+      renderStatsTab();
     }
 
     function resetOwner() {
@@ -880,44 +855,12 @@
     function renderExpenses() {
       let container = document.getElementById('expensesListContainer');
       let html = '';
-      
       let expenses = allData.filter(item => item && (item.type === 'درآمد' || item.type === 'خرج'));
 
       if (expenses.length === 0) {
         container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:12px;">رکوردی ثبت نشده است.</div>';
-        document.getElementById('expensesStatsContent').innerText = 'داده‌ای ثبت نشده است.';
         return;
       }
-
-      let startDateVal = document.getElementById('filterStartDate').value;
-      let endDateVal = document.getElementById('filterEndDate').value;
-
-      let filteredStats = {};
-      let annualStats = {};
-
-      let startDate = startDateVal ? new Date(startDateVal) : null;
-      let endDate = endDateVal ? new Date(endDateVal) : null;
-      if (endDate) endDate.setHours(23, 59, 59, 999);
-
-      expenses.forEach(item => {
-        let itemDateStr = formatDate(item.date);
-        let itemDate = new Date(itemDateStr);
-        let amt = Number(item.amount || 0);
-        let cur = item.currency || 'تومان';
-        let type = item.type;
-
-        if (!annualStats[cur]) annualStats[cur] = { درآمد: 0, خرج: 0 };
-        annualStats[cur][type] += amt;
-
-        let inRange = true;
-        if (startDate && itemDate < startDate) inRange = false;
-        if (endDate && itemDate > endDate) inRange = false;
-
-        if (inRange) {
-          if (!filteredStats[cur]) filteredStats[cur] = { درآمد: 0, خرج: 0 };
-          filteredStats[cur][type] += amt;
-        }
-      });
 
       let reversedExpenses = [...expenses].reverse();
 
@@ -944,45 +887,81 @@
       });
 
       container.innerHTML = html;
+    }
 
-      let statsHtml = '';
-      statsHtml += `<div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 8px;">`;
-      statsHtml += `<div style="font-weight: 800; color: #fbbf24; margin-bottom: 4px;">🎯 آمار بر اساس بازه زمانی انتخابی:</div>`;
-      
-      let hasFilteredData = false;
-      for (let c in filteredStats) {
-        hasFilteredData = true;
-        let inc = filteredStats[c]['درآمد'];
-        let exp = filteredStats[c]['خرج'];
+    // گزینه سوم: تب آمار خرج و درآمد (۳۰ روزه، ۱۲ ماهه و کل)
+    function renderStatsTab() {
+      let expenses = allData.filter(item => item && (item.type === 'درآمد' || item.type === 'خرج'));
+
+      if (expenses.length === 0) {
+        document.getElementById('report30Days').innerText = 'رکوردی ثبت نشده است.';
+        document.getElementById('report1Year').innerText = 'رکوردی ثبت نشده است.';
+        document.getElementById('reportTotal').innerText = 'رکوردی ثبت نشده است.';
+        return;
+      }
+
+      let now = new Date();
+      let thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+
+      let oneYearAgo = new Date();
+      oneYearAgo.setFullYear(now.getFullYear() - 1);
+
+      let stats30Days = {};
+      let stats1Year = {};
+      let statsTotal = {};
+
+      expenses.forEach(item => {
+        let itemDateStr = formatDate(item.date);
+        let itemDate = new Date(itemDateStr);
+        let amt = Number(item.amount || 0);
+        let cur = item.currency || 'تومان';
+        let type = item.type;
+
+        // مجموع کل
+        if (!statsTotal[cur]) statsTotal[cur] = { درآمد: 0, خرج: 0 };
+        statsTotal[cur][type] += amt;
+
+        // ۱۲ ماه گذشته
+        if (itemDate >= oneYearAgo) {
+          if (!stats1Year[cur]) stats1Year[cur] = { درآمد: 0, خرج: 0 };
+          stats1Year[cur][type] += amt;
+        }
+
+        // ۳۰ روز اخیر
+        if (itemDate >= thirtyDaysAgo) {
+          if (!stats30Days[cur]) stats30Days[cur] = { درآمد: 0, خرج: 0 };
+          stats30Days[cur][type] += amt;
+        }
+      });
+
+      renderStatsBox('report30Days', stats30Days, 'تراکنشی در ۳۰ روز اخیر ثبت نشده است.');
+      renderStatsBox('report1Year', stats1Year, 'تراکنشی در ۱۲ ماه گذشته ثبت نشده است.');
+      renderStatsBox('reportTotal', statsTotal, 'داده‌ای ثبت نشده است.');
+    }
+
+    function renderStatsBox(elementId, statsObj, emptyMsg) {
+      let html = '';
+      let hasData = false;
+
+      for (let c in statsObj) {
+        hasData = true;
+        let inc = statsObj[c]['درآمد'];
+        let exp = statsObj[c]['خرج'];
         let diff = inc - exp;
         let status = diff >= 0 ? `🟢 مازاد (پس‌انداز): <span style="color:#34d399;" class="eng-num">${diff.toLocaleString()}</span>` : `🔴 کسری (کم‌آمده): <span style="color:#f87171;" class="eng-num">${Math.abs(diff).toLocaleString()}</span>`;
-        
-        statsHtml += `<div style="margin-bottom:4px;"><b>${c}:</b> درآمد: <span style="color:#34d399;" class="eng-num">${inc.toLocaleString()}</span> | خرج: <span style="color:#f87171;" class="eng-num">${exp.toLocaleString()}</span><br>${status}</div>`;
-      }
-      if (!hasFilteredData) {
-        statsHtml += `<div style="color:var(--text-muted); font-size:12px;">داده‌ای در این بازه زمانی وجود ندارد.</div>`;
-      }
-      statsHtml += `</div>`;
 
-      statsHtml += `<div>`;
-      statsHtml += `<div style="font-weight: 800; color: #38bdf8; margin-bottom: 4px;">📈 آمار جامع کل سوابق (سالانه):</div>`;
-      
-      let hasYearData = false;
-      for (let c in annualStats) {
-        hasYearData = true;
-        let inc = annualStats[c]['درآمد'];
-        let exp = annualStats[c]['خرج'];
-        let totalDiff = inc - exp;
-        let totalStatus = totalDiff >= 0 ? `مازاد کل: <span style="color:#34d399;" class="eng-num">${totalDiff.toLocaleString()}</span>` : `کسری کل: <span style="color:#f87171;" class="eng-num">${Math.abs(totalDiff).toLocaleString()}</span>`;
-
-        statsHtml += `<div style="margin-bottom:4px;"><b>${c}:</b> مجموع درآمد: <span style="color:#34d399;" class="eng-num">${inc.toLocaleString()}</span> | مجموع خرج: <span style="color:#f87171;" class="eng-num">${exp.toLocaleString()}</span><br>${totalStatus}</div>`;
+        html += `<div style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px;">
+          <b>${c}:</b> درآمد: <span style="color:#34d399;" class="eng-num">${inc.toLocaleString()}</span> | خرج: <span style="color:#f87171;" class="eng-num">${exp.toLocaleString()}</span><br>
+          ${status}
+        </div>`;
       }
-      if (!hasYearData) {
-        statsHtml += `<div style="color:var(--text-muted); font-size:12px;">داده‌ای ثبت نشده است.</div>`;
-      }
-      statsHtml += `</div>`;
 
-      document.getElementById('expensesStatsContent').innerHTML = statsHtml;
+      if (!hasData) {
+        html = `<div style="color:#94a3b8; font-size:12px;">${emptyMsg}</div>`;
+      }
+
+      document.getElementById(elementId).innerHTML = html;
     }
   </script>
 </body>
