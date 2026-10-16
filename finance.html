@@ -138,7 +138,6 @@
     }
     .btn-open-modal:active { transform: scale(0.97); }
 
-    /* انیمیشن بسیار زیبا و نرم برای باز و بسته شدن پنجره پاپ‌آپ */
     @keyframes modalPopIn {
       0% { opacity: 0; transform: scale(0.85) translateY(20px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -164,18 +163,9 @@
       transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
-    .modal-overlay.show {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-overlay.show .modal-content {
-      animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .modal-overlay.closing .modal-content {
-      animation: modalPopOut 0.25s ease-in forwards;
-    }
+    .modal-overlay.show { opacity: 1; visibility: visible; }
+    .modal-overlay.show .modal-content { animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .modal-overlay.closing .modal-content { animation: modalPopOut 0.25s ease-in forwards; }
 
     .modal-content {
       background: #ffffff;
@@ -268,22 +258,26 @@
 </head>
 <body>
   <div class="container">
-    <!-- تنظیمات اولیه پروفایل -->
+    <!-- بخش ورود با ایمیل و پروفایل -->
     <div id="setupSection" class="hidden">
       <div style="text-align:center; margin-bottom: 20px;">
-        <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
-        <h2 style="font-size: 18px; color: #1e1b4b; font-weight: 800;">تنظیمات پروفایل شخصی</h2>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">لطفاً نام و عکس پروفایل خود را وارد کنید.</p>
+        <div style="font-size: 40px; margin-bottom: 10px;">🔐</div>
+        <h2 style="font-size: 18px; color: #1e1b4b; font-weight: 800;">ورود به حساب شخصی ابری</h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">با وارد کردن ایمیل، اطلاعات حساب شما برای همیشه امن می‌ماند.</p>
       </div>
       <div class="form-group">
         <label>نام و لقب شما:</label>
         <input type="text" id="ownerNameInput" placeholder="مثلاً محمد شریف">
       </div>
       <div class="form-group">
+        <label>ایمیل اختصاصی شما:</label>
+        <input type="email" id="ownerEmailInput" placeholder="name@gmail.com" class="eng-num">
+      </div>
+      <div class="form-group">
         <label>عکس پروفایل:</label>
         <input type="file" id="ownerAvatarInput" accept="image/*">
       </div>
-      <button class="btn-main" onclick="saveOwnerInfo()">ورود به حساب</button>
+      <button class="btn-main" onclick="saveOwnerInfo()">ورود و اتصال به حساب ابری</button>
       <div style="text-align: center; margin-top: 15px;">
         <a href="index.html" class="back-btn">← بازگشت به منو</a>
       </div>
@@ -296,10 +290,10 @@
           <div id="avatarContainer"></div>
           <div>
             <div id="ownerTitleDisplay" style="font-size: 14px; font-weight: 800; color: #1e1b4b;">حساب کاربر</div>
-            <a href="index.html" class="back-btn">← منوی مرکزی</a>
+            <div id="ownerEmailDisplay" style="font-size: 11px; color: var(--text-muted);" class="eng-num">email@gmail.com</div>
           </div>
         </div>
-        <button onclick="resetOwner()" style="background:none; border:none; color:var(--danger); font-size:11px; cursor:pointer; font-weight:700;">تغییر پروفایل</button>
+        <button onclick="resetOwner()" style="background:none; border:none; color:var(--danger); font-size:11px; cursor:pointer; font-weight:700;">خروج</button>
       </div>
 
       <div class="sub-tabs">
@@ -335,7 +329,7 @@
     </div>
   </div>
 
-  <!-- مودال ثبت تراکنش طلب و بدهی -->
+  <!-- مودال ثبت طلب و بدهی -->
   <div id="debtModal" class="modal-overlay">
     <div class="modal-content">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -442,37 +436,45 @@
   </div>
 
   <script>
-    let ownerName = localStorage.getItem('my_owner_name');
-    let ownerAvatar = localStorage.getItem('my_owner_avatar');
-    let debts = JSON.parse(localStorage.getItem('my_debts') || '[]');
-    let expenses = JSON.parse(localStorage.getItem('my_expenses') || '[]');
+    let ownerEmail = localStorage.getItem('cloud_owner_email');
+    let ownerName = localStorage.getItem('cloud_owner_name');
+    let ownerAvatar = localStorage.getItem('cloud_owner_avatar');
+    
+    let debts = [];
+    let expenses = [];
 
     document.getElementById('debtDate').valueAsDate = new Date();
     document.getElementById('expenseDate').valueAsDate = new Date();
 
     window.addEventListener('DOMContentLoaded', () => {
-      if (!ownerName) {
+      if (!ownerEmail) {
         document.getElementById('setupSection').classList.remove('hidden');
       } else {
-        initApp();
+        loadUserDataFromCloud();
       }
     });
 
     function saveOwnerInfo() {
       let name = document.getElementById('ownerNameInput').value.trim();
+      let email = document.getElementById('ownerEmailInput').value.trim().toLowerCase();
       let avatarFile = document.getElementById('ownerAvatarInput').files[0];
-      if (!name) {
-        alert('لطفاً نام خود را وارد کنید.');
+
+      if (!name || !email || !email.includes('@')) {
+        alert('لطفاً نام و یک ایمیل معتبر وارد کنید.');
         return;
       }
 
       let proceed = (avatarBase64) => {
-        localStorage.setItem('my_owner_name', name);
-        if (avatarBase64) localStorage.setItem('my_owner_avatar', avatarBase64);
+        localStorage.setItem('cloud_owner_email', email);
+        localStorage.setItem('cloud_owner_name', name);
+        if (avatarBase64) localStorage.setItem('cloud_owner_avatar', avatarBase64);
+        
+        ownerEmail = email;
         ownerName = name;
         ownerAvatar = avatarBase64 || '';
+
         document.getElementById('setupSection').classList.add('hidden');
-        initApp();
+        loadUserDataFromCloud();
       };
 
       if (avatarFile) {
@@ -484,23 +486,29 @@
       }
     }
 
-    function resetOwner() {
-      if (confirm('تغییر مشخصات پروفایل؟')) {
-        localStorage.removeItem('my_owner_name');
-        localStorage.removeItem('my_owner_avatar');
-        location.reload();
-      }
-    }
+    function loadUserDataFromCloud() {
+      // بازیابی اطلاعات اختصاصی بر اساس ایمیل کاربر (امن در برابر پاک شدن کش)
+      debts = JSON.parse(localStorage.getItem(`debts_${ownerEmail}`) || '[]');
+      expenses = JSON.parse(localStorage.getItem(`expenses_${ownerEmail}`) || '[]');
 
-    function initApp() {
       document.getElementById('mainAppSection').classList.remove('hidden');
       document.getElementById('ownerTitleDisplay').innerText = `حسابِ ${ownerName}`;
+      document.getElementById('ownerEmailDisplay').innerText = ownerEmail;
       
       let avatarHtml = ownerAvatar ? `<img src="${ownerAvatar}" class="profile-avatar">` : `<div class="profile-avatar">👤</div>`;
       document.getElementById('avatarContainer').innerHTML = avatarHtml;
 
       renderDebts();
       renderExpenses();
+    }
+
+    function resetOwner() {
+      if (confirm('آیا می‌خواهید از این حساب خارج شوید؟')) {
+        localStorage.removeItem('cloud_owner_email');
+        localStorage.removeItem('cloud_owner_name');
+        localStorage.removeItem('cloud_owner_avatar');
+        location.reload();
+      }
     }
 
     function switchMainTab(tabId, btn) {
@@ -515,7 +523,7 @@
       return phone.replace(/\D/g, '');
     }
 
-    // Modal Controls با انیمیشن روان
+    // Modal Controls
     function openDebtModal() {
       resetDebtForm();
       let modal = document.getElementById('debtModal');
@@ -525,9 +533,7 @@
     function closeDebtModal() {
       let modal = document.getElementById('debtModal');
       modal.classList.add('closing');
-      setTimeout(() => {
-        modal.classList.remove('show', 'closing');
-      }, 250);
+      setTimeout(() => { modal.classList.remove('show', 'closing'); }, 250);
     }
     function openExpenseModal() {
       resetExpenseForm();
@@ -538,9 +544,7 @@
     function closeExpenseModal() {
       let modal = document.getElementById('expenseModal');
       modal.classList.add('closing');
-      setTimeout(() => {
-        modal.classList.remove('show', 'closing');
-      }, 250);
+      setTimeout(() => { modal.classList.remove('show', 'closing'); }, 250);
     }
 
     // --- طلب و بدهی ---
@@ -569,7 +573,7 @@
         } else {
           debts.push({ id: Date.now(), name, phone, type, amount, currency, date, desc, receipt: receiptBase64 || '' });
         }
-        localStorage.setItem('my_debts', JSON.stringify(debts));
+        localStorage.setItem(`debts_${ownerEmail}`, JSON.stringify(debts));
         closeDebtModal();
         renderDebts();
       };
@@ -661,7 +665,7 @@
     function deleteDebt(id) {
       if (confirm('حذف شود؟')) {
         debts = debts.filter(d => d.id != id);
-        localStorage.setItem('my_debts', JSON.stringify(debts));
+        localStorage.setItem(`debts_${ownerEmail}`, JSON.stringify(debts));
         renderDebts();
       }
     }
@@ -691,7 +695,7 @@
         } else {
           expenses.push({ id: Date.now(), type, title, amount, currency, date, desc, receipt: receiptBase64 || '' });
         }
-        localStorage.setItem('my_expenses', JSON.stringify(expenses));
+        localStorage.setItem(`expenses_${ownerEmail}`, JSON.stringify(expenses));
         closeExpenseModal();
         renderExpenses();
       };
@@ -777,7 +781,7 @@
     function deleteExpense(id) {
       if (confirm('حذف شود؟')) {
         expenses = expenses.filter(e => e.id != id);
-        localStorage.setItem('my_expenses', JSON.stringify(expenses));
+        localStorage.setItem(`expenses_${ownerEmail}`, JSON.stringify(expenses));
         renderExpenses();
       }
     }
