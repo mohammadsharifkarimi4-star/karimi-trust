@@ -498,15 +498,24 @@
       }
     });
 
-    // تابع پاک‌سازی و فرمت تاریخ برای نمایش تمیز میلادی بدون ساعت
+    // تابع اصلاح شده و کامل برای نمایش تاریخ به صورت میلادی مرتب بدون ساعت
     function formatDate(dateStr) {
       if (!dateStr) return '';
-      let d = new Date(dateStr);
-      if (isNaN(d.getTime())) return dateStr;
-      let year = d.getFullYear();
-      let month = String(d.getMonth() + 1).padStart(2, '0');
-      let day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+      let str = dateStr.toString().trim();
+      
+      // اگر فرمت تاریخ به صورت رشته‌ی طولانی جاوااسکریپت بود
+      let d = new Date(str);
+      if (!isNaN(d.getTime())) {
+        let year = d.getFullYear();
+        let month = String(d.getMonth() + 1).padStart(2, '0');
+        let day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      
+      if (str.includes('T')) {
+        return str.split('T')[0];
+      }
+      return str;
     }
 
     function saveOwnerInfo() {
