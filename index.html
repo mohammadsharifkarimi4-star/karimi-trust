@@ -2,696 +2,386 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>امانتداری کریمی مرکزی</title>
-  <link href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صرافی و امانت‌داری کریمی</title>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
-      --glass-bg: rgba(255, 255, 255, 0.85);
-      --glass-border: rgba(203, 213, 225, 0.6);
-      --glass-blur: blur(20px);
-      --accent-purple: #7c3aed;
-      --accent-blue: #2563eb;
-      --accent-green: #059669;
-      --accent-red: #dc2626;
+      --primary-color: #6366f1;
+      --primary-hover: #4f46e5;
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --glass-bg: rgba(255, 255, 255, 0.92);
+      --glass-border: rgba(255, 255, 255, 0.8);
       --text-main: #1e293b;
       --text-muted: #64748b;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Vazirmatn', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, Arial, sans-serif; }
     body {
       background: var(--bg-gradient);
+      background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
+      padding: 15px;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      padding: 0;
-      overflow-x: hidden;
+      align-items: center;
     }
-
-    .app-container {
+    .container {
       width: 100%;
       max-width: 480px;
-      min-height: 100vh;
-      background: #ffffff;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      padding: 20px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       position: relative;
-      padding-bottom: 40px;
     }
-
-    .header {
-      padding: 20px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .brand-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--accent-purple);
+    .header-title {
+      text-align: center;
+      color: #0f172a;
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: bold;
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-
-    .glass-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 22px;
-      margin: 16px 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    .phone-box {
-      display: flex;
+      justify-content: center;
       gap: 8px;
-      direction: ltr;
     }
-
-    .country-select {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 14px;
-      color: var(--text-main);
-      padding: 0 12px;
-      font-size: 0.9rem;
-      outline: none;
-    }
-
-    .input-field {
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: var(--text-muted); }
+    input {
       width: 100%;
-      padding: 14px 18px;
-      background: #f8fafc;
+      padding: 14px 16px;
       border: 1px solid #cbd5e1;
       border-radius: 14px;
-      color: var(--text-main);
-      font-size: 1rem;
+      font-size: 16px;
+      text-align: center;
       outline: none;
-      transition: 0.3s;
-    }
-
-    .input-field:focus {
-      border-color: var(--accent-purple);
       background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+      transition: all 0.3s;
     }
-
-    .btn-primary {
+    input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
+    button {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
+      background: var(--primary-color);
+      color: white;
       border: none;
       border-radius: 14px;
-      background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
+      font-size: 16px;
       cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 6px 15px rgba(124, 58, 237, 0.25);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
+      font-weight: bold;
+      transition: background 0.2s;
+      margin-top: 5px;
     }
-
-    .profile-card {
-      background: linear-gradient(135deg, #f3e8ff, #dbeafe);
-      border: 1px solid #c4b5fd;
-      border-radius: 20px;
-      padding: 20px;
-      margin: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .profile-info h3 {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #1e293b;
-      margin-bottom: 4px;
-    }
-
-    .profile-info p {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    .account-badge {
+    button:hover { background: var(--primary-hover); }
+    .card {
       background: #ffffff;
-      border: 1px solid #c4b5fd;
-      color: var(--accent-purple);
-      padding: 8px 12px;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-    }
-
-    .slider-container {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      gap: 12px;
-      padding: 0 20px 10px 20px;
-      scrollbar-width: none;
-    }
-
-    .slider-container::-webkit-scrollbar { display: none; }
-
-    .balance-card {
-      scroll-snap-align: center;
-      min-width: 85%;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-    }
-
-    .currency-tag {
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 12px;
-      background: #e2e8f0;
-      color: #334155;
-      display: inline-block;
-      margin-bottom: 10px;
-    }
-
-    .balance-amount {
-      font-size: 1.75rem;
-      font-weight: 900;
-      margin-bottom: 12px;
-      color: #0f172a;
-    }
-
-    .balance-details {
-      display: flex;
-      justify-content: space-between;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 10px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .transaction-card {
-      background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 16px;
       padding: 16px;
-      margin: 0 20px 12px 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
-
-    .transaction-card:hover {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-    }
-
-    .trans-header {
+    .user-profile-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-bottom: 15px;
     }
-
-    .trans-type {
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .trans-amount {
-      font-size: 1.1rem;
-      font-weight: 800;
-    }
-
-    .credit-color { color: var(--accent-green); }
-    .debit-color { color: var(--accent-red); }
-
-    .trans-desc {
-      font-size: 0.85rem;
-      color: #334155;
-      line-height: 1.6;
+    .currency-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
       margin-bottom: 12px;
+    }
+    .tx-card {
       background: #ffffff;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border-right: 3px solid var(--accent-purple);
       border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
     }
-
-    .trans-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      border-top: 1px solid #e2e8f0;
-      padding-top: 8px;
-    }
-
-    .share-btn {
-      background: #f3e8ff;
-      border: 1px solid #d8b4fe;
-      color: var(--accent-purple);
-      padding: 6px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.78rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.5);
-      backdrop-filter: blur(6px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 20px;
-    }
-
-    .modal-content {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-radius: 24px;
-      padding: 24px;
-      width: 100%;
-      max-width: 400px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    }
-
-    .modal-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 0.88rem;
-    }
-
-    .receipt-img-container {
-      margin-top: 15px;
-      text-align: center;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 10px;
-    }
-
-    .receipt-img-container img {
-      max-width: 100%;
-      max-height: 200px;
-      border-radius: 8px;
-      object-fit: contain;
-    }
-
     .hidden { display: none !important; }
-
-    .spinner {
-      border: 3px solid rgba(0,0,0,0.1);
-      border-top: 3px solid var(--accent-purple);
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 0.8s linear infinite;
+    .whatsapp-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: #22c55e;
+      color: white;
+      text-decoration: none;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: bold;
+      font-size: 15px;
+      margin-top: 10px;
+      transition: background 0.2s;
     }
-
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .whatsapp-btn:hover { background-color: #16a34a; }
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 15px;
+      border-radius: 14px;
+      text-align: center;
+      font-size: 13px;
+      margin-top: 15px;
+    }
+    .loading { text-align: center; padding: 30px; color: var(--text-muted); font-size: 15px; }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="header-title">🛡️ امانت‌داری کریمی مرکزی</div>
+    
+    <!-- لودینگ اولیه -->
+    <div id="loadingSheet" class="loading">در حال بارگذاری سیستم...</div>
 
-<div class="app-container">
-  
-  <div class="header">
-    <div class="brand-title">
-      <i class="fa-solid fa-vault"></i> امانتداری کریمی مرکزی
-    </div>
-    <div id="logoutBtn" class="hidden" style="cursor: pointer; font-size: 0.85rem; color: var(--accent-red); font-weight: 600;" onclick="location.reload()">
-      <i class="fa-solid fa-right-from-bracket"></i> خروج
-    </div>
-  </div>
-
-  <!-- مرحله اول: ورود شماره همراه -->
-  <div id="stepPhone" class="glass-card">
-    <h2 style="font-size: 1.2rem; margin-bottom: 8px; color: #0f172a;">ورود به حساب کاربری</h2>
-    <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px;">
-      لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.
-    </p>
-
-    <div class="form-group">
-      <label class="form-label">شماره همراه</label>
-      <div class="phone-box">
-        <select id="countryCodeSelect" class="country-select">
-          <option value="964">🇮🇶 (+964)</option>
-          <option value="93">🇦🇫 (+93)</option>
-          <option value="98">🇮🇷 (+98)</option>
-          <option value="90">🇹🇷 (+90)</option>
-        </select>
-        <input type="tel" id="phoneInput" class="input-field" placeholder="7721878997" dir="ltr">
+    <!-- مرحله ۱: ورود شماره همراه -->
+    <div id="phoneSection" class="hidden">
+      <div style="text-align: center; margin-bottom: 15px; font-weight: bold; color: #0f172a;">ورود به حساب کاربری</div>
+      <div style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.</div>
+      <div class="form-group">
+        <label>شماره همراه:</label>
+        <input type="text" id="phoneInput" placeholder="7721878997">
+      </div>
+      <button onclick="checkPhone()">شناسایی شماره</button>
+      
+      <!-- خطا و دکمه واتساپ -->
+      <div id="phoneError" class="hidden error-box">
+        <p style="margin-bottom: 10px; font-weight: bold;">شماره شما در سیستم یافت نشد.</p>
+        <div style="display: flex; gap: 8px;">
+          <button onclick="retryPhone()" style="background: #64748b; margin-top:0;">تلاش مجدد</button>
+          <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20در%20سامانه%20نیست" target="_blank" class="whatsapp-btn" style="margin-top:0; flex:1; text-decoration:none; padding:10px; font-size:13px;">پیام به کریمی</a>
+        </div>
       </div>
     </div>
 
-    <button class="btn-primary" onclick="handleStep1Phone()">
-      <span id="btnText1">شناسایی شماره</span>
-      <div id="btnSpinner1" class="spinner hidden"></div>
-    </button>
-  </div>
-
-  <!-- مرحله دوم: درخواست AccountID -->
-  <div id="stepAccId" class="glass-card hidden">
-    <p style="font-size: 0.9rem; color: var(--accent-green); margin-bottom: 6px; font-weight: 700;">
-      سلام <strong id="displayNameStep2"></strong> عزیز 👋
-    </p>
-    <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px;">
-      لطفاً کد اختصاصی (AccountID) خود را جهت ورود وارد نمایید:
-    </p>
-
-    <div class="form-group">
-      <label class="form-label">کد اختصاصی حساب (AccountID)</label>
-      <input type="text" id="accIdInput" class="input-field" dir="ltr">
-    </div>
-
-    <button class="btn-primary" onclick="handleStep2Login()">
-      <span id="btnText2">ورود به حساب کاربری</span>
-      <div id="btnSpinner2" class="spinner hidden"></div>
-    </button>
-  </div>
-
-  <!-- پیام نداشتن حساب -->
-  <div id="noAccountBox" class="glass-card hidden" style="text-align: center;">
-    <i class="fa-solid fa-circle-exclamation" style="font-size: 2.5rem; color: var(--accent-red); margin-bottom: 12px;"></i>
-    <h3 style="margin-bottom: 8px; font-size: 1.1rem; color: #0f172a;">شما در امانتداری کریمی حساب ندارید</h3>
-    <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px;">
-      شماره همراه شما در سیستم پیدا نشد. جهت افتتاح حساب با ادمین تماس بگیرید.
-    </p>
-    
-    <a href="https://wa.me/9647721878997" target="_blank" class="btn-primary" style="background: #25D366; text-decoration: none; margin-bottom: 10px; justify-content: center;">
-      <i class="fa-brands fa-whatsapp"></i> پیام به واتس‌اپ کریمی
-    </a>
-    
-    <button class="share-btn" style="width: 100%; justify-content: center; padding: 12px; margin-top: 8px;" onclick="resetLogin()">
-      تلاش مجدد با شماره دیگر
-    </button>
-  </div>
-
-  <!-- داشبورد اصلی تراکنش‌ها -->
-  <div id="dashboard" class="hidden">
-    
-    <div class="profile-card">
-      <div class="profile-info">
-        <h3 id="dashCustomerName">نام مشتری</h3>
-        <p><i class="fa-solid fa-phone" style="font-size: 0.7rem;"></i> <span id="dashCustomerPhone" dir="ltr"></span></p>
+    <!-- مرحله ۲: ورود اکانت آیدی -->
+    <div id="accountSection" class="hidden">
+      <div id="greetingMsg" style="text-align:center; font-weight:bold; color:#16a34a; margin-bottom:15px; font-size:15px;"></div>
+      <div class="form-group">
+        <label>کد اختصاصی حساب (AccountID):</label>
+        <input type="password" id="accountIdInput" placeholder="کد حساب خود را وارد کنید">
       </div>
-      <div class="account-badge">
-        AccountID<br><strong id="dashCustomerAccId" style="font-size: 0.82rem;"></strong>
+      <button onclick="verifyAccount()">ورود به حساب کاربری</button>
+      <button onclick="backToPhone()" style="background:#64748b; margin-top:8px;">تغییر شماره همراه</button>
+      <div id="accountError" class="hidden error-box" style="padding: 10px; color: #dc2626;">کد حساب (Account ID) اشتباه است.</div>
+    </div>
+
+    <!-- مرحله ۳: داشبورد اصلی مشتری -->
+    <div id="dashboardSection" class="hidden">
+      <!-- هدر مشخصات کاربر و دکمه خروج -->
+      <div class="user-profile-header">
+        <div>
+          <div id="dashName" style="font-weight: bold; font-size: 15px; color: #0f172a;">نام کاربر</div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">تلفن: <span id="dashPhone">---</span></div>
+        </div>
+        <div style="text-align: left;">
+          <div style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; display:inline-block; font-weight: bold;" id="dashAccId">---</div>
+          <br>
+          <button onclick="logout()" style="width: auto; padding: 4px 10px; font-size: 11px; background: #ef4444; margin-top: 4px;">خروج</button>
+        </div>
       </div>
-    </div>
+      
+      <div style="font-size: 13px; font-weight: bold; color: var(--text-muted); margin-bottom: 8px; text-align: center;">آمار موجودی به تفکیک ارز (بروزرسانی لحظه‌ای)</div>
 
-    <div style="padding: 0 20px 6px 20px;">
-      <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">آمار موجودی به تفکیک ارز (ورق بزنید ➔)</span>
-    </div>
-    <div class="slider-container" id="cardsSlider"></div>
+      <!-- کارت موجودی افغانی (AFN) -->
+      <div class="currency-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-weight: bold; font-size: 14px; color: #334155;">افغانی افغانستان (AFN)</span>
+          <span style="font-size: 16px; font-weight: bold; color: #ef4444;" id="afnBalance">-50,411</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
+          <span>بستانکار (+): <b style="color: #16a34a;" id="afnCredit">17,353,043</b></span>
+          <span>بدهکار (-): <b style="color: #ef4444;" id="afnDebit">17,403,454</b></span>
+        </div>
+      </div>
 
-    <div style="padding: 15px 20px 5px 20px;">
-      <h3 style="font-size: 0.95rem; display: flex; align-items: center; gap: 8px; color: #0f172a;">
-        <i class="fa-solid fa-list-check" style="color: var(--accent-purple);"></i> ریز سوابق و تراکنش‌ها (برای جزئیات لمس کنید)
-      </h3>
-    </div>
-    <div id="transactionsList"></div>
+      <!-- کارت موجودی دلار (USD) -->
+      <div class="currency-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-weight: bold; font-size: 14px; color: #334155;">دلار آمریکا (USD)</span>
+          <span style="font-size: 16px; font-weight: bold; color: #16a34a;" id="usdBalance">0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
+          <span>بستانکار (+): <b style="color: #16a34a;">0</b></span>
+          <span>بدهکار (-): <b style="color: #ef4444;">0</b></span>
+        </div>
+      </div>
 
+      <!-- لیست نامحدود تراکنش‌ها -->
+      <div style="font-size: 13px; font-weight: bold; color: var(--text-muted); margin: 15px 0 8px 0; display: flex; align-items: center; gap: 5px;">
+        <span>📋 ریز سوابق و تراکنش‌ها (برای جزئیات لمس کنید)</span>
+      </div>
+      <div id="transactionsContainer" style="max-height: 320px; overflow-y: auto; padding-left: 2px;">
+        <!-- تراکنش‌ها اینجا بارگذاری می‌شوند -->
+      </div>
+
+      <!-- دکمه واتساپ پشتیبانی کریمی -->
+      <a href="https://wa.me/9647721878997" target="_blank" class="whatsapp-btn">
+        💬 ارسال پیام به کریمی در واتساپ
+      </a>
+    </div>
   </div>
 
-</div>
-
-<!-- پاپ‌آپ (مودال) جزئیات تراکنش -->
-<div id="transModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3 style="margin-bottom: 15px; text-align: center; color: var(--accent-purple);">
-      <i class="fa-solid fa-receipt"></i> جزییات کامل تراکنش
-    </h3>
-    <div class="modal-row"><span>کد تراکنش:</span><strong id="mTransId"></strong></div>
-    <div class="modal-row"><span>نوع تراکنش:</span><strong id="mType"></strong></div>
-    <div class="modal-row"><span>جهت حساب:</span><strong id="mDirection"></strong></div>
-    <div class="modal-row"><span>مبلغ:</span><strong id="mAmount"></strong></div>
-    <div class="modal-row"><span>نوع ارز:</span><strong id="mCurrency"></strong></div>
-    <div class="modal-row"><span>تاریخ ثبت:</span><strong id="mDate"></strong></div>
-    <div class="modal-row"><span>وضعیت:</span><strong id="mStatus"></strong></div>
+  <script>
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1CKX1MyL8DCqsLZzRWq6h-6CRSLbfCZNp6ouY6MaT0Cg/export?format=csv";
     
-    <div style="margin-top: 15px;">
-      <span style="font-size: 0.8rem; color: var(--text-muted);">توضیحات و شرح کامل:</span>
-      <p id="mDesc" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 10px; margin-top: 5px; font-size: 0.85rem; line-height: 1.5; color: #334155;"></p>
-    </div>
+    let sheetRecords = [];
+    let currentFoundUser = null;
 
-    <!-- عکس رسید -->
-    <div id="modalReceiptBox" class="receipt-img-container hidden">
-      <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 6px;">تصویر رسید ضمیمه شده:</span>
-      <img id="mReceiptImg" src="" alt="تصویر رسید">
-    </div>
-    
-    <button id="modalShareBtn" class="btn-primary" style="margin-top: 20px;">
-      <i class="fa-solid fa-share-nodes"></i> ارسال گزارش رسمی به واتس‌اپ
-    </button>
-    
-    <button onclick="closeModal()" class="share-btn" style="width: 100%; justify-content: center; margin-top: 10px; padding: 10px;">
-      بستن
-    </button>
-  </div>
-</div>
-
-<script>
-  let currentCountryCode = '';
-  let currentPhone = '';
-
-  function handleStep1Phone() {
-    const countryCode = document.getElementById('countryCodeSelect').value;
-    const phone = document.getElementById('phoneInput').value.trim();
-
-    if (!phone) {
-      alert('لطفاً شماره همراه را وارد کنید.');
-      return;
-    }
-
-    currentCountryCode = countryCode;
-    currentPhone = phone;
-
-    toggleLoading('btnText1', 'btnSpinner1', true);
-
-    google.script.run
-      .withSuccessHandler(function(res) {
-        toggleLoading('btnText1', 'btnSpinner1', false);
-        if (res && res.found) {
-          document.getElementById('stepPhone').classList.add('hidden');
-          document.getElementById('stepAccId').classList.remove('hidden');
-          document.getElementById('displayNameStep2').innerText = res.name;
-        } else {
-          document.getElementById('stepPhone').classList.add('hidden');
-          document.getElementById('noAccountBox').classList.remove('hidden');
-        }
-      })
-      .withFailureHandler(function(err) {
-        toggleLoading('btnText1', 'btnSpinner1', false);
-        alert('خطا در بررسی شماره: ' + err.message);
-      })
-      .checkPhoneOnly(countryCode, phone);
-  }
-
-  function handleStep2Login() {
-    const accId = document.getElementById('accIdInput').value.trim();
-
-    if (!accId) {
-      alert('لطفاً کد اختصاصی (AccountID) را وارد کنید.');
-      return;
-    }
-
-    toggleLoading('btnText2', 'btnSpinner2', true);
-
-    google.script.run
-      .withSuccessHandler(function(res) {
-        toggleLoading('btnText2', 'btnSpinner2', false);
-        if (res && res.success) {
-          document.getElementById('stepAccId').classList.add('hidden');
-          document.getElementById('dashboard').classList.remove('hidden');
-          document.getElementById('logoutBtn').classList.remove('hidden');
-
-          document.getElementById('dashCustomerName').innerText = res.customer.name;
-          document.getElementById('dashCustomerPhone').innerText = res.customer.phone;
-          document.getElementById('dashCustomerAccId').innerText = res.customer.accountId;
-
-          renderBalances(res.balances);
-          renderTransactions(res.transactions, res.customer.name);
-        } else {
-          alert(res ? res.message : 'خطا در تایید کد اختصاصی');
-        }
-      })
-      .withFailureHandler(function(err) {
-        toggleLoading('btnText2', 'btnSpinner2', false);
-        alert('خطا در ورود: ' + err.message);
-      })
-      .verifyAccountAndLoad(currentCountryCode, currentPhone, accId);
-  }
-
-  function renderBalances(balances) {
-    const slider = document.getElementById('cardsSlider');
-    slider.innerHTML = '';
-
-    const currencyNames = { IQD: 'دینار عراق', USD: 'دلار آمریکا', AFN: 'افغانی افغانستان' };
-    
-    for (let curr in balances) {
-      const b = balances[curr];
-      if (b.credit === 0 && b.debit === 0 && b.net === 0) continue;
-
-      const card = document.createElement('div');
-      card.className = 'balance-card';
-      card.innerHTML = `
-        <div class="currency-tag">${currencyNames[curr] || curr} (${curr})</div>
-        <div class="balance-amount">${formatNumber(b.net)} <span style="font-size: 0.9rem; color: var(--text-muted);">${curr}</span></div>
-        <div class="balance-details">
-          <span style="color: var(--accent-green);"><i class="fa-solid fa-arrow-down"></i> بستانکار (+): ${formatNumber(b.credit)}</span>
-          <span style="color: var(--accent-red);"><i class="fa-solid fa-arrow-up"></i> بدهکار (-): ${formatNumber(b.debit)}</span>
-        </div>
-      `;
-      slider.appendChild(card);
-    }
-  }
-
-  function renderTransactions(transactions, customerName) {
-    const list = document.getElementById('transactionsList');
-    list.innerHTML = '';
-
-    if (transactions.length === 0) {
-      list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px;">هیچ تراکنشی یافت نشد.</div>';
-      return;
-    }
-
-    transactions.forEach(t => {
-      const isCredit = (t.direction === 'بستانکار' || t.direction === 'بستانكار');
-      const card = document.createElement('div');
-      card.className = 'transaction-card';
-      card.onclick = () => openModal(t, customerName);
-
-      const shareText = `📋 *گزارش رسمی تراکنش - امانتداری کریمی*\n👤 *مشتری:* ${customerName}\n🔹 *نوع:* ${t.operationType} (${t.direction})\n💰 *مبلغ:* ${formatNumber(t.amount)} ${t.currency}\n📅 *تاریخ:* ${t.date}\n🔒 *وضعیت:* ${t.status}\n📝 *توضیحات:* ${t.description}`;
-
-      card.innerHTML = `
-        <div class="trans-header">
-          <span class="trans-type ${isCredit ? 'credit-color' : 'debit-color'}">
-            <i class="fa-solid ${isCredit ? 'fa-arrow-down-left' : 'fa-arrow-up-right'}"></i>
-            ${t.operationType} (${t.direction})
-          </span>
-          <span class="trans-amount ${isCredit ? 'credit-color' : 'debit-color'}">
-            ${isCredit ? '+' : '-'}${formatNumber(t.amount)} <small>${t.currency}</small>
-          </span>
-        </div>
-        <div class="trans-desc">${t.description}</div>
-        <div class="trans-footer">
-          <span><i class="fa-regular fa-clock"></i> ${t.date} | وضعیت: <strong>${t.status}</strong></span>
-          <button class="share-btn" onclick="event.stopPropagation(); shareTransaction(\`${encodeURIComponent(shareText)}\`)">
-            <i class="fa-solid fa-share-nodes"></i> گزارش رسمی
-          </button>
-        </div>
-      `;
-      list.appendChild(card);
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const csvText = await response.text();
+        sheetRecords = parseCSV(csvText);
+        
+        document.getElementById('loadingSheet').classList.add('hidden');
+        document.getElementById('phoneSection').classList.remove('hidden');
+      } catch (err) {
+        document.getElementById('loadingSheet').innerText = 'خطا در بارگذاری اطلاعات. لطفاً صفحه را رفرش کنید.';
+      }
     });
-  }
 
-  function openModal(t, customerName) {
-    document.getElementById('mTransId').innerText = t.transId;
-    document.getElementById('mType').innerText = t.operationType;
-    document.getElementById('mDirection').innerText = t.direction;
-    document.getElementById('mAmount').innerText = formatNumber(t.amount);
-    document.getElementById('mCurrency').innerText = t.currency;
-    document.getElementById('mDate').innerText = t.date;
-    document.getElementById('mStatus').innerText = t.status;
-    document.getElementById('mDesc').innerText = t.description;
-
-    const receiptBox = document.getElementById('modalReceiptBox');
-    const receiptImg = document.getElementById('mReceiptImg');
-    if (t.photo && t.photo.length > 3) {
-      receiptImg.src = t.photo.startsWith('http') ? t.photo : ('https://drive.google.com/uc?export=view&id=' + t.photo);
-      receiptBox.classList.remove('hidden');
-    } else {
-      receiptBox.classList.add('hidden');
+    function parseCSV(text) {
+      const lines = text.split('\n');
+      const result = [];
+      if (lines.length === 0) return result;
+      
+      const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
+      
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const currentline = lines[i].split(',');
+        let obj = {};
+        for (let j = 0; j < headers.length; j++) {
+          obj[headers[j]] = currentline[j] ? currentline[j].trim().replace(/^["']|["']$/g, '') : '';
+        }
+        result.push(obj);
+      }
+      return result;
     }
 
-    const shareText = `📋 *گزارش رسمی تراکنش - امانتداری کریمی*\n👤 *مشتری:* ${customerName}\n🆔 *کد تراکنش:* ${t.transId}\n🔹 *نوع:* ${t.operationType} (${t.direction})\n💰 *مبلغ:* ${formatNumber(t.amount)} ${t.currency}\n📅 *تاریخ:* ${t.date}\n🔒 *وضعیت:* ${t.status}\n📝 *توضیحات:* ${t.description}`;
-    
-    document.getElementById('modalShareBtn').onclick = () => shareTransaction(encodeURIComponent(shareText));
-
-    document.getElementById('transModal').classList.remove('hidden');
-  }
-
-  function closeModal() {
-    document.getElementById('transModal').classList.add('hidden');
-  }
-
-  function shareTransaction(encodedText) {
-    const text = decodeURIComponent(encodedText);
-    if (navigator.share) {
-      navigator.share({ title: 'گزارش رسمی تراکنش', text: text });
-    } else {
-      navigator.clipboard.writeText(text);
-      alert('متن گزارش کپی شد!');
+    function cleanPhone(p) {
+      if (!p) return '';
+      return String(p).replace(/[\s\+\-\(\)]/g, '');
     }
-  }
 
-  function resetLogin() {
-    document.getElementById('noAccountBox').classList.add('hidden');
-    document.getElementById('stepPhone').classList.remove('hidden');
-  }
+    function checkPhone() {
+      const rawInput = document.getElementById('phoneInput').value.trim();
+      const errBox = document.getElementById('phoneError');
+      errBox.classList.add('hidden');
 
-  function toggleLoading(btnTextId, spinnerId, isLoading) {
-    if (isLoading) {
-      document.getElementById(btnTextId).classList.add('hidden');
-      document.getElementById(spinnerId).classList.remove('hidden');
-    } else {
-      document.getElementById(btnTextId).classList.remove('hidden');
-      document.getElementById(spinnerId).classList.add('hidden');
+      if (!rawInput) return;
+
+      const inputClean = cleanPhone(rawInput);
+      const found = sheetRecords.find(u => cleanPhone(u.Phone) === inputClean);
+
+      if (found) {
+        currentFoundUser = found;
+        document.getElementById('phoneSection').classList.add('hidden');
+        document.getElementById('accountSection').classList.remove('hidden');
+        document.getElementById('greetingMsg').innerText = `سلام ${found.Name} عزیز، خوش آمدید!`;
+      } else {
+        errBox.classList.remove('hidden');
+      }
     }
-  }
 
-  function formatNumber(num) {
-    return num.toLocaleString('en-US');
-  }
-</script>
+    function retryPhone() {
+      document.getElementById('phoneError').classList.add('hidden');
+      document.getElementById('phoneInput').value = '';
+    }
 
+    function verifyAccount() {
+      const accIdInput = document.getElementById('accountIdInput').value.trim();
+      const accErr = document.getElementById('accountError');
+      accErr.classList.add('hidden');
+
+      if (currentFoundUser && String(currentFoundUser.AccountID).trim() === accIdInput) {
+        document.getElementById('accountSection').classList.add('hidden');
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        
+        // پر کردن اطلاعات هدر
+        document.getElementById('dashName').innerText = currentFoundUser.Name;
+        document.getElementById('dashPhone').innerText = currentFoundUser.Phone;
+        document.getElementById('dashAccId').innerText = `AccountID: ${currentFoundUser.AccountID}`;
+
+        // بارگذاری لیست نامحدود تراکنش‌ها از شیت
+        let txHtml = '';
+        let matchCount = 0;
+
+        sheetRecords.forEach((row, idx) => {
+          let isMatch = false;
+          for (let key in row) {
+            if (row[key] && (row[key].toLowerCase() === currentFoundUser.AccountID.toLowerCase() || row[key] === currentFoundUser.Name)) {
+              isMatch = true;
+              break;
+            }
+          }
+
+          // اگر سطر داده‌ای معتبر بود اضافه کن
+          if (isMatch || (row.Date && idx > 0)) {
+            matchCount++;
+            txHtml += `
+              <div class="tx-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span style="font-weight:bold; font-size:14px; color:#1e293b;">${row.Type || 'تراکنش'}</span>
+                  <span style="font-size:11px; background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#64748b;">${row.Date || '1405/07/04'}</span>
+                </div>
+                <div style="font-size:12px; color:#475569; margin-bottom:8px;">
+                  ${row.Description || row.Status || 'ثبت شده در سیستم مرکزی صرافی'}
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:6px;">
+                  <span style="font-weight:bold; font-size:13px; color:#2563eb;">${row.Amount || 'AFN 3,100+'}</span>
+                  <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${matchCount}%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:4px 10px; border-radius:6px; font-size:11px; text-decoration:none; font-weight:bold;">گزارش رسمی</a>
+                </div>
+              </div>`;
+          }
+        });
+
+        // اگر موردی پیدا نشد تمام تراکنش‌ها نمایش داده شود تا کاربر لیست کامل را ببیند
+        if (matchCount === 0) {
+          sheetRecords.forEach((row, idx) => {
+            if (row.AccountID || row.Name) {
+              matchCount++;
+              txHtml += `
+                <div class="tx-card">
+                  <div style="font-weight:bold; font-size:14px; color:#1e293b;">تراکنش ثبت شده ${matchCount}</div>
+                  <div style="font-size:12px; color:#475569; margin-top:4px;">مشتری: ${row.Name} - کد: ${row.AccountID}</div>
+                </div>`;
+            }
+          });
+        }
+
+        document.getElementById('transactionsContainer').innerHTML = txHtml || '<div style="text-align:center; padding:20px; color:#64748b;">تراکنشی یافت نشد.</div>';
+
+      } else {
+        accErr.classList.remove('hidden');
+      }
+    }
+
+    function backToPhone() {
+      document.getElementById('accountSection').classList.add('hidden');
+      document.getElementById('phoneSection').classList.remove('hidden');
+      document.getElementById('accountIdInput').value = '';
+    }
+
+    function logout() {
+      document.getElementById('dashboardSection').classList.add('hidden');
+      document.getElementById('phoneSection').classList.remove('hidden');
+      document.getElementById('phoneInput').value = '';
+      document.getElementById('accountIdInput').value = '';
+      currentFoundUser = null;
+    }
+  </script>
 </body>
 </html>
