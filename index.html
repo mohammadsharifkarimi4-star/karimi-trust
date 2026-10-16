@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="/manifest.json">
   <title>صرافی و امانت‌داری کریمی</title>
   <style>
     :root {
@@ -128,10 +127,8 @@
   <div class="container">
     <h2>صرافی و امانت‌داری کریمی</h2>
     
-    <!-- لودینگ اولیه برای خواندن زنده گوگل شیت -->
-    <div id="loadingSheet" class="loading">در حال اتصال به سیستم صرافی...</div>
+    <div id="loadingSheet" class="loading">در حال اتصال به سامانه صرافی...</div>
 
-    <!-- مرحله ۱: ورود شماره تلفن -->
     <div id="phoneSection" class="hidden">
       <div class="form-group">
         <label>شماره تلفن خود را وارد کنید:</label>
@@ -141,7 +138,6 @@
       <div id="phoneError" class="hidden error-box"></div>
     </div>
 
-    <!-- مرحله ۲: ورود اکانت آیدی -->
     <div id="accountSection" class="hidden">
       <div id="greetingMsg" style="text-align:center; font-weight:bold; color:#16a34a; margin-bottom:15px; font-size:15px;"></div>
       <div class="form-group">
@@ -153,26 +149,22 @@
       <div id="accountError" class="hidden error-box"></div>
     </div>
 
-    <!-- مرحله ۳: داشبورد اختصاصی مشتری -->
     <div id="dashboardSection" class="hidden">
       <div class="welcome-header">
         <h3 id="dashWelcome" style="font-size: 15px; color: #0f172a;"></h3>
         <button onclick="logout()" style="width: auto; padding: 6px 12px; font-size: 12px; background: #ef4444; margin:0;">خروج</button>
       </div>
       
-      <!-- آمار مالی -->
       <div class="card">
-        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">وضعیت حساب‌ها (بدهکار / بستانکار)</h4>
+        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">وضعیت حساب</h4>
         <div id="balancesContainer"></div>
       </div>
 
-      <!-- جزئیات تراکنش‌ها -->
       <div class="card">
-        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">جزئیات کامل تراکنش‌ها</h4>
+        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">جزئیات حساب</h4>
         <div id="transactionsContainer" style="max-height: 220px; overflow-y: auto;"></div>
       </div>
 
-      <!-- دکمه واتساپ پشتیبانی کریمی -->
       <a href="https://wa.me/9647721878997" target="_blank" class="whatsapp-btn">
         💬 ارسال پیام به کریمی در واتساپ
       </a>
@@ -180,13 +172,11 @@
   </div>
 
   <script>
-    // لینک خروجی CSV گوگل شیت شما برای خواندن زنده اطلاعات
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1CKX1MyL8DCqsLZzRWq6h-6CRSLbfCZNp6ouY6MaT0Cg/export?format=csv";
     
     let sheetRecords = [];
     let currentFoundUser = null;
 
-    // خواندن خودکار گوگل شیت به محض باز شدن سایت
     window.addEventListener('DOMContentLoaded', async () => {
       try {
         const response = await fetch(SHEET_CSV_URL);
@@ -196,17 +186,15 @@
         document.getElementById('loadingSheet').classList.add('hidden');
         document.getElementById('phoneSection').classList.remove('hidden');
       } catch (err) {
-        document.getElementById('loadingSheet').innerText = 'خطا در بارگذاری اطلاعات از سامانه. لطفاً صفحه را رفرش کنید.';
+        document.getElementById('loadingSheet').innerText = 'خطا در بارگذاری اطلاعات. لطفاً صفحه را رفرش کنید.';
       }
     });
 
-    // تابع استاندارد تبدیل CSV به لیست اطلاعات
     function parseCSV(text) {
       const lines = text.split('\n');
       const result = [];
       if (lines.length === 0) return result;
       
-      // ستون‌ها (AccountID, Name, Phone, ...)
       const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
       
       for (let i = 1; i < lines.length; i++) {
@@ -238,7 +226,6 @@
       }
 
       const inputClean = cleanPhone(rawInput);
-      // جستجو در میان داده‌های زنده گوگل شیت
       const found = sheetRecords.find(u => cleanPhone(u.Phone) === inputClean);
 
       if (found) {
@@ -262,13 +249,12 @@
         document.getElementById('dashboardSection').classList.remove('hidden');
         document.getElementById('dashWelcome').innerText = `حساب کاربری: ${currentFoundUser.Name}`;
 
-        // نمایش وضعیت حساب
         document.getElementById('balancesContainer').innerHTML = `
-          <div class="balance-box"><span>کد حساب: <b>${currentFoundUser.AccountID}</b></span><span style="color:#16a34a; font-weight:bold;">تایید شده</span></div>
+          <div class="balance-box"><span>کد حساب: <b>${currentFoundUser.AccountID}</b></span><span style="color:#16a34a; font-weight:bold;">فعال</span></div>
         `;
 
         document.getElementById('transactionsContainer').innerHTML = `
-          <div class="tx-item"><div><strong>وضعیت دسترسی</strong> - <span style="color:#16a34a; font-weight:bold;">اتصال موفق به حساب</span></div><div style="color:#64748b; margin-top:2px;">اطلاعات شما مستقیماً از سامانه مرکزی صرافی کریمی خوانده شد.</div></div>
+          <div class="tx-item"><div><strong>وضعیت دسترسی</strong> - <span style="color:#16a34a; font-weight:bold;">تایید موفقیت‌آمیز</span></div><div style="color:#64748b; margin-top:2px;">اطلاعات از سامانه مرکزی صرافی کریمی خوانده شد.</div></div>
         `;
       } else {
         accErr.innerText = 'کد حساب (Account ID) وارد شده اشتباه است.';
