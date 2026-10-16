@@ -3,17 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صرافی و امانت‌داری کریمی مرکزی</title>
+  <title>خدمات مرکزی کریمی</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
 
     :root {
       --primary: #4f46e5;
-      --success: #059669;
-      --danger: #dc2626;
+      --primary-hover: #4338ca;
       --glass-bg: rgba(255, 255, 255, 0.85);
       --glass-border: rgba(255, 255, 255, 0.95);
-      --card-bg: rgba(255, 255, 255, 0.92);
       --text-main: #0f172a;
       --text-muted: #64748b;
     }
@@ -25,7 +23,7 @@
       background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
-      padding: 15px;
+      padding: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -38,558 +36,146 @@
 
     .container {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border);
-      padding: 24px;
+      padding: 30px 24px;
       border-radius: 30px;
       animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .logo-icon {
+      font-size: 45px;
+      margin-bottom: 10px;
     }
 
     .header-title {
-      text-align: center;
       color: #1e1b4b;
-      margin-bottom: 22px;
-      font-size: 21px;
+      font-size: 22px;
       font-weight: 800;
+      margin-bottom: 8px;
     }
 
-    .form-group { margin-bottom: 18px; }
-    label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 13px; color: #334155; }
-    
-    input {
-      width: 100%;
-      padding: 15px 18px;
-      border: 2px solid #e2e8f0;
-      border-radius: 16px;
-      font-size: 16px;
-      text-align: center;
-      outline: none;
-      background: rgba(255, 255, 255, 0.95);
-      direction: ltr;
-      color: #0f172a;
-    }
-
-    input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15); }
-
-    button {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-      color: white;
-      border: none;
-      border-radius: 16px;
-      font-size: 16px;
-      cursor: pointer;
-      font-weight: 800;
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
-      margin-top: 5px;
-    }
-
-    button:active { transform: scale(0.97); }
-
-    .user-profile-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 20px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(241,245,249,0.9) 100%);
-      border-radius: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-    }
-
-    .currency-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      background: rgba(255, 255, 255, 0.5);
-      padding: 5px;
-      border-radius: 14px;
-      overflow-x: auto;
-    }
-
-    .currency-tab {
-      flex: 1;
-      min-width: 70px;
-      padding: 10px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      border-radius: 10px;
+    .header-subtitle {
       color: var(--text-muted);
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      margin-top: 0;
-      transition: all 0.3s ease;
-    }
-
-    .currency-tab.active {
-      background: #ffffff;
-      color: var(--primary);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    .currency-card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 16px;
-      border-right: 6px solid var(--primary);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-      animation: fadeIn 0.4s ease-out;
-    }
-
-    .tx-card {
-      background: rgba(255, 255, 255, 0.96);
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
-      cursor: pointer;
-      position: relative;
-      transition: all 0.25s ease;
-    }
-
-    .tx-card::before {
-      content: '';
-      position: absolute;
-      top: 0; right: 0; width: 4px; height: 100%;
-      background: var(--primary);
-    }
-
-    .tx-card:hover { border-color: var(--primary); box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15); transform: translateY(-2px); }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(8px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 20px;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    .modal-content {
-      background: #ffffff;
-      width: 100%;
-      max-width: 420px;
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-    }
-
-    .hidden { display: none !important; }
-
-    .whatsapp-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      text-decoration: none;
-      padding: 16px;
-      border-radius: 18px;
-      font-weight: 800;
-      font-size: 15px;
-      margin-top: 18px;
-      box-shadow: 0 8px 22px rgba(16, 185, 129, 0.35);
-    }
-
-    .error-box {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: var(--danger);
-      padding: 16px;
-      border-radius: 16px;
-      text-align: center;
       font-size: 13px;
-      margin-top: 15px;
-      font-weight: 700;
+      margin-bottom: 28px;
     }
 
-    .eng-num { font-family: Tahoma, Arial, sans-serif; direction: ltr; display: inline-block; }
-    .loading { text-align: center; padding: 40px; color: #ffffff; font-size: 16px; font-weight: 700; }
+    .menu-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .menu-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 20px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+    }
+
+    .menu-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(79, 70, 229, 0.15);
+    }
+
+    .menu-card.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: rgba(241, 245, 249, 0.7);
+    }
+
+    .menu-card.disabled:hover {
+      border-color: #e2e8f0;
+      transform: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+    }
+
+    .menu-info {
+      text-align: right;
+    }
+
+    .menu-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin-bottom: 4px;
+    }
+
+    .menu-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .menu-badge {
+      background: #e0e7ff;
+      color: #4338ca;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 10px;
+    }
+
+    .menu-badge.soon {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    .footer-note {
+      margin-top: 30px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header-title">🛡️ امانت‌داری کریمی مرکزی</div>
-    
-    <div id="loadingSheet" class="loading">در حال اتصال به پایگاه داده مرکزی...</div>
+    <div class="logo-icon">🛡️</div>
+    <div class="header-title">خدمات مرکزی کریمی</div>
+    <div class="header-subtitle">لطفاً بخش مورد نظر خود را انتخاب کنید</div>
 
-    <div id="phoneSection" class="hidden">
-      <div style="text-align: center; margin-bottom: 12px; font-weight: 800; color: #1e1b4b; font-size: 17px;">ورود به حساب کاربری</div>
-      <div style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 22px;">لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.</div>
-      <div class="form-group">
-        <label>شماره همراه:</label>
-        <input type="text" id="phoneInput" placeholder="7721878997">
-      </div>
-      <button id="btnCheckPhone" onclick="checkPhone()">شناسایی شماره</button>
-      
-      <div id="phoneError" class="hidden error-box">
-        <p style="margin-bottom: 12px;" id="phoneErrorMsg">شماره شما در سیستم یافت نشد.</p>
-        <div style="display: flex; gap: 10px;">
-          <button onclick="retryPhone()" style="background: #64748b; margin-top:0; padding: 12px;">تلاش مجدد</button>
-          <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20در%20سامانه%20نیست" target="_blank" class="whatsapp-btn" style="margin-top:0; flex:1; text-decoration:none; padding:12px; font-size:13px;">پیام به کریمی</a>
+    <div class="menu-grid">
+      <!-- گزینه صرافی و امانت‌داری (فعال و متصل به شیت) -->
+      <a href="exchange.html" class="menu-card">
+        <div class="menu-info">
+          <div class="menu-title">صرافی و امانت‌داری</div>
+          <div class="menu-desc">استعلام موجودی و ریز تراکنش‌های مالی</div>
         </div>
-      </div>
-    </div>
-
-    <div id="accountSection" class="hidden">
-      <div id="greetingMsg" style="text-align:center; font-weight:800; color:var(--success); margin-bottom:18px; font-size:17px;"></div>
-      <div class="form-group">
-        <label>کد اختصاصی حساب (AccountID):</label>
-        <input type="password" id="accountIdInput" placeholder="Account ID">
-      </div>
-      <button id="btnVerifyAcc" onclick="verifyAccount()">ورود به حساب کاربری</button>
-      <button onclick="backToPhone()" style="background: #64748b; margin-top:10px;">تغییر شماره همراه</button>
-      <div id="accountError" class="hidden error-box">کد حساب (Account ID) اشتباه است.</div>
-    </div>
-
-    <div id="dashboardSection" class="hidden">
-      <div class="user-profile-header">
-        <div>
-          <div id="dashName" style="font-weight: 800; font-size: 17px; color: #1e1b4b;">---</div>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">تلفن: <span id="dashPhone" class="eng-num">---</span></div>
-        </div>
-        <div style="text-align: left;">
-          <div style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 8px; display:inline-block; font-weight: 800;" id="dashAccId" class="eng-num">---</div>
-          <br>
-          <button onclick="logout()" style="width: auto; padding: 5px 12px; font-size: 11px; background: var(--danger); margin-top: 6px; box-shadow: none;">خروج</button>
-        </div>
-      </div>
-      
-      <div style="font-size: 13px; font-weight: 800; color: #334155; margin: 15px 0 10px 0; text-align: center;">📊 آمار موجودی به تفکیک ارز</div>
-      
-      <div class="currency-tabs" id="currencyTabs"></div>
-      <div id="activeCurrencyCard"></div>
-
-      <div style="font-size: 13px; font-weight: 800; color: #334155; margin: 20px 0 10px 0; display: flex; justify-content: space-between; align-items: center;">
-        <span>📋 ریز سوابق و تراکنش‌ها</span>
-        <span id="txCountBadge" style="font-size: 11px; background: #e2e8f0; color: #1e293b; padding: 3px 8px; border-radius: 6px; font-weight: 700;" class="eng-num">0</span>
-      </div>
-      <div id="transactionsContainer" style="max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
-
-      <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20درخواست%20پشتیبانی%20دارم" target="_blank" class="whatsapp-btn">
-        💬 ارسال پیام به کریمی در واتساپ
+        <div class="menu-badge">ورود</div>
       </a>
-    </div>
-  </div>
 
-  <div id="txModal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
-        <h3 style="font-size: 16px; color: #1e293b; font-weight: 800;">جزئیات کامل تراکنش</h3>
-        <button onclick="closeModal()" style="width: auto; padding: 4px 10px; font-size: 12px; background: #64748b; margin-top:0;">بستن</button>
+      <!-- نمونه خدمات آینده (غیرفعال و رزرو شده برای بعد) -->
+      <div class="menu-card disabled">
+        <div class="menu-info">
+          <div class="menu-title">محاسبه‌گر نرخ ارز</div>
+          <div class="menu-desc">محاسبه آنلاین تبدیل ارزها</div>
+        </div>
+        <div class="menu-badge soon">به زودی</div>
       </div>
-      <div id="modalBody" style="font-size: 14px; color: #334155; line-height: 1.8;"></div>
-      <a id="modalWhatsApp" href="#" target="_blank" class="whatsapp-btn" style="margin-top: 20px; padding: 12px; font-size: 13px;">💬 درخواست گزارش رسمی این تراکنش</a>
+
+      <div class="menu-card disabled">
+        <div class="menu-info">
+          <div class="menu-title">خدمات کاربردی دیگر</div>
+          <div class="menu-desc">ابزارهای کمکی و خدماتی</div>
+        </div>
+        <div class="menu-badge soon">به زودی</div>
+      </div>
     </div>
+
+    <div class="footer-note">تمامی حقوق محفوظ است © کریمی مرکزی</div>
   </div>
-
-  <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFzeaXRRzvaOs_ea0OFBy15SGrSEOkdKox8RlV9Q7upMCWJmp1DylrPus1VmOvbkMa/exec?action=getData";
-
-    let accountsList = [];
-    let transactionsList = [];
-    let currentFoundUser = null;
-    let customerTransactions = [];
-    let customerBalances = {};
-    let currencyList = [];
-    let activeCurrencyIndex = 0;
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const res = await fetch(APPS_SCRIPT_URL);
-        const data = await res.json();
-
-        if (data.accounts && data.accounts.length > 0) {
-          let accRows = data.accounts;
-          let accHeaders = accRows[0];
-          accountsList = accRows.slice(1).map(row => {
-            let obj = {};
-            accHeaders.forEach((h, i) => obj[h.toString().trim()] = row[i]);
-            return obj;
-          });
-        }
-
-        if (data.transactions && data.transactions.length > 0) {
-          let txRows = data.transactions;
-          let txHeaders = txRows[0];
-          transactionsList = txRows.slice(1).map(row => {
-            let obj = {};
-            txHeaders.forEach((h, i) => obj[h.toString().trim()] = row[i]);
-            return obj;
-          });
-        }
-
-        document.getElementById('loadingSheet').classList.add('hidden');
-
-        // بررسی ذخیره نشست قبلی (Session persistence)
-        const savedPhone = localStorage.getItem('karimi_phone');
-        const savedAccId = localStorage.getItem('karimi_accId');
-
-        if (savedPhone && savedAccId) {
-          autoLogin(savedPhone, savedAccId);
-        } else {
-          document.getElementById('phoneSection').classList.remove('hidden');
-        }
-
-      } catch (err) {
-        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات. لطفاً صفحه را رفرش کنید.</div>';
-      }
-    });
-
-    function cleanDigits(str) {
-      if (!str) return '';
-      return String(str).replace(/\D/g, '');
-    }
-
-    function checkPhone() {
-      const rawInput = document.getElementById('phoneInput').value.trim();
-      const errBox = document.getElementById('phoneError');
-      const btn = document.getElementById('btnCheckPhone');
-      errBox.classList.add('hidden');
-
-      if (!rawInput) return;
-      const userDigits = cleanDigits(rawInput);
-      btn.innerText = 'در حال بررسی...';
-
-      const found = accountsList.find(u => {
-        let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
-        const sheetPhone = cleanDigits(phoneVal);
-        if (!sheetPhone) return false;
-        // تطابق هوشمند با ۷ رقم آخر یا کل ارقام برای هر کشوری
-        return sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone) || (userDigits.length >= 7 && sheetPhone.slice(-7) === userDigits.slice(-7));
-      });
-
-      btn.innerText = 'شناسایی شماره';
-
-      if (found) {
-        currentFoundUser = found;
-        document.getElementById('phoneSection').classList.add('hidden');
-        document.getElementById('accountSection').classList.remove('hidden');
-        let nameVal = found.Name || found.name || found['نام'] || 'مشتری عزیز';
-        document.getElementById('greetingMsg').innerText = `سلام ${nameVal}، خوش آمدید!`;
-      } else {
-        document.getElementById('phoneErrorMsg').innerText = 'شماره شما در سیستم یافت نشد.';
-        errBox.classList.remove('hidden');
-      }
-    }
-
-    function autoLogin(phone, accId) {
-      const userDigits = cleanDigits(phone);
-      const found = accountsList.find(u => {
-        let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
-        const sheetPhone = cleanDigits(phoneVal);
-        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone));
-      });
-
-      if (found) {
-        let sheetAccId = String(found.AccountID || found.accountid || found.ID || '').trim().toLowerCase();
-        if (sheetAccId === accId.toLowerCase()) {
-          currentFoundUser = found;
-          processDashboard(sheetAccId);
-          return;
-        }
-      }
-      localStorage.clear();
-      document.getElementById('phoneSection').classList.remove('hidden');
-    }
-
-    function retryPhone() {
-      document.getElementById('phoneError').classList.add('hidden');
-      document.getElementById('phoneInput').value = '';
-    }
-
-    function verifyAccount() {
-      const accIdInput = document.getElementById('accountIdInput').value.trim().toLowerCase();
-      const accErr = document.getElementById('accountError');
-      const btn = document.getElementById('btnVerifyAcc');
-      accErr.classList.add('hidden');
-
-      if (!accIdInput) return;
-      btn.innerText = 'در حال ورود...';
-
-      let sheetAccId = String(currentFoundUser.AccountID || currentFoundUser.accountid || currentFoundUser.ID || '').trim().toLowerCase();
-      btn.innerText = 'ورود به حساب کاربری';
-
-      if (currentFoundUser && sheetAccId === accIdInput) {
-        // ذخیره در حافظه برای عدم نیاز به ورود مجدد
-        localStorage.setItem('karimi_phone', currentFoundUser.Phone || currentFoundUser.phone || '');
-        localStorage.setItem('karimi_accId', sheetAccId);
-
-        processDashboard(sheetAccId);
-      } else {
-        accErr.innerText = 'کد حساب (Account ID) اشتباه است.';
-        accErr.classList.remove('hidden');
-      }
-    }
-
-    function processDashboard(sheetAccId) {
-      document.getElementById('phoneSection').classList.add('hidden');
-      document.getElementById('accountSection').classList.add('hidden');
-      document.getElementById('dashboardSection').classList.remove('hidden');
-      
-      let nameVal = currentFoundUser.Name || currentFoundUser.name || '---';
-      let phoneVal = currentFoundUser.Phone || currentFoundUser.phone || '---';
-      let accIdVal = currentFoundUser.AccountID || currentFoundUser.accountid || '---';
-
-      document.getElementById('dashName').innerText = nameVal;
-      document.getElementById('dashPhone').innerText = phoneVal;
-      document.getElementById('dashAccId').innerText = `ID: ${accIdVal}`;
-
-      // فیلتر تراکنش‌ها و معکوس کردن برای نمایش جدیدترین‌ها در بالا
-      customerTransactions = transactionsList.filter(tx => {
-        let rowAccId = String(tx.AccountID || tx.accountid || tx.ID || '').trim().toLowerCase();
-        return rowAccId === sheetAccId;
-      }).reverse();
-
-      customerBalances = {};
-      customerTransactions.forEach(tx => {
-        let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
-        let amount = parseFloat(tx.Amount || tx.amount) || 0;
-        let dir = String(tx.Direction || tx.direction || '').trim();
-
-        if (!customerBalances[curr]) {
-          customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
-        }
-
-        if (dir.includes('بستانکار') || dir.includes('دریافت')) {
-          customerBalances[curr].credit += amount;
-        } else if (dir.includes('بدهکار') || dir.includes('پرداخت')) {
-          customerBalances[curr].debit += amount;
-        }
-      });
-
-      for (let c in customerBalances) {
-        customerBalances[c].net = customerBalances[c].credit - customerBalances[c].debit;
-      }
-
-      currencyList = Object.keys(customerBalances);
-      if (currencyList.length === 0) {
-        currencyList = ['AFN'];
-        customerBalances['AFN'] = { credit: 0, debit: 0, net: 0 };
-      }
-
-      activeCurrencyIndex = 0;
-      renderCurrencyTabs();
-      renderTransactions();
-    }
-
-    function renderCurrencyTabs() {
-      let tabsHtml = '';
-      currencyList.forEach((curr, idx) => {
-        let activeClass = idx === activeCurrencyIndex ? 'active' : '';
-        tabsHtml += `<button class="currency-tab ${activeClass}" onclick="switchCurrency(${idx})">${curr}</button>`;
-      });
-      document.getElementById('currencyTabs').innerHTML = tabsHtml;
-      renderActiveCurrencyCard();
-    }
-
-    function switchCurrency(idx) {
-      activeCurrencyIndex = idx;
-      renderCurrencyTabs();
-    }
-
-    function renderActiveCurrencyCard() {
-      let currName = currencyList[activeCurrencyIndex];
-      let b = customerBalances[currName] || { credit: 0, debit: 0, net: 0 };
-      let netColor = b.net >= 0 ? 'var(--success)' : 'var(--danger)';
-      
-      let cardHtml = `
-        <div class="currency-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 800; font-size: 14px; color: #1e293b;">ارز: ${currName}</span>
-            <span style="font-size: 18px; font-weight: 800; color: ${netColor};" class="eng-num">${b.net.toLocaleString()}</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
-            <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.credit.toLocaleString()}</b></span>
-            <span>بدهکار (-): <b style="color: var(--danger);" class="eng-num">${b.debit.toLocaleString()}</b></span>
-          </div>
-        </div>`;
-      document.getElementById('activeCurrencyCard').innerHTML = cardHtml;
-    }
-
-    function renderTransactions() {
-      let txHtml = '';
-      if (customerTransactions.length === 0) {
-        txHtml = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی یافت نشد.</div>';
-      } else {
-        customerTransactions.forEach((tx, idx) => {
-          let dir = String(tx.Direction || tx.direction || '');
-          let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
-          let amountVal = parseFloat(tx.Amount || tx.amount) || 0;
-          
-          txHtml += `
-            <div class="tx-card" onclick="openModal(${idx})">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:800; font-size:14px; color:#1e293b;">${tx.OperationType || tx.operationtype || 'عملیات مالی'}</span>
-                <span style="font-size:11px; background:#f1f5f9; padding:3px 8px; border-radius:6px; color:var(--text-muted); font-weight: 700;" class="eng-num">${tx.Date || tx.date || '---'}</span>
-              </div>
-              <div style="font-size:12px; color:#334155; margin-bottom:10px; line-height:1.6;">
-                ${tx.Description || tx.description || 'بدون شرح'}<br>
-                وضعیت: <span style="color:var(--success); font-weight:800;">${tx.Status || tx.status || 'رسیده'}</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
-                <span style="font-weight:800; font-size:13px; color:${amtColor};" class="eng-num">${tx.Currency || tx.currency || 'AFN'} ${amountVal.toLocaleString()} (${dir})</span>
-                <span style="color:#4f46e5; font-size:11px; font-weight:800;">مشاهده جزئیات</span>
-              </div>
-            </div>`;
-        });
-      }
-
-      document.getElementById('transactionsContainer').innerHTML = txHtml;
-      document.getElementById('txCountBadge').innerText = customerTransactions.length;
-    }
-
-    function openModal(idx) {
-      let tx = customerTransactions[idx];
-      let bodyHtml = `
-        <p><b>شناسه تراکنش:</b> <span class="eng-num">${tx.TransID || tx.transid || '---'}</span></p>
-        <p><b>نوع عملیات:</b> ${tx.OperationType || tx.operationtype || '---'}</p>
-        <p><b>تاریخ:</b> <span class="eng-num">${tx.Date || tx.date || '---'}</span></p>
-        <p><b>شرح:</b> ${tx.Description || tx.description || '---'}</p>
-        <p><b>واحد ارز:</b> ${tx.Currency || tx.currency || '---'}</p>
-        <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:var(--primary);">${tx.Amount || tx.amount || '0'}</span></p>
-        <p><b>جهت تراکنش:</b> ${tx.Direction || tx.direction || '---'}</p>
-        <p><b>وضعیت:</b> <span style="color:var(--success); font-weight:bold;">${tx.Status || tx.status || '---'}</span></p>
-      `;
-      document.getElementById('modalBody').innerHTML = bodyHtml;
-      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${tx.TransID || tx.transid || (idx+1)}%20را دارم`;
-      document.getElementById('txModal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-      document.getElementById('txModal').classList.add('hidden');
-    }
-
-    function backToPhone() {
-      document.getElementById('accountSection').classList.add('hidden');
-      document.getElementById('phoneSection').classList.remove('hidden');
-      document.getElementById('accountIdInput').value = '';
-    }
-
-    function logout() {
-      localStorage.clear();
-      document.getElementById('dashboardSection').classList.add('hidden');
-      document.getElementById('phoneSection').classList.remove('hidden');
-      document.getElementById('phoneInput').value = '';
-      document.getElementById('accountIdInput').value = '';
-      currentFoundUser = null;
-    }
-  </script>
 </body>
 </html>
