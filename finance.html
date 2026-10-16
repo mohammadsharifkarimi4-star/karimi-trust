@@ -1,1 +1,576 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حساب‌کتاب‌های من - مدیریت مالی شخصی</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
 
+    :root {
+      --primary: #6366f1;
+      --success: #059669;
+      --danger: #dc2626;
+      --glass-bg: rgba(255, 255, 255, 0.9);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; direction: rtl; }
+
+    body {
+      background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 24px;
+      border-radius: 30px;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 12px;
+    }
+
+    .back-btn {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1e1b4b;
+    }
+
+    .sub-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: rgba(226, 232, 240, 0.6);
+      padding: 5px;
+      border-radius: 16px;
+    }
+
+    .sub-tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .sub-tab.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .section-box { display: none; }
+    .section-box.active { display: block; animation: fadeIn 0.4s ease-out; }
+
+    .card-stats {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 18px;
+      border-right: 5px solid var(--primary);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .form-group { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 12px; color: #334155; }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      font-size: 14px;
+      outline: none;
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+
+    .btn-main {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+      margin-top: 5px;
+    }
+
+    .btn-main:active { transform: scale(0.97); }
+
+    .tx-item {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      position: relative;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn-wa { background: #10b981; color: white; }
+    .btn-edit { background: #f59e0b; color: white; }
+    .btn-del { background: var(--danger); color: white; }
+
+    .hidden { display: none !important; }
+    .eng-num { font-family: Tahoma, sans-serif; direction: ltr; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <a href="index.html" class="back-btn">← بازگشت به منو</a>
+      <div class="header-title">📊 حساب‌کتاب‌های من</div>
+      <div></div>
+    </div>
+
+    <!-- تب‌های اصلی بین طلب‌ها و خرج‌ها -->
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchMainTab('debtsTab', this)">طلب‌ها و بدهی‌ها</button>
+      <button class="sub-tab" onclick="switchMainTab('expensesTab', this)">خرج‌ها و درآمدها</button>
+    </div>
+
+    <!-- بخش اول: طلب‌ها و بدهی‌ها -->
+    <div id="debtsTab" class="section-box active">
+      <div class="card-stats" id="debtsStatsSummary">
+        <div style="font-weight: 800; font-size: 14px; margin-bottom: 6px; color: #1e1b4b;">آمار کل طلب و بدهی</div>
+        <div id="debtsStatsContent" style="font-size: 13px; color: var(--text-muted);">داده‌ای ثبت نشده است.</div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.7); padding: 16px; border-radius: 20px; margin-bottom: 20px;">
+        <div style="font-weight: 800; font-size: 14px; margin-bottom: 12px; color: #1e1b4b;" id="debtFormTitle">➕ ثبت تراکنش جدید</div>
+        <input type="hidden" id="editDebtId">
+        
+        <div class="form-group">
+          <label>نام شخص:</label>
+          <input type="text" id="debtName" placeholder="مثلاً احمد احمدی">
+        </div>
+        <div class="form-group">
+          <label>شماره واتساپ:</label>
+          <input type="text" id="debtPhone" placeholder="96477... یا 077..." class="eng-num">
+        </div>
+        <div class="form-group">
+          <label>نوع تراکنش:</label>
+          <select id="debtType">
+            <option value="طلب">از او طلبکارم (طلب)</option>
+            <option value="بدهی">به او بدهکارم (بدهی)</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <div class="form-group" style="flex: 2;">
+            <label>مبلغ:</label>
+            <input type="number" id="debtAmount" placeholder="1000" class="eng-num">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>ارز:</label>
+            <select id="debtCurrency">
+              <option value="دلار">دلار ($)</option>
+              <option value="تومان">تومان</option>
+              <option value="افغانی">افغانی</option>
+              <option value="دینار">دینار</option>
+              <option value="کلدار">کلدار</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>تاریخ:</label>
+          <input type="date" id="debtDate" class="eng-num">
+        </div>
+        <div class="form-group">
+          <label>توضیحات:</label>
+          <textarea id="debtDesc" rows="2" placeholder="بابت..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>بارگذاری عکس رسید (اختیاری):</label>
+          <input type="file" id="debtReceipt" accept="image/*">
+        </div>
+        <button class="btn-main" onclick="saveDebt()">ثبت تراکنش</button>
+      </div>
+
+      <div style="font-weight: 800; font-size: 14px; margin-bottom: 10px; color: #1e1b4b;">📋 لیست طلب‌ها و بدهی‌ها</div>
+      <div id="debtsListContainer"></div>
+    </div>
+
+    <!-- بخش دوم: خرج‌ها و درآمدها -->
+    <div id="expensesTab" class="section-box">
+      <div class="card-stats" id="expensesStatsSummary">
+        <div style="font-weight: 800; font-size: 14px; margin-bottom: 6px; color: #1e1b4b;">آمار خرج و درآمد</div>
+        <div id="expensesStatsContent" style="font-size: 13px; color: var(--text-muted);">داده‌ای ثبت نشده است.</div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.7); padding: 16px; border-radius: 20px; margin-bottom: 20px;">
+        <div style="font-weight: 800; font-size: 14px; margin-bottom: 12px; color: #1e1b4b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</div>
+        <input type="hidden" id="editExpenseId">
+
+        <div class="form-group">
+          <label>نوع:</label>
+          <select id="expenseType">
+            <option value="درآمد">درآمد 🟢</option>
+            <option value="خرج">خرج و هزینه 🔴</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>عنوان:</label>
+          <input type="text" id="expenseTitle" placeholder="مثلاً حقوق، خرید مواد غذایی...">
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <div class="form-group" style="flex: 2;">
+            <label>مبلغ:</label>
+            <input type="number" id="expenseAmount" placeholder="500" class="eng-num">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>ارز:</label>
+            <select id="expenseCurrency">
+              <option value="دلار">دلار ($)</option>
+              <option value="تومان">تومان</option>
+              <option value="افغانی">افغانی</option>
+              <option value="دینار">دینار</option>
+              <option value="کلدار">کلدار</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>تاریخ:</label>
+          <input type="date" id="expenseDate" class="eng-num">
+        </div>
+        <div class="form-group">
+          <label>توضیحات:</label>
+          <textarea id="expenseDesc" rows="2" placeholder="جزئیات..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>بارگذاری عکس رسید (اختیاری):</label>
+          <input type="file" id="expenseReceipt" accept="image/*">
+        </div>
+        <button class="btn-main" onclick="saveExpense()">ثبت رکورد</button>
+      </div>
+
+      <div style="font-weight: 800; font-size: 14px; margin-bottom: 10px; color: #1e1b4b;">📋 لیست خرج‌ها و درآمدها</div>
+      <div id="expensesListContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    let debts = JSON.parse(localStorage.getItem('my_debts') || '[]');
+    let expenses = JSON.parse(localStorage.getItem('my_expenses') || '[]');
+
+    document.getElementById('debtDate').valueAsDate = new Date();
+    document.getElementById('expenseDate').valueAsDate = new Date();
+
+    function switchMainTab(tabId, btn) {
+      document.querySelectorAll('.section-box').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function cleanPhone(phone) {
+      if (!phone) return '';
+      return phone.replace(/\D/g, '');
+    }
+
+    // --- مدیریت طلب و بدهی ---
+    function saveDebt() {
+      let id = document.getElementById('editDebtId').value;
+      let name = document.getElementById('debtName').value.trim();
+      let phone = document.getElementById('debtPhone').value.trim();
+      let type = document.getElementById('debtType').value;
+      let amount = parseFloat(document.getElementById('debtAmount').value) || 0;
+      let currency = document.getElementById('debtCurrency').value;
+      let date = document.getElementById('debtDate').value;
+      let desc = document.getElementById('debtDesc').value.trim();
+      let receiptFile = document.getElementById('debtReceipt').files[0];
+
+      if (!name || amount <= 0) {
+        alert('لطفاً نام شخص و مبلغ معتبر وارد کنید.');
+        return;
+      }
+
+      let saveItem = (receiptBase64) => {
+        if (id) {
+          let idx = debts.findIndex(item => item.id == id);
+          if (idx !== -1) {
+            debts[idx] = { id: Number(id), name, phone, type, amount, currency, date, desc, receipt: receiptBase64 || debts[idx].receipt };
+          }
+        } else {
+          debts.push({ id: Date.now(), name, phone, type, amount, currency, date, desc, receipt: receiptBase64 || '' });
+        }
+        localStorage.setItem('my_debts', JSON.stringify(debts));
+        resetDebtForm();
+        renderDebts();
+      };
+
+      if (receiptFile) {
+        let reader = new FileReader();
+        reader.onload = function(e) { saveItem(e.target.result); };
+        reader.readAsDataURL(receiptFile);
+      } else {
+        saveItem(null);
+      }
+    }
+
+    function resetDebtForm() {
+      document.getElementById('editDebtId').value = '';
+      document.getElementById('debtName').value = '';
+      document.getElementById('debtPhone').value = '';
+      document.getElementById('debtAmount').value = '';
+      document.getElementById('debtDesc').value = '';
+      document.getElementById('debtReceipt').value = '';
+      document.getElementById('debtFormTitle').innerText = '➕ ثبت تراکنش جدید';
+    }
+
+    function renderDebts() {
+      let container = document.getElementById('debtsListContainer');
+      let html = '';
+      let stats = {};
+
+      if (debts.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی ثبت نشده است.</div>';
+        document.getElementById('debtsStatsContent').innerText = 'داده‌ای ثبت نشده است.';
+        return;
+      }
+
+      debts.forEach(item => {
+        let amtColor = item.type === 'طلب' ? 'var(--success)' : 'var(--danger)';
+        if (!stats[item.currency]) stats[item.currency] = { طلب: 0, بدهی: 0 };
+        stats[item.currency][item.type] += item.amount;
+
+        let waText = encodeURIComponent(`سلام ${item.name} عزیز، گزارش حساب شما:\nمبلغ: ${item.amount} ${item.currency}\nنوع: ${item.type}\nتاریخ: ${item.date}\nشرح: ${item.desc}`);
+        let waLink = item.phone ? `https://wa.me/${cleanPhone(item.phone)}?text=${waText}` : '#';
+
+        html += `
+          <div class="tx-item">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-weight:800; font-size:14px; color:#1e293b;">${item.name} (${item.type})</span>
+              <span style="font-size:11px; color:var(--text-muted);" class="eng-num">${item.date}</span>
+            </div>
+            <div style="font-size:13px; margin-bottom:6px; color:${amtColor}; font-weight:800;" class="eng-num">
+              ${item.currency} ${item.amount.toLocaleString()}
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">${item.desc || 'بدون توضیح'}</div>
+            ${item.receipt ? `<div style="margin-bottom:8px;"><a href="${item.receipt}" target="_blank" style="font-size:11px; color:var(--primary);">مشاهده عکس رسید</a></div>` : ''}
+            <div class="action-btns">
+              <a href="${waLink}" target="_blank" class="action-btn btn-wa">واتساپ</a>
+              <button class="action-btn btn-edit" onclick="editDebt(${item.id})">ویرایش</button>
+              <button class="action-btn btn-del" onclick="deleteDebt(${item.id})">حذف</button>
+            </div>
+          </div>`;
+      });
+
+      container.innerHTML = html;
+
+      let statsHtml = '';
+      for (let c in stats) {
+        statsHtml += `<div><b>${c}:</b> طلبکار: <span style="color:var(--success);" class="eng-num">${stats[c]['طلب'].toLocaleString()}</span> | بدهکار: <span style="color:var(--danger);" class="eng-num">${stats[c]['بدهی'].toLocaleString()}</span></div>`;
+      }
+      document.getElementById('debtsStatsContent').innerHTML = statsHtml;
+    }
+
+    function editDebt(id) {
+      let item = debts.find(d => d.id == id);
+      if (!item) return;
+      document.getElementById('editDebtId').value = item.id;
+      document.getElementById('debtName').value = item.name;
+      document.getElementById('debtPhone').value = item.phone;
+      document.getElementById('debtType').value = item.type;
+      document.getElementById('debtAmount').value = item.amount;
+      document.getElementById('debtCurrency').value = item.currency;
+      document.getElementById('debtDate').value = item.date;
+      document.getElementById('debtDesc').value = item.desc;
+      document.getElementById('debtFormTitle').innerText = '✏️ ویرایش تراکنش';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteDebt(id) {
+      if (confirm('آیا از حذف این مورد اطمینان دارید؟')) {
+        debts = debts.filter(d => d.id != id);
+        localStorage.setItem('my_debts', JSON.stringify(debts));
+        renderDebts();
+      }
+    }
+
+    // --- مدیریت خرج و درآمد ---
+    function saveExpense() {
+      let id = document.getElementById('editExpenseId').value;
+      let type = document.getElementById('expenseType').value;
+      let title = document.getElementById('expenseTitle').value.trim();
+      let amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
+      let currency = document.getElementById('expenseCurrency').value;
+      let date = document.getElementById('expenseDate').value;
+      let desc = document.getElementById('expenseDesc').value.trim();
+      let receiptFile = document.getElementById('expenseReceipt').files[0];
+
+      if (!title || amount <= 0) {
+        alert('لطفاً عنوان و مبلغ معتبر وارد کنید.');
+        return;
+      }
+
+      let saveItem = (receiptBase64) => {
+        if (id) {
+          let idx = expenses.findIndex(item => item.id == id);
+          if (idx !== -1) {
+            expenses[idx] = { id: Number(id), type, title, amount, currency, date, desc, receipt: receiptBase64 || expenses[idx].receipt };
+          }
+        } else {
+          expenses.push({ id: Date.now(), type, title, amount, currency, date, desc, receipt: receiptBase64 || '' });
+        }
+        localStorage.setItem('my_expenses', JSON.stringify(expenses));
+        resetExpenseForm();
+        renderExpenses();
+      };
+
+      if (receiptFile) {
+        let reader = new FileReader();
+        reader.onload = function(e) { saveItem(e.target.result); };
+        reader.readAsDataURL(receiptFile);
+      } else {
+        saveItem(null);
+      }
+    }
+
+    function resetExpenseForm() {
+      document.getElementById('editExpenseId').value = '';
+      document.getElementById('expenseTitle').value = '';
+      document.getElementById('expenseAmount').value = '';
+      document.getElementById('expenseDesc').value = '';
+      document.getElementById('expenseReceipt').value = '';
+      document.getElementById('expenseFormTitle').innerText = '➕ ثبت خرج یا درآمد';
+    }
+
+    function renderExpenses() {
+      let container = document.getElementById('expensesListContainer');
+      let html = '';
+      let stats = {};
+
+      if (expenses.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:13px;">هیچ رکوردی ثبت نشده است.</div>';
+        document.getElementById('expensesStatsContent').innerText = 'داده‌ای ثبت نشده است.';
+        return;
+      }
+
+      expenses.forEach(item => {
+        let amtColor = item.type === 'درآمد' ? 'var(--success)' : 'var(--danger)';
+        if (!stats[item.currency]) stats[item.currency] = { درآمد: 0, خرج: 0 };
+        stats[item.currency][item.type] += item.amount;
+
+        html += `
+          <div class="tx-item">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-weight:800; font-size:14px; color:#1e293b;">${item.title} (${item.type})</span>
+              <span style="font-size:11px; color:var(--text-muted);" class="eng-num">${item.date}</span>
+            </div>
+            <div style="font-size:13px; margin-bottom:6px; color:${amtColor}; font-weight:800;" class="eng-num">
+              ${item.currency} ${item.amount.toLocaleString()}
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">${item.desc || 'بدون توضیح'}</div>
+            ${item.receipt ? `<div style="margin-bottom:8px;"><a href="${item.receipt}" target="_blank" style="font-size:11px; color:var(--primary);">مشاهده عکس رسید</a></div>` : ''}
+            <div class="action-btns">
+              <button class="action-btn btn-edit" onclick="editExpense(${item.id})">ویرایش</button>
+              <button class="action-btn btn-del" onclick="deleteExpense(${item.id})">حذف</button>
+            </div>
+          </div>`;
+      });
+
+      container.innerHTML = html;
+
+      let statsHtml = '';
+      for (let c in stats) {
+        statsHtml += `<div><b>${c}:</b> درآمد: <span style="color:var(--success);" class="eng-num">${stats[c]['درآمد'].toLocaleString()}</span> | خرج: <span style="color:var(--danger);" class="eng-num">${stats[c]['خرج'].toLocaleString()}</span></div>`;
+      }
+      document.getElementById('expensesStatsContent').innerHTML = statsHtml;
+    }
+
+    function editExpense(id) {
+      let item = expenses.find(e => e.id == id);
+      if (!item) return;
+      document.getElementById('editExpenseId').value = item.id;
+      document.getElementById('expenseType').value = item.type;
+      document.getElementById('expenseTitle').value = item.title;
+      document.getElementById('expenseAmount').value = item.amount;
+      document.getElementById('expenseCurrency').value = item.currency;
+      document.getElementById('expenseDate').value = item.date;
+      document.getElementById('expenseDesc').value = item.desc;
+      document.getElementById('expenseFormTitle').innerText = '✏️ ویرایش رکورد';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteExpense(id) {
+      if (confirm('آیا از حذف این مورد اطمینان دارید؟')) {
+        expenses = expenses.filter(e => e.id != id);
+        localStorage.setItem('my_expenses', JSON.stringify(expenses));
+        renderExpenses();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderDebts();
+      renderExpenses();
+    });
+  </script>
+</body>
+</html>
