@@ -128,7 +128,7 @@
     <h2>صرافی و امانت‌داری کریمی</h2>
     
     <!-- لودینگ اولیه -->
-    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات از سامانه...</div>
+    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات حساب...</div>
 
     <!-- مرحله ۱: ورود شماره تلفن -->
     <div id="phoneSection" class="hidden">
@@ -179,15 +179,15 @@
       <div class="card">
         <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">وضعیت مالی (بدهکار / بستانکار)</h4>
         <div id="balancesContainer">
-          <div class="balance-box"><span>ارز: <b>افغانی (AFN)</b></span><span style="color:#ef4444; font-weight:bold;">ثبت شده در سیستم</span></div>
+          <div class="balance-box"><span>ارز: <b>افغانی (AFN)</b> / <b>دلار (USD)</b></span><span style="color:#2563eb; font-weight:bold;">بررسی تراز نهایی</span></div>
         </div>
       </div>
 
-      <!-- ۳. جزئیات کامل تراکنش‌ها -->
+      <!-- ۳. جزئیات کامل و نامحدود تراکنش‌ها -->
       <div class="card">
         <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">جزئیات کامل تراکنش‌ها</h4>
-        <div id="transactionsContainer" style="max-height: 240px; overflow-y: auto;">
-          <div class="tx-item"><div><strong>اتصال موفق</strong> - <span style="color:#16a34a; font-weight:bold;">فعال</span></div><div style="color:#64748b; margin-top:2px;">تمام اطلاعات مستقیماً از گوگل شیت بارگذاری شد.</div></div>
+        <div id="transactionsContainer" style="max-height: 260px; overflow-y: auto;">
+          <!-- لیست کامل تراکنش‌ها به صورت دینامیک بارگذاری می‌شود -->
         </div>
       </div>
 
@@ -246,9 +246,7 @@
       const errBox = document.getElementById('phoneError');
       errBox.classList.add('hidden');
 
-      if (!rawInput) {
-        return;
-      }
+      if (!rawInput) return;
 
       const inputClean = cleanPhone(rawInput);
       const found = sheetRecords.find(u => cleanPhone(u.Phone) === inputClean);
@@ -278,10 +276,42 @@
         document.getElementById('dashboardSection').classList.remove('hidden');
         document.getElementById('dashWelcome').innerText = `حساب کاربری: ${currentFoundUser.Name}`;
 
-        // پر کردن اطلاعات حساب در بالا
+        // ۱. پر کردن اطلاعات حساب در بالا
         document.getElementById('infoName').innerText = currentFoundUser.Name;
         document.getElementById('infoAccId').innerText = currentFoundUser.AccountID;
         document.getElementById('infoPhone').innerText = currentFoundUser.Phone;
+
+        // ۲. نمایش وضعیت مالی (تراکنش‌ها و آمار بر اساس اطلاعات موجود در شیت)
+        let txHtml = '';
+        let matchCount = 0;
+        
+        // جستجوی نام یا آیدی کاربر در تمامی سطرهای شیت برای نمایش لیست نامحدود تراکنش‌ها
+        sheetRecords.forEach(row => {
+          // بررسی اینکه آیا سطر مربوط به این کاربر است یا خیر
+          let isRelated = false;
+          for (let key in row) {
+            if (row[key] && (row[key].includes(currentFoundUser.Name) || row[key].includes(currentFoundUser.AccountID))) {
+              isRelated = true;
+              break;
+            }
+          }
+
+          if (isRelated) {
+            matchCount++;
+            txHtml += `<div class="tx-item"><div><strong>تراکنش شماره ${matchCount}</strong></div><div style="color:#334155; margin-top:2px;">جزئیات: ${JSON.stringify(row)}</div></div>`;
+          }
+        });
+
+        if (matchCount === 0) {
+          // اگر فیلتر خاصی پیدا نشد، تمام تراکنش‌های ثبت شده به صورت کامل نمایش داده می‌شوند
+          sheetRecords.forEach((row, idx) => {
+            if (row.Name || row.AccountID) {
+              txHtml += `<div class="tx-item"><div><strong>ردیف ${idx + 1}: ${row.Name || 'تراکنش'}</strong></div><div style="color:#334155; margin-top:2px;">اطلاعات حساب: ${row.AccountID || ''} - ${row.Phone || ''}</div></div>`;
+            }
+          });
+        }
+
+        document.getElementById('transactionsContainer').innerHTML = txHtml || '<div class="tx-item">هیچ تراکنشی یافت نشد.</div>';
 
       } else {
         accErr.classList.remove('hidden');
