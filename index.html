@@ -26,7 +26,7 @@
     }
     .container {
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
       background: var(--glass-bg);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
@@ -66,27 +66,29 @@
     }
     button:hover { background: #1d4ed8; }
     .card {
-      background: rgba(255, 255, 255, 0.75);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      border-radius: 12px;
-      padding: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 14px;
+      padding: 16px;
       margin-bottom: 15px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
     }
     .balance-box {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
+      padding: 10px 0;
       border-bottom: 1px solid #f1f5f9;
       font-size: 14px;
     }
     .balance-box:last-child { border-bottom: none; }
     .tx-item {
-      border-bottom: 1px solid #f1f5f9;
-      padding: 10px 0;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
       font-size: 13px;
     }
-    .tx-item:last-child { border-bottom: none; }
     .hidden { display: none !important; }
     .whatsapp-btn {
       display: flex;
@@ -120,7 +122,7 @@
       align-items: center;
       margin-bottom: 15px;
     }
-    .loading { text-align: center; padding: 20px; color: var(--text-muted); font-size: 14px; }
+    .loading { text-align: center; padding: 25px; color: var(--text-muted); font-size: 14px; }
   </style>
 </head>
 <body>
@@ -128,7 +130,7 @@
     <h2>صرافی و امانت‌داری کریمی</h2>
     
     <!-- لودینگ اولیه -->
-    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات حساب...</div>
+    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات حساب‌ها...</div>
 
     <!-- مرحله ۱: ورود شماره تلفن -->
     <div id="phoneSection" class="hidden">
@@ -169,7 +171,7 @@
       
       <!-- ۱. اطلاعات حساب در بالا -->
       <div class="card">
-        <h4 style="margin-bottom: 6px; color: #334155; font-size: 14px;">اطلاعات حساب</h4>
+        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">مشخصات حساب</h4>
         <div class="balance-box"><span>نام مشتری:</span><b id="infoName">---</b></div>
         <div class="balance-box"><span>کد حساب:</span><b id="infoAccId">---</b></div>
         <div class="balance-box"><span>شماره تماس:</span><b id="infoPhone">---</b></div>
@@ -177,17 +179,17 @@
 
       <!-- ۲. آمار مالی به تفکیک ارز (بدهکار / بستانکار) -->
       <div class="card">
-        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">وضعیت مالی (بدهکار / بستانکار)</h4>
+        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">وضعیت مالی و تراز حساب</h4>
         <div id="balancesContainer">
-          <div class="balance-box"><span>ارز: <b>افغانی (AFN)</b> / <b>دلار (USD)</b></span><span style="color:#2563eb; font-weight:bold;">بررسی تراز نهایی</span></div>
+          <div class="balance-box"><span>ارزهای فعال:</span><span style="color:#2563eb; font-weight:bold;">بررسی تراز نهایی</span></div>
         </div>
       </div>
 
-      <!-- ۳. جزئیات کامل و نامحدود تراکنش‌ها -->
+      <!-- ۳. جزئیات نامحدود تراکنش‌ها -->
       <div class="card">
-        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px;">جزئیات کامل تراکنش‌ها</h4>
-        <div id="transactionsContainer" style="max-height: 260px; overflow-y: auto;">
-          <!-- لیست کامل تراکنش‌ها به صورت دینامیک بارگذاری می‌شود -->
+        <h4 style="margin-bottom: 8px; color: #334155; font-size: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">لیست کامل تراکنش‌ها</h4>
+        <div id="transactionsContainer" style="max-height: 280px; overflow-y: auto; padding-left: 4px;">
+          <!-- تراکنش‌ها اینجا بارگذاری می‌شوند -->
         </div>
       </div>
 
@@ -276,42 +278,56 @@
         document.getElementById('dashboardSection').classList.remove('hidden');
         document.getElementById('dashWelcome').innerText = `حساب کاربری: ${currentFoundUser.Name}`;
 
-        // ۱. پر کردن اطلاعات حساب در بالا
+        // ۱. پر کردن مشخصات حساب در بالا
         document.getElementById('infoName').innerText = currentFoundUser.Name;
         document.getElementById('infoAccId').innerText = currentFoundUser.AccountID;
         document.getElementById('infoPhone').innerText = currentFoundUser.Phone;
 
-        // ۲. نمایش وضعیت مالی (تراکنش‌ها و آمار بر اساس اطلاعات موجود در شیت)
+        // ۲. نمایش لیست کامل و نامحدود تراکنش‌ها برای این AccountID خاص
         let txHtml = '';
         let matchCount = 0;
-        
-        // جستجوی نام یا آیدی کاربر در تمامی سطرهای شیت برای نمایش لیست نامحدود تراکنش‌ها
-        sheetRecords.forEach(row => {
-          // بررسی اینکه آیا سطر مربوط به این کاربر است یا خیر
-          let isRelated = false;
+
+        sheetRecords.forEach((row, idx) => {
+          // بررسی تطابق با اکانت آیدی کاربر یا نام او
+          let isMatch = false;
           for (let key in row) {
-            if (row[key] && (row[key].includes(currentFoundUser.Name) || row[key].includes(currentFoundUser.AccountID))) {
-              isRelated = true;
+            if (row[key] && (row[key].toLowerCase() === currentFoundUser.AccountID.toLowerCase() || row[key] === currentFoundUser.Name)) {
+              isMatch = true;
               break;
             }
           }
 
-          if (isRelated) {
+          if (isMatch) {
             matchCount++;
-            txHtml += `<div class="tx-item"><div><strong>تراکنش شماره ${matchCount}</strong></div><div style="color:#334155; margin-top:2px;">جزئیات: ${JSON.stringify(row)}</div></div>`;
+            txHtml += `
+              <div class="tx-item">
+                <div style="display:flex; justify-content:between; font-weight:bold; color:#0f172a; margin-bottom:4px;">
+                  <span>تراکنش شماره ${matchCount}</span>
+                  <span style="color:#64748b; font-size:11px;">${row.Date || ''}</span>
+                </div>
+                <div style="color:#334155; line-height:1.5;">
+                  ${row.Type ? `نوع: <b>${row.Type}</b><br>` : ''}
+                  ${row.Status ? `وضعیت: <span style="color:#16a34a; font-weight:bold;">${row.Status}</span>` : ''}
+                </div>
+              </div>`;
           }
         });
 
+        // اگر ردیف مستقیمی پیدا نشد، تمام تراکنش‌های ثبت شده نمایش داده می‌شوند تا کاربر چیزی را از دست ندهد
         if (matchCount === 0) {
-          // اگر فیلتر خاصی پیدا نشد، تمام تراکنش‌های ثبت شده به صورت کامل نمایش داده می‌شوند
           sheetRecords.forEach((row, idx) => {
-            if (row.Name || row.AccountID) {
-              txHtml += `<div class="tx-item"><div><strong>ردیف ${idx + 1}: ${row.Name || 'تراکنش'}</strong></div><div style="color:#334155; margin-top:2px;">اطلاعات حساب: ${row.AccountID || ''} - ${row.Phone || ''}</div></div>`;
+            if (row.Date || row.Type || row.Status) {
+              matchCount++;
+              txHtml += `
+                <div class="tx-item">
+                  <div style="font-weight:bold; color:#0f172a; margin-bottom:4px;">تراکنش ${matchCount}</div>
+                  <div style="color:#334155;">تاریخ: ${row.Date || 'نامشخص'} - نوع: ${row.Type || 'ثبت شده'}</div>
+                </div>`;
             }
           });
         }
 
-        document.getElementById('transactionsContainer').innerHTML = txHtml || '<div class="tx-item">هیچ تراکنشی یافت نشد.</div>';
+        document.getElementById('transactionsContainer').innerHTML = txHtml || '<div class="tx-item" style="text-align:center; color:#64748b;">هیچ تراکنشی برای این حساب یافت نشد.</div>';
 
       } else {
         accErr.classList.remove('hidden');
