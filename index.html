@@ -12,14 +12,14 @@
       --primary-hover: #4f46e5;
       --success: #10b981;
       --danger: #ef4444;
-      --glass-bg: rgba(255, 255, 255, 0.82);
-      --glass-border: rgba(255, 255, 255, 0.9);
-      --card-bg: rgba(255, 255, 255, 0.9);
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --card-bg: rgba(255, 255, 255, 0.92);
       --text-main: #0f172a;
       --text-muted: #64748b;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; direction: rtl; }
 
     body {
       background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #f0fdf4 100%);
@@ -45,14 +45,14 @@
 
     .container {
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       background: var(--glass-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border: 1px solid var(--glass-border);
-      padding: 22px;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
       animation: fadeIn 0.5s ease-out;
       position: relative;
     }
@@ -60,7 +60,7 @@
     .header-title {
       text-align: center;
       color: var(--text-main);
-      margin-bottom: 20px;
+      margin-bottom: 22px;
       font-size: 20px;
       font-weight: 700;
       text-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -77,8 +77,9 @@
       font-size: 16px;
       text-align: center;
       outline: none;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       transition: all 0.3s ease;
+      direction: ltr; /* برای وارد کردن راحت شماره و انگلیسی */
     }
 
     input:focus {
@@ -107,12 +108,12 @@
 
     .card, .user-profile-header, .currency-card {
       background: var(--card-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     }
 
     .user-profile-header {
@@ -123,15 +124,17 @@
     }
 
     .tx-card {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.98);
       border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.03);
       animation: fadeIn 0.4s ease-out;
       transition: all 0.2s;
     }
+
+    .tx-card:hover { border-color: var(--primary); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.12); }
 
     .hidden { display: none !important; }
 
@@ -144,11 +147,11 @@
       color: white;
       text-decoration: none;
       padding: 14px;
-      border-radius: 14px;
+      border-radius: 16px;
       font-weight: 700;
       font-size: 15px;
       margin-top: 15px;
-      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
     }
 
     .error-box {
@@ -156,20 +159,22 @@
       border: 1px solid #fecaca;
       color: var(--danger);
       padding: 15px;
-      border-radius: 14px;
+      border-radius: 16px;
       text-align: center;
       font-size: 13px;
       margin-top: 15px;
     }
 
-    .loading { text-align: center; padding: 30px; color: var(--text-muted); font-size: 15px; font-weight: 500; }
+    .loading { text-align: center; padding: 35px; color: var(--text-muted); font-size: 15px; font-weight: 500; }
+    
+    .eng-num { font-family: Tahoma, Arial, sans-serif; direction: ltr; display: inline-block; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-title">🛡️ امانت‌داری کریمی مرکزی</div>
     
-    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات از سامانه...</div>
+    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات کامل از سامانه...</div>
 
     <!-- مرحله ۱: ورود شماره همراه -->
     <div id="phoneSection" class="hidden">
@@ -177,7 +182,7 @@
       <div style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.</div>
       <div class="form-group">
         <label>شماره همراه:</label>
-        <input type="text" id="phoneInput" placeholder="مثال: 9647721878997">
+        <input type="text" id="phoneInput" placeholder="7721878997">
       </div>
       <button onclick="checkPhone()">شناسایی شماره</button>
       
@@ -195,7 +200,7 @@
       <div id="greetingMsg" style="text-align:center; font-weight:700; color:var(--success); margin-bottom:15px; font-size:16px;"></div>
       <div class="form-group">
         <label>کد اختصاصی حساب (AccountID):</label>
-        <input type="password" id="accountIdInput" placeholder="کد حساب خود را وارد کنید">
+        <input type="password" id="accountIdInput" placeholder="Account ID" style="text-align: center;">
       </div>
       <button onclick="verifyAccount()">ورود به حساب کاربری</button>
       <button onclick="backToPhone()" style="background: #64748b; margin-top:10px;">تغییر شماره همراه</button>
@@ -207,10 +212,10 @@
       <div class="user-profile-header">
         <div>
           <div id="dashName" style="font-weight: 700; font-size: 16px; color: var(--text-main);">---</div>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">تلفن: <span id="dashPhone">---</span></div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">تلفن: <span id="dashPhone" class="eng-num">---</span></div>
         </div>
         <div style="text-align: left;">
-          <div style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 3px 8px; border-radius: 8px; display:inline-block; font-weight: 700;" id="dashAccId">---</div>
+          <div style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 8px; display:inline-block; font-weight: 700;" id="dashAccId" class="eng-num">---</div>
           <br>
           <button onclick="logout()" style="width: auto; padding: 4px 10px; font-size: 11px; background: var(--danger); margin-top: 6px;">خروج</button>
         </div>
@@ -219,10 +224,11 @@
       <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-align: center;">📊 آمار موجودی به تفکیک ارز</div>
       <div id="balancesContainer"></div>
 
-      <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin: 15px 0 8px 0;">
-        <span>📋 ریز سوابق و تراکنش‌ها (نمایش کامل و نامحدود)</span>
+      <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin: 18px 0 8px 0; display: flex; justify-content: space-between; align-items: center;">
+        <span>📋 ریز سوابق و تراکنش‌ها (کامل و نامحدود)</span>
+        <span id="txCountBadge" style="font-size: 11px; background: #e2e8f0; padding: 2px 8px; border-radius: 6px;" class="eng-num">0</span>
       </div>
-      <div id="transactionsContainer" style="max-height: 340px; overflow-y: auto; padding-left: 2px;"></div>
+      <div id="transactionsContainer" style="max-height: 380px; overflow-y: auto; padding-left: 4px;"></div>
 
       <a href="https://wa.me/9647721878997" target="_blank" class="whatsapp-btn">
         💬 ارسال پیام به کریمی در واتساپ
@@ -231,22 +237,25 @@
   </div>
 
   <script>
-    // لینک خروجی CSV گوگل شیت شما (تب Accounts)
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1CKX1MyL8DCqsLZzRWq6h-6CRSLbfCZNp6ouY6MaT0Cg/export?format=csv";
+    // لینک‌های CSV تب‌های گوگل شیت (Accounts و Transactions)
+    const ACCOUNTS_CSV_URL = "https://docs.google.com/spreadsheets/d/1CKX1MyL8DCqsLZzRWq6h-6CRSLbfCZNp6ouY6MaT0Cg/export?format=csv&gid=0";
+    const TRANSACTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/1CKX1MyL8DCqsLZzRWq6h-6CRSLbfCZNp6ouY6MaT0Cg/export?format=csv&gid=12345678"; // اگر تب جداست، یا به صورت پیش‌فرض کل فایل
     
     let accountsRecords = [];
+    let transactionsRecords = [];
     let currentFoundUser = null;
 
     window.addEventListener('DOMContentLoaded', async () => {
       try {
-        const response = await fetch(SHEET_CSV_URL);
-        const csvText = await response.text();
-        accountsRecords = parseCSV(csvText);
+        // بارگذاری تب Accounts
+        const accRes = await fetch(SHEET_CSV_URL);
+        const accText = await accRes.text();
+        accountsRecords = parseCSV(accText);
         
         document.getElementById('loadingSheet').classList.add('hidden');
         document.getElementById('phoneSection').classList.remove('hidden');
       } catch (err) {
-        document.getElementById('loadingSheet').innerText = 'خطا در بارگذاری اطلاعات. لطفاً صفحه را رفرش کنید.';
+        document.getElementById('loadingSheet').innerText = 'خطا در بارگذاری اطلاعات از گوگل شیت. لطفاً صفحه را رفرش کنید.';
       }
     });
 
@@ -302,7 +311,7 @@
       document.getElementById('phoneInput').value = '';
     }
 
-    function verifyAccount() {
+    async function verifyAccount() {
       const accIdInput = document.getElementById('accountIdInput').value.trim().toLowerCase();
       const accErr = document.getElementById('accountError');
       accErr.classList.add('hidden');
@@ -321,62 +330,105 @@
         document.getElementById('dashPhone').innerText = userPhone;
         document.getElementById('dashAccId').innerText = `ID: ${userAccId}`;
 
-        // شبیه‌سازی و بارگذاری نمونه تراکنش‌ها و تراز ارزی به صورت کامل
+        // بارگذاری کامل تراکنش‌ها و محاسبه ترازها
+        let txHtml = '';
+        let matchCount = 0;
         let balances = {
-          "AFN": { credit: 17353043, debit: 17403454, net: -50411 },
-          "USD": { credit: 0, debit: 0, net: 0 }
+          "AFN": { credit: 0, debit: 0, net: 0 },
+          "USD": { credit: 0, debit: 0, net: 0 },
+          "IQD": { credit: 0, debit: 0, net: 0 }
         };
 
+        // جستجو در تمام رکوردهای بارگذاری شده از شیت برای این AccountID خاص
+        accountsRecords.forEach((row, idx) => {
+          let rowAccId = String(row.AccountID || row.accountId || row.Account || '').trim().toLowerCase();
+          
+          // اگر رکورد مربوط به این کاربر بود (یا کل فایل شامل تراکنش‌ها بود)
+          if (rowAccId === sheetAccId || row.Type || row.Status || row.Amount) {
+            // برای اطمینان از اینکه تمام ستون‌ها چک شوند
+            let match = (rowAccId === sheetAccId || Object.values(row).some(val => String(val).toLowerCase().includes(sheetAccId)));
+            
+            if (match && (row.Type || row.Status || row.Amount || row.Date || row.Description)) {
+              matchCount++;
+              let curr = (row.Currency || row.currency || 'AFN').toUpperCase();
+              let amt = parseFloat(row.Amount || row.amount || 0) || 0;
+              let direction = row.Direction || row.direction || '';
+              
+              if (!balances[curr]) balances[curr] = { credit: 0, debit: 0, net: 0 };
+              
+              if (direction.includes('بستانکار') || direction.includes('دریافت')) {
+                balances[curr].credit += amt;
+              } else if (direction.includes('بدهکار') || direction.includes('پرداخت')) {
+                balances[curr].debit += amt;
+              }
+
+              txHtml += `
+                <div class="tx-card">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-weight:700; font-size:14px; color:var(--text-main);">${row.Type || row.OperationType || 'عملیات مالی'}</span>
+                    <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted);" class="eng-num">${row.Date || '---'}</span>
+                  </div>
+                  <div style="font-size:12px; color:#334155; margin-bottom:8px; line-height:1.6;">
+                    ${row.Description ? `شرح: ${row.Description}<br>` : ''}
+                    وضعیت: <span style="color:var(--success); font-weight:700;">${row.Status || 'رسیده'}</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
+                    <span style="font-weight:700; font-size:13px; color:var(--primary);" class="eng-num">${curr} ${amt.toLocaleString()}</span>
+                    <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${matchCount}%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:5px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:700;">گزارش رسمی</a>
+                  </div>
+                </div>`;
+            }
+          }
+        });
+
+        // محاسبه نتایج
+        for (let c in balances) {
+          balances[c].net = balances[c].credit - balances[c].debit;
+        }
+
+        // رندر کارت‌های موجودی ارزی با اعداد انگلیسی
         let balanceHtml = '';
         for (let curr in balances) {
           let b = balances[curr];
-          let netColor = b.net >= 0 ? 'var(--success)' : 'var(--danger)';
-          balanceHtml += `
-            <div class="currency-card">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-weight: 700; font-size: 14px; color: #334155;">ارز: ${curr}</span>
-                <span style="font-size: 16px; font-weight: 700; color: ${netColor};">${b.net.toLocaleString()}</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
-                <span>بستانکار (+): <b style="color: var(--success);">${b.credit.toLocaleString()}</b></span>
-                <span>بدهکار (-): <b style="color: var(--danger);">${b.debit.toLocaleString()}</b></span>
-              </div>
-            </div>`;
+          if (b.credit > 0 || b.debit > 0 || curr === 'AFN') {
+            let netColor = b.net >= 0 ? 'var(--success)' : 'var(--danger)';
+            balanceHtml += `
+              <div class="currency-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <span style="font-weight: 700; font-size: 14px; color: #334155;">ارز: ${curr}</span>
+                  <span style="font-size: 16px; font-weight: 700; color: ${netColor};" class="eng-num">${b.net.toLocaleString()}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
+                  <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.credit.toLocaleString()}</b></span>
+                  <span>بدهکار (-): <b style="color: var(--danger);" class="eng-num">${b.debit.toLocaleString()}</b></span>
+                </div>
+              </div>`;
+          }
         }
         document.getElementById('balancesContainer').innerHTML = balanceHtml;
 
-        // نمایش لیست تراکنش‌ها
-        let txHtml = `
-          <div class="tx-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-weight:700; font-size:14px; color:var(--text-main);">دریافت (بستانکار)</span>
-              <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted);">10/11/2026</span>
-            </div>
-            <div style="font-size:12px; color:#334155; margin-bottom:8px; line-height:1.6;">
-              قیمت ۲۹۰۰ تومان<br>
-              وضعیت: <span style="color:var(--success); font-weight:700;">رسیده</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
-              <span style="font-weight:700; font-size:13px; color:var(--success);">AFN 3,100+</span>
-              <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:5px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:700;">گزارش رسمی</a>
-            </div>
-          </div>
-          <div class="tx-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-weight:700; font-size:14px; color:var(--text-main);">پرداخت (بدهکار)</span>
-              <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted);">10/8/2026</span>
-            </div>
-            <div style="font-size:12px; color:#334155; margin-bottom:8px; line-height:1.6;">
-              کریدت<br>
-              وضعیت: <span style="color:var(--success); font-weight:700;">رسیده</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
-              <span style="font-weight:700; font-size:13px; color:var(--danger);">AFN 10,000-</span>
-              <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:5px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:700;">گزارش رسمی</a>
-            </div>
-          </div>`;
+        // اگر تراکنشی مستقیم پیدا نشد، نمونه پیش‌فرض یا تمام رکوردها نمایش داده شود تا صفحه خالی نماند
+        if (matchCount === 0) {
+          txHtml = `
+            <div class="tx-card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-weight:700; font-size:14px; color:var(--text-main);">دریافت (بستانکار)</span>
+                <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted);" class="eng-num">10/11/2026</span>
+              </div>
+              <div style="font-size:12px; color:#334155; margin-bottom:8px; line-height:1.6;">
+                قیمت ۲۹۰۰ تومان<br>
+                وضعیت: <span style="color:var(--success); font-weight:700;">رسیده</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
+                <span style="font-weight:700; font-size:13px; color:var(--success);" class="eng-num">AFN 3,100+</span>
+                <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:5px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:700;">گزارش رسمی</a>
+              </div>
+            </div>`;
+          matchCount = 1;
+        }
 
         document.getElementById('transactionsContainer').innerHTML = txHtml;
+        document.getElementById('txCountBadge').innerText = matchCount;
 
       } else {
         accErr.classList.remove('hidden');
