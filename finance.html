@@ -241,9 +241,10 @@
       padding: 14px;
       margin-bottom: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      transition: transform 0.2s ease;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s;
     }
-    .tx-item:hover { transform: translateY(-2px); }
+    .tx-item:hover { transform: translateY(-2px); border-color: var(--primary); }
 
     .action-btns {
       display: flex;
@@ -268,6 +269,8 @@
     .action-btn:hover { opacity: 0.9; }
 
     .btn-wa { background: #059669; color: white; }
+    .btn-edit { background: #d97706; color: white; }
+    .btn-del { background: var(--danger); color: white; }
 
     .loading-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -301,7 +304,7 @@
   </div>
 
   <div class="container">
-    <!-- بخش ثبت‌نام اولیه با ایمیل -->
+    <!-- بخش ثبت‌نام اولیه -->
     <div id="setupSection" class="hidden">
       <div style="text-align:center; margin-bottom: 22px;">
         <div style="font-size: 42px; margin-bottom: 10px;">☁️</div>
@@ -326,7 +329,7 @@
       </div>
     </div>
 
-    <!-- بخش اصلی اپلیکیشن -->
+    <!-- بخش اصلی برنامه -->
     <div id="mainAppSection" class="hidden">
       <div class="top-bar">
         <div class="profile-header">
@@ -344,7 +347,6 @@
         <button class="sub-tab" onclick="switchMainTab('expensesTab', this)">خرج‌ها و درآمدها</button>
       </div>
 
-      <!-- تب طلب‌ها و بدهی‌ها -->
       <div id="debtsTab" class="section-box active">
         <div class="card-stats">
           <div class="stats-title">📈 آمار کل طلب و بدهی</div>
@@ -353,11 +355,10 @@
 
         <button class="btn-open-modal" onclick="openDebtModal()">➕ ثبت تراکنش جدید</button>
 
-        <div class="list-section-title"><span>📋 لیست تراکنش‌ها</span></div>
+        <div class="list-section-title"><span>📋 لیست تراکنش‌ها (جدیدترین در بالا)</span></div>
         <div class="transactions-scroll-area" id="debtsListContainer"></div>
       </div>
 
-      <!-- تب خرج‌ها و درآمدها -->
       <div id="expensesTab" class="section-box">
         <div class="card-stats">
           <div class="stats-title">📈 آمار خرج و درآمد</div>
@@ -366,19 +367,20 @@
 
         <button class="btn-open-modal" onclick="openExpenseModal()">➕ ثبت خرج یا درآمد</button>
 
-        <div class="list-section-title"><span>📋 لیست رکوردها</span></div>
+        <div class="list-section-title"><span>📋 لیست رکوردها (جدیدترین در بالا)</span></div>
         <div class="transactions-scroll-area" id="expensesListContainer"></div>
       </div>
     </div>
   </div>
 
-  <!-- مودال ثبت طلب و بدهی -->
+  <!-- مودال ثبت / ویرایش طلب و بدهی -->
   <div id="debtModal" class="modal-overlay">
     <div class="modal-content">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h3 style="font-size: 16px; font-weight: 800; color: #1e293b;" id="debtFormTitle">➕ ثبت تراکنش جدید</h3>
         <button onclick="closeDebtModal()" style="background:none; border:none; font-size:18px; cursor:pointer; font-weight:800; color:#64748b;">✕</button>
       </div>
+      <input type="hidden" id="editDebtRowIndex" value="">
       <div class="form-grid">
         <div class="form-group">
           <label>نام شخص:</label>
@@ -415,24 +417,25 @@
         </div>
         <div class="form-group full">
           <label>توضیحات:</label>
-          <textarea id="debtDesc" placeholder="توضیحات یا بابت بستانکاری..."></textarea>
+          <textarea id="debtDesc" placeholder="توضیحات یا بابت..."></textarea>
         </div>
         <div class="form-group full">
           <label>عکس رسید:</label>
           <input type="file" id="debtReceipt" accept="image/*">
         </div>
       </div>
-      <button class="btn-main" onclick="saveDebt()">ثبت و ذخیره</button>
+      <button class="btn-main" onclick="saveOrUpdateDebt()">ذخیره تراکنش</button>
     </div>
   </div>
 
-  <!-- مودال ثبت خرج و درآمد -->
+  <!-- مودال ثبت / ویرایش خرج و درآمد -->
   <div id="expenseModal" class="modal-overlay">
     <div class="modal-content">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h3 style="font-size: 16px; font-weight: 800; color: #1e293b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</h3>
         <button onclick="closeExpenseModal()" style="background:none; border:none; font-size:18px; cursor:pointer; font-weight:800; color:#64748b;">✕</button>
       </div>
+      <input type="hidden" id="editExpenseRowIndex" value="">
       <div class="form-grid">
         <div class="form-group">
           <label>نوع:</label>
@@ -472,7 +475,7 @@
           <input type="file" id="expenseReceipt" accept="image/*">
         </div>
       </div>
-      <button class="btn-main" onclick="saveExpense()">ثبت و ذخیره</button>
+      <button class="btn-main" onclick="saveOrUpdateExpense()">ذخیره رکورد</button>
     </div>
   </div>
 
@@ -482,7 +485,6 @@
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
     let ownerAvatar = localStorage.getItem('cloud_owner_avatar');
-    
     let allData = [];
 
     document.getElementById('debtDate').valueAsDate = new Date();
@@ -508,26 +510,16 @@
 
       let proceed = (avatarBase64) => {
         document.getElementById('loadingOverlay').classList.remove('hidden');
-        
         fetch(SCRIPT_URL, {
           method: 'POST',
-          body: JSON.stringify({
-            action: 'register',
-            email: email,
-            name: name,
-            avatar: avatarBase64 || ''
-          })
+          body: JSON.stringify({ action: 'register', email: email, name: name, avatar: avatarBase64 || '' })
         })
         .then(res => res.json())
         .then(res => {
           localStorage.setItem('cloud_owner_email', email);
           localStorage.setItem('cloud_owner_name', name);
           if (avatarBase64) localStorage.setItem('cloud_owner_avatar', avatarBase64);
-          
-          ownerEmail = email;
-          ownerName = name;
-          ownerAvatar = avatarBase64 || '';
-
+          ownerEmail = email; ownerName = name; ownerAvatar = avatarBase64 || '';
           document.getElementById('setupSection').classList.add('hidden');
           loadDataFromCloud();
         })
@@ -541,14 +533,11 @@
         let reader = new FileReader();
         reader.onload = function(e) { proceed(e.target.result); };
         reader.readAsDataURL(avatarFile);
-      } else {
-        proceed(null);
-      }
+      } else { proceed(null); }
     }
 
     function loadDataFromCloud() {
       document.getElementById('loadingOverlay').classList.remove('hidden');
-      
       fetch(`${SCRIPT_URL}?email=${encodeURIComponent(ownerEmail)}`)
         .then(res => res.json())
         .then(data => {
@@ -567,19 +556,15 @@
       document.getElementById('mainAppSection').classList.remove('hidden');
       document.getElementById('ownerTitleDisplay').innerText = `حسابِ ${ownerName}`;
       document.getElementById('ownerEmailDisplay').innerText = ownerEmail;
-      
       let avatarHtml = ownerAvatar ? `<img src="${ownerAvatar}" class="profile-avatar">` : `<div class="profile-avatar">👤</div>`;
       document.getElementById('avatarContainer').innerHTML = avatarHtml;
-
       renderDebts();
       renderExpenses();
     }
 
     function resetOwner() {
       if (confirm('آیا می‌خواهید از این حساب خارج شوید؟')) {
-        localStorage.removeItem('cloud_owner_email');
-        localStorage.removeItem('cloud_owner_name');
-        localStorage.removeItem('cloud_owner_avatar');
+        localStorage.clear();
         location.reload();
       }
     }
@@ -600,9 +585,21 @@
       return cleaned.replace(/\D/g, '');
     }
 
-    function openDebtModal() {
-      resetDebtForm();
+    function openDebtModal(item = null) {
       let modal = document.getElementById('debtModal');
+      if (item) {
+        document.getElementById('debtFormTitle').innerText = '✏️ ویرایش تراکنش';
+        document.getElementById('editDebtRowIndex').value = item.rowIndex;
+        document.getElementById('debtName').value = item.nameOrTitle || '';
+        document.getElementById('debtPhone').value = item.phone || '';
+        document.getElementById('debtType').value = item.type || 'طلب';
+        document.getElementById('debtCurrency').value = item.currency || 'تومان';
+        document.getElementById('debtAmount').value = item.amount || '';
+        document.getElementById('debtDate').value = item.date || '';
+        document.getElementById('debtDesc').value = item.description || '';
+      } else {
+        resetDebtForm();
+      }
       modal.classList.remove('closing');
       modal.classList.add('show');
     }
@@ -611,9 +608,21 @@
       modal.classList.add('closing');
       setTimeout(() => { modal.classList.remove('show', 'closing'); }, 250);
     }
-    function openExpenseModal() {
-      resetExpenseForm();
+
+    function openExpenseModal(item = null) {
       let modal = document.getElementById('expenseModal');
+      if (item) {
+        document.getElementById('expenseFormTitle').innerText = '✏️ ویرایش رکورد';
+        document.getElementById('editExpenseRowIndex').value = item.rowIndex;
+        document.getElementById('expenseType').value = item.type || 'درآمد';
+        document.getElementById('expenseCurrency').value = item.currency || 'تومان';
+        document.getElementById('expenseTitle').value = item.nameOrTitle || '';
+        document.getElementById('expenseAmount').value = item.amount || '';
+        document.getElementById('expenseDate').value = item.date || '';
+        document.getElementById('expenseDesc').value = item.description || '';
+      } else {
+        resetExpenseForm();
+      }
       modal.classList.remove('closing');
       modal.classList.add('show');
     }
@@ -636,11 +645,12 @@
       })
       .catch(err => {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('خطا در ذخیره سازی اطلاعات.');
+        alert('خطا در ارتباط با سرور.');
       });
     }
 
-    function saveDebt() {
+    function saveOrUpdateDebt() {
+      let rowIndex = document.getElementById('editDebtRowIndex').value;
       let name = document.getElementById('debtName').value.trim();
       let phone = document.getElementById('debtPhone').value.trim();
       let type = document.getElementById('debtType').value;
@@ -655,9 +665,11 @@
         return;
       }
 
-      let processSave = (receiptBase64) => {
+      let processAction = (receiptBase64) => {
+        let actionType = rowIndex ? 'update' : 'save';
         let payload = {
-          action: 'save',
+          action: actionType,
+          rowIndex: rowIndex || undefined,
           email: ownerEmail,
           type: type,
           nameOrTitle: name,
@@ -668,7 +680,6 @@
           description: desc,
           receipt: receiptBase64 || ''
         };
-
         sendToCloud(payload, () => {
           closeDebtModal();
           loadDataFromCloud();
@@ -677,20 +688,79 @@
 
       if (receiptFile) {
         let reader = new FileReader();
-        reader.onload = function(e) { processSave(e.target.result); };
+        reader.onload = function(e) { processAction(e.target.result); };
         reader.readAsDataURL(receiptFile);
-      } else {
-        processSave('');
+      } else { processAction(''); }
+    }
+
+    function saveOrUpdateExpense() {
+      let rowIndex = document.getElementById('editExpenseRowIndex').value;
+      let type = document.getElementById('expenseType').value;
+      let title = document.getElementById('expenseTitle').value.trim();
+      let amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
+      let currency = document.getElementById('expenseCurrency').value;
+      let date = document.getElementById('expenseDate').value;
+      let desc = document.getElementById('expenseDesc').value.trim();
+      let receiptFile = document.getElementById('expenseReceipt').files[0];
+
+      if (!title || amount <= 0) {
+        alert('لطفاً عنوان و مبلغ معتبر وارد کنید.');
+        return;
+      }
+
+      let processAction = (receiptBase64) => {
+        let actionType = rowIndex ? 'update' : 'save';
+        let payload = {
+          action: actionType,
+          rowIndex: rowIndex || undefined,
+          email: ownerEmail,
+          type: type,
+          nameOrTitle: title,
+          phone: '',
+          amount: amount,
+          currency: currency,
+          date: date,
+          description: desc,
+          receipt: receiptBase64 || ''
+        };
+        sendToCloud(payload, () => {
+          closeExpenseModal();
+          loadDataFromCloud();
+        });
+      };
+
+      if (receiptFile) {
+        let reader = new FileReader();
+        reader.onload = function(e) { processAction(e.target.result); };
+        reader.readAsDataURL(receiptFile);
+      } else { processAction(''); }
+    }
+
+    function deleteTransaction(rowIndex) {
+      if (confirm('آیا از حذف این تراکنش اطمینان دارید؟')) {
+        sendToCloud({ action: 'delete', rowIndex: rowIndex }, () => {
+          loadDataFromCloud();
+        });
       }
     }
 
     function resetDebtForm() {
+      document.getElementById('editDebtRowIndex').value = '';
       document.getElementById('debtName').value = '';
       document.getElementById('debtPhone').value = '';
       document.getElementById('debtAmount').value = '';
       document.getElementById('debtDesc').value = '';
       document.getElementById('debtReceipt').value = '';
       document.getElementById('debtFormTitle').innerText = '➕ ثبت تراکنش جدید';
+    }
+
+    function resetExpenseForm() {
+      document.getElementById('editExpenseRowIndex').value = '';
+      document.getElementById('expenseTitle').value = '';
+      document.getElementById('expenseAmount').value = '';
+      document.getElementById('expenseDesc').value = '';
+      document.getElementById('expenseReceipt').value = '';
+      document.getElementById('expenseFormTitle').innerText = '➕ ثبت خرج یا درآمد';
     }
 
     function renderDebts() {
@@ -705,7 +775,6 @@
         return;
       }
 
-      // معکوس کردن لیست برای اینکه تراکنش‌های جدید در بالا قرار بگیرند
       let reversedDebts = [...debts].reverse();
 
       reversedDebts.forEach(item => {
@@ -714,16 +783,16 @@
         stats[item.currency][item.type] += Number(item.amount || 0);
 
         let safePhone = cleanPhone(item.phone);
-        
-        // متن روان‌شناختی، محترمانه و عالی برای واتساپ
         let waText = '';
         if (item.type === 'طلب') {
-          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nخواستم یادآوری کنم که مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} بابت (${item.description || 'حساب فی‌مابین'}) از شما طلبکار هستم.\nبا توجه به اینکه دستم کمی تنگ است و به این مبلغ نیاز دارم، ممنون می‌شوم لطف کنید و تسویه بفرمایید.\n\nتاریخ تراکنش: ${item.date}\nپیشاپیش از همکاری و درک شما سپاسگزارم.`);
+          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nخواستم یادآوری کنم که مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} بابت (${item.description || 'حساب فی‌مابین'}) از شما طلبکار هستم.\nبا توجه به اینکه دستم کمی تنگ است و به این مبلغ نیاز دارم، ممنون می‌شوم لطف کنید و تسویه بفرمایید.\n\nتاریخ: ${item.date}\nپیشاپیش از همکاری شما سپاسگزارم.`);
         } else {
-          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nبابت مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} که به شما بدهکار بودم (${item.description || 'حساب فی‌مابین'})، عذرخواهی می‌کنم اگر پرداختش طول کشید.\nان‌شاءالله به زودی تسویه حساب انجام می‌شود.\n\nتاریخ تراکنش: ${item.date}\nممنون از صبوری شما.`);
+          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nبابت مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} که به شما بدهکار بودم (${item.description || 'حساب فی‌مابین'})، عذرخواهی می‌کنم اگر پرداختش طول کشید.\nان‌شاءالله به زودی تسویه انجام می‌شود.\n\nتاریخ: ${item.date}\nممنون از صبوری شما.`);
         }
-
         let waLink = safePhone ? `https://wa.me/${safePhone}?text=${waText}` : '#';
+
+        // تبدیل داده به فرمت مناسب برای ارسال به تابع ویرایش
+        let itemJson = encodeURIComponent(JSON.stringify(item));
 
         html += `
           <div class="tx-item">
@@ -737,7 +806,9 @@
             <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:6px; white-space: pre-wrap;">${item.description || 'بدون توضیح'}</div>
             ${item.receipt ? `<div style="margin-bottom:6px;"><a href="${item.receipt}" target="_blank" style="font-size:11.5px; color:var(--primary); font-weight:700;">مشاهده عکس رسید</a></div>` : ''}
             <div class="action-btns">
-              <a href="${waLink}" target="_blank" class="action-btn btn-wa">ارسال به واتساپ</a>
+              <a href="${waLink}" target="_blank" class="action-btn btn-wa">واتساپ</a>
+              <button class="action-btn btn-edit" onclick='openDebtModal(${JSON.stringify(item)})'>ویرایش</button>
+              <button class="action-btn btn-del" onclick="deleteTransaction(${item.rowIndex})">حذف</button>
             </div>
           </div>`;
       });
@@ -749,57 +820,6 @@
         statsHtml += `<div><b>${c}</b> ➔ طلبکار: <span style="color:#34d399;" class="eng-num">${stats[c]['طلب'].toLocaleString()}</span> | بدهکار: <span style="color:#f87171;" class="eng-num">${stats[c]['بدهی'].toLocaleString()}</span></div>`;
       }
       document.getElementById('debtsStatsContent').innerHTML = statsHtml;
-    }
-
-    function saveExpense() {
-      let type = document.getElementById('expenseType').value;
-      let title = document.getElementById('expenseTitle').value.trim();
-      let amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
-      let currency = document.getElementById('expenseCurrency').value;
-      let date = document.getElementById('expenseDate').value;
-      let desc = document.getElementById('expenseDesc').value.trim();
-      let receiptFile = document.getElementById('expenseReceipt').files[0];
-
-      if (!title || amount <= 0) {
-        alert('لطفاً عنوان و مبلغ معتبر وارد کنید.');
-        return;
-      }
-
-      let processSave = (receiptBase64) => {
-        let payload = {
-          action: 'save',
-          email: ownerEmail,
-          type: type,
-          nameOrTitle: title,
-          phone: '',
-          amount: amount,
-          currency: currency,
-          date: date,
-          description: desc,
-          receipt: receiptBase64 || ''
-        };
-
-        sendToCloud(payload, () => {
-          closeExpenseModal();
-          loadDataFromCloud();
-        });
-      };
-
-      if (receiptFile) {
-        let reader = new FileReader();
-        reader.onload = function(e) { processSave(e.target.result); };
-        reader.readAsDataURL(receiptFile);
-      } else {
-        processSave('');
-      }
-    }
-
-    function resetExpenseForm() {
-      document.getElementById('expenseTitle').value = '';
-      document.getElementById('expenseAmount').value = '';
-      document.getElementById('expenseDesc').value = '';
-      document.getElementById('expenseReceipt').value = '';
-      document.getElementById('expenseFormTitle').innerText = '➕ ثبت خرج یا درآمد';
     }
 
     function renderExpenses() {
@@ -814,7 +834,6 @@
         return;
       }
 
-      // معکوس کردن لیست خرج‌ها و درآمدها برای نمایش جدیدترین‌ها در بالا
       let reversedExpenses = [...expenses].reverse();
 
       reversedExpenses.forEach(item => {
@@ -833,6 +852,10 @@
             </div>
             <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:6px; white-space: pre-wrap;">${item.description || 'بدون توضیح'}</div>
             ${item.receipt ? `<div style="margin-bottom:6px;"><a href="${item.receipt}" target="_blank" style="font-size:11.5px; color:var(--primary); font-weight:700;">مشاهده عکس رسید</a></div>` : ''}
+            <div class="action-btns">
+              <button class="action-btn btn-edit" onclick='openExpenseModal(${JSON.stringify(item)})'>ویرایش</button>
+              <button class="action-btn btn-del" onclick="deleteTransaction(${item.rowIndex})">حذف</button>
+            </div>
           </div>`;
       });
 
