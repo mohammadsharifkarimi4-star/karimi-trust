@@ -11,7 +11,7 @@
       --primary: #6366f1;
       --success: #059669;
       --danger: #dc2626;
-      --glass-bg: rgba(255, 255, 255, 0.92);
+      --glass-bg: rgba(255, 255, 255, 0.94);
       --glass-border: rgba(255, 255, 255, 0.95);
       --text-main: #0f172a;
       --text-muted: #64748b;
@@ -54,11 +54,29 @@
       align-items: center;
       margin-bottom: 15px;
       border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
     }
 
-    .back-btn { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 800; }
-    .header-title { font-size: 16px; font-weight: 800; color: #1e1b4b; text-align: center; }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      background: #e0e7ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .back-btn { color: var(--primary); text-decoration: none; font-size: 12px; font-weight: 800; }
 
     .sub-tabs {
       display: flex;
@@ -88,24 +106,61 @@
     .section-box { display: none; }
     .section-box.active { display: block; animation: fadeIn 0.3s ease-out; }
 
+    /* آمار بزرگ و درشت در بالا */
     .card-stats {
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
       color: white;
       border-radius: 18px;
-      padding: 16px;
+      padding: 18px;
       margin-bottom: 15px;
       box-shadow: 0 10px 25px rgba(49, 46, 129, 0.3);
     }
 
-    .stats-title { font-size: 13px; font-weight: 700; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; }
-    .stats-content { font-size: 15px; font-weight: 800; line-height: 1.8; }
+    .stats-title { font-size: 12px; font-weight: 700; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; }
+    .stats-content { font-size: 16px; font-weight: 800; line-height: 1.8; }
 
-    .form-container {
-      background: rgba(255, 255, 255, 0.8);
+    /* دکمه باز کردن فرم ثبت تراکنش */
+    .btn-open-modal {
+      width: 100%;
       padding: 14px;
-      border-radius: 18px;
+      background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
       margin-bottom: 15px;
-      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* مودال (پنجره پاپ‌آپ ثبت تراکنش) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 15px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -138,13 +193,14 @@
       cursor: pointer;
       font-weight: 800;
       box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
-      margin-top: 4px;
+      margin-top: 5px;
     }
 
-    .list-section-title { font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #1e1b4b; display: flex; justify-content: space-between; align-items: center; }
+    /* لیست تراکنش‌ها در نیمه پایین */
+    .list-section-title { font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #1e1b4b; }
     
     .transactions-scroll-area {
-      max-height: 220px;
+      max-height: 280px;
       overflow-y: auto;
       padding-left: 4px;
     }
@@ -188,33 +244,38 @@
 </head>
 <body>
   <div class="container">
-    <!-- بخش ثبت‌نام اولیه کاربر (فقط بار اول) -->
+    <!-- بخش تنظیمات اولیه پروفایل -->
     <div id="setupSection" class="hidden">
       <div style="text-align:center; margin-bottom: 20px;">
         <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
-        <h2 style="font-size: 18px; color: #1e1b4b; font-weight: 800;">تنظیمات دفتر حساب شخصی</h2>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">لطفاً مشخصات خود را وارد کنید تا حساب به نام شما ثبت شود.</p>
+        <h2 style="font-size: 18px; color: #1e1b4b; font-weight: 800;">تنظیمات پروفایل شخصی</h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">لطفاً نام و عکس پروفایل خود را وارد کنید.</p>
       </div>
       <div class="form-group">
         <label>نام و لقب شما:</label>
-        <input type="text" id="ownerNameInput" placeholder="مثلاً محمد شریف کریمی">
+        <input type="text" id="ownerNameInput" placeholder="مثلاً علی صالحی">
       </div>
       <div class="form-group">
-        <label>ایمیل (اختیاری برای اتصال):</label>
-        <input type="email" id="ownerEmailInput" placeholder="name@gmail.com" class="eng-num">
+        <label>عکس پروفایل:</label>
+        <input type="file" id="ownerAvatarInput" accept="image/*">
       </div>
-      <button class="btn-main" onclick="saveOwnerInfo()">ورود به دفتر حساب</button>
+      <button class="btn-main" onclick="saveOwnerInfo()">ورود به حساب</button>
       <div style="text-align: center; margin-top: 15px;">
         <a href="index.html" class="back-btn">← بازگشت به منو</a>
       </div>
     </div>
 
-    <!-- بخش اصلی برنامه بعد از ورود مشخصات -->
+    <!-- بخش اصلی برنامه -->
     <div id="mainAppSection" class="hidden">
       <div class="top-bar">
-        <a href="index.html" class="back-btn">← منو</a>
-        <div class="header-title" id="ownerTitleDisplay">دفتر حساب</div>
-        <button onclick="resetOwner()" style="background:none; border:none; color:var(--danger); font-size:11px; cursor:pointer; font-weight:700;">تغییر مشخصات</button>
+        <div class="profile-header">
+          <div id="avatarContainer"></div>
+          <div>
+            <div id="ownerTitleDisplay" style="font-size: 14px; font-weight: 800; color: #1e1b4b;">حساب کاربر</div>
+            <a href="index.html" class="back-btn">← منوی مرکزی</a>
+          </div>
+        </div>
+        <button onclick="resetOwner()" style="background:none; border:none; color:var(--danger); font-size:11px; cursor:pointer; font-weight:700;">تغییر پروفایل</button>
       </div>
 
       <div class="sub-tabs">
@@ -229,55 +290,7 @@
           <div id="debtsStatsContent" class="stats-content eng-num">داده‌ای ثبت نشده است.</div>
         </div>
 
-        <div class="form-container">
-          <div style="font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #1e1b4b;" id="debtFormTitle">➕ ثبت تراکنش جدید</div>
-          <input type="hidden" id="editDebtId">
-          
-          <div class="form-grid">
-            <div class="form-group">
-              <label>نام شخص:</label>
-              <input type="text" id="debtName" placeholder="نام شخص">
-            </div>
-            <div class="form-group">
-              <label>شماره واتساپ:</label>
-              <input type="text" id="debtPhone" placeholder="077..." class="eng-num">
-            </div>
-            <div class="form-group">
-              <label>نوع:</label>
-              <select id="debtType">
-                <option value="طلب">طلبکارم</option>
-                <option value="بدهی">بدهکارم</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>ارز:</label>
-              <select id="debtCurrency">
-                <option value="دلار">دلار ($)</option>
-                <option value="تومان">تومان</option>
-                <option value="افغانی">افغانی</option>
-                <option value="دینار">دینار</option>
-                <option value="کلدار">کلدار</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>مبلغ:</label>
-              <input type="number" id="debtAmount" placeholder="1000" class="eng-num">
-            </div>
-            <div class="form-group">
-              <label>تاریخ:</label>
-              <input type="date" id="debtDate" class="eng-num">
-            </div>
-            <div class="form-group full">
-              <label>توضیحات:</label>
-              <input type="text" id="debtDesc" placeholder="بابت...">
-            </div>
-            <div class="form-group full">
-              <label>عکس رسید:</label>
-              <input type="file" id="debtReceipt" accept="image/*">
-            </div>
-          </div>
-          <button class="btn-main" onclick="saveDebt()">ثبت تراکنش</button>
-        </div>
+        <button class="btn-open-modal" onclick="openDebtModal()">➕ ثبت تراکنش جدید</button>
 
         <div class="list-section-title"><span>📋 لیست تراکنش‌ها</span></div>
         <div class="transactions-scroll-area" id="debtsListContainer"></div>
@@ -290,51 +303,7 @@
           <div id="expensesStatsContent" class="stats-content eng-num">داده‌ای ثبت نشده است.</div>
         </div>
 
-        <div class="form-container">
-          <div style="font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #1e1b4b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</div>
-          <input type="hidden" id="editExpenseId">
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label>نوع:</label>
-              <select id="expenseType">
-                <option value="درآمد">درآمد 🟢</option>
-                <option value="خرج">خرج 🔴</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>ارز:</label>
-              <select id="expenseCurrency">
-                <option value="دلار">دلار ($)</option>
-                <option value="تومان">تومان</option>
-                <option value="افغانی">افغانی</option>
-                <option value="دینار">دینار</option>
-                <option value="کلدار">کلدار</option>
-              </select>
-            </div>
-            <div class="form-group full">
-              <label>عنوان:</label>
-              <input type="text" id="expenseTitle" placeholder="عنوان خرج یا درآمد">
-            </div>
-            <div class="form-group">
-              <label>مبلغ:</label>
-              <input type="number" id="expenseAmount" placeholder="500" class="eng-num">
-            </div>
-            <div class="form-group">
-              <label>تاریخ:</label>
-              <input type="date" id="expenseDate" class="eng-num">
-            </div>
-            <div class="form-group full">
-              <label>توضیحات:</label>
-              <input type="text" id="expenseDesc" placeholder="جزئیات...">
-            </div>
-            <div class="form-group full">
-              <label>عکس رسید:</label>
-              <input type="file" id="expenseReceipt" accept="image/*">
-            </div>
-          </div>
-          <button class="btn-main" onclick="saveExpense()">ثبت رکورد</button>
-        </div>
+        <button class="btn-open-modal" onclick="openExpenseModal()">➕ ثبت خرج یا درآمد</button>
 
         <div class="list-section-title"><span>📋 لیست رکوردها</span></div>
         <div class="transactions-scroll-area" id="expensesListContainer"></div>
@@ -342,9 +311,115 @@
     </div>
   </div>
 
+  <!-- مودال ثبت تراکنش طلب و بدهی -->
+  <div id="debtModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;" id="debtFormTitle">➕ ثبت تراکنش جدید</h3>
+        <button onclick="closeDebtModal()" style="background:none; border:none; font-size:16px; cursor:pointer; font-weight:800; color:#64748b;">✕</button>
+      </div>
+      <input type="hidden" id="editDebtId">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>نام شخص:</label>
+          <input type="text" id="debtName" placeholder="نام شخص">
+        </div>
+        <div class="form-group">
+          <label>شماره واتساپ:</label>
+          <input type="text" id="debtPhone" placeholder="077..." class="eng-num">
+        </div>
+        <div class="form-group">
+          <label>نوع:</label>
+          <select id="debtType">
+            <option value="طلب">طلبکارم</option>
+            <option value="بدهی">بدهکارم</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ارز:</label>
+          <select id="debtCurrency">
+            <option value="تومان">تومان</option>
+            <option value="دلار">دلار ($)</option>
+            <option value="افغانی">افغانی</option>
+            <option value="دینار">دینار</option>
+            <option value="کلدار">کلدار</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>مبلغ:</label>
+          <input type="number" id="debtAmount" placeholder="1000" class="eng-num">
+        </div>
+        <div class="form-group">
+          <label>تاریخ:</label>
+          <input type="date" id="debtDate" class="eng-num">
+        </div>
+        <div class="form-group full">
+          <label>توضیحات:</label>
+          <input type="text" id="debtDesc" placeholder="بابت...">
+        </div>
+        <div class="form-group full">
+          <label>عکس رسید:</label>
+          <input type="file" id="debtReceipt" accept="image/*">
+        </div>
+      </div>
+      <button class="btn-main" onclick="saveDebt()">ثبت و ذخیره</button>
+    </div>
+  </div>
+
+  <!-- مودال ثبت خرج و درآمد -->
+  <div id="expenseModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;" id="expenseFormTitle">➕ ثبت خرج یا درآمد</h3>
+        <button onclick="closeExpenseModal()" style="background:none; border:none; font-size:16px; cursor:pointer; font-weight:800; color:#64748b;">✕</button>
+      </div>
+      <input type="hidden" id="editExpenseId">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>نوع:</label>
+          <select id="expenseType">
+            <option value="درآمد">درآمد 🟢</option>
+            <option value="خرج">خرج 🔴</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ارز:</label>
+          <select id="expenseCurrency">
+            <option value="تومان">تومان</option>
+            <option value="دلار">دلار ($)</option>
+            <option value="افغانی">افغانی</option>
+            <option value="دینار">دینار</option>
+            <option value="کلدار">کلدار</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>عنوان:</label>
+          <input type="text" id="expenseTitle" placeholder="عنوان خرج یا درآمد">
+        </div>
+        <div class="form-group">
+          <label>مبلغ:</label>
+          <input type="number" id="expenseAmount" placeholder="500" class="eng-num">
+        </div>
+        <div class="form-group">
+          <label>تاریخ:</label>
+          <input type="date" id="expenseDate" class="eng-num">
+        </div>
+        <div class="form-group full">
+          <label>توضیحات:</label>
+          <input type="text" id="expenseDesc" placeholder="جزئیات...">
+        </div>
+        <div class="form-group full">
+          <label>عکس رسید:</label>
+          <input type="file" id="expenseReceipt" accept="image/*">
+        </div>
+      </div>
+      <button class="btn-main" onclick="saveExpense()">ثبت و ذخیره</button>
+    </div>
+  </div>
+
   <script>
     let ownerName = localStorage.getItem('my_owner_name');
-    let ownerEmail = localStorage.getItem('my_owner_email');
+    let ownerAvatar = localStorage.getItem('my_owner_avatar');
     let debts = JSON.parse(localStorage.getItem('my_debts') || '[]');
     let expenses = JSON.parse(localStorage.getItem('my_expenses') || '[]');
 
@@ -361,23 +436,34 @@
 
     function saveOwnerInfo() {
       let name = document.getElementById('ownerNameInput').value.trim();
-      let email = document.getElementById('ownerEmailInput').value.trim();
+      let avatarFile = document.getElementById('ownerAvatarInput').files[0];
       if (!name) {
         alert('لطفاً نام خود را وارد کنید.');
         return;
       }
-      localStorage.setItem('my_owner_name', name);
-      localStorage.setItem('my_owner_email', email);
-      ownerName = name;
-      ownerEmail = email;
-      document.getElementById('setupSection').classList.add('hidden');
-      initApp();
+
+      let proceed = (avatarBase64) => {
+        localStorage.setItem('my_owner_name', name);
+        if (avatarBase64) localStorage.setItem('my_owner_avatar', avatarBase64);
+        ownerName = name;
+        ownerAvatar = avatarBase64 || '';
+        document.getElementById('setupSection').classList.add('hidden');
+        initApp();
+      };
+
+      if (avatarFile) {
+        let reader = new FileReader();
+        reader.onload = function(e) { proceed(e.target.result); };
+        reader.readAsDataURL(avatarFile);
+      } else {
+        proceed(null);
+      }
     }
 
     function resetOwner() {
-      if (confirm('آیا می‌خواهید مشخصات خود را تغییر دهید؟')) {
+      if (confirm('تغییر مشخصات پروفایل؟')) {
         localStorage.removeItem('my_owner_name');
-        localStorage.removeItem('my_owner_email');
+        localStorage.removeItem('my_owner_avatar');
         location.reload();
       }
     }
@@ -385,6 +471,10 @@
     function initApp() {
       document.getElementById('mainAppSection').classList.remove('hidden');
       document.getElementById('ownerTitleDisplay').innerText = `حسابِ ${ownerName}`;
+      
+      let avatarHtml = ownerAvatar ? `<img src="${ownerAvatar}" class="profile-avatar">` : `<div class="profile-avatar">👤</div>`;
+      document.getElementById('avatarContainer').innerHTML = avatarHtml;
+
       renderDebts();
       renderExpenses();
     }
@@ -399,6 +489,22 @@
     function cleanPhone(phone) {
       if (!phone) return '';
       return phone.replace(/\D/g, '');
+    }
+
+    // Modal Controls
+    function openDebtModal() {
+      resetDebtForm();
+      document.getElementById('debtModal').classList.remove('hidden');
+    }
+    function closeDebtModal() {
+      document.getElementById('debtModal').classList.add('hidden');
+    }
+    function openExpenseModal() {
+      resetExpenseForm();
+      document.getElementById('expenseModal').classList.remove('hidden');
+    }
+    function closeExpenseModal() {
+      document.getElementById('expenseModal').classList.add('hidden');
     }
 
     // --- طلب و بدهی ---
@@ -428,7 +534,7 @@
           debts.push({ id: Date.now(), name, phone, type, amount, currency, date, desc, receipt: receiptBase64 || '' });
         }
         localStorage.setItem('my_debts', JSON.stringify(debts));
-        resetDebtForm();
+        closeDebtModal();
         renderDebts();
       };
 
@@ -510,7 +616,7 @@
       document.getElementById('debtDate').value = item.date;
       document.getElementById('debtDesc').value = item.desc;
       document.getElementById('debtFormTitle').innerText = '✏️ ویرایش تراکنش';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('debtModal').classList.remove('hidden');
     }
 
     function deleteDebt(id) {
@@ -547,7 +653,7 @@
           expenses.push({ id: Date.now(), type, title, amount, currency, date, desc, receipt: receiptBase64 || '' });
         }
         localStorage.setItem('my_expenses', JSON.stringify(expenses));
-        resetExpenseForm();
+        closeExpenseModal();
         renderExpenses();
       };
 
@@ -623,7 +729,7 @@
       document.getElementById('expenseDate').value = item.date;
       document.getElementById('expenseDesc').value = item.desc;
       document.getElementById('expenseFormTitle').innerText = '✏️ ویرایش رکورد';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('expenseModal').classList.remove('hidden');
     }
 
     function deleteExpense(id) {
