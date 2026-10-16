@@ -1,1 +1,10 @@
-
+{
+  "name": "karimi-trust",
+  "version": "1.0.0",
+  "description": "Karimi Trust Financial Dashboard",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {}
+}
