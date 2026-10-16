@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>صرافی و امانت‌داری کریمی مرکزی</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
 
@@ -301,61 +300,51 @@
   </div>
 
   <script>
-    const ACCOUNTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbZuehG4hJ9oVt1rhT-bgNdY1Jqr_0JuzjTC5ysF6eMmoj0mqhT6rhsHCm8aSeKDAU4jdmUQj0-B0/pub?output=csv&sheet=Accounts";
-    const TRANSACTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbZuehG4hJ9oVt1rhT-bgNdY1Jqr_0JuzjTC5ysF6eMmoj0mqhT6rhsHCm8aSeKDAU4jdmUQj0-B0/pub?output=csv&sheet=Transactions";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFzeaXRRzvaOs_ea0OFBy15SGrSEOkdKox8RlV9Q7upMCWJmp1DylrPus1VmOvbkMa/exec?action=getData";
 
-    let accountsData = [];
-    let transactionsData = [];
+    let accountsList = [];
+    let transactionsList = [];
     let currentFoundUser = null;
     let customerTransactions = [];
     let customerBalances = {};
     let currencyList = [];
     let activeCurrencyIndex = 0;
 
-    window.addEventListener('DOMContentLoaded', () => {
-      Papa.parse(ACCOUNTS_CSV_URL, {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(accResults) {
-          accountsData = accResults.data;
-          
-          Papa.parse(TRANSACTIONS_CSV_URL, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(txResults) {
-              transactionsData = txResults.data;
-              document.getElementById('loadingSheet').classList.add('hidden');
-              document.getElementById('phoneSection').classList.remove('hidden');
-            },
-            error: function() { showLoadError(); }
-          });
-        },
-        error: function() { showLoadError(); }
-      });
-    });
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch(APPS_SCRIPT_URL);
+        const data = await res.json();
 
-    function showLoadError() {
-      document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات از گوگل شیت.</div>';
-    }
+        if (data.accounts && data.accounts.length > 0) {
+          let accRows = data.accounts;
+          let accHeaders = accRows[0];
+          accountsList = accRows.slice(1).map(row => {
+            let obj = {};
+            accHeaders.forEach((h, i) => obj[h.toString().trim()] = row[i]);
+            return obj;
+          });
+        }
+
+        if (data.transactions && data.transactions.length > 0) {
+          let txRows = data.transactions;
+          let txHeaders = txRows[0];
+          transactionsList = txRows.slice(1).map(row => {
+            let obj = {};
+            txHeaders.forEach((h, i) => obj[h.toString().trim()] = row[i]);
+            return obj;
+          });
+        }
+
+        document.getElementById('loadingSheet').classList.add('hidden');
+        document.getElementById('phoneSection').classList.remove('hidden');
+      } catch (err) {
+        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات از سرور. لطفاً صفحه را رفرش کنید.</div>';
+      }
+    });
 
     function cleanDigits(str) {
       if (!str) return '';
       return String(str).replace(/\D/g, '');
-    }
-
-    // تابع کمکی برای پیدا کردن کلیدهای ستون صرف نظر از کوچک/بزرگ بودن حروف
-    function getVal(obj, possibleKeys) {
-      for (let key of Object.keys(obj)) {
-        let cleanKey = key.trim().toLowerCase();
-        for (let pk of possibleKeys) {
-          if (cleanKey === pk.toLowerCase()) {
-            return obj[key];
-          }
-        }
-      }
-      return '';
     }
 
     function checkPhone() {
@@ -368,8 +357,8 @@
       const userDigits = cleanDigits(rawInput);
       btn.innerText = 'در حال بررسی...';
 
-      const found = accountsData.find(u => {
-        let phoneVal = getVal(u, ['Phone', 'phone', 'تلفن', 'شماره']);
+      const found = accountsList.find(u => {
+        let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
         const sheetPhone = cleanDigits(phoneVal);
         return sheetPhone && (sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone.slice(-7)));
       });
@@ -380,8 +369,8 @@
         currentFoundUser = found;
         document.getElementById('phoneSection').classList.add('hidden');
         document.getElementById('accountSection').classList.remove('hidden');
-        let nameVal = getVal(found, ['Name', 'name', 'نام', 'مشتری']);
-        document.getElementById('greetingMsg').innerText = `سلام ${nameVal || 'مشتری عزیز'}، خوش آمدید!`;
+        let nameVal = found.Name || found.name || found['نام'] || 'مشتری عزیز';
+        document.getElementById('greetingMsg').innerText = `سلام ${nameVal}، خوش آمدید!`;
       } else {
         document.getElementById('phoneErrorMsg').innerText = 'شماره شما در سیستم یافت نشد.';
         errBox.classList.remove('hidden');
@@ -402,39 +391,39 @@
       if (!accIdInput) return;
       btn.innerText = 'در حال ورود...';
 
-      let sheetAccId = String(getVal(currentFoundUser, ['AccountID', 'accountid', 'id', 'Account ID'])).trim().toLowerCase();
+      let sheetAccId = String(currentFoundUser.AccountID || currentFoundUser.accountid || currentFoundUser.ID || '').trim().toLowerCase();
       btn.innerText = 'ورود به حساب کاربری';
 
       if (currentFoundUser && sheetAccId === accIdInput) {
         document.getElementById('accountSection').classList.add('hidden');
         document.getElementById('dashboardSection').classList.remove('hidden');
         
-        let nameVal = getVal(currentFoundUser, ['Name', 'name', 'نام']);
-        let phoneVal = getVal(currentFoundUser, ['Phone', 'phone', 'تلفن']);
-        let accIdVal = getVal(currentFoundUser, ['AccountID', 'accountid', 'id']);
+        let nameVal = currentFoundUser.Name || currentFoundUser.name || '---';
+        let phoneVal = currentFoundUser.Phone || currentFoundUser.phone || '---';
+        let accIdVal = currentFoundUser.AccountID || currentFoundUser.accountid || '---';
 
-        document.getElementById('dashName').innerText = nameVal || '---';
-        document.getElementById('dashPhone').innerText = phoneVal || '---';
+        document.getElementById('dashName').innerText = nameVal;
+        document.getElementById('dashPhone').innerText = phoneVal;
         document.getElementById('dashAccId').innerText = `ID: ${accIdVal}`;
 
-        customerTransactions = transactionsData.filter(tx => {
-          let rowAccId = String(getVal(tx, ['AccountID', 'accountid', 'id', 'Account ID'])).trim().toLowerCase();
+        customerTransactions = transactionsList.filter(tx => {
+          let rowAccId = String(tx.AccountID || tx.accountid || tx.ID || '').trim().toLowerCase();
           return rowAccId === sheetAccId;
         });
 
         customerBalances = {};
         customerTransactions.forEach(tx => {
-          let curr = String(getVal(tx, ['Currency', 'currency', 'ارز']) || 'AFN').toUpperCase();
-          let amount = parseFloat(getVal(tx, ['Amount', 'amount', 'مبلغ'])) || 0;
-          let dir = String(getVal(tx, ['Direction', 'direction', 'جهت', 'نوع'])).trim();
+          let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
+          let amount = parseFloat(tx.Amount || tx.amount) || 0;
+          let dir = String(tx.Direction || tx.direction || '').trim();
 
           if (!customerBalances[curr]) {
             customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
           }
 
-          if (dir.includes('بستانکار') || dir.includes('دریافت') || dir.includes('credit')) {
+          if (dir.includes('بستانکار') || dir.includes('دریافت')) {
             customerBalances[curr].credit += amount;
-          } else if (dir.includes('بدهکار') || dir.includes('پرداخت') || dir.includes('debit')) {
+          } else if (dir.includes('بدهکار') || dir.includes('پرداخت')) {
             customerBalances[curr].debit += amount;
           }
         });
@@ -496,30 +485,25 @@
     function renderTransactions() {
       let txHtml = '';
       if (customerTransactions.length === 0) {
-        txHtml = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی در گوگل شیت برای این حساب ثبت نشده است.</div>';
+        txHtml = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی یافت نشد.</div>';
       } else {
         customerTransactions.forEach((tx, idx) => {
-          let dir = String(getVal(tx, ['Direction', 'direction', 'جهت']));
-          let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت') || dir.includes('credit')) ? 'var(--success)' : 'var(--danger)';
-          let amountVal = parseFloat(getVal(tx, ['Amount', 'amount', 'مبلغ'])) || 0;
-          let opType = getVal(tx, ['OperationType', 'operationtype', 'نوع عملیات']) || 'عملیات مالی';
-          let dateVal = getVal(tx, ['Date', 'date', 'تاریخ']) || '---';
-          let descVal = getVal(tx, ['Description', 'description', 'شرح']) || 'بدون شرح';
-          let statusVal = getVal(tx, ['Status', 'status', 'وضعیت']) || 'رسیده';
-          let currVal = getVal(tx, ['Currency', 'currency', 'ارز']) || 'AFN';
+          let dir = String(tx.Direction || tx.direction || '');
+          let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
+          let amountVal = parseFloat(tx.Amount || tx.amount) || 0;
           
           txHtml += `
             <div class="tx-card" onclick="openModal(${idx})">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:800; font-size:14px; color:#1e293b;">${opType}</span>
-                <span style="font-size:11px; background:#f1f5f9; padding:3px 8px; border-radius:6px; color:var(--text-muted); font-weight: 700;" class="eng-num">${dateVal}</span>
+                <span style="font-weight:800; font-size:14px; color:#1e293b;">${tx.OperationType || tx.operationtype || 'عملیات مالی'}</span>
+                <span style="font-size:11px; background:#f1f5f9; padding:3px 8px; border-radius:6px; color:var(--text-muted); font-weight: 700;" class="eng-num">${tx.Date || tx.date || '---'}</span>
               </div>
               <div style="font-size:12px; color:#334155; margin-bottom:10px; line-height:1.6;">
-                ${descVal}<br>
-                وضعیت: <span style="color:var(--success); font-weight:800;">${statusVal}</span>
+                ${tx.Description || tx.description || 'بدون شرح'}<br>
+                وضعیت: <span style="color:var(--success); font-weight:800;">${tx.Status || tx.status || 'رسیده'}</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
-                <span style="font-weight:800; font-size:13px; color:${amtColor};" class="eng-num">${currVal} ${amountVal.toLocaleString()} (${dir})</span>
+                <span style="font-weight:800; font-size:13px; color:${amtColor};" class="eng-num">${tx.Currency || tx.currency || 'AFN'} ${amountVal.toLocaleString()} (${dir})</span>
                 <span style="color:#4f46e5; font-size:11px; font-weight:800;">مشاهده جزئیات</span>
               </div>
             </div>`;
@@ -533,17 +517,17 @@
     function openModal(idx) {
       let tx = customerTransactions[idx];
       let bodyHtml = `
-        <p><b>شناسه تراکنش:</b> <span class="eng-num">${getVal(tx, ['TransID', 'transid', 'شناسه']) || '---'}</span></p>
-        <p><b>نوع عملیات:</b> ${getVal(tx, ['OperationType', 'operationtype']) || '---'}</p>
-        <p><b>تاریخ:</b> <span class="eng-num">${getVal(tx, ['Date', 'date']) || '---'}</span></p>
-        <p><b>شرح:</b> ${getVal(tx, ['Description', 'description']) || '---'}</p>
-        <p><b>واحد ارز:</b> ${getVal(tx, ['Currency', 'currency']) || '---'}</p>
-        <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:var(--primary);">${getVal(tx, ['Amount', 'amount']) || '0'}</span></p>
-        <p><b>جهت تراکنش:</b> ${getVal(tx, ['Direction', 'direction']) || '---'}</p>
-        <p><b>وضعیت:</b> <span style="color:var(--success); font-weight:bold;">${getVal(tx, ['Status', 'status']) || '---'}</span></p>
+        <p><b>شناسه تراکنش:</b> <span class="eng-num">${tx.TransID || tx.transid || '---'}</span></p>
+        <p><b>نوع عملیات:</b> ${tx.OperationType || tx.operationtype || '---'}</p>
+        <p><b>تاریخ:</b> <span class="eng-num">${tx.Date || tx.date || '---'}</span></p>
+        <p><b>شرح:</b> ${tx.Description || tx.description || '---'}</p>
+        <p><b>واحد ارز:</b> ${tx.Currency || tx.currency || '---'}</p>
+        <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:var(--primary);">${tx.Amount || tx.amount || '0'}</span></p>
+        <p><b>جهت تراکنش:</b> ${tx.Direction || tx.direction || '---'}</p>
+        <p><b>وضعیت:</b> <span style="color:var(--success); font-weight:bold;">${tx.Status || tx.status || '---'}</span></p>
       `;
       document.getElementById('modalBody').innerHTML = bodyHtml;
-      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${getVal(tx, ['TransID']) || (idx+1)}%20را دارم`;
+      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${tx.TransID || tx.transid || (idx+1)}%20را دارم`;
       document.getElementById('txModal').classList.remove('hidden');
     }
 
