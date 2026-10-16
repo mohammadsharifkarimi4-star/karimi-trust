@@ -453,7 +453,7 @@
         </div>
         <div class="form-group full">
           <label>عنوان:</label>
-          <input type="text" id="expenseTitle" placeholder="عنوان خرج یا درآمد استاندارد">
+          <input type="text" id="expenseTitle" placeholder="عنوان خرج یا درآمد">
         </div>
         <div class="form-group">
           <label>مبلغ:</label>
@@ -477,7 +477,6 @@
   </div>
 
   <script>
-    // لینک آخرین وب‌اپلیکیشن گوگل‌اسکریپت شما
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgq16rTFn_qEYTJQ8r9zBx2_RoCqFm979jpCTDtp5b2zNws3PH6qeb-54WyXYPzPpN/exec";
 
     let ownerEmail = localStorage.getItem('cloud_owner_email');
@@ -592,11 +591,9 @@
       btn.classList.add('active');
     }
 
-    // اصلاح اساسی و ایمن برای شماره تلفن جهت جلوگیری از ارور کاراکتر +
     function cleanPhone(phone) {
       if (!phone) return '';
       let cleaned = phone.toString().trim();
-      // اگر با + شروع شود، علامت پلاس را نگه می‌دارد و بقیه را اعداد می‌کند، در غیر این صورت فقط اعداد را برمی‌گرداند
       if (cleaned.startsWith('+')) {
         return '+' + cleaned.substring(1).replace(/\D/g, '');
       }
@@ -664,7 +661,7 @@
           email: ownerEmail,
           type: type,
           nameOrTitle: name,
-          phone: cleanPhone(phone), // ایمن‌سازی شماره ارسالی
+          phone: cleanPhone(phone),
           amount: amount,
           currency: currency,
           date: date,
@@ -708,13 +705,24 @@
         return;
       }
 
-      debts.forEach(item => {
+      // معکوس کردن لیست برای اینکه تراکنش‌های جدید در بالا قرار بگیرند
+      let reversedDebts = [...debts].reverse();
+
+      reversedDebts.forEach(item => {
         let amtColor = item.type === 'طلب' ? '#34d399' : '#f87171';
         if (!stats[item.currency]) stats[item.currency] = { طلب: 0, بدهی: 0 };
         stats[item.currency][item.type] += Number(item.amount || 0);
 
         let safePhone = cleanPhone(item.phone);
-        let waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز:\nمبلغ: ${Number(item.amount).toLocaleString()} ${item.currency}\nنوع: ${item.type}\nتاریخ: ${item.date}\nشرح: ${item.description}`);
+        
+        // متن روان‌شناختی، محترمانه و عالی برای واتساپ
+        let waText = '';
+        if (item.type === 'طلب') {
+          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nخواستم یادآوری کنم که مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} بابت (${item.description || 'حساب فی‌مابین'}) از شما طلبکار هستم.\nبا توجه به اینکه دستم کمی تنگ است و به این مبلغ نیاز دارم، ممنون می‌شوم لطف کنید و تسویه بفرمایید.\n\nتاریخ تراکنش: ${item.date}\nپیشاپیش از همکاری و درک شما سپاسگزارم.`);
+        } else {
+          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nبابت مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} که به شما بدهکار بودم (${item.description || 'حساب فی‌مابین'})، عذرخواهی می‌کنم اگر پرداختش طول کشید.\nان‌شاءالله به زودی تسویه حساب انجام می‌شود.\n\nتاریخ تراکنش: ${item.date}\nممنون از صبوری شما.`);
+        }
+
         let waLink = safePhone ? `https://wa.me/${safePhone}?text=${waText}` : '#';
 
         html += `
@@ -806,7 +814,10 @@
         return;
       }
 
-      expenses.forEach(item => {
+      // معکوس کردن لیست خرج‌ها و درآمدها برای نمایش جدیدترین‌ها در بالا
+      let reversedExpenses = [...expenses].reverse();
+
+      reversedExpenses.forEach(item => {
         let amtColor = item.type === 'درآمد' ? '#34d399' : '#f87171';
         if (!stats[item.currency]) stats[item.currency] = { درآمد: 0, خرج: 0 };
         stats[item.currency][item.type] += Number(item.amount || 0);
@@ -825,7 +836,7 @@
           </div>`;
       });
 
-    container.innerHTML = html;
+      container.innerHTML = html;
 
       let statsHtml = '';
       for (let c in stats) {
