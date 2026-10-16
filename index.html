@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>صرافی و امانت‌داری کریمی مرکزی</title>
+  <!-- کتابخانه سریع و استاندارد پارس کردن CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
 
@@ -314,43 +316,37 @@
     let currencyList = [];
     let activeCurrencyIndex = 0;
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const [accRes, txRes] = await Promise.all([
-          fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(ACCOUNTS_CSV_URL)),
-          fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(TRANSACTIONS_CSV_URL))
-        ]);
-
-        const accCsv = await accRes.text();
-        const txCsv = await txRes.text();
-
-        accountsData = parseCSV(accCsv);
-        transactionsData = parseCSV(txCsv);
-
-        document.getElementById('loadingSheet').classList.add('hidden');
-        document.getElementById('phoneSection').classList.remove('hidden');
-      } catch (err) {
-        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات از گوگل شیت. لطفاً صفحه را رفرش کنید.</div>';
-      }
+    window.addEventListener('DOMContentLoaded', () => {
+      // استفاده از PapaParse برای خواندن مستقیم و پرسرعت CSV از گوگل شیت
+      Papa.parse(ACCOUNTS_CSV_URL, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(accResults) {
+          accountsData = accResults.data;
+          
+          Papa.parse(TRANSACTIONS_CSV_URL, {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function(txResults) {
+              transactionsData = txResults.data;
+              document.getElementById('loadingSheet').classList.add('hidden');
+              document.getElementById('phoneSection').classList.remove('hidden');
+            },
+            error: function() {
+              showLoadError();
+            }
+          });
+        },
+        error: function() {
+          showLoadError();
+        }
+      });
     });
 
-    function parseCSV(text) {
-      const lines = text.split('\n');
-      const result = [];
-      if (lines.length === 0) return result;
-      
-      const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
-      
-      for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        const currentline = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        let obj = {};
-        for (let j = 0; j < headers.length; j++) {
-          obj[headers[j]] = currentline[j] ? currentline[j].trim().replace(/^["']|["']$/g, '') : '';
-        }
-        result.push(obj);
-      }
-      return result;
+    function showLoadError() {
+      document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات از گوگل شیت. لطفاً از انتشار صحیح شیت مطمئن شوید.</div>';
     }
 
     function cleanDigits(str) {
