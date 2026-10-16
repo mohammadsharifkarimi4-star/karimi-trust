@@ -12,9 +12,9 @@
       --primary-hover: #4338ca;
       --success: #059669;
       --danger: #dc2626;
-      --glass-bg: rgba(255, 255, 255, 0.78);
+      --glass-bg: rgba(255, 255, 255, 0.82);
       --glass-border: rgba(255, 255, 255, 0.95);
-      --card-bg: rgba(255, 255, 255, 0.88);
+      --card-bg: rgba(255, 255, 255, 0.92);
       --text-main: #0f172a;
       --text-muted: #64748b;
     }
@@ -37,12 +37,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes floatGlow {
-      0% { box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2); }
-      50% { box-shadow: 0 15px 40px rgba(79, 70, 229, 0.4); }
-      100% { box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2); }
-    }
-
     .container {
       width: 100%;
       max-width: 500px;
@@ -52,7 +46,7 @@
       border: 1px solid var(--glass-border);
       padding: 24px;
       border-radius: 30px;
-      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1), floatGlow 5s infinite ease-in-out;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     }
@@ -64,7 +58,6 @@
       font-size: 21px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     .form-group { margin-bottom: 18px; }
@@ -82,13 +75,12 @@
       transition: all 0.3s ease;
       direction: ltr;
       color: #0f172a;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
     input:focus {
       border-color: var(--primary);
       background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
     }
 
     button {
@@ -107,17 +99,7 @@
     }
 
     button:active { transform: scale(0.97); }
-    button:hover { opacity: 0.95; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.5); transform: translateY(-1px); }
-
-    .card, .user-profile-header, .currency-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-    }
+    button:hover { opacity: 0.95; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.5); }
 
     .user-profile-header {
       display: flex;
@@ -125,13 +107,55 @@
       align-items: center;
       padding: 16px 20px;
       background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(241,245,249,0.9) 100%);
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    }
+
+    /* استایل تب‌های اسلایدر ارز متحرک شیشه‌ای */
+    .currency-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 5px;
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .currency-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      margin-top: 0;
+    }
+
+    .currency-tab.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     .currency-card {
-      border-right: 5px solid var(--primary);
-      transition: transform 0.2s;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+      border-right: 6px solid var(--primary);
+      animation: fadeIn 0.4s ease-out;
     }
-    .currency-card:hover { transform: translateY(-2px); }
 
     .tx-card {
       background: rgba(255, 255, 255, 0.96);
@@ -140,7 +164,7 @@
       padding: 16px;
       margin-bottom: 14px;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
-      animation: fadeIn 0.4s ease-out;
+      cursor: pointer;
       transition: all 0.25s ease;
       position: relative;
       overflow: hidden;
@@ -153,7 +177,32 @@
       background: var(--primary);
     }
 
-    .tx-card:hover { border-color: var(--primary); box-shadow: 0 10px 25px rgba(79, 70, 229, 0.12); transform: translateY(-2px); }
+    .tx-card:hover { border-color: var(--primary); box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15); transform: translateY(-2px); }
+
+    /* استایل مودال (پنجره جزئیات تراکنش) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+      position: relative;
+      animation: fadeIn 0.3s ease-out;
+    }
 
     .hidden { display: none !important; }
 
@@ -243,10 +292,13 @@
       </div>
       
       <div style="font-size: 13px; font-weight: 800; color: #334155; margin: 15px 0 10px 0; text-align: center;">📊 آمار موجودی به تفکیک ارز</div>
-      <div id="balancesContainer"></div>
+      
+      <!-- تب‌های اسلایدر شیشه‌ای متحرک برای ارزها -->
+      <div class="currency-tabs" id="currencyTabs"></div>
+      <div id="activeCurrencyCard"></div>
 
       <div style="font-size: 13px; font-weight: 800; color: #334155; margin: 20px 0 10px 0; display: flex; justify-content: space-between; align-items: center;">
-        <span>📋 ریز سوابق و تراکنش‌ها (نمایش کامل و بدون محدودیت)</span>
+        <span>📋 ریز سوابق و تراکنش‌ها (نمایش کامل و نامحدود)</span>
         <span id="txCountBadge" style="font-size: 11px; background: #e2e8f0; color: #1e293b; padding: 3px 8px; border-radius: 6px; font-weight: 700;" class="eng-num">0</span>
       </div>
       <div id="transactionsContainer" style="max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
@@ -257,8 +309,19 @@
     </div>
   </div>
 
+  <!-- پنجره مودال جزئیات تراکنش -->
+  <div id="txModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+        <h3 style="font-size: 16px; color: #1e293b; font-weight: 800;">جزئیات کامل تراکنش</h3>
+        <button onclick="closeModal()" style="width: auto; padding: 4px 10px; font-size: 12px; background: #64748b; margin-top:0;">بستن</button>
+      </div>
+      <div id="modalBody" style="font-size: 14px; color: #334155; line-height: 1.8;"></div>
+      <a id="modalWhatsApp" href="#" target="_blank" class="whatsapp-btn" style="margin-top: 20px; padding: 12px; font-size: 13px;">💬 درخواست گزارش رسمی این تراکنش</a>
+    </div>
+  </div>
+
   <script>
-    // پایگاه داده جامع و کامل با تمام تراکنش‌ها بدون سقف و محدودیت
     const database = {
       "7721878997": {
         name: "شریف کریمی",
@@ -266,29 +329,31 @@
         accountId: "c7d99b00",
         balances: [
           { currency: "AFN", total: "-50,411", creditor: "17,403,454", debtor: "17,353,043" },
-          { currency: "USD", total: "0", creditor: "0", debtor: "0" }
+          { currency: "USD", total: "202", creditor: "202", debtor: "0" },
+          { currency: "IQD", total: "1,500,000", creditor: "2,000,000", debtor: "500,000" }
         ],
         transactions: [
-          { type: "دریافت (بستانکار)", date: "10/11/2026", desc: "قیمت ۲۹۰۰ تومان", amount: "AFN 3,100+", status: "رسیده" },
-          { type: "پرداخت (بدهکار)", date: "10/8/2026", desc: "کریدت", amount: "AFN 10,000-", status: "رسیده" },
-          { type: "حواله (بدهکار)", date: "10/4/2026", desc: "فرستنده حسن جعفری گیرنده موسی ولد غلام حسین ولسوالی درایم ولایت بدخشان مبلغ ۱۰۰۰۰ ده هزار افغانی", amount: "AFN 10,100-", status: "رسیده" },
-          { type: "دریافت (بستانکار)", date: "10/4/2026", desc: "قیمت ۱۱۹۰ تن شد", amount: "AFN 77,350+", status: "رسیده" },
-          { type: "دریافت (بستانکار)", date: "10/4/2026", desc: "قیمت ۲۵۳ دلار شده", amount: "AFN 16,450+", status: "رسیده" },
-          { type: "حواله (بدهکار)", date: "10/3/2026", desc: "رحیمی برای محمد علامی 91770افغانی فکتور", amount: "AFN 92,270-", status: "رسیده" },
-          { type: "پرداخت (بدهکار)", date: "9/28/2026", desc: "کریدت", amount: "AFN 30,050-", status: "رسیده" },
-          { type: "حواله (بدهکار)", date: "9/28/2026", desc: "رحیمی برای رووان یاوری 10000افغانی فکتور", amount: "AFN 10,100-", status: "رسیده" },
-          { type: "پرداخت (بدهکار)", date: "9/26/2026", desc: "قیمت ۶م", amount: "AFN 1,740-", status: "رسیده" },
-          { type: "پرداخت (بدهکار)", date: "9/3/2026", desc: "۲م به ۳۰۰ به حساب محمد رضا محمدی", amount: "AFN 6,300-", status: "رسیده" },
-          { type: "پرداخت (بدهکار)", date: "9/2/2026", desc: "رسید از تفریق 3830افغانی", amount: "AFN 3,830-", status: "رسیده" },
-          { type: "حواله (بدهکار)", date: "9/2/2026", desc: "سجاد برای عنایت الله 5770افغانی لوگر", amount: "AFN 5,870-", status: "رسیده" },
-          { type: "پرداخت (بدهکار)", date: "7/21/2026", desc: "شماره 1650 امین صدر برای سید یاسین حیدری 4190قاشانی دره قاشان دکان وای قای", amount: "AFN 4,290-", status: "رسیده" },
-          { type: "پرداخت (بدهکار)", date: "6/1/2026", desc: "کریدت", amount: "AFN 5,000-", status: "رسیده" },
-          { type: "دریافت (بستانکار)", date: "7/19/2026", desc: "رسید 202 دلار از 1300 تن", amount: "USD 202+", status: "رسیده" }
+          { type: "دریافت (بستانکار)", date: "10/11/2026", desc: "قیمت ۲۹۰۰ تومان", amount: "AFN 3,100+", status: "رسیده", details: "ثبت شده در سامانه مرکزی صرافی کریمی - بستانکار قطعی" },
+          { type: "پرداخت (بدهکار)", date: "10/8/2026", desc: "کریدت حساب", amount: "AFN 10,000-", status: "رسیده", details: "پرداخت نقدی به حساب صرافی - بدهکار" },
+          { type: "حواله (بدهکار)", date: "10/4/2026", desc: "فرستنده حسن جعفری گیرنده موسی ولد غلام حسین ولسوالی درایم ولایت بدخشان مبلغ ۱۰۰۰۰ ده هزار افغانی", amount: "AFN 10,100-", status: "رسیده", details: "حواله ارسالی به ولایت بدخشان - ولسوالی درایم" },
+          { type: "دریافت (بستانکار)", date: "10/4/2026", desc: "قیمت ۱۱۹۰ تن شد", amount: "AFN 77,350+", status: "رسیده", details: "تبدیل و دریافت وجه نقد" },
+          { type: "دریافت (بستانکار)", date: "10/4/2026", desc: "قیمت ۲۵۳ دلار شده", amount: "AFN 16,450+", status: "رسیده", details: "تبدیل ارز دلار به افغانی" },
+          { type: "حواله (بدهکار)", date: "10/3/2026", desc: "رحیمی برای محمد علامی 91770افغانی فکتور", amount: "AFN 92,270-", status: "رسیده", details: "حواله تجاری فکتور شماره 91770" },
+          { type: "پرداخت (بدهکار)", date: "9/28/2026", desc: "کریدت", amount: "AFN 30,050-", status: "رسیده", details: "پرداخت بدهی صرافی" },
+          { type: "حواله (بدهکار)", date: "9/28/2026", desc: "رحیمی برای رووان یاوری 10000افغانی فکتور", amount: "AFN 10,100-", status: "رسیده", details: "حواله ارسالی به نام رووان یاوری" },
+          { type: "پرداخت (بدهکار)", date: "9/26/2026", desc: "قیمت ۶م", amount: "AFN 1,740-", status: "رسیده", details: "تراکنش مالی تسویه شده" },
+          { type: "پرداخت (بدهکار)", date: "9/3/2026", desc: "۲م به ۳۰۰ به حساب محمد رضا محمدی", amount: "AFN 6,300-", status: "رسیده", details: "واریز به حساب محمد رضا محمدی" },
+          { type: "پرداخت (بدهکار)", date: "9/2/2026", desc: "رسید از تفریق 3830افغانی", amount: "AFN 3,830-", status: "رسیده", details: "تفریق حساب فیمابین" },
+          { type: "حواله (بدهکار)", date: "9/2/2026", desc: "سجاد برای عنایت الله 5770افغانی لوگر", amount: "AFN 5,870-", status: "رسیده", details: "حواله ولایت لوگر" },
+          { type: "پرداخت (بدهکار)", date: "7/21/2026", desc: "شماره 1650 امین صدر برای سید یاسین حیدری 4190قاشانی دره قاشان دکان وای قای", amount: "AFN 4,290-", status: "رسیده", details: "پرداخت بابت فکتور تجاری" },
+          { type: "پرداخت (بدهکار)", date: "6/1/2026", desc: "کریدت", amount: "AFN 5,000-", status: "رسیده", details: "کریدت حساب" },
+          { type: "دریافت (بستانکار)", date: "7/19/2026", desc: "رسید 202 دلار از 1300 تن", amount: "USD 202+", status: "رسیده", details: "دریافت دلار آمریکا نقد" }
         ]
       }
     };
 
     let currentUser = null;
+    let activeCurrencyIndex = 0;
 
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
@@ -340,51 +405,88 @@
         document.getElementById('dashPhone').innerText = currentUser.phone;
         document.getElementById('dashAccId').innerText = `ID: ${currentUser.accountId}`;
 
-        // نمایش موجودی ارزی
-        let balanceHtml = '';
-        currentUser.balances.forEach(b => {
-          let netColor = !b.total.includes('-') ? 'var(--success)' : 'var(--danger)';
-          balanceHtml += `
-            <div class="currency-card">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-weight: 800; font-size: 14px; color: #1e293b;">ارز: ${b.currency}</span>
-                <span style="font-size: 17px; font-weight: 800; color: ${netColor};" class="eng-num">${b.total}</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
-                <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.creditor}</b></span>
-                <span>بدهکار (-): <b style="color: var(--danger);" class="eng-num">${b.debtor}</b></span>
-              </div>
-            </div>`;
-        });
-        document.getElementById('balancesContainer').innerHTML = balanceHtml;
-
-        // نمایش تمام تراکنش‌ها بدون سقف و محدودیت
-        let txHtml = '';
-        currentUser.transactions.forEach((tx, idx) => {
-          let amtColor = tx.amount.includes('+') ? 'var(--success)' : 'var(--danger)';
-          txHtml += `
-            <div class="tx-card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:800; font-size:14px; color:#1e293b;">${tx.type}</span>
-                <span style="font-size:11px; background:#f1f5f9; padding:3px 8px; border-radius:6px; color:var(--text-muted); font-weight: 700;" class="eng-num">${tx.date}</span>
-              </div>
-              <div style="font-size:12px; color:#334155; margin-bottom:10px; line-height:1.6;">
-                ${tx.desc}<br>
-                وضعیت: <span style="color:var(--success); font-weight:800;">${tx.status}</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
-                <span style="font-weight:800; font-size:13px; color:${amtColor};" class="eng-num">${tx.amount}</span>
-                <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${idx+1}%20را دارم" target="_blank" style="background:#ede9fe; color:#6d28d9; padding:6px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:800;">گزارش رسمی</a>
-              </div>
-            </div>`;
-        });
-
-        document.getElementById('transactionsContainer').innerHTML = txHtml;
-        document.getElementById('txCountBadge').innerText = currentUser.transactions.length;
+        renderCurrencyTabs();
+        renderTransactions();
 
       } else {
         accErr.classList.remove('hidden');
       }
+    }
+
+    function renderCurrencyTabs() {
+      let tabsHtml = '';
+      currentUser.balances.forEach((b, idx) => {
+        let activeClass = idx === activeCurrencyIndex ? 'active' : '';
+        tabsHtml += `<button class="currency-tab ${activeClass}" onclick="switchCurrency(${idx})">${b.currency}</button>`;
+      });
+      document.getElementById('currencyTabs').innerHTML = tabsHtml;
+      renderActiveCurrencyCard();
+    }
+
+    function switchCurrency(idx) {
+      activeCurrencyIndex = idx;
+      renderCurrencyTabs();
+    }
+
+    function renderActiveCurrencyCard() {
+      let b = currentUser.balances[activeCurrencyIndex];
+      let netColor = !b.total.includes('-') ? 'var(--success)' : 'var(--danger)';
+      let cardHtml = `
+        <div class="currency-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-weight: 800; font-size: 14px; color: #1e293b;">ارز: ${b.currency}</span>
+            <span style="font-size: 18px; font-weight: 800; color: ${netColor};" class="eng-num">${b.total}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
+            <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.creditor}</b></span>
+            <span>بدهکار (-): <b style="color: var(--danger);" class="eng-num">${b.debtor}</b></span>
+          </div>
+        </div>`;
+      document.getElementById('activeCurrencyCard').innerHTML = cardHtml;
+    }
+
+    function renderTransactions() {
+      let txHtml = '';
+      currentUser.transactions.forEach((tx, idx) => {
+        let amtColor = tx.amount.includes('+') ? 'var(--success)' : 'var(--danger)';
+        txHtml += `
+          <div class="tx-card" onclick="openModal(${idx})">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-weight:800; font-size:14px; color:#1e293b;">${tx.type}</span>
+              <span style="font-size:11px; background:#f1f5f9; padding:3px 8px; border-radius:6px; color:var(--text-muted); font-weight: 700;" class="eng-num">${tx.date}</span>
+            </div>
+            <div style="font-size:12px; color:#334155; margin-bottom:10px; line-height:1.6;">
+              ${tx.desc}<br>
+              وضعیت: <span style="color:var(--success); font-weight:800;">${tx.status}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
+              <span style="font-weight:800; font-size:13px; color:${amtColor};" class="eng-num">${tx.amount}</span>
+              <span style="color:#4f46e5; font-size:11px; font-weight:800;">مشاهده جزئیات کلیک کنید</span>
+            </div>
+          </div>`;
+      });
+
+      document.getElementById('transactionsContainer').innerHTML = txHtml;
+      document.getElementById('txCountBadge').innerText = currentUser.transactions.length;
+    }
+
+    function openModal(idx) {
+      let tx = currentUser.transactions[idx];
+      let bodyHtml = `
+        <p><b>نوع تراکنش:</b> ${tx.type}</p>
+        <p><b>تاریخ ثبت:</b> <span class="eng-num">${tx.date}</span></p>
+        <p><b>شرح کامل:</b> ${tx.desc}</p>
+        <p><b>توضیحات تکمیلی:</b> ${tx.details}</p>
+        <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:var(--primary);">${tx.amount}</span></p>
+        <p><b>وضعیت:</b> <span style="color:var(--success); font-weight:bold;">${tx.status}</span></p>
+      `;
+      document.getElementById('modalBody').innerHTML = bodyHtml;
+      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${idx+1}%20(${tx.date})%20را دارم`;
+      document.getElementById('txModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('txModal').classList.add('hidden');
     }
 
     function backToPhone() {
