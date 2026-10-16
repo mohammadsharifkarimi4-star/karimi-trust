@@ -108,7 +108,6 @@
     .section-box { display: none; }
     .section-box.active { display: block; animation: fadeIn 0.3s ease-out; }
 
-    /* کادر آمار بزرگ‌تر، مرتب‌تر و با فضای کافی برای نمایش اطلاعات کامل */
     .card-stats {
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
       color: white;
@@ -116,12 +115,35 @@
       padding: 16px 20px;
       margin-bottom: 16px;
       box-shadow: 0 10px 25px rgba(49, 46, 129, 0.3);
-      max-height: 280px;
-      overflow-y: auto;
     }
 
     .stats-title { font-size: 13px; font-weight: 800; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 6px; }
-    .stats-content { font-size: 13px; font-weight: 700; line-height: 1.7; }
+    .stats-content { font-size: 13px; font-weight: 700; line-height: 1.7; max-height: 220px; overflow-y: auto; padding-left: 4px; }
+
+    /* استایل فیلتر تاریخ */
+    .date-filter-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .date-filter-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .date-filter-row label { font-size: 11px; color: #c7d2fe; min-width: 45px; }
+    .date-filter-row input {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.9);
+      color: #0f172a;
+    }
 
     .btn-open-modal {
       width: 100%;
@@ -350,6 +372,7 @@
         <button class="sub-tab" onclick="switchMainTab('expensesTab', this)">خرج‌ها و درآمدها</button>
       </div>
 
+      <!-- تب طلب‌ها و بدهی‌ها (دست‌نخورده و عالی) -->
       <div id="debtsTab" class="section-box active">
         <div class="card-stats">
           <div class="stats-title">📈 آمار کل طلب و بدهی</div>
@@ -362,9 +385,23 @@
         <div class="transactions-scroll-area" id="debtsListContainer"></div>
       </div>
 
+      <!-- تب خرج‌ها و درآمدها با فیلتر بازه زمانی -->
       <div id="expensesTab" class="section-box">
         <div class="card-stats">
-          <div class="stats-title">📊 آمار جامع خرج و درآمد (۳۰ روزه و سالانه)</div>
+          <div class="stats-title">📊 آمار خرج و درآمد (با فیلتر بازه زمانی)</div>
+          
+          <!-- فیلتر بازه زمانی -->
+          <div class="date-filter-box">
+            <div class="date-filter-row">
+              <label>از تاریخ:</label>
+              <input type="date" id="filterStartDate" onchange="renderExpenses()" class="eng-num">
+            </div>
+            <div class="date-filter-row">
+              <label>تا تاریخ:</label>
+              <input type="date" id="filterEndDate" onchange="renderExpenses()" class="eng-num">
+            </div>
+          </div>
+
           <div id="expensesStatsContent" class="stats-content eng-num">داده‌ای ثبت نشده است.</div>
         </div>
 
@@ -501,7 +538,7 @@
       }
     });
 
-    // پاک‌سازی کامل تاریخ برای نمایش تمیز میلادی (بدون ساعت)
+    // تابع پاکسازی تاریخ برای نمایش تمیز میلادی
     function formatDate(dateStr) {
       if (!dateStr) return '';
       let str = dateStr.toString().trim();
@@ -853,29 +890,36 @@
         return;
       }
 
-      // محاسبه آمار ماهانه (۳۰ روز اخیر) و آمار سالانه جامع
-      let annualStats = {};
-      let thirtyDaysStats = {};
+      // گرفتن مقادیر فیلتر بازه زمانی دستی
+      let startDateVal = document.getElementById('filterStartDate').value;
+      let endDateVal = document.getElementById('filterEndDate').value;
 
-      let now = new Date();
-      let thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(now.getDate() - 30);
+      let filteredStats = {};
+      let annualStats = {};
+
+      let startDate = startDateVal ? new Date(startDateVal) : null;
+      let endDate = endDateVal ? new Date(endDateVal) : null;
+      if (endDate) endDate.setHours(23, 59, 59, 999); // پایان روز انتخابی
 
       expenses.forEach(item => {
-        let itemDate = item.date ? new Date(item.date) : new Date();
+        let itemDateStr = formatDate(item.date);
+        let itemDate = new Date(itemDateStr);
         let amt = Number(item.amount || 0);
         let cur = item.currency || 'تومان';
         let type = item.type; // 'درآمد' یا 'خرج'
 
-        // آمار سالانه (کل سوابق بدون حذف)
-        if (!annualStats[cur]) annualStats[cur] = { درآمد: 0, خرج: 0, count: 0 };
+        // آمار جامع سالانه (کل سوابق بدون حذف)
+        if (!annualStats[cur]) annualStats[cur] = { درآمد: 0, خرج: 0 };
         annualStats[cur][type] += amt;
-        annualStats[cur].count += 1;
 
-        // آمار قفل‌شده‌ی ۳۰ روز اخیر (ماهانه)
-        if (itemDate >= thirtyDaysAgo) {
-          if (!thirtyDaysStats[cur]) thirtyDaysStats[cur] = { درآمد: 0, خرج: 0 };
-          thirtyDaysStats[cur][type] += amt;
+        // بررسی قرار داشتن در بازه زمانی فیلترشده
+        let inRange = true;
+        if (startDate && itemDate < startDate) inRange = false;
+        if (endDate && itemDate > endDate) inRange = false;
+
+        if (inRange) {
+          if (!filteredStats[cur]) filteredStats[cur] = { درآمد: 0, خرج: 0 };
+          filteredStats[cur][type] += amt;
         }
       });
 
@@ -905,31 +949,31 @@
 
       container.innerHTML = html;
 
-      // ساختار نمایش آمار: اول ۳۰ روزه (ماهانه) و پایین‌تر آمار سالانه جامع
+      // ساختار آمار: ابتدا آمار بر اساس بازه زمانی انتخابی، سپس آمار جامع سالانه
       let statsHtml = '';
 
-      // ۱. بخش آمار ۳۰ روزه (ماهانه)
+      // ۱. آمار بازه زمانی فیلتر شده
       statsHtml += `<div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 8px;">`;
-      statsHtml += `<div style="font-weight: 800; color: #fbbf24; margin-bottom: 4px;">📅 آمار ۳۰ روز اخیر (ماهانه):</div>`;
+      statsHtml += `<div style="font-weight: 800; color: #fbbf24; margin-bottom: 4px;">🎯 آمار بر اساس بازه زمانی انتخابی:</div>`;
       
-      let hasMonthData = false;
-      for (let c in thirtyDaysStats) {
-        hasMonthData = true;
-        let inc = thirtyDaysStats[c]['درآمد'];
-        let exp = thirtyDaysStats[c]['خرج'];
+      let hasFilteredData = false;
+      for (let c in filteredStats) {
+        hasFilteredData = true;
+        let inc = filteredStats[c]['درآمد'];
+        let exp = filteredStats[c]['خرج'];
         let diff = inc - exp;
         let status = diff >= 0 ? `🟢 مازاد (پس‌انداز): <span style="color:#34d399;" class="eng-num">${diff.toLocaleString()}</span>` : `🔴 کسری (کم‌آمده): <span style="color:#f87171;" class="eng-num">${Math.abs(diff).toLocaleString()}</span>`;
         
         statsHtml += `<div style="margin-bottom:4px;"><b>${c}:</b> درآمد: <span style="color:#34d399;" class="eng-num">${inc.toLocaleString()}</span> | خرج: <span style="color:#f87171;" class="eng-num">${exp.toLocaleString()}</span><br>${status}</div>`;
       }
-      if (!hasMonthData) {
-        statsHtml += `<div style="color:var(--text-muted); font-size:12px;">تراکنشی در ۳۰ روز اخیر ثبت نشده است.</div>`;
+      if (!hasFilteredData) {
+        statsHtml += `<div style="color:var(--text-muted); font-size:12px;">داده‌ای در این بازه زمانی وجود ندارد.</div>`;
       }
       statsHtml += `</div>`;
 
-      // ۲. بخش آمار سالانه (در پایین)
+      // ۲. آمار کل سالانه
       statsHtml += `<div>`;
-      statsHtml += `<div style="font-weight: 800; color: #38bdf8; margin-bottom: 4px;">📈 آمار جامع سالانه:</div>`;
+      statsHtml += `<div style="font-weight: 800; color: #38bdf8; margin-bottom: 4px;">📈 آمار جامع کل سوابق (سالانه):</div>`;
       
       let hasYearData = false;
       for (let c in annualStats) {
