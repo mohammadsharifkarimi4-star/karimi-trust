@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سامانه حسابداری کریمی</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, Arial, sans-serif; }
+    body { background-color: #f4f6f9; color: #333; padding: 15px; }
+    .container { max-width: 500px; margin: 20px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #1e293b; margin-bottom: 20px; font-size: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; color: #475569; }
+    input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; text-align: center; outline: none; }
+    input:focus { border-color: #2563eb; }
+    button { width: 100%; padding: 12px; background-color: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+    button:hover { background-color: #1d4ed8; }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+    .balance-box { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: 15px; }
+    .tx-item { border-bottom: 1px solid #f1f5f9; padding: 10px 0; font-size: 13px; }
+    .tx-item:last-child { border-bottom: none; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>سامانه حسابداری و صرافی کریمی</h2>
+    
+    <!-- Login Form -->
+    <div id="loginSection">
+      <div class="form-group">
+        <label>شماره تلفن:</label>
+        <input type="text" id="phoneInput" placeholder="مثال: 7721878997" value="7721878997">
+      </div>
+      <div class="form-group">
+        <label>کد حساب (رمز عبور):</label>
+        <input type="password" id="accountIdInput" placeholder="کد حساب را وارد کنید" value="c7d99b00">
+      </div>
+      <button onclick="login()">ورود به سامانه</button>
+      <p id="errorMsg" style="color: #ef4444; text-align: center; margin-top: 10px; font-size: 14px;"></p>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="hidden">
+      <h3 id="welcomeMsg" style="margin-bottom: 15px; font-size: 16px; color: #0f172a;"></h3>
+      
+      <div class="card">
+        <h4 style="margin-bottom: 10px; color: #334155;">موجودی حساب‌ها</h4>
+        <div id="balancesContainer"></div>
+      </div>
+
+      <div class="card">
+        <h4 style="margin-bottom: 10px; color: #334155;">آخرین تراکنش‌ها</h4>
+        <div id="transactionsContainer"></div>
+      </div>
+      <button onclick="logout()" style="background-color: #ef4444;">خروج از حساب</button>
+    </div>
+  </div>
+
+  <script>
+    const database = {
+      "7721878997": {
+        name: "شریف کریمی",
+        accountId: "c7d99b00",
+        balances: [
+          { currency: "AFN", total: "-50,411", statusColor: "#ef4444" },
+          { currency: "USD", total: "0", statusColor: "#22c55e" }
+        ],
+        transactions: [
+          { type: "حواله", amount: "AFN 10,100-", date: "10/4/2026", desc: "فرستنده حسن جعفری، گیرنده موسی، ولایت دایکندی" },
+          { type: "پرداخت", amount: "AFN 10,000-", date: "10/8/2026", desc: "کردیت حساب" },
+          { type: "دریافت", amount: "AFN 3,100+", date: "10/11/2026", desc: "قیمت ۲۹۰۰ تومان" },
+          { type: "دریافت", amount: "AFN 129,600+", date: "9/26/2026", desc: "قیمت ۲ هزار تتر" },
+          { type: "دریافت", amount: "AFN 77,350+", date: "9/19/2026", desc: "قیمت ۱۱۹۰ تتر شد" },
+          { type: "پرداخت", amount: "AFN 3,000-", date: "9/15/2026", desc: "برداشت نقدی از حساب" },
+          { type: "حواله", amount: "AFN 10,100-", date: "9/10/2026", desc: "ارسال حواله تجاری به کابل" }
+        ]
+      }
+    };
+
+    function login() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      const accountId = document.getElementById('accountIdInput').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
+      
+      if (database[phone] && database[phone].accountId === accountId) {
+        const user = database[phone];
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        document.getElementById('welcomeMsg').innerText = 'خوش آمدید، ' + user.name;
+        
+        let balHtml = '';
+        user.balances.forEach(b => {
+          balHtml += '<div class="balance-box"><span>ارز: <b>' + b.currency + '</b></span><span style="color:' + b.statusColor + '; font-weight:bold;">' + b.total + '</span></div>';
+        });
+        document.getElementById('balancesContainer').innerHTML = balHtml;
+
+        let txHtml = '';
+        user.transactions.forEach(t => {
+          txHtml += '<div class="tx-item"><div><strong>' + t.type + '</strong> (' + t.date + ') - <span style="color:#16a34a; font-weight:bold;">' + t.amount + '</span></div><div style="color:#64748b; margin-top:3px;">' + t.desc + '</div></div>';
+        });
+        document.getElementById('transactionsContainer').innerHTML = txHtml;
+      } else {
+        errorMsg.innerText = 'شماره تلفن یا کد حساب اشتباه است';
+      }
+    }
+
+    function logout() {
+      document.getElementById('dashboardSection').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
