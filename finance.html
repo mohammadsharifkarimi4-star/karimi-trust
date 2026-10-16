@@ -480,7 +480,8 @@
   </div>
 
   <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3u4VwbjI3TnrQEFpXimtZDbiwu8RdXc666ZER7N2fUWrpdMW/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3u4VwbjI3TnrQEFpXimtZDbiwu8RdXc666ZER7N2fUWrpdMW/exec";
+
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
     let ownerAvatar = localStorage.getItem('cloud_owner_avatar');
@@ -496,6 +497,17 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3
         loadDataFromCloud();
       }
     });
+
+    // تابع پاک‌سازی و فرمت تاریخ برای نمایش تمیز میلادی بدون ساعت
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      let d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      let year = d.getFullYear();
+      let month = String(d.getMonth() + 1).padStart(2, '0');
+      let day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
 
     function saveOwnerInfo() {
       let name = document.getElementById('ownerNameInput').value.trim();
@@ -594,7 +606,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3
         document.getElementById('debtType').value = item.type || 'طلب';
         document.getElementById('debtCurrency').value = item.currency || 'تومان';
         document.getElementById('debtAmount').value = item.amount || '';
-        document.getElementById('debtDate').value = item.date || '';
+        document.getElementById('debtDate').value = item.date ? item.date.split('T')[0] : '';
         document.getElementById('debtDesc').value = item.description || '';
       } else {
         resetDebtForm();
@@ -617,7 +629,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3
         document.getElementById('expenseCurrency').value = item.currency || 'تومان';
         document.getElementById('expenseTitle').value = item.nameOrTitle || '';
         document.getElementById('expenseAmount').value = item.amount || '';
-        document.getElementById('expenseDate').value = item.date || '';
+        document.getElementById('expenseDate').value = item.date ? item.date.split('T')[0] : '';
         document.getElementById('expenseDesc').value = item.description || '';
       } else {
         resetExpenseForm();
@@ -750,6 +762,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3
       document.getElementById('debtAmount').value = '';
       document.getElementById('debtDesc').value = '';
       document.getElementById('debtReceipt').value = '';
+      document.getElementById('debtDate').valueAsDate = new Date();
       document.getElementById('debtFormTitle').innerText = '➕ ثبت تراکنش جدید';
     }
 
@@ -759,6 +772,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3
       document.getElementById('expenseAmount').value = '';
       document.getElementById('expenseDesc').value = '';
       document.getElementById('expenseReceipt').value = '';
+      document.getElementById('expenseDate').valueAsDate = new Date();
       document.getElementById('expenseFormTitle').innerText = '➕ ثبت خرج یا درآمد';
     }
 
@@ -782,22 +796,20 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3
         stats[item.currency][item.type] += Number(item.amount || 0);
 
         let safePhone = cleanPhone(item.phone);
+        let cleanDateStr = formatDate(item.date);
         let waText = '';
         if (item.type === 'طلب') {
-          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nخواستم یادآوری کنم که مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} بابت (${item.description || 'حساب فی‌مابین'}) از شما طلبکار هستم.\nبا توجه به اینکه دستم کمی تنگ است و به این مبلغ نیاز دارم، ممنون می‌شوم لطف کنید و تسویه بفرمایید.\n\nتاریخ: ${item.date}\nپیشاپیش از همکاری شما سپاسگزارم.`);
+          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nخواستم یادآوری کنم که مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} بابت (${item.description || 'حساب فی‌مابین'}) از شما طلبکار هستم.\nبا توجه به اینکه دستم کمی تنگ است و به این مبلغ نیاز دارم، ممنون می‌شوم لطف کنید و تسویه بفرمایید.\n\nتاریخ: ${cleanDateStr}\nپیشاپیش از همکاری شما سپاسگزارم.`);
         } else {
-          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nبابت مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} که به شما بدهکار بودم (${item.description || 'حساب فی‌مابین'})، عذرخواهی می‌کنم اگر پرداختش طول کشید.\nان‌شاءالله به زودی تسویه انجام می‌شود.\n\nتاریخ: ${item.date}\nممنون از صبوری شما.`);
+          waText = encodeURIComponent(`سلام ${item.nameOrTitle} عزیز، روزتان بخیر.\n\nبابت مبلغ ${Number(item.amount).toLocaleString()} ${item.currency} که به شما بدهکار بودم (${item.description || 'حساب فی‌مابین'})، عذرخواهی می‌کنم اگر پرداختش طول کشید.\nان‌شاءالله به زودی تسویه انجام می‌شود.\n\nتاریخ: ${cleanDateStr}\nممنون از صبوری شما.`);
         }
         let waLink = safePhone ? `https://wa.me/${safePhone}?text=${waText}` : '#';
-
-        // تبدیل داده به فرمت مناسب برای ارسال به تابع ویرایش
-        let itemJson = encodeURIComponent(JSON.stringify(item));
 
         html += `
           <div class="tx-item">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <span style="font-weight:800; font-size:13.5px; color:#1e293b;">${item.nameOrTitle} (${item.type})</span>
-              <span style="font-size:11.5px; color:var(--text-muted);" class="eng-num">${item.date}</span>
+              <span style="font-size:11.5px; color:var(--text-muted);" class="eng-num">${cleanDateStr}</span>
             </div>
             <div style="font-size:13.5px; margin-bottom:4px; color:${amtColor}; font-weight:800;" class="eng-num">
               ${item.currency} ${Number(item.amount).toLocaleString()}
@@ -839,12 +851,13 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3
         let amtColor = item.type === 'درآمد' ? '#34d399' : '#f87171';
         if (!stats[item.currency]) stats[item.currency] = { درآمد: 0, خرج: 0 };
         stats[item.currency][item.type] += Number(item.amount || 0);
+        let cleanDateStr = formatDate(item.date);
 
         html += `
           <div class="tx-item">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <span style="font-weight:800; font-size:13.5px; color:#1e293b;">${item.nameOrTitle} (${item.type})</span>
-              <span style="font-size:11.5px; color:var(--text-muted);" class="eng-num">${item.date}</span>
+              <span style="font-size:11.5px; color:var(--text-muted);" class="eng-num">${cleanDateStr}</span>
             </div>
             <div style="font-size:13.5px; margin-bottom:4px; color:${amtColor}; font-weight:800;" class="eng-num">
               ${item.currency} ${Number(item.amount).toLocaleString()}
