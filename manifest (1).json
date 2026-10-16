@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Karimi Trust",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "امانتداری کریمی",
+  "start_url": "/",
+  "theme_color": "#ffffff"
+}
