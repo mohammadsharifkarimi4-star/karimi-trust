@@ -117,8 +117,8 @@
       box-shadow: 0 10px 25px rgba(49, 46, 129, 0.3);
     }
 
-    .stats-title { font-size: 12px; font-weight: 700; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; }
-    .stats-content { font-size: 15px; font-weight: 800; line-height: 1.8; }
+    .stats-title { font-size: 12.5px; font-weight: 700; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; }
+    .stats-content { font-size: 13.5px; font-weight: 700; line-height: 1.8; }
 
     .btn-open-modal {
       width: 100%;
@@ -361,7 +361,7 @@
 
       <div id="expensesTab" class="section-box">
         <div class="card-stats">
-          <div class="stats-title">📈 آمار خرج و درآمد</div>
+          <div class="stats-title">📊 آمار جامع خرج و درآمد (سالانه و ماهانه)</div>
           <div id="expensesStatsContent" class="stats-content eng-num">داده‌ای ثبت نشده است.</div>
         </div>
 
@@ -498,12 +498,10 @@
       }
     });
 
-    // تابع اصلاح شده و کامل برای نمایش تاریخ به صورت میلادی مرتب بدون ساعت
+    // تابع پاکسازی تاریخ برای نمایش تمیز میلادی بدون ساعت
     function formatDate(dateStr) {
       if (!dateStr) return '';
       let str = dateStr.toString().trim();
-      
-      // اگر فرمت تاریخ به صورت رشته‌ی طولانی جاوااسکریپت بود
       let d = new Date(str);
       if (!isNaN(d.getTime())) {
         let year = d.getFullYear();
@@ -511,10 +509,8 @@
         let day = String(d.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       }
-      
-      if (str.includes('T')) {
-        return str.split('T')[0];
-      }
+      if (str.includes('T')) return str.split('T')[0];
+      if (str.length >= 10) return str.substring(0, 10);
       return str;
     }
 
@@ -845,7 +841,7 @@
     function renderExpenses() {
       let container = document.getElementById('expensesListContainer');
       let html = '';
-      let stats = {};
+      
       let expenses = allData.filter(item => item && (item.type === 'درآمد' || item.type === 'خرج'));
 
       if (expenses.length === 0) {
@@ -854,12 +850,37 @@
         return;
       }
 
+      // ۱. آمار کل سالانه (بدون حذف داده‌ها، کل ۳۶۵ روز گذشته یا کل سوابق)
+      let annualStats = {};
+      // ۲. آمار ماه جاری (بر اساس ماه و سالِ تاریخ تراکنش)
+      let currentMonthStats = {};
+
+      let now = new Date();
+      let currentYear = now.getFullYear();
+      let currentMonth = now.getMonth(); // ماه جاری (0 تا 11)
+
+      expenses.forEach(item => {
+        let itemDate = item.date ? new Date(item.date) : new Date();
+        let amt = Number(item.amount || 0);
+        let cur = item.currency || 'تومان';
+        let type = item.type; // 'درآمد' یا 'خرج'
+
+        // تجمیع آمار سالانه (کل سوابق)
+        if (!annualStats[cur]) annualStats[cur] = { درآمد: 0, خرج: 0, count: 0 };
+        annualStats[cur][type] += amt;
+        annualStats[cur].count += 1;
+
+        // تجمیع آمار ماه جاری
+        if (itemDate.getFullYear() === currentYear && itemDate.getMonth() === currentMonth) {
+          if (!currentMonthStats[cur]) currentMonthStats[cur] = { درآمد: 0, خرج: 0 };
+          currentMonthStats[cur][type] += amt;
+        }
+      });
+
       let reversedExpenses = [...expenses].reverse();
 
       reversedExpenses.forEach(item => {
         let amtColor = item.type === 'درآمد' ? '#34d399' : '#f87171';
-        if (!stats[item.currency]) stats[item.currency] = { درآمد: 0, خرج: 0 };
-        stats[item.currency][item.type] += Number(item.amount || 0);
         let cleanDateStr = formatDate(item.date);
 
         html += `
@@ -882,10 +903,47 @@
 
       container.innerHTML = html;
 
+      // ساخت بخش نمایش آمار تفکیک‌شده (ماه جاری و کل سالانه)
       let statsHtml = '';
-      for (let c in stats) {
-        statsHtml += `<div><b>${c}</b> ➔ درآمد: <span style="color:#34d399;" class="eng-num">${stats[c]['درآمد'].toLocaleString()}</span> | خرج: <span style="color:#f87171;" class="eng-num">${stats[c]['خرج'].toLocaleString()}</span></div>`;
+
+      // الف) بخش آمار ماه جاری
+      statsHtml += `<div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px;">`;
+      statsHtml += `<div style="font-weight: 800; color: #fbbf24; margin-bottom: 4px;">📅 آمار این ماه:</div>`;
+      
+      let hasMonthData = false;
+      for (let c in currentMonthStats) {
+        hasMonthData = true;
+        let inc = currentMonthStats[c]['درآمد'];
+        let exp = currentMonthStats[c]['خرج'];
+        let diff = inc - exp;
+        let status = diff >= 0 ? `🟢 مازاد (پس‌انداز): <span style="color:#34d399;" class="eng-num">${diff.toLocaleString()}</span>` : `🔴 کسری (کم‌آمده): <span style="color:#f87171;" class="eng-num">${Math.abs(diff).toLocaleString()}</span>`;
+        
+        statsHtml += `<div style="margin-bottom:4px;"><b>${c}:</b> درآمد: <span style="color:#34d399;" class="eng-num">${inc.toLocaleString()}</span> | خرج: <span style="color:#f87171;" class="eng-num">${exp.toLocaleString()}</span><br>${status}</div>`;
       }
+      if (!hasMonthData) {
+        statsHtml += `<div style="color:var(--text-muted); font-size:12px;">تراکنشی در این ماه ثبت نشده است.</div>`;
+      }
+      statsHtml += `</div>`;
+
+      // ب) بخش آمار جامع سالانه و میانگین کل
+      statsHtml += `<div>`;
+      statsHtml += `<div style="font-weight: 800; color: #38bdf8; margin-bottom: 4px;">📈 آمار جامع سالانه و کل:</div>`;
+      
+      let hasYearData = false;
+      for (let c in annualStats) {
+        hasYearData = true;
+        let inc = annualStats[c]['درآمد'];
+        let exp = annualStats[c]['خرج'];
+        let totalDiff = inc - exp;
+        let totalStatus = totalDiff >= 0 ? `مازاد کل: <span style="color:#34d399;" class="eng-num">${totalDiff.toLocaleString()}</span>` : `کسری کل: <span style="color:#f87171;" class="eng-num">${Math.abs(totalDiff).toLocaleString()}</span>`;
+
+        statsHtml += `<div style="margin-bottom:4px;"><b>${c}:</b> مجموع درآمد: <span style="color:#34d399;" class="eng-num">${inc.toLocaleString()}</span> | مجموع خرج: <span style="color:#f87171;" class="eng-num">${exp.toLocaleString()}</span><br>${totalStatus}</div>`;
+      }
+      if (!hasYearData) {
+        statsHtml += `<div style="color:var(--text-muted); font-size:12px;">داده‌ای ثبت نشده است.</div>`;
+      }
+      statsHtml += `</div>`;
+
       document.getElementById('expensesStatsContent').innerHTML = statsHtml;
     }
   </script>
