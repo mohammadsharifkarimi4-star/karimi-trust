@@ -301,7 +301,7 @@
   </div>
 
   <div class="container">
-    <!-- ورود با ایمیل -->
+    <!-- بخش ثبت‌نام اولیه با ایمیل -->
     <div id="setupSection" class="hidden">
       <div style="text-align:center; margin-bottom: 22px;">
         <div style="font-size: 42px; margin-bottom: 10px;">☁️</div>
@@ -326,7 +326,7 @@
       </div>
     </div>
 
-    <!-- بخش اصلی برنامه -->
+    <!-- بخش اصلی اپلیکیشن -->
     <div id="mainAppSection" class="hidden">
       <div class="top-bar">
         <div class="profile-header">
@@ -344,7 +344,7 @@
         <button class="sub-tab" onclick="switchMainTab('expensesTab', this)">خرج‌ها و درآمدها</button>
       </div>
 
-      <!-- طلب‌ها و بدهی‌ها -->
+      <!-- تب طلب‌ها و بدهی‌ها -->
       <div id="debtsTab" class="section-box active">
         <div class="card-stats">
           <div class="stats-title">📈 آمار کل طلب و بدهی</div>
@@ -357,7 +357,7 @@
         <div class="transactions-scroll-area" id="debtsListContainer"></div>
       </div>
 
-      <!-- خرج‌ها و درآمدها -->
+      <!-- تب خرج‌ها و درآمدها -->
       <div id="expensesTab" class="section-box">
         <div class="card-stats">
           <div class="stats-title">📈 آمار خرج و درآمد</div>
@@ -477,7 +477,9 @@
   </div>
 
   <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgq16rTFn_qEYTJQ8r9zBx2_RoCqFm979jpCTDtp5b2zNws3PH6qeb-54WyXYPzPpN/exec";
+    // لینک آخرین وب‌اپلیکیشن گوگل‌اسکریپت
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgq16rTFn_qEYTJQ8r9zBx2_RoCqFm979jpCTDtp5b2zNws3PH6qeb-54WyXYPzPpN/exec";
+
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
     let ownerAvatar = localStorage.getItem('cloud_owner_avatar');
@@ -777,13 +779,13 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgq16rTFn_qEYTJQ8r9
       }
     }
 
-    function resetExpenseForm() {
+    let resetExpenseForm = () => {
       document.getElementById('expenseTitle').value = '';
       document.getElementById('expenseAmount').value = '';
       document.getElementById('expenseDesc').value = '';
       document.getElementById('expenseReceipt').value = '';
       document.getElementById('expenseFormTitle').innerText = '➕ ثبت خرج یا درآمد';
-    }
+    };
 
     function renderExpenses() {
       let container = document.getElementById('expensesListContainer');
