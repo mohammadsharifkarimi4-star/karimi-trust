@@ -108,17 +108,20 @@
     .section-box { display: none; }
     .section-box.active { display: block; animation: fadeIn 0.3s ease-out; }
 
+    /* کادر آمار بزرگ‌تر، مرتب‌تر و با فضای کافی برای نمایش اطلاعات کامل */
     .card-stats {
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
       color: white;
-      border-radius: 18px;
-      padding: 18px;
+      border-radius: 20px;
+      padding: 16px 20px;
       margin-bottom: 16px;
       box-shadow: 0 10px 25px rgba(49, 46, 129, 0.3);
+      max-height: 280px;
+      overflow-y: auto;
     }
 
-    .stats-title { font-size: 12.5px; font-weight: 700; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; }
-    .stats-content { font-size: 13.5px; font-weight: 700; line-height: 1.8; }
+    .stats-title { font-size: 13px; font-weight: 800; color: #c7d2fe; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 6px; }
+    .stats-content { font-size: 13px; font-weight: 700; line-height: 1.7; }
 
     .btn-open-modal {
       width: 100%;
@@ -229,7 +232,7 @@
     .list-section-title { font-weight: 800; font-size: 13.5px; margin-bottom: 10px; color: #1e1b4b; }
     
     .transactions-scroll-area {
-      max-height: 320px;
+      max-height: 280px;
       overflow-y: auto;
       padding-left: 4px;
     }
@@ -361,7 +364,7 @@
 
       <div id="expensesTab" class="section-box">
         <div class="card-stats">
-          <div class="stats-title">📊 آمار جامع خرج و درآمد (سالانه و ماهانه)</div>
+          <div class="stats-title">📊 آمار جامع خرج و درآمد (۳۰ روزه و سالانه)</div>
           <div id="expensesStatsContent" class="stats-content eng-num">داده‌ای ثبت نشده است.</div>
         </div>
 
@@ -498,7 +501,7 @@
       }
     });
 
-    // تابع پاکسازی تاریخ برای نمایش تمیز میلادی بدون ساعت
+    // پاک‌سازی کامل تاریخ برای نمایش تمیز میلادی (بدون ساعت)
     function formatDate(dateStr) {
       if (!dateStr) return '';
       let str = dateStr.toString().trim();
@@ -850,14 +853,13 @@
         return;
       }
 
-      // ۱. آمار کل سالانه (بدون حذف داده‌ها، کل ۳۶۵ روز گذشته یا کل سوابق)
+      // محاسبه آمار ماهانه (۳۰ روز اخیر) و آمار سالانه جامع
       let annualStats = {};
-      // ۲. آمار ماه جاری (بر اساس ماه و سالِ تاریخ تراکنش)
-      let currentMonthStats = {};
+      let thirtyDaysStats = {};
 
       let now = new Date();
-      let currentYear = now.getFullYear();
-      let currentMonth = now.getMonth(); // ماه جاری (0 تا 11)
+      let thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
 
       expenses.forEach(item => {
         let itemDate = item.date ? new Date(item.date) : new Date();
@@ -865,15 +867,15 @@
         let cur = item.currency || 'تومان';
         let type = item.type; // 'درآمد' یا 'خرج'
 
-        // تجمیع آمار سالانه (کل سوابق)
+        // آمار سالانه (کل سوابق بدون حذف)
         if (!annualStats[cur]) annualStats[cur] = { درآمد: 0, خرج: 0, count: 0 };
         annualStats[cur][type] += amt;
         annualStats[cur].count += 1;
 
-        // تجمیع آمار ماه جاری
-        if (itemDate.getFullYear() === currentYear && itemDate.getMonth() === currentMonth) {
-          if (!currentMonthStats[cur]) currentMonthStats[cur] = { درآمد: 0, خرج: 0 };
-          currentMonthStats[cur][type] += amt;
+        // آمار قفل‌شده‌ی ۳۰ روز اخیر (ماهانه)
+        if (itemDate >= thirtyDaysAgo) {
+          if (!thirtyDaysStats[cur]) thirtyDaysStats[cur] = { درآمد: 0, خرج: 0 };
+          thirtyDaysStats[cur][type] += amt;
         }
       });
 
@@ -903,31 +905,31 @@
 
       container.innerHTML = html;
 
-      // ساخت بخش نمایش آمار تفکیک‌شده (ماه جاری و کل سالانه)
+      // ساختار نمایش آمار: اول ۳۰ روزه (ماهانه) و پایین‌تر آمار سالانه جامع
       let statsHtml = '';
 
-      // الف) بخش آمار ماه جاری
-      statsHtml += `<div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px;">`;
-      statsHtml += `<div style="font-weight: 800; color: #fbbf24; margin-bottom: 4px;">📅 آمار این ماه:</div>`;
+      // ۱. بخش آمار ۳۰ روزه (ماهانه)
+      statsHtml += `<div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 8px;">`;
+      statsHtml += `<div style="font-weight: 800; color: #fbbf24; margin-bottom: 4px;">📅 آمار ۳۰ روز اخیر (ماهانه):</div>`;
       
       let hasMonthData = false;
-      for (let c in currentMonthStats) {
+      for (let c in thirtyDaysStats) {
         hasMonthData = true;
-        let inc = currentMonthStats[c]['درآمد'];
-        let exp = currentMonthStats[c]['خرج'];
+        let inc = thirtyDaysStats[c]['درآمد'];
+        let exp = thirtyDaysStats[c]['خرج'];
         let diff = inc - exp;
         let status = diff >= 0 ? `🟢 مازاد (پس‌انداز): <span style="color:#34d399;" class="eng-num">${diff.toLocaleString()}</span>` : `🔴 کسری (کم‌آمده): <span style="color:#f87171;" class="eng-num">${Math.abs(diff).toLocaleString()}</span>`;
         
         statsHtml += `<div style="margin-bottom:4px;"><b>${c}:</b> درآمد: <span style="color:#34d399;" class="eng-num">${inc.toLocaleString()}</span> | خرج: <span style="color:#f87171;" class="eng-num">${exp.toLocaleString()}</span><br>${status}</div>`;
       }
       if (!hasMonthData) {
-        statsHtml += `<div style="color:var(--text-muted); font-size:12px;">تراکنشی در این ماه ثبت نشده است.</div>`;
+        statsHtml += `<div style="color:var(--text-muted); font-size:12px;">تراکنشی در ۳۰ روز اخیر ثبت نشده است.</div>`;
       }
       statsHtml += `</div>`;
 
-      // ب) بخش آمار جامع سالانه و میانگین کل
+      // ۲. بخش آمار سالانه (در پایین)
       statsHtml += `<div>`;
-      statsHtml += `<div style="font-weight: 800; color: #38bdf8; margin-bottom: 4px;">📈 آمار جامع سالانه و کل:</div>`;
+      statsHtml += `<div style="font-weight: 800; color: #38bdf8; margin-bottom: 4px;">📈 آمار جامع سالانه:</div>`;
       
       let hasYearData = false;
       for (let c in annualStats) {
