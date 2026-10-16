@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>امانت‌داری کریمی مرکزی</title>
+  <title>صرافی و امانت‌داری کریمی مرکزی</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
 
     :root {
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --success: #10b981;
-      --danger: #ef4444;
-      --glass-bg: rgba(255, 255, 255, 0.85);
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --success: #059669;
+      --danger: #dc2626;
+      --glass-bg: rgba(255, 255, 255, 0.78);
       --glass-border: rgba(255, 255, 255, 0.95);
-      --card-bg: rgba(255, 255, 255, 0.92);
+      --card-bg: rgba(255, 255, 255, 0.88);
       --text-main: #0f172a;
       --text-muted: #64748b;
     }
@@ -22,7 +22,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; direction: rtl; }
 
     body {
-      background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #f0fdf4 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
       background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
@@ -33,78 +33,81 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-      70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    @keyframes floatGlow {
+      0% { box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2); }
+      50% { box-shadow: 0 15px 40px rgba(79, 70, 229, 0.4); }
+      100% { box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2); }
     }
 
     .container {
       width: 100%;
-      max-width: 520px;
+      max-width: 500px;
       background: var(--glass-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border);
       padding: 24px;
-      border-radius: 28px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-      animation: fadeIn 0.5s ease-out;
+      border-radius: 30px;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1), floatGlow 5s infinite ease-in-out;
       position: relative;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     }
 
     .header-title {
       text-align: center;
-      color: var(--text-main);
+      color: #1e1b4b;
       margin-bottom: 22px;
-      font-size: 20px;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
-    .form-group { margin-bottom: 16px; }
-    label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 13px; color: var(--text-muted); }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 13px; color: #334155; }
     
     input {
       width: 100%;
-      padding: 14px 16px;
-      border: 2px solid #cbd5e1;
-      border-radius: 14px;
+      padding: 15px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
       font-size: 16px;
       text-align: center;
       outline: none;
       background: rgba(255, 255, 255, 0.95);
       transition: all 0.3s ease;
       direction: ltr;
+      color: #0f172a;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
     input:focus {
       border-color: var(--primary);
       background: #ffffff;
-      animation: pulseGlow 1.5s infinite;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
     button {
       width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      padding: 15px;
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
       color: white;
       border: none;
-      border-radius: 14px;
+      border-radius: 16px;
       font-size: 16px;
       cursor: pointer;
-      font-weight: 700;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      font-weight: 800;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
       margin-top: 5px;
     }
 
-    button:active { transform: scale(0.98); }
-    button:hover { opacity: 0.95; box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4); }
+    button:active { transform: scale(0.97); }
+    button:hover { opacity: 0.95; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.5); transform: translateY(-1px); }
 
     .card, .user-profile-header, .currency-card {
       background: var(--card-bg);
@@ -113,28 +116,44 @@
       border-radius: 20px;
       padding: 18px;
       margin-bottom: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
     }
 
     .user-profile-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 18px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(241,245,249,0.9) 100%);
     }
+
+    .currency-card {
+      border-right: 5px solid var(--primary);
+      transition: transform 0.2s;
+    }
+    .currency-card:hover { transform: translateY(-2px); }
 
     .tx-card {
-      background: rgba(255, 255, 255, 0.98);
+      background: rgba(255, 255, 255, 0.96);
       border: 1px solid #e2e8f0;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 16px;
       margin-bottom: 14px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
       animation: fadeIn 0.4s ease-out;
-      transition: all 0.2s;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .tx-card:hover { border-color: var(--primary); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.12); }
+    .tx-card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; width: 4px; height: 100%;
+      background: var(--primary);
+    }
+
+    .tx-card:hover { border-color: var(--primary); box-shadow: 0 10px 25px rgba(79, 70, 229, 0.12); transform: translateY(-2px); }
 
     .hidden { display: none !important; }
 
@@ -142,40 +161,46 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      gap: 10px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
       text-decoration: none;
-      padding: 14px;
-      border-radius: 16px;
-      font-weight: 700;
+      padding: 16px;
+      border-radius: 18px;
+      font-weight: 800;
       font-size: 15px;
-      margin-top: 15px;
-      box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
+      margin-top: 18px;
+      box-shadow: 0 8px 22px rgba(16, 185, 129, 0.35);
+      transition: all 0.25s ease;
     }
+    .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(16, 185, 129, 0.45); }
 
     .error-box {
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: var(--danger);
-      padding: 15px;
+      padding: 16px;
       border-radius: 16px;
       text-align: center;
       font-size: 13px;
       margin-top: 15px;
+      font-weight: 700;
     }
 
     .eng-num { font-family: Tahoma, Arial, sans-serif; direction: ltr; display: inline-block; }
+    .loading { text-align: center; padding: 40px; color: #ffffff; font-size: 16px; font-weight: 700; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-title">🛡️ امانت‌داری کریمی مرکزی</div>
+    
+    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات امن سامانه...</div>
 
     <!-- مرحله ۱: ورود شماره همراه -->
-    <div id="phoneSection">
-      <div style="text-align: center; margin-bottom: 12px; font-weight: 700; color: var(--text-main);">ورود به حساب کاربری</div>
-      <div style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.</div>
+    <div id="phoneSection" class="hidden">
+      <div style="text-align: center; margin-bottom: 12px; font-weight: 800; color: #1e1b4b; font-size: 17px;">ورود به حساب کاربری</div>
+      <div style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 22px;">لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.</div>
       <div class="form-group">
         <label>شماره همراه:</label>
         <input type="text" id="phoneInput" placeholder="7721878997">
@@ -183,57 +208,57 @@
       <button onclick="checkPhone()">شناسایی شماره</button>
       
       <div id="phoneError" class="hidden error-box">
-        <p style="margin-bottom: 10px; font-weight: 700;">شماره شما در سیستم یافت نشد.</p>
-        <div style="display: flex; gap: 8px;">
-          <button onclick="retryPhone()" style="background: #64748b; margin-top:0;">تلاش مجدد</button>
-          <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20در%20سامانه%20نیست" target="_blank" class="whatsapp-btn" style="margin-top:0; flex:1; text-decoration:none; padding:10px; font-size:13px;">پیام به کریمی</a>
+        <p style="margin-bottom: 12px;">شماره شما در سیستم یافت نشد.</p>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="retryPhone()" style="background: #64748b; margin-top:0; padding: 12px;">تلاش مجدد</button>
+          <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20در%20سامانه%20نیست" target="_blank" class="whatsapp-btn" style="margin-top:0; flex:1; text-decoration:none; padding:12px; font-size:13px;">پیام به کریمی</a>
         </div>
       </div>
     </div>
 
     <!-- مرحله ۲: ورود اکانت آیدی -->
     <div id="accountSection" class="hidden">
-      <div id="greetingMsg" style="text-align:center; font-weight:700; color:var(--success); margin-bottom:15px; font-size:16px;"></div>
+      <div id="greetingMsg" style="text-align:center; font-weight:800; color:var(--success); margin-bottom:18px; font-size:17px;"></div>
       <div class="form-group">
         <label>کد اختصاصی حساب (AccountID):</label>
         <input type="password" id="accountIdInput" placeholder="Account ID">
       </div>
       <button onclick="verifyAccount()">ورود به حساب کاربری</button>
       <button onclick="backToPhone()" style="background: #64748b; margin-top:10px;">تغییر شماره همراه</button>
-      <div id="accountError" class="hidden error-box" style="padding: 10px; color: var(--danger);">کد حساب (Account ID) اشتباه است.</div>
+      <div id="accountError" class="hidden error-box">کد حساب (Account ID) اشتباه است.</div>
     </div>
 
     <!-- مرحله ۳: داشبورد اصلی مشتری -->
     <div id="dashboardSection" class="hidden">
       <div class="user-profile-header">
         <div>
-          <div id="dashName" style="font-weight: 700; font-size: 16px; color: var(--text-main);">---</div>
+          <div id="dashName" style="font-weight: 800; font-size: 17px; color: #1e1b4b;">---</div>
           <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">تلفن: <span id="dashPhone" class="eng-num">---</span></div>
         </div>
         <div style="text-align: left;">
-          <div style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 8px; display:inline-block; font-weight: 700;" id="dashAccId" class="eng-num">---</div>
+          <div style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 8px; display:inline-block; font-weight: 800;" id="dashAccId" class="eng-num">---</div>
           <br>
-          <button onclick="logout()" style="width: auto; padding: 4px 10px; font-size: 11px; background: var(--danger); margin-top: 6px;">خروج</button>
+          <button onclick="logout()" style="width: auto; padding: 5px 12px; font-size: 11px; background: var(--danger); margin-top: 6px; box-shadow: none;">خروج</button>
         </div>
       </div>
       
-      <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-align: center;">📊 آمار موجودی به تفکیک ارز</div>
+      <div style="font-size: 13px; font-weight: 800; color: #334155; margin: 15px 0 10px 0; text-align: center;">📊 آمار موجودی به تفکیک ارز</div>
       <div id="balancesContainer"></div>
 
-      <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin: 18px 0 8px 0; display: flex; justify-content: space-between; align-items: center;">
-        <span>📋 ریز سوابق و تراکنش‌ها (کامل و نامحدود)</span>
-        <span id="txCountBadge" style="font-size: 11px; background: #e2e8f0; padding: 2px 8px; border-radius: 6px;" class="eng-num">0</span>
+      <div style="font-size: 13px; font-weight: 800; color: #334155; margin: 20px 0 10px 0; display: flex; justify-content: space-between; align-items: center;">
+        <span>📋 ریز سوابق و تراکنش‌ها (نمایش کامل و بدون محدودیت)</span>
+        <span id="txCountBadge" style="font-size: 11px; background: #e2e8f0; color: #1e293b; padding: 3px 8px; border-radius: 6px; font-weight: 700;" class="eng-num">0</span>
       </div>
-      <div id="transactionsContainer" style="max-height: 380px; overflow-y: auto; padding-left: 4px;"></div>
+      <div id="transactionsContainer" style="max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
 
-      <a href="https://wa.me/9647721878997" target="_blank" class="whatsapp-btn">
+      <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20درخواست%20پشتیبانی%20دارم" target="_blank" class="whatsapp-btn">
         💬 ارسال پیام به کریمی در واتساپ
       </a>
     </div>
   </div>
 
   <script>
-    // پایگاه داده داخلی امن و مطمئن (گرفته شده از اطلاعات سامانه کریمی)
+    // پایگاه داده جامع و کامل با تمام تراکنش‌ها بدون سقف و محدودیت
     const database = {
       "7721878997": {
         name: "شریف کریمی",
@@ -250,12 +275,27 @@
           { type: "دریافت (بستانکار)", date: "10/4/2026", desc: "قیمت ۱۱۹۰ تن شد", amount: "AFN 77,350+", status: "رسیده" },
           { type: "دریافت (بستانکار)", date: "10/4/2026", desc: "قیمت ۲۵۳ دلار شده", amount: "AFN 16,450+", status: "رسیده" },
           { type: "حواله (بدهکار)", date: "10/3/2026", desc: "رحیمی برای محمد علامی 91770افغانی فکتور", amount: "AFN 92,270-", status: "رسیده" },
-          { type: "پرداخت (بدهکار)", date: "9/28/2026", desc: "کریدت", amount: "AFN 30,050-", status: "رسیده" }
+          { type: "پرداخت (بدهکار)", date: "9/28/2026", desc: "کریدت", amount: "AFN 30,050-", status: "رسیده" },
+          { type: "حواله (بدهکار)", date: "9/28/2026", desc: "رحیمی برای رووان یاوری 10000افغانی فکتور", amount: "AFN 10,100-", status: "رسیده" },
+          { type: "پرداخت (بدهکار)", date: "9/26/2026", desc: "قیمت ۶م", amount: "AFN 1,740-", status: "رسیده" },
+          { type: "پرداخت (بدهکار)", date: "9/3/2026", desc: "۲م به ۳۰۰ به حساب محمد رضا محمدی", amount: "AFN 6,300-", status: "رسیده" },
+          { type: "پرداخت (بدهکار)", date: "9/2/2026", desc: "رسید از تفریق 3830افغانی", amount: "AFN 3,830-", status: "رسیده" },
+          { type: "حواله (بدهکار)", date: "9/2/2026", desc: "سجاد برای عنایت الله 5770افغانی لوگر", amount: "AFN 5,870-", status: "رسیده" },
+          { type: "پرداخت (بدهکار)", date: "7/21/2026", desc: "شماره 1650 امین صدر برای سید یاسین حیدری 4190قاشانی دره قاشان دکان وای قای", amount: "AFN 4,290-", status: "رسیده" },
+          { type: "پرداخت (بدهکار)", date: "6/1/2026", desc: "کریدت", amount: "AFN 5,000-", status: "رسیده" },
+          { type: "دریافت (بستانکار)", date: "7/19/2026", desc: "رسید 202 دلار از 1300 تن", amount: "USD 202+", status: "رسیده" }
         ]
       }
     };
 
     let currentUser = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById('loadingSheet').classList.add('hidden');
+        document.getElementById('phoneSection').classList.remove('hidden');
+      }, 400);
+    });
 
     function cleanDigits(str) {
       if (!str) return '';
@@ -307,8 +347,8 @@
           balanceHtml += `
             <div class="currency-card">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-weight: 700; font-size: 14px; color: #334155;">ارز: ${b.currency}</span>
-                <span style="font-size: 16px; font-weight: 700; color: ${netColor};" class="eng-num">${b.total}</span>
+                <span style="font-weight: 800; font-size: 14px; color: #1e293b;">ارز: ${b.currency}</span>
+                <span style="font-size: 17px; font-weight: 800; color: ${netColor};" class="eng-num">${b.total}</span>
               </div>
               <div style="display: flex; justify-content: space-between; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 8px; color: var(--text-muted);">
                 <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.creditor}</b></span>
@@ -318,23 +358,23 @@
         });
         document.getElementById('balancesContainer').innerHTML = balanceHtml;
 
-        // نمایش لیست تراکنش‌ها
+        // نمایش تمام تراکنش‌ها بدون سقف و محدودیت
         let txHtml = '';
         currentUser.transactions.forEach((tx, idx) => {
           let amtColor = tx.amount.includes('+') ? 'var(--success)' : 'var(--danger)';
           txHtml += `
             <div class="tx-card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="font-weight:700; font-size:14px; color:var(--text-main);">${tx.type}</span>
-                <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted);" class="eng-num">${tx.date}</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:800; font-size:14px; color:#1e293b;">${tx.type}</span>
+                <span style="font-size:11px; background:#f1f5f9; padding:3px 8px; border-radius:6px; color:var(--text-muted); font-weight: 700;" class="eng-num">${tx.date}</span>
               </div>
-              <div style="font-size:12px; color:#334155; margin-bottom:8px; line-height:1.6;">
+              <div style="font-size:12px; color:#334155; margin-bottom:10px; line-height:1.6;">
                 ${tx.desc}<br>
-                وضعیت: <span style="color:var(--success); font-weight:700;">${tx.status}</span>
+                وضعیت: <span style="color:var(--success); font-weight:800;">${tx.status}</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
-                <span style="font-weight:700; font-size:13px; color:${amtColor};" class="eng-num">${tx.amount}</span>
-                <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${idx+1}%20را دارم" target="_blank" style="background:#f3e8ff; color:#7e22ce; padding:5px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:700;">گزارش رسمی</a>
+                <span style="font-weight:800; font-size:13px; color:${amtColor};" class="eng-num">${tx.amount}</span>
+                <a href="https://wa.me/9647721878997?text=سلام%20درخواست%20گزارش%20رسمی%20تراکنش%20شماره%20${idx+1}%20را دارم" target="_blank" style="background:#ede9fe; color:#6d28d9; padding:6px 12px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:800;">گزارش رسمی</a>
               </div>
             </div>`;
         });
