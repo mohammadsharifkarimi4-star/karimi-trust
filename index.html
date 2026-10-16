@@ -220,14 +220,17 @@
     }
 
     .eng-num { font-family: Tahoma, Arial, sans-serif; direction: ltr; display: inline-block; }
+    .loading { text-align: center; padding: 40px; color: #ffffff; font-size: 16px; font-weight: 700; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-title">🛡️ امانت‌داری کریمی مرکزی</div>
+    
+    <div id="loadingSheet" class="loading">در حال بارگذاری اطلاعات زنده از گوگل شیت...</div>
 
     <!-- مرحله ۱: ورود شماره همراه -->
-    <div id="phoneSection">
+    <div id="phoneSection" class="hidden">
       <div style="text-align: center; margin-bottom: 12px; font-weight: 800; color: #1e1b4b; font-size: 17px;">ورود به حساب کاربری</div>
       <div style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 22px;">لطفاً شماره همراه خود را وارد کنید تا سیستم شما را شناسایی کند.</div>
       <div class="form-group">
@@ -300,37 +303,85 @@
   </div>
 
   <script>
-    let currentPhone = '';
-    let customerData = null;
+    const ACCOUNTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbZuehG4hJ9oVt1rhT-bgNdY1Jqr_0JuzjTC5ysF6eMmoj0mqhT6rhsHCm8aSeKDAU4jdmUQj0-B0/pub?output=csv&sheet=Accounts";
+    const TRANSACTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbZuehG4hJ9oVt1rhT-bgNdY1Jqr_0JuzjTC5ysF6eMmoj0mqhT6rhsHCm8aSeKDAU4jdmUQj0-B0/pub?output=csv&sheet=Transactions";
+
+    let accountsData = [];
+    let transactionsData = [];
+    let currentFoundUser = null;
+    let customerTransactions = [];
+    let customerBalances = {};
     let currencyList = [];
     let activeCurrencyIndex = 0;
 
-    async function checkPhone() {
-      const phone = document.getElementById('phoneInput').value.trim();
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const [accRes, txRes] = await Promise.all([
+          fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(ACCOUNTS_CSV_URL)),
+          fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(TRANSACTIONS_CSV_URL))
+        ]);
+
+        const accCsv = await accRes.text();
+        const txCsv = await txRes.text();
+
+        accountsData = parseCSV(accCsv);
+        transactionsData = parseCSV(txCsv);
+
+        document.getElementById('loadingSheet').classList.add('hidden');
+        document.getElementById('phoneSection').classList.remove('hidden');
+      } catch (err) {
+        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات از گوگل شیت. لطفاً صفحه را رفرش کنید.</div>';
+      }
+    });
+
+    function parseCSV(text) {
+      const lines = text.split('\n');
+      const result = [];
+      if (lines.length === 0) return result;
+      
+      const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
+      
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const currentline = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        let obj = {};
+        for (let j = 0; j < headers.length; j++) {
+          obj[headers[j]] = currentline[j] ? currentline[j].trim().replace(/^["']|["']$/g, '') : '';
+        }
+        result.push(obj);
+      }
+      return result;
+    }
+
+    function cleanDigits(str) {
+      if (!str) return '';
+      return String(str).replace(/\D/g, '');
+    }
+
+    function checkPhone() {
+      const rawInput = document.getElementById('phoneInput').value.trim();
       const errBox = document.getElementById('phoneError');
       const btn = document.getElementById('btnCheckPhone');
       errBox.classList.add('hidden');
 
-      if (!phone) return;
-      currentPhone = phone;
+      if (!rawInput) return;
+      const userDigits = cleanDigits(rawInput);
       btn.innerText = 'در حال بررسی...';
 
-      try {
-        const res = await fetch(`/api/check-phone?phone=${encodeURIComponent(phone)}`);
-        const data = await res.json();
-        btn.innerText = 'شناسایی شماره';
+      const found = accountsData.find(u => {
+        const sheetPhone = cleanDigits(u.Phone || '');
+        return sheetPhone && (sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone.slice(-7)));
+      });
 
-        if (data && data.found) {
-          document.getElementById('phoneSection').classList.add('hidden');
-          document.getElementById('accountSection').classList.remove('hidden');
-          document.getElementById('greetingMsg').innerText = `سلام ${data.name} عزیز، خوش آمدید!`;
-        } else {
-          document.getElementById('phoneErrorMsg').innerText = 'شماره شما در سیستم یافت نشد.';
-          errBox.classList.remove('hidden');
-        }
-      } catch (err) {
-        btn.innerText = 'شناسایی شماره';
-        document.getElementById('phoneErrorMsg').innerText = 'خطا در ارتباط با سرور.';
+      btn.innerText = 'شناسایی شماره';
+
+      if (found) {
+        currentFoundUser = found;
+        document.getElementById('phoneSection').classList.add('hidden');
+        document.getElementById('accountSection').classList.remove('hidden');
+        document.getElementById('greetingMsg').innerText = `سلام ${found.Name || 'مشتری عزیز'}، خوش آمدید!`;
+      } else {
+        document.getElementById('phoneErrorMsg').innerText = 'شماره شما در سیستم یافت نشد.';
         errBox.classList.remove('hidden');
       }
     }
@@ -340,46 +391,63 @@
       document.getElementById('phoneInput').value = '';
     }
 
-    async function verifyAccount() {
-      const accountId = document.getElementById('accountIdInput').value.trim();
+    function verifyAccount() {
+      const accIdInput = document.getElementById('accountIdInput').value.trim().toLowerCase();
       const accErr = document.getElementById('accountError');
       const btn = document.getElementById('btnVerifyAcc');
       accErr.classList.add('hidden');
 
-      if (!accountId) return;
+      if (!accIdInput) return;
       btn.innerText = 'در حال ورود...';
 
-      try {
-        const res = await fetch(`/api/verify-account?phone=${encodeURIComponent(currentPhone)}&accountId=${encodeURIComponent(accountId)}`);
-        const data = await res.json();
-        btn.innerText = 'ورود به حساب کاربری';
+      const sheetAccId = String(currentFoundUser.AccountID || '').trim().toLowerCase();
+      btn.innerText = 'ورود به حساب کاربری';
 
-        if (data && data.success) {
-          customerData = data;
-          document.getElementById('accountSection').classList.add('hidden');
-          document.getElementById('dashboardSection').classList.remove('hidden');
+      if (currentFoundUser && sheetAccId === accIdInput) {
+        document.getElementById('accountSection').classList.add('hidden');
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        
+        document.getElementById('dashName').innerText = currentFoundUser.Name || '---';
+        document.getElementById('dashPhone').innerText = currentFoundUser.Phone || '---';
+        document.getElementById('dashAccId').innerText = `ID: ${currentFoundUser.AccountID}`;
 
-          document.getElementById('dashName').innerText = data.customer.Name;
-          document.getElementById('dashPhone').innerText = data.customer.Phone;
-          document.getElementById('dashAccId').innerText = `ID: ${data.customer.AccountID}`;
+        customerTransactions = transactionsData.filter(tx => {
+          return String(tx.AccountID || '').trim().toLowerCase() === sheetAccId;
+        });
 
-          currencyList = Object.keys(data.balances);
-          if (currencyList.length === 0) {
-            currencyList = ['AFN'];
-            data.balances['AFN'] = { credit: 0, debit: 0, net: 0 };
+        customerBalances = {};
+        customerTransactions.forEach(tx => {
+          let curr = (tx.Currency || 'AFN').toUpperCase();
+          let amount = parseFloat(tx.Amount) || 0;
+          let dir = String(tx.Direction || '').trim();
+
+          if (!customerBalances[curr]) {
+            customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
           }
 
-          activeCurrencyIndex = 0;
-          renderCurrencyTabs();
-          renderTransactions();
+          if (dir.includes('بستانکار') || dir.includes('دریافت')) {
+            customerBalances[curr].credit += amount;
+          } else if (dir.includes('بدهکار') || dir.includes('پرداخت')) {
+            customerBalances[curr].debit += amount;
+          }
+        });
 
-        } else {
-          accErr.innerText = data.message || 'کد حساب (Account ID) اشتباه است.';
-          accErr.classList.remove('hidden');
+        for (let c in customerBalances) {
+          customerBalances[c].net = customerBalances[c].credit - customerBalances[c].debit;
         }
-      } catch (err) {
-        btn.innerText = 'ورود به حساب کاربری';
-        accErr.innerText = 'خطا در برقراری ارتباط.';
+
+        currencyList = Object.keys(customerBalances);
+        if (currencyList.length === 0) {
+          currencyList = ['AFN'];
+          customerBalances['AFN'] = { credit: 0, debit: 0, net: 0 };
+        }
+
+        activeCurrencyIndex = 0;
+        renderCurrencyTabs();
+        renderTransactions();
+
+      } else {
+        accErr.innerText = 'کد حساب (Account ID) اشتباه است.';
         accErr.classList.remove('hidden');
       }
     }
@@ -401,7 +469,7 @@
 
     function renderActiveCurrencyCard() {
       let currName = currencyList[activeCurrencyIndex];
-      let b = customerData.balances[currName] || { credit: 0, debit: 0, net: 0 };
+      let b = customerBalances[currName] || { credit: 0, debit: 0, net: 0 };
       let netColor = b.net >= 0 ? 'var(--success)' : 'var(--danger)';
       
       let cardHtml = `
@@ -420,12 +488,10 @@
 
     function renderTransactions() {
       let txHtml = '';
-      let txs = customerData.transactions || [];
-
-      if (txs.length === 0) {
-        txHtml = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی در گوگل شیت یافت نشد.</div>';
+      if (customerTransactions.length === 0) {
+        txHtml = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">هیچ تراکنشی در گوگل شیت برای این حساب ثبت نشده است.</div>';
       } else {
-        txs.forEach((tx, idx) => {
+        customerTransactions.forEach((tx, idx) => {
           let dir = String(tx.Direction || '');
           let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
           let amountVal = parseFloat(tx.Amount) || 0;
@@ -449,11 +515,11 @@
       }
 
       document.getElementById('transactionsContainer').innerHTML = txHtml;
-      document.getElementById('txCountBadge').innerText = txs.length;
+      document.getElementById('txCountBadge').innerText = customerTransactions.length;
     }
 
     function openModal(idx) {
-      let tx = customerData.transactions[idx];
+      let tx = customerTransactions[idx];
       let bodyHtml = `
         <p><b>شناسه تراکنش:</b> <span class="eng-num">${tx.TransID || '---'}</span></p>
         <p><b>نوع عملیات:</b> ${tx.OperationType || '---'}</p>
@@ -484,7 +550,7 @@
       document.getElementById('phoneSection').classList.remove('hidden');
       document.getElementById('phoneInput').value = '';
       document.getElementById('accountIdInput').value = '';
-      customerData = null;
+      currentFoundUser = null;
     }
   </script>
 </body>
