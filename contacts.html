@@ -120,7 +120,6 @@
       white-space: nowrap;
     }
 
-    /* فرم افزودن مخاطب */
     .form-card {
       background: var(--card-bg);
       border-radius: 20px;
@@ -174,13 +173,11 @@
       box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
     }
 
-    /* بخش سرچ */
     .search-box {
       display: flex;
       gap: 8px;
     }
 
-    /* لیست مخاطبین */
     .contacts-container {
       display: flex;
       flex-direction: column;
@@ -268,13 +265,11 @@
 
   <div class="app-viewport">
     
-    <!-- هدر ناوبری -->
     <div class="header-nav">
       <a href="index.html" class="back-link">← بازگشت به منو</a>
       <span id="currentUserDisplay" class="user-badge">کاربر: --</span>
     </div>
 
-    <!-- فرم افزودن / ویرایش مخاطب -->
     <div class="form-card">
       <span class="form-title" id="formTitle">➕ افزودن مخاطب جدید</span>
       <input type="hidden" id="editRowIndex" value="">
@@ -286,18 +281,16 @@
 
       <div class="input-group">
         <span class="input-label">شماره تماس (با کد کشور و علامت + همراه باشد):</span>
-        <input type="text" id="phoneInput" class="form-input eng-text" placeholder="+93700000000">
+        <input type="text" id="phoneInput" class="form-input eng-text" placeholder="+9647700000000">
       </div>
 
       <button class="btn-submit" onclick="saveContact()" id="submitBtn">ذخیره مخاطب</button>
     </div>
 
-    <!-- بخش جستجو بر اساس اسم -->
     <div class="search-box">
       <input type="text" id="searchInput" class="form-input" placeholder="🔍 جستجو بر اساس نام مخاطب..." oninput="filterContacts()">
     </div>
 
-    <!-- لیست مخاطبین -->
     <div id="contactsList" class="contacts-container">
       <div class="loading-box">در حال بارگذاری اطلاعات...</div>
     </div>
@@ -305,8 +298,8 @@
   </div>
 
   <script>
-    // لینک جدید گوگل اسکریپت شما
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhbIF5Q-ehQpV7xS7wBFPfnuBiLeb1aG3tT36KHPhnGElcDB6UN966DKEiEhH3A2piIw/exec";
+    // لینک جدید وب‌اپلیکیشن گوگل اسکریپت شما
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCmD0ZbWKzvXIkahzoU81l-bOGmS75eHJ2Xo_netxIIFY8aCDtjAsaNLrkn4HFFQYj/exec";
     
     let allContacts = [];
     let currentUserEmail = localStorage.getItem('hesab_user_email') || "";
@@ -410,23 +403,23 @@
       }
 
       const action = row ? "edit" : "add";
-      const payload = { action, row, email: currentUserEmail, name, phone };
+      let url = `${SCRIPT_URL}?action=${action}&email=${encodeURIComponent(currentUserEmail)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`;
+      if (row) {
+        url += `&row=${row}`;
+      }
 
       document.getElementById('submitBtn').innerText = "در حال ذخیره...";
 
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        resetForm();
-        loadContacts();
-      })
-      .catch(err => {
-        alert("خطا در ذخیره‌سازی اطلاعات.");
-        document.getElementById('submitBtn').innerText = "ذخیره مخاطب";
-      });
+      fetch(url)
+        .then(res => res.json())
+        .then(res => {
+          resetForm();
+          loadContacts();
+        })
+        .catch(err => {
+          alert("خطا در ذخیره‌سازی اطلاعات.");
+          document.getElementById('submitBtn').innerText = "ذخیره مخاطب";
+        });
     }
 
     function prepareEdit(row, name, phone) {
@@ -441,17 +434,16 @@
     function deleteContact(row) {
       if (!confirm("آیا از حذف این مخاطب مطمئن هستید؟")) return;
 
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "delete", row: row })
-      })
-      .then(res => res.json())
-      .then(res => {
-        loadContacts();
-      })
-      .catch(err => {
-        alert("خطا در حذف مخاطب.");
-      });
+      const url = `${SCRIPT_URL}?action=delete&row=${row}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(res => {
+          loadContacts();
+        })
+        .catch(err => {
+          alert("خطا در حذف مخاطب.");
+        });
     }
 
     function resetForm() {
