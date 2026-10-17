@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -103,7 +102,7 @@
       <button class="sub-tab" onclick="switchCalc('exchange', this)">💱 محاسبه‌گر ارز</button>
     </div>
 
-    <!-- ماشین‌حساب عادی -->
+    <!-- ماشین‌حساب عادی (همراه با گزینه درصد) -->
     <div id="normalCalc" class="calc-box active">
       <input type="text" id="calcDisplay" readonly class="eng-num" style="font-size: 24px; text-align: left; margin-bottom: 14px; background: #0f172a; color: #38bdf8; height: 55px; border-radius: 16px;">
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
@@ -127,12 +126,13 @@
         <button onclick="calcAppend('3')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">3</button>
         <button onclick="calcCompute()" style="padding: 14px; font-weight: 800; background: #6366f1; color: white; border:none; border-radius: 12px; cursor:pointer; grid-row: span 2; display:flex; align-items:center; justify-content:center;">=</button>
 
-        <button onclick="calcAppend('0')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer; grid-column: span 2;" class="eng-num">0</button>
+        <button onclick="calcAppend('0')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">0</button>
         <button onclick="calcAppend('.')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">.</button>
+        <button onclick="calcAppend('%')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">%</button>
       </div>
     </div>
 
-    <!-- محاسبه‌گر ارز -->
+    <!-- محاسبه‌گر ارز (همراه با کمیسیون/درصدی افزودنی و کسری) -->
     <div id="exchangeCalc" class="calc-box">
       <div class="form-group">
         <label>مبلغ پایه:</label>
@@ -164,9 +164,34 @@
         <label>نرخ تبدیل:</label>
         <input type="number" id="exRate" placeholder="نرخ تبدیل" class="eng-num" value="1" oninput="calculateExchange()">
       </div>
-      <div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; padding: 18px; border-radius: 18px; text-align: center; margin-top: 16px;">
-        <div style="font-size: 12px; color: #c7d2fe;">نتیجه محاسبه:</div>
-        <div id="exResult" class="eng-num" style="font-size: 22px; font-weight: 800; color: #38bdf8; margin-top: 4px;">0</div>
+
+      <!-- تنظیمات درصد کارمزد / کمیسیون (افزودنی / کسری) -->
+      <div style="background: #f1f5f9; padding: 12px; border-radius: 14px; margin-top: 10px; margin-bottom: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>نوع درصد (کارمزد):</label>
+            <select id="feeType" onchange="calculateExchange()">
+              <option value="none">بدون کارمزد (۰٪)</option>
+              <option value="add">➕ افزودنی (اضافه به مبلغ)</option>
+              <option value="sub">➖ کسری (کم شدن از مبلغ)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>مقدار درصد (٪):</label>
+            <input type="number" id="feePercent" placeholder="مثلاً ۲" class="eng-num" value="0" oninput="calculateExchange()">
+          </div>
+        </div>
+      </div>
+
+      <!-- نتیجه محاسبه -->
+      <div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; padding: 18px; border-radius: 18px; text-align: center; margin-top: 12px;">
+        <div style="font-size: 12px; color: #c7d2fe;">مبلغ اصلی قبل از درصد:</div>
+        <div id="exBaseResult" class="eng-num" style="font-size: 16px; font-weight: 700; color: #93c5fd; margin-top: 2px;">0</div>
+        
+        <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px;">
+          <div style="font-size: 12px; color: #fbbf24;" id="feeLabelDisplay">مبلغ نهایی:</div>
+          <div id="exFinalResult" class="eng-num" style="font-size: 22px; font-weight: 800; color: #38bdf8; margin-top: 2px;">0</div>
+        </div>
       </div>
     </div>
   </div>
@@ -191,14 +216,38 @@
     }
     function calcCompute() {
       let disp = document.getElementById('calcDisplay');
-      try { disp.value = eval(disp.value.replace(/×/g, '*').replace(/÷/g, '/')); }
+      try { 
+        let expr = disp.value.replace(/×/g, '*').replace(/÷/g, '/');
+        // جایگزینی درصد (مثلا 100*5% => 100*0.05)
+        expr = expr.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
+        disp.value = eval(expr); 
+      }
       catch (e) { disp.value = 'خطا'; }
     }
 
     function calculateExchange() {
       let amt = parseFloat(document.getElementById('exAmount').value) || 0;
       let rate = parseFloat(document.getElementById('exRate').value) || 1;
-      document.getElementById('exResult').innerText = (amt * rate).toLocaleString();
+      let baseConverted = amt * rate;
+
+      let feeType = document.getElementById('feeType').value;
+      let feePct = parseFloat(document.getElementById('feePercent').value) || 0;
+      let feeAmount = (baseConverted * feePct) / 100;
+
+      let finalConverted = baseConverted;
+      let labelText = "مبلغ نهایی:";
+
+      if (feeType === 'add' && feePct > 0) {
+        finalConverted = baseConverted + feeAmount;
+        labelText = `مبلغ نهایی با اضافه شدن ${feePct}٪ کارمزد (+${feeAmount.toLocaleString()}):`;
+      } else if (feeType === 'sub' && feePct > 0) {
+        finalConverted = baseConverted - feeAmount;
+        labelText = `مبلغ نهایی با کسر شدن ${feePct}٪ کارمزد (-${feeAmount.toLocaleString()}):`;
+      }
+
+      document.getElementById('exBaseResult').innerText = baseConverted.toLocaleString();
+      document.getElementById('feeLabelDisplay').innerText = labelText;
+      document.getElementById('exFinalResult').innerText = finalConverted.toLocaleString();
     }
   </script>
 </body>
