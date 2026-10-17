@@ -8,13 +8,12 @@
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
     :root {
-      --bg-gradient: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
-      --card-bg: #f8fafc; /* سفیدی مایل به خاکستری ملایم */
-      --accent-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+      --card-bg: #f8fafc;
+      --accent-gradient: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
       --text-dark: #0f172a;
       --text-muted: #475569;
       --shadow-soft: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
-      --shadow-hover: 0 15px 25px -5px rgba(37, 99, 235, 0.25);
+      --shadow-hover: 0 15px 25px -5px rgba(5, 150, 105, 0.25);
     }
 
     * {
@@ -39,14 +38,14 @@
       width: 100%;
       max-width: 440px;
       min-height: 100vh;
-      background: #f1f5f9; /* پس زمینه نرم مایل به خاکستری */
+      background: #f1f5f9;
       padding: 16px 16px 32px 16px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    /* هدر بالای صفحه */
+    /* هدر بالا */
     .top-header {
       display: flex;
       justify-content: space-between;
@@ -101,59 +100,73 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* کارت آبی اصلی با طراحی زیبا */
+    /* کارت سبز-آبی شکیل بالایی حاوی تقویم ۳گانه */
     .hero-card {
       background: var(--accent-gradient);
       border-radius: 24px;
-      padding: 20px;
+      padding: 18px;
       color: #ffffff;
-      box-shadow: 0 15px 30px -8px rgba(37, 99, 235, 0.35);
+      box-shadow: 0 15px 30px -8px rgba(5, 150, 105, 0.35);
       position: relative;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .hero-top {
+    .hero-top-info {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
     }
 
-    .hero-title {
-      font-size: 12.5px;
-      color: #93c5fd;
+    .hero-main-title {
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .day-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
       font-weight: 800;
     }
 
-    .hero-main-val {
-      font-size: 20px;
-      font-weight: 900;
-      margin-bottom: 14px;
+    /* ۳ ستون تاریخ‌ها دقیقاً مثل نمونه مد نظر شما */
+    .dates-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
 
-    /* نمایش تواریخ طراحی نواری */
-    .date-container {
+    .date-box-item {
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 10px 6px;
+      text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      padding-top: 12px;
+      gap: 4px;
     }
 
-    .date-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
+    .date-box-title {
+      font-size: 10.5px;
+      color: #a7f3d0;
       font-weight: 700;
     }
 
-    .date-badge {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      color: #e0e7ff;
+    .date-box-val {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .date-box-sub {
+      font-size: 9.5px;
+      color: #d1fae5;
+      font-weight: 600;
     }
 
     .section-label {
@@ -163,7 +176,7 @@
       margin-top: 2px;
     }
 
-    /* ساختار کارت‌ها با رنگ خاکستری-سفید شکیل */
+    /* کارت‌ها */
     .menu-container {
       display: flex;
       flex-direction: column;
@@ -201,7 +214,7 @@
     .marquee-text {
       display: inline-block;
       padding-right: 100%;
-      animation: marquee 12s linear infinite;
+      animation: marquee 14s linear infinite;
       font-size: 11.5px;
       color: var(--text-muted);
       font-weight: 600;
@@ -332,25 +345,33 @@
       </div>
     </div>
 
-    <!-- کارت اصلی با تاریخ‌های صحیح و هوشمند -->
+    <!-- کارت تقویم ۳گانه زنده و خودکار (شمسی افغانستان، قمری، میلادی) -->
     <div class="hero-card">
-      <div class="hero-top">
-        <span class="hero-title">حساب‌کتاب من</span>
+      <div class="hero-top-info">
+        <span class="hero-main-title">حساب‌کتاب من</span>
+        <span class="day-badge" id="dayNameDisplay">شنبه</span>
       </div>
-      <div class="hero-main-val">سامانه امن و هوشمند مالی</div>
-      
-      <div class="date-container">
-        <div class="date-row">
-          <span class="date-badge">شمسی (افغانستان):</span>
-          <span id="afghaniDateDisplay">در حال دریافت...</span>
+
+      <div class="dates-grid-3">
+        <!-- شمسی افغانستان -->
+        <div class="date-box-item">
+          <span class="date-box-title">شمسی</span>
+          <span class="date-box-val" id="shamsiDayVal">۲۵</span>
+          <span class="date-box-sub" id="shamsiMonthVal">میزان ۱۴۰۵</span>
         </div>
-        <div class="date-row">
-          <span class="date-badge">هجری قمری:</span>
-          <span id="hijriDateDisplay">در حال دریافت...</span>
+
+        <!-- هجری قمری -->
+        <div class="date-box-item">
+          <span class="date-box-title">قمری</span>
+          <span class="date-box-val" id="hijriDayVal">۵</span>
+          <span class="date-box-sub" id="hijriMonthVal">جمادی الاول</span>
         </div>
-        <div class="date-row">
-          <span class="date-badge">میلادی:</span>
-          <span id="gregorianDateDisplay" class="eng-num">در حال دریافت...</span>
+
+        <!-- میلادی -->
+        <div class="date-box-item">
+          <span class="date-box-title">میلادی</span>
+          <span class="date-box-val eng-num" id="gregDayVal">17</span>
+          <span class="date-box-sub eng-num" id="gregMonthVal">Oct 2026</span>
         </div>
       </div>
     </div>
@@ -361,7 +382,7 @@
     </div>
 
     <div class="menu-container">
-      <!-- کارت مدیریت حساب‌ها با متن متحرک افقی زیبا -->
+      <!-- کارت مدیریت حساب‌ها با متن متحرک افقی -->
       <a href="finance.html" class="menu-card-large">
         <div class="icon-wrapper icon-finance">📁</div>
         <div style="flex: 1; overflow: hidden;">
@@ -372,7 +393,6 @@
         </div>
       </a>
 
-      <!-- کارت‌های عمودی کوچک -->
       <div class="menu-row-small">
         <a href="exchange.html" class="menu-card-small">
           <div class="icon-wrapper icon-exchange">🤝</div>
@@ -407,16 +427,18 @@
   </div>
 
   <script>
-    // اسکریپت محاسبه دقیق تواریخ امروز
-    function updateLiveDates() {
+    // اسکریپت محاسبه دقیق و خودکار تقویم‌ها بر اساس تاریخ زنده روز دستگاه
+    function updateLiveCalendar() {
       const now = new Date();
       
+      // روز هفته
       const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
-      const dayName = weekDays[now.getDay()];
+      document.getElementById('dayNameDisplay').innerText = weekDays[now.getDay()];
 
+      // ماه‌های افغانستان
       const afMonths = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'];
       
-      // محاسبه شمسی با ماه‌های افغانی (میزان)
+      // محاسبه شمسی
       const formatterSF = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'numeric', year: 'numeric' });
       const partsSF = formatterSF.formatToParts(now);
       let daySF = '', monthSF = '', yearSF = '';
@@ -425,24 +447,35 @@
         if (p.type === 'month') monthSF = parseInt(p.value, 10);
         if (p.type === 'year') yearSF = p.value;
       });
-      const afMonthName = afMonths[monthSF - 1] || '';
-      document.getElementById('afghaniDateDisplay').innerText = `${dayName} ${daySF} ${afMonthName} ${yearSF}`;
+      document.getElementById('shamsiDayVal').innerText = daySF;
+      document.getElementById('shamsiMonthVal').innerText = `${afMonths[monthSF - 1] || ''} ${yearSF}`;
 
-      // محاسبه قمری دقیق
+      // محاسبه قمری دقیق (هجری قمری)
+      const islamicMonths = ['محرم', 'صفر', 'ربیع‌الاول', 'ربیع‌الثانی', 'جمادی‌الاول', 'جمادی‌الثانی', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذیقعده', 'ذیحجه'];
       try {
-        const formatterIslamic = new Intl.DateTimeFormat('fa-AF-u-ca-islamic-uma', { day: 'numeric', month: 'long', year: 'numeric' });
-        document.getElementById('hijriDateDisplay').innerText = formatterIslamic.format(now);
+        const formatterIslamic = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', { day: 'numeric', month: 'numeric', year: 'numeric' });
+        const partsHijri = formatterIslamic.formatToParts(now);
+        let dH = '', mH = '', yH = '';
+        partsHijri.forEach(p => {
+          if (p.type === 'day') dH = p.value;
+          if (p.type === 'month') mH = parseInt(p.value, 10);
+          if (p.type === 'year') yH = p.value;
+        });
+        document.getElementById('hijriDayVal').innerText = dH;
+        document.getElementById('hijriMonthVal').innerText = islamicMonths[mH - 1] || 'جمادی الاول';
       } catch (e) {
-        document.getElementById('hijriDateDisplay').innerText = '۵ ربیع‌الثانی ۱۴۴۸';
+        document.getElementById('hijriDayVal').innerText = '۵';
+        document.getElementById('hijriMonthVal').innerText = 'جمادی الاول';
       }
 
-      // میلادی
-      const enOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-      document.getElementById('gregorianDateDisplay').innerText = now.toLocaleDateString('en-US', enOptions);
+      // محاسبه میلادی
+      document.getElementById('gregDayVal').innerText = now.getDate();
+      const engMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      document.getElementById('gregMonthVal').innerText = `${engMonths[now.getMonth()]} ${now.getFullYear()}`;
     }
 
     window.onload = function() {
-      updateLiveDates();
+      updateLiveCalendar();
     };
   </script>
 
