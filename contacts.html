@@ -46,14 +46,14 @@
       gap: 16px;
     }
 
-    /* پنجره ورود ایمیل اختصاصی کاربر */
+    /* پنجره احراز هویت اولیه ایمیل */
     #authOverlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.9);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -67,7 +67,7 @@
       max-width: 380px;
       padding: 24px;
       border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -253,13 +253,13 @@
 </head>
 <body>
 
-  <!-- پنجره ورود ایمیل اختصاصی کاربر -->
+  <!-- پنجره احراز هویت اولیه ایمیل -->
   <div id="authOverlay" style="display:none;">
     <div class="auth-card">
       <div class="auth-title">ورود به حساب کاربری</div>
-      <div class="auth-desc">لطفاً ایمیل خود را وارد کنید تا مخاطبین مختص حساب شما بارگذاری شوند.</div>
+      <div class="auth-desc">لطفاً ایمیل خود را وارد کنید. سیستم ابتدا اتصال را بررسی و ایمیل شما را در سامانه ثبت می‌کند.</div>
       <input type="email" id="userEmailInput" class="form-input eng-text" placeholder="your-email@gmail.com">
-      <button class="btn-submit" onclick="saveUserEmail()">ورود و مشاهده مخاطبین</button>
+      <button class="btn-submit" id="authBtn" onclick="verifyAndSaveEmail()">بررسی اتصال و ورود</button>
     </div>
   </div>
 
@@ -298,8 +298,8 @@
   </div>
 
   <script>
-    // لینک جدید و نهایی گوگل اسکریپت شما
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPQ8wHRfeB2kRrQ0-5n4Y90BQKx-2mV5MmetdobtM6UiC-Q3KFuVAx3eG7id0Lg_Gp/exec";
+    // لینک جدید وب‌اپلیکیشن گوگل اسکریپت شما
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZLa4qMpDtrgWV3kpQ3wJ7lPwh95gVkHsU0tihF4Khgq6Du7Ekn-tlQRRpyHo_r1YG/exec";
     
     let allContacts = [];
     let currentUserEmail = localStorage.getItem('hesab_user_email') || "";
@@ -314,22 +314,39 @@
       }
     };
 
-    function saveUserEmail() {
+    function verifyAndSaveEmail() {
       const email = document.getElementById('userEmailInput').value.trim();
       if (!email || !email.includes('@')) {
         alert("لطفاً یک ایمیل معتبر وارد کنید.");
         return;
       }
-      localStorage.setItem('hesab_user_email', email);
-      currentUserEmail = email;
-      document.getElementById('authOverlay').style.display = 'none';
-      document.getElementById('currentUserDisplay').innerText = email;
-      loadContacts();
+
+      const btn = document.getElementById('authBtn');
+      btn.innerText = "در حال بررسی و ثبت...";
+
+      fetch(`${SCRIPT_URL}?action=verify_email&email=${encodeURIComponent(email)}`)
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === "success") {
+            localStorage.setItem('hesab_user_email', email);
+            currentUserEmail = email;
+            document.getElementById('authOverlay').style.display = 'none';
+            document.getElementById('currentUserDisplay').innerText = email;
+            loadContacts();
+          } else {
+            alert("خطا در تایید ایمیل از طرف گوگل شیت.");
+            btn.innerText = "بررسی اتصال و ورود";
+          }
+        })
+        .catch(err => {
+          alert("خطا در برقراری ارتباط با گوگل شیت. لطفاً لینک را بررسی کنید.");
+          btn.innerText = "بررسی اتصال و ورود";
+        });
     }
 
     function loadContacts() {
       const container = document.getElementById('contactsList');
-      container.innerHTML = '<div class="loading-box">در حال دریافت اطلاعات از گوگل شیت...</div>';
+      container.innerHTML = '<div class="loading-box">در حال دریافت اطلاعات...</div>';
 
       fetch(`${SCRIPT_URL}?action=read&email=${encodeURIComponent(currentUserEmail)}`)
         .then(res => res.json())
@@ -347,7 +364,7 @@
       container.innerHTML = "";
       
       if (!list || list.length === 0) {
-        container.innerHTML = '<div class="loading-box">هیچ مخاطبی یافت نشد.</div>';
+        container.innerHTML = '<div class="loading-box">هیچ مخاطبی ثبت نشده است.</div>';
         return;
       }
 
