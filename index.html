@@ -101,7 +101,7 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* کارت آبی حاوی تقویم و تواریخ کامل */
+    /* کارت آبی اصلی */
     .hero-card {
       background: var(--accent-gradient);
       border-radius: 24px;
@@ -116,7 +116,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .hero-title {
@@ -131,6 +131,7 @@
       margin-bottom: 12px;
     }
 
+    /* شبکه نمایش تاریخ‌های زنده خودکار */
     .date-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -161,7 +162,7 @@
       margin-top: 2px;
     }
 
-    /* ساختار جدید کارت‌های مستطیلی کوچک و بزرگ */
+    /* ساختار کارت‌های منو */
     .menu-container {
       display: flex;
       flex-direction: column;
@@ -299,7 +300,7 @@
 
   <div class="app-viewport">
     
-    <!-- ۱. هدر بالا (بدون زنگوله، با خوش‌آمدید فارسی) -->
+    <!-- هدر بالا -->
     <div class="top-header">
       <div class="welcome-box">
         <span class="welcome-title">خوش آمدید 👋</span>
@@ -311,51 +312,46 @@
       </div>
     </div>
 
-    <!-- ۲. کارت آبی اصلی همراه با تاریخ‌های کامل -->
+    <!-- کارت آبی اصلی با تاریخ‌های کاملاً خودکار و زنده -->
     <div class="hero-card">
       <div class="hero-top">
         <span class="hero-title">حساب‌کتاب من</span>
       </div>
       <div class="hero-main-val">سامانه امن و هوشمند مالی</div>
       
-      <!-- شبکه نمایش روز هفته و تواریخ کامل -->
+      <!-- نمایش هوشمند و زنده تواریخ (بر اساس تاریخ روز دستگاه کاربر) -->
       <div class="date-grid">
         <div class="date-item">
-          <span class="date-label">روز هفته و شمسی:</span>
-          <span>شنبه ۲۵ مهر ۱۴۰۵</span>
+          <span class="date-label">تاریخ هجری شمسی (افغانستان):</span>
+          <span id="afghaniDateDisplay">در حال محاسبه...</span>
         </div>
         <div class="date-item">
           <span class="date-label">تاریخ میلادی:</span>
-          <span class="eng-num">17 October 2026</span>
+          <span id="gregorianDateDisplay" class="eng-num">در حال محاسبه...</span>
         </div>
         <div class="date-item" style="grid-column: span 2; margin-top: 4px;">
           <span class="date-label">تاریخ قمری:</span>
-          <span>۵ ربیع‌الثانی ۱۴۴۸</span>
+          <span id="hijriDateDisplay">در حال محاسبه...</span>
         </div>
       </div>
     </div>
 
-    <!-- ۳. عنوان بخش خدمات -->
+    <!-- عنوان خدمات -->
     <div class="section-label">
       <span>خدمات</span>
     </div>
 
-    <!-- ۴. ساختار مستطیلی جدید کارت‌ها (بزرگ و کوچک) -->
+    <!-- کارت‌ها -->
     <div class="menu-container">
-      
-      <!-- مستطیل بزرگ افقی: مدیریت حساب‌ها -->
       <a href="finance.html" class="menu-card-large">
         <div class="icon-wrapper icon-finance">📁</div>
         <div style="flex: 1;">
           <div class="card-title" style="margin-bottom: 2px;">مدیریت حساب‌ها</div>
-          <div class="card-desc" id="rotatingDesc">ثبت و مدیریت طلب‌ها، بدهی‌ها، خرج و درآمدها</div>
+          <div class="card-desc" id="rotatingDesc">امکان نوشتن، ثبت، ویرایش و حذف تراکنش‌ها</div>
         </div>
       </a>
 
-      <!-- ردیف دو مستطیل عمودی -->
       <div class="menu-row-small">
-        
-        <!-- مستطیل عمودی ۱: امانت‌داری کریمی -->
         <a href="exchange.html" class="menu-card-small">
           <div class="icon-wrapper icon-exchange">🤝</div>
           <div>
@@ -364,7 +360,6 @@
           </div>
         </a>
 
-        <!-- مستطیل عمودی ۲: محاسبه‌گر ارز -->
         <a href="calc.html" class="menu-card-small">
           <div class="icon-wrapper icon-calc">🧮</div>
           <div>
@@ -372,12 +367,10 @@
             <div class="card-desc" style="margin-top: 4px;">ماشین‌حساب عادی و تبدیل ارزها</div>
           </div>
         </a>
-
       </div>
-
     </div>
 
-    <!-- ۵. بنر سه دکمه‌ای ورود سریع -->
+    <!-- بنر دسترسی سریع -->
     <div class="quick-actions-banner">
       <div class="quick-title">
         <span>⚡ دسترسی سریع به بخش‌ها</span>
@@ -392,10 +385,51 @@
   </div>
 
   <script>
-    // متن گردشی پویا برای بخش مدیریت حساب‌ها
+    // اسکریپت محاسبه خودکار روز هفته و ماه‌های افغانستان (حمل، ثور، جوزا، سرطان، اسد، سنبله، میزان، عقرب، قوس، جدی، دلو، حوت)
+    function updateLiveDates() {
+      const now = new Date();
+      
+      const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+      const dayName = weekDays[now.getDay()];
+
+      const afMonths = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'];
+      
+      // تبدیل خروجی شمسی استاندارد به نام ماه‌های افغانستان
+      const formatterSF = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'numeric', year: 'numeric' });
+      const parts = formatterSF.formatToParts(now);
+      let daySF = '', monthSF = '', yearSF = '';
+      
+      parts.forEach(p => {
+        if (p.type === 'day') daySF = p.value;
+        if (p.type === 'month') monthSF = parseInt(p.value, 10);
+        if (p.type === 'year') yearSF = p.value;
+      });
+
+      const afMonthName = afMonths[monthSF - 1] || '';
+      document.getElementById('afghaniDateDisplay').innerText = `${dayName} ${daySF} ${afMonthName} ${yearSF}`;
+
+      // تاریخ میلادی
+      const enOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+      document.getElementById('gregorianDateDisplay').innerText = now.toLocaleDateString('en-US', enOptions);
+
+      // تاریخ قمری
+      try {
+        const formatterIslamic = new Intl.DateTimeFormat('fa-AF-u-ca-islamic-uma', { day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('hijriDateDisplay').innerText = formatterIslamic.format(now);
+      } catch (e) {
+        document.getElementById('hijriDateDisplay').innerText = now.toLocaleDateString('ar-SA-u-ca-islamic');
+      }
+    }
+
+    // اجرا هنگام لود شدن صفحه
+    window.onload = function() {
+      updateLiveDates();
+    };
+
+    // متن گردشی پویا
     const texts = [
-      "ثبت و مدیریت طلب‌ها، بدهی‌ها، خرج و درآمدها",
       "امکان نوشتن، ثبت، ویرایش و حذف تراکنش‌ها",
+      "ثبت و مدیریت طلب‌ها، بدهی‌ها، خرج و درآمدها",
       "مدیریت کامل حساب‌های مالی شخصی به صورت پویا"
     ];
     let index = 0;
