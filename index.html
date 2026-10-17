@@ -2,139 +2,395 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حساب‌کتاب من</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>داشبورد مدیریت مالی</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
     :root {
-      --primary: #6366f1;
-      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-      --glass-card: rgba(255, 255, 255, 0.88);
-      --glass-border: rgba(255, 255, 255, 0.5);
-      --text-main: #0f172a;
+      --bg-gradient: linear-gradient(180deg, #f0f4f9 0%, #e2e8f0 100%);
+      --card-bg: #ffffff;
+      --primary-blue: #0284c7;
+      --accent-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+      --text-dark: #0f172a;
       --text-muted: #64748b;
+      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      --shadow-hover: 0 20px 30px -10px rgba(37, 99, 235, 0.2);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; direction: rtl; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      direction: rtl;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     body {
-      background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
-      background-attachment: fixed;
-      color: var(--text-main);
+      background: var(--bg-gradient);
+      color: var(--text-dark);
       min-height: 100vh;
-      padding: 20px;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
+      padding: 0;
     }
 
-    @keyframes floatIn {
-      0% { opacity: 0; transform: translateY(30px) scale(0.95); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .container {
+    .app-viewport {
       width: 100%;
       max-width: 440px;
-      padding: 10px;
-      animation: floatIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      min-height: 100vh;
+      background: #f8fafc;
+      padding: 16px 16px 32px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .hero-section { text-align: center; margin-bottom: 25px; }
+    /* ۱. هدر بالا */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 4px;
+    }
 
-    .logo-badge {
-      display: inline-flex;
+    .welcome-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .welcome-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text-dark);
+      line-height: 1.2;
+    }
+
+    .welcome-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      display: flex;
       align-items: center;
       justify-content: center;
-      width: 75px; height: 75px;
-      background: var(--primary-gradient);
-      border-radius: 24px;
-      font-size: 36px;
-      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-      margin-bottom: 15px;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      cursor: pointer;
+      position: relative;
     }
 
-    .header-title { color: #ffffff; font-size: 24px; font-weight: 800; margin-bottom: 6px; }
-    .header-subtitle { color: #94a3b8; font-size: 14px; }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      padding: 6px 12px;
+      border-radius: 30px;
+      border: 1px solid #e2e8f0;
+      font-size: 11px;
+      font-weight: 800;
+      color: #059669;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
 
-    .menu-grid { display: flex; flex-direction: column; gap: 16px; }
+    .dot-pulse {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 1.6s infinite;
+    }
 
-    .menu-card {
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* ۲. کارت اصلی داشبورد (مشابه تصویر) */
+    .hero-card {
+      background: var(--accent-gradient);
+      border-radius: 24px;
+      padding: 20px;
+      color: #ffffff;
+      box-shadow: 0 15px 30px -8px rgba(37, 99, 235, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      left: -30px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .hero-tag {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-title {
+      font-size: 13px;
+      color: #93c5fd;
+      font-weight: 700;
+    }
+
+    .hero-main-val {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 12px;
+      font-size: 11.5px;
+      color: #e0e7ff;
+      font-weight: 600;
+    }
+
+    /* ۳. منوی شبکه‌ای گزینه‌ها */
+    .section-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-top: 4px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--glass-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border);
-      padding: 20px;
+    }
+
+    .grid-menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .menu-card {
+      background: var(--card-bg);
       border-radius: 22px;
+      padding: 18px 14px;
       text-decoration: none;
-      color: var(--text-main);
-      transition: all 0.35s ease;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+      border: 1px solid #f1f5f9;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
 
-    .menu-card:hover {
-      transform: translateY(-4px) scale(1.01);
-      border-color: rgba(99, 102, 241, 0.5);
+    .menu-card:active, .menu-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: #cbd5e1;
     }
 
-    .menu-info { text-align: right; }
-    .menu-title { font-size: 17px; font-weight: 800; color: #1e1b4b; margin-bottom: 4px; }
-    .menu-desc { font-size: 12px; color: var(--text-muted); }
+    .icon-wrapper {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 6px 15px rgba(0, 0, 0, 0.05);
+    }
 
-    .menu-badge {
-      background: #e0e7ff;
-      color: #4338ca;
-      font-size: 12px;
+    .icon-finance { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; }
+    .icon-exchange { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); color: #059669; }
+    .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
+    .icon-report { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); color: #9333ea; }
+
+    .card-title {
+      font-size: 13.5px;
       font-weight: 800;
-      padding: 6px 14px;
-      border-radius: 12px;
+      color: var(--text-dark);
     }
 
-    .footer-note { text-align: center; margin-top: 30px; font-size: 12px; color: #64748b; }
+    .card-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    /* ۴. بنر ویژه وسط صفحه */
+    .promo-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 20px;
+      padding: 16px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+    }
+
+    .promo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .promo-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+
+    .promo-sub {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .promo-btn {
+      background: #2563eb;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 11.5px;
+      font-weight: 800;
+    }
+
+    .eng-num {
+      font-family: Tahoma, sans-serif;
+      direction: ltr;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="hero-section">
-      <div class="logo-badge">💎</div>
-      <div class="header-title">حساب‌کتاب من</div>
-      <div class="header-subtitle">مدیریت هوشمند حساب‌ها و خدمات مالی</div>
-    </div>
 
-    <div class="menu-grid">
-      <!-- گزینه اول: حساب در امانت‌داری کریمی -->
-      <a href="exchange.html" class="menu-card">
-        <div class="menu-info">
-          <div class="menu-title">حساب در امانت‌داری کریمی</div>
-          <div class="menu-desc">استعلام موجودی و ریز تراکنش‌های مالی</div>
+  <div class="app-viewport">
+    
+    <!-- ۱. هدر بالای صفحه -->
+    <div class="top-header">
+      <div class="welcome-box">
+        <span class="welcome-title">مرحباً 👋</span>
+        <span class="welcome-subtitle">سامانه یکپارچه مدیریت حساب‌ها</span>
+      </div>
+      <div class="header-actions">
+        <div class="status-badge">
+          <div class="dot-pulse"></div>
+          <span>فعال</span>
         </div>
-        <div class="menu-badge">ورود</div>
-      </a>
-
-      <!-- گزینه دوم: حساب‌کتاب‌های شخصی (محلی روی گوشی) -->
-      <a href="finance.html" class="menu-card">
-        <div class="menu-info">
-          <div class="menu-title">حساب‌کتاب‌های شخصی من</div>
-          <div class="menu-desc">مدیریت طلب‌ها، بدهی‌ها، خرج‌ها و درآمدها</div>
-        </div>
-        <div class="menu-badge" style="background: #d1fae5; color: #065f46;">جدید</div>
-      </a>
-
-      <!-- گزینه سوم: رزرو برای آینده -->
-      <div class="menu-card" style="opacity: 0.6; cursor: not-allowed;">
-        <div class="menu-info">
-          <div class="menu-title">ابزارهای کاربردی دیگر</div>
-          <div class="menu-desc">امکانات کمکی آینده</div>
-        </div>
-        <div class="menu-badge" style="background: #f1f5f9; color: #64748b;">به زودی</div>
+        <div class="icon-btn">🔔</div>
       </div>
     </div>
 
-    <div class="footer-note">طراحی اختصاصی برای مدیریت امن امور مالی</div>
+    <!-- ۲. کارت اصلی بنر حساب -->
+    <div class="hero-card">
+      <div class="hero-top">
+        <span class="hero-title">سیستم مدیریت ابری</span>
+        <span class="hero-tag">نسخه پرو</span>
+      </div>
+      <div class="hero-main-val">مدیریت هوشمند مالی</div>
+      <div class="hero-footer">
+        <span>اتصال امن به دیتابیس</span>
+        <span class="eng-num">2026</span>
+      </div>
+    </div>
+
+    <!-- ۳. عنوان بخش منوها -->
+    <div class="section-label">
+      <span>خدمات و بخش‌ها</span>
+    </div>
+
+    <!-- ۴. شبکه منوی اصلی -->
+    <div class="grid-menu">
+      
+      <!-- گزینه اول: حساب‌های شخصی -->
+      <a href="finance.html" class="menu-card">
+        <div class="icon-wrapper icon-finance">👤</div>
+        <div>
+          <div class="card-title">حساب‌های شخصی</div>
+          <div class="card-desc">طلب، بدهی، خرج و درآمدها</div>
+        </div>
+      </a>
+
+      <!-- گزینه دوم: حساب‌های صرافی -->
+      <a href="exchange.html" class="menu-card">
+        <div class="icon-wrapper icon-exchange">💱</div>
+        <div>
+          <div class="card-title">حساب‌های صرافی</div>
+          <div class="card-desc">معاملات و حساب‌های ارزی</div>
+        </div>
+      </a>
+
+      <!-- گزینه سوم: ماشین‌حساب هوشمند -->
+      <a href="calc.html" class="menu-card">
+        <div class="icon-wrapper icon-calc">🧮</div>
+        <div>
+          <div class="card-title">ماشین‌حساب</div>
+          <div class="card-desc">عادی و محاسبه‌گر ارزها</div>
+        </div>
+      </a>
+
+      <!-- گزینه چهارم: گزارشات مالی -->
+      <a href="finance.html" class="menu-card">
+        <div class="icon-wrapper icon-report">📊</div>
+        <div>
+          <div class="card-title">آمار و گزارشات</div>
+          <div class="card-desc">تحلیل ۳۰ روزه و سالانه</div>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- ۵. بنر اطلاع‌رسانی سفلای صفحه -->
+    <div class="promo-banner">
+      <div class="promo-text">
+        <span class="promo-title">💡 نیاز به ثبت تراکنش دارید؟</span>
+        <span class="promo-sub">از بخش حساب‌های شخصی اقدام کنید</span>
+      </div>
+      <a href="finance.html" class="promo-btn">ورود سریع</a>
+    </div>
+
   </div>
+
 </body>
 </html>
