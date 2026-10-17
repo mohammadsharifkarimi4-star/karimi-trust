@@ -45,7 +45,6 @@
       gap: 16px;
     }
 
-    /* هدر بالا */
     .top-header {
       display: flex;
       justify-content: space-between;
@@ -100,7 +99,6 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* کارت اصلی حاوی تقویم و ساعت‌های جهان */
     .hero-card {
       background: var(--accent-gradient);
       border-radius: 24px;
@@ -121,22 +119,18 @@
     }
 
     .hero-main-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 900;
     }
 
-    /* ساعت دیجیتال زنده بزرگ */
-    .live-clock-badge {
-      background: rgba(0, 0, 0, 0.25);
+    .day-badge {
+      background: rgba(255, 255, 255, 0.2);
       padding: 4px 12px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
-      color: #34d399;
-      border: 1px solid rgba(52, 211, 153, 0.3);
     }
 
-    /* ۳ ستون تاریخ‌ها */
     .dates-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -155,13 +149,13 @@
     }
 
     .date-box-title {
-      font-size: 10px;
+      font-size: 10.5px;
       color: #a7f3d0;
       font-weight: 700;
     }
 
     .date-box-val {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 900;
       color: #ffffff;
     }
@@ -172,35 +166,39 @@
       font-weight: 600;
     }
 
-    /* بخش ساعت‌های جهانی */
-    .world-clocks {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      padding-top: 10px;
+    .world-clocks-ticker {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      padding: 8px 10px;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .clocks-track {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollClocks 20s linear infinite;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    @keyframes scrollClocks {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(100%); }
     }
 
     .clock-item {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 6px 4px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+      margin-left: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .clock-city {
-      font-size: 9.5px;
-      color: #a7f3d0;
-      font-weight: 700;
-    }
-
-    .clock-time {
-      font-size: 11px;
-      font-weight: 800;
-      color: #ffffff;
+    .clock-label {
+      color: #6ee7b7;
     }
 
     .section-label {
@@ -210,7 +208,6 @@
       margin-top: 2px;
     }
 
-    /* کارت‌های خدمات */
     .menu-container {
       display: flex;
       flex-direction: column;
@@ -300,6 +297,7 @@
     .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0284c7; }
     .icon-exchange { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #16a34a; }
     .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
+    .icon-contacts { background: linear-gradient(135deg, #fae8ff 0%, #f5d0fe 100%); color: #c026d3; }
 
     .card-title {
       font-size: 14px;
@@ -314,7 +312,6 @@
       line-height: 1.4;
     }
 
-    /* بنر دسترسی سریع */
     .quick-actions-banner {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       border-radius: 20px;
@@ -337,7 +334,7 @@
 
     .quick-btns-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
     }
 
@@ -366,7 +363,6 @@
 
   <div class="app-viewport">
     
-    <!-- هدر بالا -->
     <div class="top-header">
       <div class="welcome-box">
         <span class="welcome-title">خوش آمدید 👋</span>
@@ -378,54 +374,42 @@
       </div>
     </div>
 
-    <!-- کارت سبز رنگ زنده (تقویم ۳گانه + ساعت‌های جهانی متحرک) -->
     <div class="hero-card">
       <div class="hero-top-info">
         <span class="hero-main-title">حساب‌کتاب من</span>
-        <div class="live-clock-badge eng-num" id="liveClockDisplay">00:00:00</div>
+        <span class="day-badge" id="dayNameDisplay">شنبه</span>
       </div>
 
-      <!-- ۳ ستون تاریخ‌ها -->
       <div class="dates-grid-3">
         <div class="date-box-item">
           <span class="date-box-title">شمسی</span>
-          <span class="date-box-val" id="shamsiDayVal">--</span>
-          <span class="date-box-sub" id="shamsiMonthVal">--</span>
+          <span class="date-box-val" id="shamsiDayVal">۲۵</span>
+          <span class="date-box-sub" id="shamsiMonthVal">میزان ۱۴۰۵</span>
         </div>
+
         <div class="date-box-item">
           <span class="date-box-title">قمری</span>
-          <span class="date-box-val" id="hijriDayVal">--</span>
-          <span class="date-box-sub" id="hijriMonthVal">--</span>
+          <span class="date-box-val" id="hijriDayVal">۵</span>
+          <span class="date-box-sub" id="hijriMonthVal">جمادی الاول</span>
         </div>
+
         <div class="date-box-item">
           <span class="date-box-title">میلادی</span>
-          <span class="date-box-val eng-num" id="gregDayVal">--</span>
-          <span class="date-box-sub eng-num" id="gregMonthVal">--</span>
+          <span class="date-box-val eng-num" id="gregDayVal">17</span>
+          <span class="date-box-sub eng-num" id="gregMonthVal">Oct 2026</span>
         </div>
       </div>
 
-      <!-- ساعت‌های جهانی (کابل، بغداد، لندن، آمریکا/نیویورک) -->
-      <div class="world-clocks">
-        <div class="clock-item">
-          <span class="clock-city">کابل</span>
-          <span class="clock-time eng-num" id="timeKabul">--:--</span>
-        </div>
-        <div class="clock-item">
-          <span class="clock-city">بغداد</span>
-          <span class="clock-time eng-num" id="timeBaghdad">--:--</span>
-        </div>
-        <div class="clock-item">
-          <span class="clock-city">لندن</span>
-          <span class="clock-time eng-num" id="timeLondon">--:--</span>
-        </div>
-        <div class="clock-item">
-          <span class="clock-city">نیویورک</span>
-          <span class="clock-time eng-num" id="timeNewYork">--:--</span>
+      <div class="world-clocks-ticker">
+        <div class="clocks-track">
+          <span class="clock-item"><span class="clock-label">کابل:</span> <span id="clockKabul" class="eng-num">--:--:--</span></span>
+          <span class="clock-item"><span class="clock-label">بغداد:</span> <span id="clockBaghdad" class="eng-num">--:--:--</span></span>
+          <span class="clock-item"><span class="clock-label">لندن:</span> <span id="clockLondon" class="eng-num">--:--:--</span></span>
+          <span class="clock-item"><span class="clock-label">آمریکا (نیویورک):</span> <span id="clockNewYork" class="eng-num">--:--:--</span></span>
         </div>
       </div>
     </div>
 
-    <!-- خدمات -->
     <div class="section-label">
       <span>خدمات</span>
     </div>
@@ -437,6 +421,17 @@
           <div class="card-title" style="margin-bottom: 4px;">مدیریت حساب‌ها</div>
           <div class="marquee-wrapper">
             <span class="marquee-text">ثبت، مدیریت، ویرایش و حذف کامل طلب‌ها، بدهی‌ها، درآمدها و خرج‌های شخصی به صورت پویای ابری</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- دکمه بخش پخش مخاطبین -->
+      <a href="contacts.html" class="menu-card-large">
+        <div class="icon-wrapper icon-contacts">📇</div>
+        <div style="flex: 1; overflow: hidden;">
+          <div class="card-title" style="margin-bottom: 4px;">پخش مخاطبین</div>
+          <div class="marquee-wrapper">
+            <span class="marquee-text">مدیریت شماره‌ها، ارسال پیام واتساپ، پیامک متنی، تماس صوتی، ویرایش و حذف مخاطبین ابری</span>
           </div>
         </div>
       </a>
@@ -460,13 +455,13 @@
       </div>
     </div>
 
-    <!-- بنر دسترسی سریع -->
     <div class="quick-actions-banner">
       <div class="quick-title">
         <span>⚡ دسترسی سریع به بخش‌ها</span>
       </div>
       <div class="quick-btns-grid">
         <a href="finance.html" class="quick-btn">حساب شخصی</a>
+        <a href="contacts.html" class="quick-btn">پخش مخاطبین</a>
         <a href="exchange.html" class="quick-btn">امانت‌داری کریمی</a>
         <a href="calc.html" class="quick-btn">ماشین‌حساب</a>
       </div>
@@ -475,29 +470,11 @@
   </div>
 
   <script>
-    function updateAllDynamics() {
+    function updateLiveCalendarAndClocks() {
       const now = new Date();
-      
-      // ۱. ساعت زنده دیجیتال
-      document.getElementById('liveClockDisplay').innerText = now.toLocaleTimeString('en-GB');
+      const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+      document.getElementById('dayNameDisplay').innerText = weekDays[now.getDay()];
 
-      // ۲. ساعت‌های جهانی
-      const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
-      
-      try {
-        document.getElementById('timeKabul').innerText = new Intl.DateTimeFormat('en-GB', { ...timeOptions, timeZone: 'Asia/Kabul' }).format(now);
-        document.getElementById('timeBaghdad').innerText = new Intl.DateTimeFormat('en-GB', { ...timeOptions, timeZone: 'Asia/Baghdad' }).format(now);
-        document.getElementById('timeLondon').innerText = new Intl.DateTimeFormat('en-GB', { ...timeOptions, timeZone: 'Europe/London' }).format(now);
-        document.getElementById('timeNewYork').innerText = new Intl.DateTimeFormat('en-GB', { ...timeOptions, timeZone: 'America/New_York' }).format(now);
-      } catch (e) {
-        // Fallback اگر تایم‌زون پشتیبانی نشود
-        document.getElementById('timeKabul').innerText = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('timeBaghdad').innerText = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('timeLondon').innerText = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('timeNewYork').innerText = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-      }
-
-      // ۳. تقویم شمسی افغانستان
       const afMonths = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'];
       const formatterSF = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'numeric', year: 'numeric' });
       const partsSF = formatterSF.formatToParts(now);
@@ -510,15 +487,15 @@
       document.getElementById('shamsiDayVal').innerText = daySF;
       document.getElementById('shamsiMonthVal').innerText = `${afMonths[monthSF - 1] || ''} ${yearSF}`;
 
-      // ۴. تقویم قمری
       const islamicMonths = ['محرم', 'صفر', 'ربیع‌الاول', 'ربیع‌الثانی', 'جمادی‌الاول', 'جمادی‌الثانی', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذیقعده', 'ذیحجه'];
       try {
         const formatterIslamic = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', { day: 'numeric', month: 'numeric', year: 'numeric' });
         const partsHijri = formatterIslamic.formatToParts(now);
-        let dH = '', mH = '';
+        let dH = '', mH = '', yH = '';
         partsHijri.forEach(p => {
           if (p.type === 'day') dH = p.value;
           if (p.type === 'month') mH = parseInt(p.value, 10);
+          if (p.type === 'year') yH = p.value;
         });
         document.getElementById('hijriDayVal').innerText = dH;
         document.getElementById('hijriMonthVal').innerText = islamicMonths[mH - 1] || 'جمادی الاول';
@@ -527,15 +504,22 @@
         document.getElementById('hijriMonthVal').innerText = 'جمادی الاول';
       }
 
-      // ۵. میلادی
       document.getElementById('gregDayVal').innerText = now.getDate();
       const engMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       document.getElementById('gregMonthVal').innerText = `${engMonths[now.getMonth()]} ${now.getFullYear()}`;
+
+      const getTimeZoneString = (timeZone) => {
+        return now.toLocaleTimeString('en-US', { timeZone, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      };
+
+      document.getElementById('clockKabul').innerText = getTimeZoneString('Asia/Kabul');
+      document.getElementById('clockBaghdad').innerText = getTimeZoneString('Asia/Baghdad');
+      document.getElementById('clockLondon').innerText = getTimeZoneString('Europe/London');
+      document.getElementById('clockNewYork').innerText = getTimeZoneString('America/New_York');
     }
 
-    // به‌روزرسانی لحظه‌ای هر یک ثانیه
-    setInterval(updateAllDynamics, 1000);
-    window.onload = updateAllDynamics;
+    updateLiveCalendarAndClocks();
+    setInterval(updateLiveCalendarAndClocks, 1000);
   </script>
 
 </body>
