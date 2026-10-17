@@ -10,11 +10,11 @@
     :root {
       --bg-gradient: linear-gradient(180deg, #f0f4f9 0%, #e2e8f0 100%);
       --card-bg: #ffffff;
-      --accent-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+      --accent-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
       --text-dark: #0f172a;
       --text-muted: #64748b;
       --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-      --shadow-hover: 0 20px 30px -10px rgba(37, 99, 235, 0.2);
+      --shadow-hover: 0 15px 30px -10px rgba(37, 99, 235, 0.2);
     }
 
     * {
@@ -46,11 +46,12 @@
       gap: 16px;
     }
 
+    /* هدر بالای صفحه */
     .top-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 4px;
+      padding: 6px 4px;
     }
 
     .welcome-box {
@@ -68,28 +69,8 @@
     .welcome-subtitle {
       font-size: 12px;
       color: var(--text-muted);
-      font-weight: 500;
+      font-weight: 600;
       margin-top: 2px;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .icon-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-      cursor: pointer;
     }
 
     .status-badge {
@@ -97,10 +78,10 @@
       align-items: center;
       gap: 6px;
       background: #ffffff;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 30px;
       border: 1px solid #e2e8f0;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 800;
       color: #059669;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -120,75 +101,103 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
+    /* کارت آبی حاوی تقویم و تواریخ کامل */
     .hero-card {
       background: var(--accent-gradient);
       border-radius: 24px;
-      padding: 20px;
+      padding: 18px 20px;
       color: #ffffff;
       box-shadow: 0 15px 30px -8px rgba(37, 99, 235, 0.35);
       position: relative;
       overflow: hidden;
     }
 
-    .hero-card::before {
-      content: '';
-      position: absolute;
-      top: -30px;
-      left: -30px;
-      width: 120px;
-      height: 120px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-    }
-
     .hero-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .hero-title {
       font-size: 13px;
       color: #93c5fd;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .hero-main-val {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 900;
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
+      margin-bottom: 12px;
     }
 
-    .hero-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
+    .date-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
       padding-top: 10px;
       font-size: 11.5px;
-      color: #e0e7ff;
+      color: #f1f5f9;
       font-weight: 600;
+    }
+
+    .date-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .date-label {
+      font-size: 10px;
+      color: #93c5fd;
+      font-weight: 700;
     }
 
     .section-label {
       font-size: 14px;
       font-weight: 800;
       color: var(--text-dark);
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
-    .grid-menu {
+    /* ساختار جدید کارت‌های مستطیلی کوچک و بزرگ */
+    .menu-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .menu-card-large {
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 18px 16px;
+      text-decoration: none;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid #f1f5f9;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.25s ease;
+    }
+
+    .menu-card-large:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+      border-color: #cbd5e1;
+    }
+
+    .menu-row-small {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
 
-    .menu-card {
+    .menu-card-small {
       background: var(--card-bg);
       border-radius: 22px;
-      padding: 18px 14px;
+      padding: 16px 12px;
       text-decoration: none;
       color: var(--text-dark);
       display: flex;
@@ -201,40 +210,39 @@
       transition: all 0.25s ease;
     }
 
-    .menu-card:hover {
-      transform: translateY(-4px);
+    .menu-card-small:hover {
+      transform: translateY(-3px);
       box-shadow: var(--shadow-hover);
       border-color: #cbd5e1;
     }
 
     .icon-wrapper {
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 26px;
+      flex-shrink: 0;
       box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 6px 15px rgba(0, 0, 0, 0.05);
     }
 
     .icon-finance { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; }
     .icon-exchange { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); color: #059669; }
     .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
-    .icon-report { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); color: #9333ea; }
 
     .card-title {
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 800;
       color: var(--text-dark);
     }
 
     .card-desc {
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-muted);
       font-weight: 500;
-      line-height: 1.3;
-      min-height: 28px;
+      line-height: 1.4;
     }
 
     /* بنر سه دکمه‌ای ورود سریع */
@@ -267,7 +275,7 @@
     .quick-btn {
       background: #2563eb;
       color: white;
-      padding: 10px 6px;
+      padding: 10px 4px;
       border-radius: 12px;
       text-decoration: none;
       font-size: 11px;
@@ -291,80 +299,85 @@
 
   <div class="app-viewport">
     
-    <!-- هدر بالا -->
+    <!-- ۱. هدر بالا (بدون زنگوله، با خوش‌آمدید فارسی) -->
     <div class="top-header">
       <div class="welcome-box">
-        <span class="welcome-title">مرحباً 👋</span>
-        <span class="welcome-subtitle">حساب‌کتاب من</span>
+        <span class="welcome-title">خوش آمدید 👋</span>
+        <span class="welcome-subtitle">سامانه حساب‌کتاب من</span>
       </div>
-      <div class="header-actions">
-        <div class="status-badge">
-          <div class="dot-pulse"></div>
-          <span>فعال</span>
-        </div>
-        <div class="icon-btn">🔔</div>
+      <div class="status-badge">
+        <div class="dot-pulse"></div>
+        <span>فعال</span>
       </div>
     </div>
 
-    <!-- کارت آبی بالای صفحه -->
+    <!-- ۲. کارت آبی اصلی همراه با تاریخ‌های کامل -->
     <div class="hero-card">
       <div class="hero-top">
         <span class="hero-title">حساب‌کتاب من</span>
       </div>
       <div class="hero-main-val">سامانه امن و هوشمند مالی</div>
-      <div class="hero-footer">
-        <span>اتصال امن ابری</span>
-        <span class="eng-num">2026</span>
+      
+      <!-- شبکه نمایش روز هفته و تواریخ کامل -->
+      <div class="date-grid">
+        <div class="date-item">
+          <span class="date-label">روز هفته و شمسی:</span>
+          <span>شنبه ۲۵ مهر ۱۴۰۵</span>
+        </div>
+        <div class="date-item">
+          <span class="date-label">تاریخ میلادی:</span>
+          <span class="eng-num">17 October 2026</span>
+        </div>
+        <div class="date-item" style="grid-column: span 2; margin-top: 4px;">
+          <span class="date-label">تاریخ قمری:</span>
+          <span>۵ ربیع‌الثانی ۱۴۴۸</span>
+        </div>
       </div>
     </div>
 
-    <!-- عنوان خدمات -->
+    <!-- ۳. عنوان بخش خدمات -->
     <div class="section-label">
       <span>خدمات</span>
     </div>
 
-    <!-- منوی شبکه‌ای -->
-    <div class="grid-menu">
+    <!-- ۴. ساختار مستطیلی جدید کارت‌ها (بزرگ و کوچک) -->
+    <div class="menu-container">
       
-      <!-- مدیریت حساب‌ها -->
-      <a href="finance.html" class="menu-card">
+      <!-- مستطیل بزرگ افقی: مدیریت حساب‌ها -->
+      <a href="finance.html" class="menu-card-large">
         <div class="icon-wrapper icon-finance">📁</div>
-        <div>
-          <div class="card-title">مدیریت حساب‌ها</div>
+        <div style="flex: 1;">
+          <div class="card-title" style="margin-bottom: 2px;">مدیریت حساب‌ها</div>
           <div class="card-desc" id="rotatingDesc">ثبت و مدیریت طلب‌ها، بدهی‌ها، خرج و درآمدها</div>
         </div>
       </a>
 
-      <!-- حساب با امانت‌داری کریمی -->
-      <a href="exchange.html" class="menu-card">
-        <div class="icon-wrapper icon-exchange">🤝</div>
-        <div>
-          <div class="card-title">امانت‌داری کریمی</div>
-          <div class="card-desc">اشراف به حساب و چک کردن موجودی و تراکنش‌ها</div>
-        </div>
-      </a>
+      <!-- ردیف دو مستطیل عمودی -->
+      <div class="menu-row-small">
+        
+        <!-- مستطیل عمودی ۱: امانت‌داری کریمی -->
+        <a href="exchange.html" class="menu-card-small">
+          <div class="icon-wrapper icon-exchange">🤝</div>
+          <div>
+            <div class="card-title">امانت‌داری کریمی</div>
+            <div class="card-desc" style="margin-top: 4px;">اشراف به حساب و چک کردن موجودی و تراکنش‌ها</div>
+          </div>
+        </a>
 
-      <!-- ماشین‌حساب -->
-      <a href="calc.html" class="menu-card">
-        <div class="icon-wrapper icon-calc">🧮</div>
-        <div>
-          <div class="card-title">محاسبه‌گر ارز</div>
-          <div class="card-desc">ماشین‌حساب عادی و تبدیل ارزها</div>
-        </div>
-      </a>
+        <!-- مستطیل عمودی ۲: محاسبه‌گر ارز -->
+        <a href="calc.html" class="menu-card-small">
+          <div class="icon-wrapper icon-calc">🧮</div>
+          <div>
+            <div class="card-title">محاسبه‌گر ارز</div>
+            <div class="card-desc" style="margin-top: 4px;">ماشین‌حساب عادی و تبدیل ارزها</div>
+          </div>
+        </a>
 
-      <!-- آمار و گزارشات -->
-      <a href="finance.html" class="menu-card">
-        <div class="icon-wrapper icon-report">📊</div>
-        <div>
-          <div class="card-title">آمار و گزارشات</div>
-          <div class="card-desc">تحلیل ۳۰ روزه و سالانه</div>
-        </div>
-      </a>
+      </div>
 
     </div>
 
-    <!-- بنر سه دکمه‌ای ورود سریع -->
+    <!-- ۵. بنر سه دکمه‌ای ورود سریع -->
     <div class="quick-actions-banner">
       <div class="quick-title">
         <span>⚡ دسترسی سریع به بخش‌ها</span>
@@ -379,7 +392,7 @@
   </div>
 
   <script>
-    // متن گردشی برای بخش مدیریت حساب‌ها
+    // متن گردشی پویا برای بخش مدیریت حساب‌ها
     const texts = [
       "ثبت و مدیریت طلب‌ها، بدهی‌ها، خرج و درآمدها",
       "امکان نوشتن، ثبت، ویرایش و حذف تراکنش‌ها",
