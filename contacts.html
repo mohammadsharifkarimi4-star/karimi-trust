@@ -257,10 +257,10 @@
 <body>
 
   <!-- پنجره ورود ایمیل اختصاصی کاربر -->
-  <div id="authOverlay">
+  <div id="authOverlay" style="display:none;">
     <div class="auth-card">
       <div class="auth-title">ورود به حساب کاربری</div>
-      <div class="auth-desc">لطفاً ایمیل اختصاصی خود را وارد کنید تا مخاطبین مخصوص حساب شما بارگذاری و مدیریت شوند.</div>
+      <div class="auth-desc">لطفاً ایمیل خود را وارد کنید تا مخاطبین مختص حساب شما بارگذاری شوند.</div>
       <input type="email" id="userEmailInput" class="form-input eng-text" placeholder="your-email@gmail.com">
       <button class="btn-submit" onclick="saveUserEmail()">ورود و مشاهده مخاطبین</button>
     </div>
@@ -285,8 +285,8 @@
       </div>
 
       <div class="input-group">
-        <span class="input-label">شماره تماس (با کد کشور مثلاً 937...):</span>
-        <input type="text" id="phoneInput" class="form-input eng-text" placeholder="93700000000">
+        <span class="input-label">شماره تماس (با کد کشور و علامت + همراه باشد):</span>
+        <input type="text" id="phoneInput" class="form-input eng-text" placeholder="+93700000000">
       </div>
 
       <button class="btn-submit" onclick="saveContact()" id="submitBtn">ذخیره مخاطب</button>
@@ -305,8 +305,8 @@
   </div>
 
   <script>
-    // لینک وب اپلیکیشن گوگل اسکریپت شما
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziAKsDURQhFV8Kyxw7KAqTHyOHJ_lot2Nr7kStLIY7w1lxVBoBbnYzbKYBlaZ3rU5OUA/exec";
+    // لینک جدید گوگل اسکریپت شما
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhbIF5Q-ehQpV7xS7wBFPfnuBiLeb1aG3tT36KHPhnGElcDB6UN966DKEiEhH3A2piIw/exec";
     
     let allContacts = [];
     let currentUserEmail = localStorage.getItem('hesab_user_email') || "";
@@ -359,7 +359,8 @@
       }
 
       list.forEach(item => {
-        let cleanPhone = item.phone ? item.phone.toString().replace(/[^0-9]/g, '') : '';
+        let rawPhone = item.phone ? item.phone.toString().trim() : '';
+        let cleanWhatsAppPhone = rawPhone.replace(/[^0-9]/g, '');
         
         let card = document.createElement('div');
         card.className = 'contact-card';
@@ -371,13 +372,13 @@
             </div>
           </div>
           <div class="actions-grid">
-            <a href="https://wa.me/${cleanPhone}" target="_blank" class="action-btn btn-whatsapp">
+            <a href="https://wa.me/${cleanWhatsAppPhone}" target="_blank" class="action-btn btn-whatsapp">
               <span>💬</span> واتساپ
             </a>
-            <a href="sms:${cleanPhone}" class="action-btn btn-sms">
+            <a href="sms:${rawPhone}" class="action-btn btn-sms">
               <span>📱</span> پیامک
             </a>
-            <a href="tel:${cleanPhone}" class="action-btn btn-call">
+            <a href="tel:${rawPhone}" class="action-btn btn-call">
               <span>📞</span> تماس
             </a>
             <button class="action-btn btn-edit" onclick="prepareEdit(${item.row}, '${item.name || ''}', '${item.phone || ''}')">
