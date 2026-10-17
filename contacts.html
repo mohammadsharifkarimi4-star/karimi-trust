@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -11,8 +10,8 @@
     :root {
       --bg-color: #f1f5f9;
       --card-bg: #ffffff;
-      --primary: #9333ea;
-      --primary-gradient: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%);
+      --primary: #059669;
+      --primary-gradient: linear-gradient(135deg, #047857 0%, #059669 100%);
       --text-dark: #0f172a;
       --text-muted: #64748b;
       --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
@@ -47,6 +46,46 @@
       gap: 16px;
     }
 
+    /* پنجره ورود ایمیل اختصاصی کاربر */
+    #authOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .auth-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text-dark);
+    }
+
+    .auth-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
     .header-nav {
       display: flex;
       justify-content: space-between;
@@ -68,13 +107,20 @@
       gap: 4px;
     }
 
-    .page-title {
-      font-size: 15px;
-      font-weight: 900;
-      color: var(--text-dark);
+    .user-badge {
+      font-size: 11px;
+      background: #d1fae5;
+      color: #065f46;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    /* فرم افزودن/ویرایش */
+    /* فرم افزودن مخاطب */
     .form-card {
       background: var(--card-bg);
       border-radius: 20px;
@@ -112,13 +158,9 @@
       font-size: 13px;
       outline: none;
       background: #f8fafc;
-      transition: border 0.2s;
     }
 
-    .form-input:focus {
-      border-color: var(--primary);
-      background: #fff;
-    }
+    .form-input:focus { border-color: var(--primary); background: #fff; }
 
     .btn-submit {
       background: var(--primary-gradient);
@@ -129,11 +171,14 @@
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
-      transition: opacity 0.2s;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
     }
 
-    .btn-submit:active { opacity: 0.9; }
+    /* بخش سرچ */
+    .search-box {
+      display: flex;
+      gap: 8px;
+    }
 
     /* لیست مخاطبین */
     .contacts-container {
@@ -166,7 +211,7 @@
     }
 
     .contact-details {
-      font-size: 11.5px;
+      font-size: 12px;
       color: var(--text-muted);
       margin-top: 2px;
     }
@@ -177,7 +222,6 @@
       display: inline-block;
     }
 
-    /* دکمه‌های اکشن (واتساپ، پیامک، تماس، ویرایش، حذف) */
     .actions-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -187,10 +231,10 @@
     }
 
     .action-btn {
-      padding: 8px 4px;
+      padding: 8px 2px;
       border-radius: 10px;
       border: none;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -207,23 +251,27 @@
     .btn-edit { background: #f1f5f9; color: #475569; }
     .btn-delete { background: #fee2e2; color: #dc2626; }
 
-    .loading-box {
-      text-align: center;
-      padding: 20px;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-    }
+    .loading-box { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
   </style>
 </head>
 <body>
+
+  <!-- پنجره ورود ایمیل اختصاصی کاربر -->
+  <div id="authOverlay">
+    <div class="auth-card">
+      <div class="auth-title">ورود به حساب کاربری</div>
+      <div class="auth-desc">لطفاً ایمیل اختصاصی خود را وارد کنید تا مخاطبین مخصوص حساب شما بارگذاری و مدیریت شوند.</div>
+      <input type="email" id="userEmailInput" class="form-input eng-text" placeholder="your-email@gmail.com">
+      <button class="btn-submit" onclick="saveUserEmail()">ورود و مشاهده مخاطبین</button>
+    </div>
+  </div>
 
   <div class="app-viewport">
     
     <!-- هدر ناوبری -->
     <div class="header-nav">
       <a href="index.html" class="back-link">← بازگشت به منو</a>
-      <span class="page-title">پخش مخاطبین</span>
+      <span id="currentUserDisplay" class="user-badge">کاربر: --</span>
     </div>
 
     <!-- فرم افزودن / ویرایش مخاطب -->
@@ -233,7 +281,7 @@
       
       <div class="input-group">
         <span class="input-label">نام و نام خانوادگی:</span>
-        <input type="text" id="nameInput" class="form-input" placeholder="مثلاً محمد کریم">
+        <input type="text" id="nameInput" class="form-input" placeholder="مثلاً احمد کریمی">
       </div>
 
       <div class="input-group">
@@ -241,89 +289,119 @@
         <input type="text" id="phoneInput" class="form-input eng-text" placeholder="93700000000">
       </div>
 
-      <div class="input-group">
-        <span class="input-label">ایمیل (اختیاری):</span>
-        <input type="email" id="emailInput" class="form-input eng-text" placeholder="email@example.com">
-      </div>
-
       <button class="btn-submit" onclick="saveContact()" id="submitBtn">ذخیره مخاطب</button>
     </div>
 
-    <!-- لیست مخاطبین -->
-    <div class="section-label" style="font-size: 13px; font-weight: 800; color: #0f172a; margin-top: 4px;">
-      <span>لیست مخاطبین ثبت‌شده</span>
+    <!-- بخش جستجو بر اساس اسم -->
+    <div class="search-box">
+      <input type="text" id="searchInput" class="form-input" placeholder="🔍 جستجو بر اساس نام مخاطب..." oninput="filterContacts()">
     </div>
 
+    <!-- لیست مخاطبین -->
     <div id="contactsList" class="contacts-container">
-      <div class="loading-box">در حال بارگذاری اطلاعات از گوگل شیت...</div>
+      <div class="loading-box">در حال بارگذاری اطلاعات...</div>
     </div>
 
   </div>
 
   <script>
     // لینک وب اپلیکیشن گوگل اسکریپت شما
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkPEKJIgFFdrPZ0yeSxXaZQXwGNSee2pulO_D1RvzEYhb8y8iTSzsWeYs30JgjL-da/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziAKsDURQhFV8Kyxw7KAqTHyOHJ_lot2Nr7kStLIY7w1lxVBoBbnYzbKYBlaZ3rU5OUA/exec";
+    
+    let allContacts = [];
+    let currentUserEmail = localStorage.getItem('hesab_user_email') || "";
 
     window.onload = function() {
-      loadContacts();
+      if (!currentUserEmail) {
+        document.getElementById('authOverlay').style.display = 'flex';
+      } else {
+        document.getElementById('authOverlay').style.display = 'none';
+        document.getElementById('currentUserDisplay').innerText = currentUserEmail;
+        loadContacts();
+      }
     };
+
+    function saveUserEmail() {
+      const email = document.getElementById('userEmailInput').value.trim();
+      if (!email || !email.includes('@')) {
+        alert("لطفاً یک ایمیل معتبر وارد کنید.");
+        return;
+      }
+      localStorage.setItem('hesab_user_email', email);
+      currentUserEmail = email;
+      document.getElementById('authOverlay').style.display = 'none';
+      document.getElementById('currentUserDisplay').innerText = email;
+      loadContacts();
+    }
 
     function loadContacts() {
       const container = document.getElementById('contactsList');
-      container.innerHTML = '<div class="loading-box">در حال بارگذاری اطلاعات...</div>';
+      container.innerHTML = '<div class="loading-box">در حال دریافت اطلاعات از گوگل شیت...</div>';
 
-      fetch(SCRIPT_URL + "?action=read")
+      fetch(`${SCRIPT_URL}?action=read&email=${encodeURIComponent(currentUserEmail)}`)
         .then(res => res.json())
         .then(data => {
-          container.innerHTML = "";
-          if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading-box">هیچ مخاطبی ثبت نشده است.</div>';
-            return;
-          }
-
-          data.forEach(item => {
-            let cleanPhone = item.phone ? item.phone.toString().replace(/[^0-9]/g, '') : '';
-            
-            let card = document.createElement('div');
-            card.className = 'contact-card';
-            card.innerHTML = `
-              <div class="contact-info">
-                <div>
-                  <div class="contact-name">${item.name || 'بدون نام'}</div>
-                  <div class="contact-details eng-text">📞 ${item.phone || '-'} | 📧 ${item.email || '-'}</div>
-                </div>
-              </div>
-              <div class="actions-grid">
-                <a href="https://wa.me/${cleanPhone}" target="_blank" class="action-btn btn-whatsapp">
-                  <span>💬</span> واتساپ
-                </a>
-                <a href="sms:${cleanPhone}" class="action-btn btn-sms">
-                  <span>📱</span> پیامک
-                </a>
-                <a href="tel:${cleanPhone}" class="action-btn btn-call">
-                  <span>📞</span> تماس
-                </a>
-                <button class="action-btn btn-edit" onclick="prepareEdit(${item.row}, '${item.name || ''}', '${item.phone || ''}', '${item.email || ''}')">
-                  <span>✏️</span> ویرایش
-                </button>
-                <button class="action-btn btn-delete" onclick="deleteContact(${item.row})">
-                  <span>🗑️</span> حذف
-                </button>
-              </div>
-            `;
-            container.appendChild(card);
-          });
+          allContacts = data || [];
+          renderContacts(allContacts);
         })
         .catch(err => {
           container.innerHTML = '<div class="loading-box" style="color: #dc2626;">خطا در ارتباط با گوگل شیت!</div>';
         });
     }
 
+    function renderContacts(list) {
+      const container = document.getElementById('contactsList');
+      container.innerHTML = "";
+      
+      if (!list || list.length === 0) {
+        container.innerHTML = '<div class="loading-box">هیچ مخاطبی یافت نشد.</div>';
+        return;
+      }
+
+      list.forEach(item => {
+        let cleanPhone = item.phone ? item.phone.toString().replace(/[^0-9]/g, '') : '';
+        
+        let card = document.createElement('div');
+        card.className = 'contact-card';
+        card.innerHTML = `
+          <div class="contact-info">
+            <div>
+              <div class="contact-name">${item.name || 'بدون نام'}</div>
+              <div class="contact-details eng-text">📞 ${item.phone || '-'}</div>
+            </div>
+          </div>
+          <div class="actions-grid">
+            <a href="https://wa.me/${cleanPhone}" target="_blank" class="action-btn btn-whatsapp">
+              <span>💬</span> واتساپ
+            </a>
+            <a href="sms:${cleanPhone}" class="action-btn btn-sms">
+              <span>📱</span> پیامک
+            </a>
+            <a href="tel:${cleanPhone}" class="action-btn btn-call">
+              <span>📞</span> تماس
+            </a>
+            <button class="action-btn btn-edit" onclick="prepareEdit(${item.row}, '${item.name || ''}', '${item.phone || ''}')">
+              <span>✏️</span> ویرایش
+            </button>
+            <button class="action-btn btn-delete" onclick="deleteContact(${item.row})">
+              <span>🗑️</span> حذف
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterContacts() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const filtered = allContacts.filter(c => c.name && c.name.toLowerCase().includes(query));
+      renderContacts(filtered);
+    }
+
     function saveContact() {
       const row = document.getElementById('editRowIndex').value;
       const name = document.getElementById('nameInput').value.trim();
       const phone = document.getElementById('phoneInput').value.trim();
-      const email = document.getElementById('emailInput').value.trim();
 
       if (!name || !phone) {
         alert("لطفاً نام و شماره تماس را وارد کنید.");
@@ -331,7 +409,7 @@
       }
 
       const action = row ? "edit" : "add";
-      const payload = { action, row, name, phone, email };
+      const payload = { action, row, email: currentUserEmail, name, phone };
 
       document.getElementById('submitBtn').innerText = "در حال ذخیره...";
 
@@ -350,11 +428,10 @@
       });
     }
 
-    function prepareEdit(row, name, phone, email) {
+    function prepareEdit(row, name, phone) {
       document.getElementById('editRowIndex').value = row;
       document.getElementById('nameInput').value = name;
       document.getElementById('phoneInput').value = phone;
-      document.getElementById('emailInput').value = email;
       document.getElementById('formTitle').innerText = "✏️ ویرایش مشخصات مخاطب";
       document.getElementById('submitBtn').innerText = "بروزرسانی مخاطب";
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -380,7 +457,6 @@
       document.getElementById('editRowIndex').value = "";
       document.getElementById('nameInput').value = "";
       document.getElementById('phoneInput').value = "";
-      document.getElementById('emailInput').value = "";
       document.getElementById('formTitle').innerText = "➕ افزودن مخاطب جدید";
       document.getElementById('submitBtn').innerText = "ذخیره مخاطب";
     }
