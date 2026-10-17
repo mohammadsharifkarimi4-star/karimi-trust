@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>داشبورد مدیریت مالی</title>
+  <title>حساب‌کتاب من</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
     :root {
       --bg-gradient: linear-gradient(180deg, #f0f4f9 0%, #e2e8f0 100%);
       --card-bg: #ffffff;
-      --primary-blue: #0284c7;
       --accent-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
       --text-dark: #0f172a;
       --text-muted: #64748b;
@@ -34,7 +33,6 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      padding: 0;
     }
 
     .app-viewport {
@@ -48,7 +46,6 @@
       gap: 16px;
     }
 
-    /* ۱. هدر بالا */
     .top-header {
       display: flex;
       justify-content: space-between;
@@ -93,7 +90,6 @@
       font-size: 18px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
       cursor: pointer;
-      position: relative;
     }
 
     .status-badge {
@@ -115,7 +111,6 @@
       height: 8px;
       background-color: #10b981;
       border-radius: 50%;
-      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
       animation: pulse 1.6s infinite;
     }
 
@@ -125,7 +120,6 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* ۲. کارت اصلی داشبورد (مشابه تصویر) */
     .hero-card {
       background: var(--accent-gradient);
       border-radius: 24px;
@@ -151,17 +145,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .hero-tag {
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(8px);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
+      margin-bottom: 12px;
     }
 
     .hero-title {
@@ -173,7 +157,7 @@
     .hero-main-val {
       font-size: 24px;
       font-weight: 900;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       letter-spacing: -0.5px;
     }
 
@@ -182,21 +166,17 @@
       justify-content: space-between;
       align-items: center;
       border-top: 1px solid rgba(255, 255, 255, 0.15);
-      padding-top: 12px;
+      padding-top: 10px;
       font-size: 11.5px;
       color: #e0e7ff;
       font-weight: 600;
     }
 
-    /* ۳. منوی شبکه‌ای گزینه‌ها */
     .section-label {
       font-size: 14px;
       font-weight: 800;
       color: var(--text-dark);
       margin-top: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
 
     .grid-menu {
@@ -218,11 +198,10 @@
       gap: 10px;
       border: 1px solid #f1f5f9;
       box-shadow: var(--shadow-soft);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
+      transition: all 0.25s ease;
     }
 
-    .menu-card:active, .menu-card:hover {
+    .menu-card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-hover);
       border-color: #cbd5e1;
@@ -235,7 +214,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 26px;
       box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 6px 15px rgba(0, 0, 0, 0.05);
     }
 
@@ -255,45 +234,50 @@
       color: var(--text-muted);
       font-weight: 500;
       line-height: 1.3;
+      min-height: 28px;
     }
 
-    /* ۴. بنر ویژه وسط صفحه */
-    .promo-banner {
+    /* بنر سه دکمه‌ای ورود سریع */
+    .quick-actions-banner {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       border-radius: 20px;
       padding: 16px;
       color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
-    }
-
-    .promo-text {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 12px;
     }
 
-    .promo-title {
-      font-size: 13.5px;
+    .quick-title {
+      font-size: 13px;
       font-weight: 800;
       color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .promo-sub {
-      font-size: 11px;
-      color: #94a3b8;
+    .quick-btns-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
 
-    .promo-btn {
+    .quick-btn {
       background: #2563eb;
       color: white;
-      padding: 8px 14px;
+      padding: 10px 6px;
       border-radius: 12px;
       text-decoration: none;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 800;
+      text-align: center;
+      transition: background 0.2s;
+    }
+
+    .quick-btn:hover {
+      background: #1d4ed8;
     }
 
     .eng-num {
@@ -307,11 +291,11 @@
 
   <div class="app-viewport">
     
-    <!-- ۱. هدر بالای صفحه -->
+    <!-- هدر بالا -->
     <div class="top-header">
       <div class="welcome-box">
         <span class="welcome-title">مرحباً 👋</span>
-        <span class="welcome-subtitle">سامانه یکپارچه مدیریت حساب‌ها</span>
+        <span class="welcome-subtitle">حساب‌کتاب من</span>
       </div>
       <div class="header-actions">
         <div class="status-badge">
@@ -322,55 +306,54 @@
       </div>
     </div>
 
-    <!-- ۲. کارت اصلی بنر حساب -->
+    <!-- کارت آبی بالای صفحه -->
     <div class="hero-card">
       <div class="hero-top">
-        <span class="hero-title">سیستم مدیریت ابری</span>
-        <span class="hero-tag">نسخه پرو</span>
+        <span class="hero-title">حساب‌کتاب من</span>
       </div>
-      <div class="hero-main-val">مدیریت هوشمند مالی</div>
+      <div class="hero-main-val">سامانه امن و هوشمند مالی</div>
       <div class="hero-footer">
-        <span>اتصال امن به دیتابیس</span>
+        <span>اتصال امن ابری</span>
         <span class="eng-num">2026</span>
       </div>
     </div>
 
-    <!-- ۳. عنوان بخش منوها -->
+    <!-- عنوان خدمات -->
     <div class="section-label">
-      <span>خدمات و بخش‌ها</span>
+      <span>خدمات</span>
     </div>
 
-    <!-- ۴. شبکه منوی اصلی -->
+    <!-- منوی شبکه‌ای -->
     <div class="grid-menu">
       
-      <!-- گزینه اول: حساب‌های شخصی -->
+      <!-- مدیریت حساب‌ها -->
       <a href="finance.html" class="menu-card">
-        <div class="icon-wrapper icon-finance">👤</div>
+        <div class="icon-wrapper icon-finance">📁</div>
         <div>
-          <div class="card-title">حساب‌های شخصی</div>
-          <div class="card-desc">طلب، بدهی، خرج و درآمدها</div>
+          <div class="card-title">مدیریت حساب‌ها</div>
+          <div class="card-desc" id="rotatingDesc">ثبت و مدیریت طلب‌ها، بدهی‌ها، خرج و درآمدها</div>
         </div>
       </a>
 
-      <!-- گزینه دوم: حساب‌های صرافی -->
+      <!-- حساب با امانت‌داری کریمی -->
       <a href="exchange.html" class="menu-card">
-        <div class="icon-wrapper icon-exchange">💱</div>
+        <div class="icon-wrapper icon-exchange">🤝</div>
         <div>
-          <div class="card-title">حساب‌های صرافی</div>
-          <div class="card-desc">معاملات و حساب‌های ارزی</div>
+          <div class="card-title">امانت‌داری کریمی</div>
+          <div class="card-desc">اشراف به حساب و چک کردن موجودی و تراکنش‌ها</div>
         </div>
       </a>
 
-      <!-- گزینه سوم: ماشین‌حساب هوشمند -->
+      <!-- ماشین‌حساب -->
       <a href="calc.html" class="menu-card">
         <div class="icon-wrapper icon-calc">🧮</div>
         <div>
-          <div class="card-title">ماشین‌حساب</div>
-          <div class="card-desc">عادی و محاسبه‌گر ارزها</div>
+          <div class="card-title">محاسبه‌گر ارز</div>
+          <div class="card-desc">ماشین‌حساب عادی و تبدیل ارزها</div>
         </div>
       </a>
 
-      <!-- گزینه چهارم: گزارشات مالی -->
+      <!-- آمار و گزارشات -->
       <a href="finance.html" class="menu-card">
         <div class="icon-wrapper icon-report">📊</div>
         <div>
@@ -381,16 +364,34 @@
 
     </div>
 
-    <!-- ۵. بنر اطلاع‌رسانی سفلای صفحه -->
-    <div class="promo-banner">
-      <div class="promo-text">
-        <span class="promo-title">💡 نیاز به ثبت تراکنش دارید؟</span>
-        <span class="promo-sub">از بخش حساب‌های شخصی اقدام کنید</span>
+    <!-- بنر سه دکمه‌ای ورود سریع -->
+    <div class="quick-actions-banner">
+      <div class="quick-title">
+        <span>⚡ دسترسی سریع به بخش‌ها</span>
       </div>
-      <a href="finance.html" class="promo-btn">ورود سریع</a>
+      <div class="quick-btns-grid">
+        <a href="finance.html" class="quick-btn">حساب شخصی</a>
+        <a href="exchange.html" class="quick-btn">امانت‌داری کریمی</a>
+        <a href="calc.html" class="quick-btn">ماشین‌حساب</a>
+      </div>
     </div>
 
   </div>
+
+  <script>
+    // متن گردشی برای بخش مدیریت حساب‌ها
+    const texts = [
+      "ثبت و مدیریت طلب‌ها، بدهی‌ها، خرج و درآمدها",
+      "امکان نوشتن، ثبت، ویرایش و حذف تراکنش‌ها",
+      "مدیریت کامل حساب‌های مالی شخصی به صورت پویا"
+    ];
+    let index = 0;
+    setInterval(() => {
+      index = (index + 1) % texts.length;
+      let el = document.getElementById('rotatingDesc');
+      if(el) el.innerText = texts[index];
+    }, 3500);
+  </script>
 
 </body>
 </html>
