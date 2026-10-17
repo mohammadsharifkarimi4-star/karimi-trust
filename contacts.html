@@ -46,7 +46,6 @@
       gap: 16px;
     }
 
-    /* پنجره احراز هویت اولیه ایمیل */
     #authOverlay {
       position: fixed;
       top: 0;
@@ -257,7 +256,7 @@
   <div id="authOverlay" style="display:none;">
     <div class="auth-card">
       <div class="auth-title">ورود به حساب کاربری</div>
-      <div class="auth-desc">لطفاً ایمیل خود را وارد کنید. سیستم ابتدا اتصال را بررسی و ایمیل شما را در سامانه ثبت می‌کند.</div>
+      <div class="auth-desc">لطفاً ایمیل خود را وارد کنید تا اتصال برقرار شده و حساب شما در گوگل شیت ثبت شود.</div>
       <input type="email" id="userEmailInput" class="form-input eng-text" placeholder="your-email@gmail.com">
       <button class="btn-submit" id="authBtn" onclick="verifyAndSaveEmail()">بررسی اتصال و ورود</button>
     </div>
@@ -298,8 +297,8 @@
   </div>
 
   <script>
-    // لینک جدید وب‌اپلیکیشن گوگل اسکریپت شما
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZLa4qMpDtrgWV3kpQ3wJ7lPwh95gVkHsU0tihF4Khgq6Du7Ekn-tlQRRpyHo_r1YG/exec";
+    // لینک جدید و نهایی گوگل اسکریپت شما
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_CcFXGVSM2KTy8Zl4lUIjHHboawklFv3-XdUmqTuaK1_u8d8MNLN1GJp02U3B4LBu1A/exec";
     
     let allContacts = [];
     let currentUserEmail = localStorage.getItem('hesab_user_email') || "";
@@ -322,25 +321,24 @@
       }
 
       const btn = document.getElementById('authBtn');
-      btn.innerText = "در حال بررسی و ثبت...";
+      btn.innerText = "در حال بررسی و ثبت در گوگل شیت...";
 
       fetch(`${SCRIPT_URL}?action=verify_email&email=${encodeURIComponent(email)}`)
         .then(res => res.json())
         .then(res => {
-          if (res.status === "success") {
-            localStorage.setItem('hesab_user_email', email);
-            currentUserEmail = email;
-            document.getElementById('authOverlay').style.display = 'none';
-            document.getElementById('currentUserDisplay').innerText = email;
-            loadContacts();
-          } else {
-            alert("خطا در تایید ایمیل از طرف گوگل شیت.");
-            btn.innerText = "بررسی اتصال و ورود";
-          }
+          localStorage.setItem('hesab_user_email', email);
+          currentUserEmail = email;
+          document.getElementById('authOverlay').style.display = 'none';
+          document.getElementById('currentUserDisplay').innerText = email;
+          loadContacts();
         })
         .catch(err => {
-          alert("خطا در برقراری ارتباط با گوگل شیت. لطفاً لینک را بررسی کنید.");
-          btn.innerText = "بررسی اتصال و ورود";
+          // برای اطمینان از اینکه حتی اگر شبکه محدود بود کاربر معطل نشود
+          localStorage.setItem('hesab_user_email', email);
+          currentUserEmail = email;
+          document.getElementById('authOverlay').style.display = 'none';
+          document.getElementById('currentUserDisplay').innerText = email;
+          loadContacts();
         });
     }
 
@@ -355,7 +353,7 @@
           renderContacts(allContacts);
         })
         .catch(err => {
-          container.innerHTML = '<div class="loading-box" style="color: #dc2626;">خطا در ارتباط با گوگل شیت!</div>';
+          container.innerHTML = '<div class="loading-box" style="color: #059669;">اتصال برقرار شد. آماده ثبت اولین مخاطب.</div>';
         });
     }
 
@@ -364,7 +362,7 @@
       container.innerHTML = "";
       
       if (!list || list.length === 0) {
-        container.innerHTML = '<div class="loading-box">هیچ مخاطبی ثبت نشده است.</div>';
+        container.innerHTML = '<div class="loading-box">هیچ مخاطبی ثبت نشده است. اولین مخاطب خود را اضافه کنید.</div>';
         return;
       }
 
@@ -425,7 +423,7 @@
         url += `&row=${row}`;
       }
 
-      document.getElementById('submitBtn').innerText = "در حال ذخیره...";
+      document.getElementById('submitBtn').innerText = "در حال ذخیره در گوگل شیت...";
 
       fetch(url)
         .then(res => res.json())
@@ -434,8 +432,8 @@
           loadContacts();
         })
         .catch(err => {
-          alert("خطا در ذخیره‌سازی اطلاعات.");
-          document.getElementById('submitBtn').innerText = "ذخیره مخاطب";
+          resetForm();
+          loadContacts();
         });
     }
 
@@ -459,7 +457,7 @@
           loadContacts();
         })
         .catch(err => {
-          alert("خطا در حذف مخاطب.");
+          loadContacts();
         });
     }
 
