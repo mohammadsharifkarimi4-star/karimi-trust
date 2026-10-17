@@ -1,1 +1,205 @@
 
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ماشین‌حساب هوشمند</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
+
+    :root {
+      --primary: #6366f1;
+      --glass-bg: rgba(255, 255, 255, 0.96);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; direction: rtl; }
+
+    body {
+      background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 22px;
+      border-radius: 28px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 12px;
+    }
+
+    .back-btn { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 800; }
+
+    .sub-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      background: rgba(226, 232, 240, 0.7);
+      padding: 4px;
+      border-radius: 14px;
+    }
+
+    .sub-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .sub-tab.active { background: #ffffff; color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+
+    .calc-box { display: none; }
+    .calc-box.active { display: block; }
+
+    .form-group { margin-bottom: 12px; }
+    label { display: block; margin-bottom: 6px; font-weight: 800; font-size: 12px; color: #334155; }
+    input, select {
+      width: 100%; padding: 12px;
+      border: 2px solid #e2e8f0; border-radius: 14px;
+      font-size: 14px; outline: none; background: #f8fafc; color: #0f172a; font-weight: 600;
+    }
+
+    .eng-num { font-family: Tahoma, sans-serif; direction: ltr; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <h2 style="font-size: 16px; color: #1e1b4b; font-weight: 800;">🧮 ماشین‌حساب هوشمند</h2>
+      <a href="index.html" class="back-btn">← بازگشت به منو</a>
+    </div>
+
+    <!-- تب‌ها -->
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchCalc('normal', this)">🔢 عادی</button>
+      <button class="sub-tab" onclick="switchCalc('exchange', this)">💱 محاسبه‌گر ارز</button>
+    </div>
+
+    <!-- ماشین‌حساب عادی -->
+    <div id="normalCalc" class="calc-box active">
+      <input type="text" id="calcDisplay" readonly class="eng-num" style="font-size: 24px; text-align: left; margin-bottom: 14px; background: #0f172a; color: #38bdf8; height: 55px; border-radius: 16px;">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+        <button onclick="calcClear()" style="padding: 14px; font-weight: 800; background: #dc2626; color: white; border:none; border-radius: 12px; cursor:pointer;">C</button>
+        <button onclick="calcAppend('/')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">÷</button>
+        <button onclick="calcAppend('*')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">×</button>
+        <button onclick="calcBack()" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">⌫</button>
+
+        <button onclick="calcAppend('7')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">7</button>
+        <button onclick="calcAppend('8')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">8</button>
+        <button onclick="calcAppend('9')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">9</button>
+        <button onclick="calcAppend('-')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">-</button>
+
+        <button onclick="calcAppend('4')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">4</button>
+        <button onclick="calcAppend('5')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">5</button>
+        <button onclick="calcAppend('6')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">6</button>
+        <button onclick="calcAppend('+')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">+</button>
+
+        <button onclick="calcAppend('1')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">1</button>
+        <button onclick="calcAppend('2')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">2</button>
+        <button onclick="calcAppend('3')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">3</button>
+        <button onclick="calcCompute()" style="padding: 14px; font-weight: 800; background: #6366f1; color: white; border:none; border-radius: 12px; cursor:pointer; grid-row: span 2; display:flex; align-items:center; justify-content:center;">=</button>
+
+        <button onclick="calcAppend('0')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer; grid-column: span 2;" class="eng-num">0</button>
+        <button onclick="calcAppend('.')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">.</button>
+      </div>
+    </div>
+
+    <!-- محاسبه‌گر ارز -->
+    <div id="exchangeCalc" class="calc-box">
+      <div class="form-group">
+        <label>مبلغ پایه:</label>
+        <input type="number" id="exAmount" placeholder="مقدار مبلغ" class="eng-num" oninput="calculateExchange()">
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="form-group">
+          <label>از ارز:</label>
+          <select id="exFrom" onchange="calculateExchange()">
+            <option value="USD">دلار ($)</option>
+            <option value="IRR">تومان</option>
+            <option value="AFN">افغانی</option>
+            <option value="IQD">دینار</option>
+            <option value="PKR">کلدار</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>به ارز:</label>
+          <select id="exTo" onchange="calculateExchange()">
+            <option value="IRR">تومان</option>
+            <option value="USD">دلار ($)</option>
+            <option value="AFN">افغانی</option>
+            <option value="IQD">دینار</option>
+            <option value="PKR">کلدار</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>نرخ تبدیل:</label>
+        <input type="number" id="exRate" placeholder="نرخ تبدیل" class="eng-num" value="1" oninput="calculateExchange()">
+      </div>
+      <div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; padding: 18px; border-radius: 18px; text-align: center; margin-top: 16px;">
+        <div style="font-size: 12px; color: #c7d2fe;">نتیجه محاسبه:</div>
+        <div id="exResult" class="eng-num" style="font-size: 22px; font-weight: 800; color: #38bdf8; margin-top: 4px;">0</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchCalc(type, btn) {
+      document.querySelectorAll('.calc-box').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active'));
+      if (type === 'normal') {
+        document.getElementById('normalCalc').classList.add('active');
+      } else {
+        document.getElementById('exchangeCalc').classList.add('active');
+      }
+      btn.classList.add('active');
+    }
+
+    function calcAppend(val) { document.getElementById('calcDisplay').value += val; }
+    function calcClear() { document.getElementById('calcDisplay').value = ''; }
+    function calcBack() {
+      let disp = document.getElementById('calcDisplay');
+      disp.value = disp.value.slice(0, -1);
+    }
+    function calcCompute() {
+      let disp = document.getElementById('calcDisplay');
+      try { disp.value = eval(disp.value.replace(/×/g, '*').replace(/÷/g, '/')); }
+      catch (e) { disp.value = 'خطا'; }
+    }
+
+    function calculateExchange() {
+      let amt = parseFloat(document.getElementById('exAmount').value) || 0;
+      let rate = parseFloat(document.getElementById('exRate').value) || 1;
+      document.getElementById('exResult').innerText = (amt * rate).toLocaleString();
+    }
+  </script>
+</body>
+</html>
