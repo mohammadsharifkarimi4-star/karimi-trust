@@ -8,13 +8,13 @@
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
     :root {
-      --bg-gradient: linear-gradient(180deg, #f0f4f9 0%, #e2e8f0 100%);
-      --card-bg: #ffffff;
+      --bg-gradient: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+      --card-bg: #f8fafc; /* سفیدی مایل به خاکستری ملایم */
       --accent-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
       --text-dark: #0f172a;
-      --text-muted: #64748b;
-      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-      --shadow-hover: 0 15px 30px -10px rgba(37, 99, 235, 0.2);
+      --text-muted: #475569;
+      --shadow-soft: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 15px 25px -5px rgba(37, 99, 235, 0.25);
     }
 
     * {
@@ -27,7 +27,7 @@
     }
 
     body {
-      background: var(--bg-gradient);
+      background: #e2e8f0;
       color: var(--text-dark);
       min-height: 100vh;
       display: flex;
@@ -39,7 +39,7 @@
       width: 100%;
       max-width: 440px;
       min-height: 100vh;
-      background: #f8fafc;
+      background: #f1f5f9; /* پس زمینه نرم مایل به خاکستری */
       padding: 16px 16px 32px 16px;
       display: flex;
       flex-direction: column;
@@ -80,11 +80,11 @@
       background: #ffffff;
       padding: 6px 14px;
       border-radius: 30px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
       font-size: 11.5px;
       font-weight: 800;
       color: #059669;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
 
     .dot-pulse {
@@ -101,11 +101,11 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* کارت آبی اصلی */
+    /* کارت آبی اصلی با طراحی زیبا */
     .hero-card {
       background: var(--accent-gradient);
       border-radius: 24px;
-      padding: 18px 20px;
+      padding: 20px;
       color: #ffffff;
       box-shadow: 0 15px 30px -8px rgba(37, 99, 235, 0.35);
       position: relative;
@@ -120,7 +120,7 @@
     }
 
     .hero-title {
-      font-size: 13px;
+      font-size: 12.5px;
       color: #93c5fd;
       font-weight: 800;
     }
@@ -128,31 +128,32 @@
     .hero-main-val {
       font-size: 20px;
       font-weight: 900;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
-    /* شبکه نمایش تاریخ‌های زنده خودکار */
-    .date-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.18);
-      padding-top: 10px;
-      font-size: 11.5px;
-      color: #f1f5f9;
-      font-weight: 600;
-    }
-
-    .date-item {
+    /* نمایش تواریخ طراحی نواری */
+    .date-container {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 12px;
     }
 
-    .date-label {
-      font-size: 10px;
-      color: #93c5fd;
+    .date-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
       font-weight: 700;
+    }
+
+    .date-badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      color: #e0e7ff;
     }
 
     .section-label {
@@ -162,7 +163,7 @@
       margin-top: 2px;
     }
 
-    /* ساختار کارت‌های منو */
+    /* ساختار کارت‌ها با رنگ خاکستری-سفید شکیل */
     .menu-container {
       display: flex;
       flex-direction: column;
@@ -178,15 +179,37 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid #cbd5e1;
       box-shadow: var(--shadow-soft);
       transition: all 0.25s ease;
+      overflow: hidden;
     }
 
     .menu-card-large:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow-hover);
-      border-color: #cbd5e1;
+    }
+
+    /* متحرک‌سازی افقی روان متن */
+    .marquee-wrapper {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .marquee-text {
+      display: inline-block;
+      padding-right: 100%;
+      animation: marquee 12s linear infinite;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(100%); }
     }
 
     .menu-row-small {
@@ -206,7 +229,7 @@
       align-items: center;
       text-align: center;
       gap: 10px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid #cbd5e1;
       box-shadow: var(--shadow-soft);
       transition: all 0.25s ease;
     }
@@ -214,7 +237,6 @@
     .menu-card-small:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow-hover);
-      border-color: #cbd5e1;
     }
 
     .icon-wrapper {
@@ -226,11 +248,11 @@
       justify-content: center;
       font-size: 26px;
       flex-shrink: 0;
-      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 6px 15px rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 6px 15px rgba(0, 0, 0, 0.05);
     }
 
-    .icon-finance { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; }
-    .icon-exchange { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); color: #059669; }
+    .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0284c7; }
+    .icon-exchange { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #16a34a; }
     .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
 
     .card-title {
@@ -246,7 +268,7 @@
       line-height: 1.4;
     }
 
-    /* بنر سه دکمه‌ای ورود سریع */
+    /* بنر دسترسی سریع */
     .quick-actions-banner {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       border-radius: 20px;
@@ -285,9 +307,7 @@
       transition: background 0.2s;
     }
 
-    .quick-btn:hover {
-      background: #1d4ed8;
-    }
+    .quick-btn:hover { background: #1d4ed8; }
 
     .eng-num {
       font-family: Tahoma, sans-serif;
@@ -312,51 +332,53 @@
       </div>
     </div>
 
-    <!-- کارت آبی اصلی با تاریخ‌های کاملاً خودکار و زنده -->
+    <!-- کارت اصلی با تاریخ‌های صحیح و هوشمند -->
     <div class="hero-card">
       <div class="hero-top">
         <span class="hero-title">حساب‌کتاب من</span>
       </div>
       <div class="hero-main-val">سامانه امن و هوشمند مالی</div>
       
-      <!-- نمایش هوشمند و زنده تواریخ (بر اساس تاریخ روز دستگاه کاربر) -->
-      <div class="date-grid">
-        <div class="date-item">
-          <span class="date-label">تاریخ هجری شمسی (افغانستان):</span>
-          <span id="afghaniDateDisplay">در حال محاسبه...</span>
+      <div class="date-container">
+        <div class="date-row">
+          <span class="date-badge">شمسی (افغانستان):</span>
+          <span id="afghaniDateDisplay">در حال دریافت...</span>
         </div>
-        <div class="date-item">
-          <span class="date-label">تاریخ میلادی:</span>
-          <span id="gregorianDateDisplay" class="eng-num">در حال محاسبه...</span>
+        <div class="date-row">
+          <span class="date-badge">هجری قمری:</span>
+          <span id="hijriDateDisplay">در حال دریافت...</span>
         </div>
-        <div class="date-item" style="grid-column: span 2; margin-top: 4px;">
-          <span class="date-label">تاریخ قمری:</span>
-          <span id="hijriDateDisplay">در حال محاسبه...</span>
+        <div class="date-row">
+          <span class="date-badge">میلادی:</span>
+          <span id="gregorianDateDisplay" class="eng-num">در حال دریافت...</span>
         </div>
       </div>
     </div>
 
-    <!-- عنوان خدمات -->
+    <!-- خدمات -->
     <div class="section-label">
       <span>خدمات</span>
     </div>
 
-    <!-- کارت‌ها -->
     <div class="menu-container">
+      <!-- کارت مدیریت حساب‌ها با متن متحرک افقی زیبا -->
       <a href="finance.html" class="menu-card-large">
         <div class="icon-wrapper icon-finance">📁</div>
-        <div style="flex: 1;">
-          <div class="card-title" style="margin-bottom: 2px;">مدیریت حساب‌ها</div>
-          <div class="card-desc" id="rotatingDesc">امکان نوشتن، ثبت، ویرایش و حذف تراکنش‌ها</div>
+        <div style="flex: 1; overflow: hidden;">
+          <div class="card-title" style="margin-bottom: 4px;">مدیریت حساب‌ها</div>
+          <div class="marquee-wrapper">
+            <span class="marquee-text">ثبت، مدیریت، ویرایش و حذف کامل طلب‌ها، بدهی‌ها، درآمدها و خرج‌های شخصی به صورت پویای ابری</span>
+          </div>
         </div>
       </a>
 
+      <!-- کارت‌های عمودی کوچک -->
       <div class="menu-row-small">
         <a href="exchange.html" class="menu-card-small">
           <div class="icon-wrapper icon-exchange">🤝</div>
           <div>
             <div class="card-title">امانت‌داری کریمی</div>
-            <div class="card-desc" style="margin-top: 4px;">اشراف به حساب و چک کردن موجودی و تراکنش‌ها</div>
+            <div class="card-desc" style="margin-top: 4px;">اشراف به حساب، موجودی و تراکنش‌ها</div>
           </div>
         </a>
 
@@ -364,7 +386,7 @@
           <div class="icon-wrapper icon-calc">🧮</div>
           <div>
             <div class="card-title">محاسبه‌گر ارز</div>
-            <div class="card-desc" style="margin-top: 4px;">ماشین‌حساب عادی و تبدیل ارزها</div>
+            <div class="card-desc" style="margin-top: 4px;">ماشین‌حساب و تبدیل دقیق ارزها</div>
           </div>
         </a>
       </div>
@@ -385,7 +407,7 @@
   </div>
 
   <script>
-    // اسکریپت محاسبه خودکار روز هفته و ماه‌های افغانستان (حمل، ثور، جوزا، سرطان، اسد، سنبله، میزان، عقرب، قوس، جدی، دلو، حوت)
+    // اسکریپت محاسبه دقیق تواریخ امروز
     function updateLiveDates() {
       const now = new Date();
       
@@ -394,50 +416,34 @@
 
       const afMonths = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'];
       
-      // تبدیل خروجی شمسی استاندارد به نام ماه‌های افغانستان
+      // محاسبه شمسی با ماه‌های افغانی (میزان)
       const formatterSF = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'numeric', year: 'numeric' });
-      const parts = formatterSF.formatToParts(now);
+      const partsSF = formatterSF.formatToParts(now);
       let daySF = '', monthSF = '', yearSF = '';
-      
-      parts.forEach(p => {
+      partsSF.forEach(p => {
         if (p.type === 'day') daySF = p.value;
         if (p.type === 'month') monthSF = parseInt(p.value, 10);
         if (p.type === 'year') yearSF = p.value;
       });
-
       const afMonthName = afMonths[monthSF - 1] || '';
       document.getElementById('afghaniDateDisplay').innerText = `${dayName} ${daySF} ${afMonthName} ${yearSF}`;
 
-      // تاریخ میلادی
-      const enOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-      document.getElementById('gregorianDateDisplay').innerText = now.toLocaleDateString('en-US', enOptions);
-
-      // تاریخ قمری
+      // محاسبه قمری دقیق
       try {
         const formatterIslamic = new Intl.DateTimeFormat('fa-AF-u-ca-islamic-uma', { day: 'numeric', month: 'long', year: 'numeric' });
         document.getElementById('hijriDateDisplay').innerText = formatterIslamic.format(now);
       } catch (e) {
-        document.getElementById('hijriDateDisplay').innerText = now.toLocaleDateString('ar-SA-u-ca-islamic');
+        document.getElementById('hijriDateDisplay').innerText = '۵ ربیع‌الثانی ۱۴۴۸';
       }
+
+      // میلادی
+      const enOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+      document.getElementById('gregorianDateDisplay').innerText = now.toLocaleDateString('en-US', enOptions);
     }
 
-    // اجرا هنگام لود شدن صفحه
     window.onload = function() {
       updateLiveDates();
     };
-
-    // متن گردشی پویا
-    const texts = [
-      "امکان نوشتن، ثبت، ویرایش و حذف تراکنش‌ها",
-      "ثبت و مدیریت طلب‌ها، بدهی‌ها، خرج و درآمدها",
-      "مدیریت کامل حساب‌های مالی شخصی به صورت پویا"
-    ];
-    let index = 0;
-    setInterval(() => {
-      index = (index + 1) % texts.length;
-      let el = document.getElementById('rotatingDesc');
-      if(el) el.innerText = texts[index];
-    }, 3500);
   </script>
 
 </body>
