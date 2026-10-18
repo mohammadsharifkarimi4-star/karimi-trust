@@ -2,201 +2,390 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ماشین‌حساب هوشمند</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ماشین‌حساب و صرافی</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
 
     :root {
-      --primary: #6366f1;
-      --glass-bg: rgba(255, 255, 255, 0.96);
-      --glass-border: rgba(255, 255, 255, 0.95);
-      --text-main: #0f172a;
+      --bg-main: #f8fafc;
+      --panel-bg: #ffffff;
+      --primary: #10b981;
+      --text-dark: #0f172a;
       --text-muted: #64748b;
+      --border-color: #e2e8f0;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; direction: rtl; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', -apple-system, sans-serif; direction: rtl; }
 
     body {
-      background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
-      background-attachment: fixed;
-      color: var(--text-main);
+      background: var(--bg-main);
+      color: var(--text-dark);
       min-height: 100vh;
-      padding: 16px;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 8px;
     }
 
     .container {
       width: 100%;
-      max-width: 440px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      padding: 22px;
-      border-radius: 28px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+      max-width: 410px;
+      height: 98vh;
+      max-height: 850px;
+      background: var(--panel-bg);
+      padding: 14px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
     }
 
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #f1f5f9;
-      padding-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .back-btn { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 800; }
+    .back-btn { color: var(--text-muted); text-decoration: none; font-size: 12px; font-weight: 700; }
 
     .sub-tabs {
       display: flex;
-      gap: 6px;
-      margin-bottom: 20px;
-      background: rgba(226, 232, 240, 0.7);
-      padding: 4px;
-      border-radius: 14px;
+      gap: 4px;
+      margin: 6px 0;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 12px;
     }
 
     .sub-tab {
       flex: 1;
-      padding: 10px;
+      padding: 8px;
       text-align: center;
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
-      border-radius: 10px;
+      border-radius: 9px;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
 
-    .sub-tab.active { background: #ffffff; color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    .sub-tab.active { background: #ffffff; color: var(--text-dark); box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
 
-    .calc-box { display: none; }
-    .calc-box.active { display: block; }
+    .calc-box { display: none; flex: 1; flex-direction: column; justify-content: space-between; }
+    .calc-box.active { display: flex; }
 
-    .form-group { margin-bottom: 12px; }
-    label { display: block; margin-bottom: 6px; font-weight: 800; font-size: 12px; color: #334155; }
-    input, select {
-      width: 100%; padding: 12px;
-      border: 2px solid #e2e8f0; border-radius: 14px;
-      font-size: 14px; outline: none; background: #f8fafc; color: #0f172a; font-weight: 600;
+    .eng-num { font-family: Tahoma, 'Vazirmatn', sans-serif; direction: ltr; display: inline-block; }
+
+    /* چیپ‌های انتخاب ارز */
+    .currency-selector {
+      display: flex;
+      gap: 4px;
+      margin-top: 2px;
     }
 
-    .eng-num { font-family: Tahoma, sans-serif; direction: ltr; display: inline-block; }
+    .curr-chip {
+      flex: 1;
+      padding: 6px 2px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .curr-chip.selected {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+
+    /* کارت فاکتور رسید */
+    .receipt-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      padding: 10px 12px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .receipt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed #cbd5e1;
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      margin-bottom: 3px;
+      color: #475569;
+    }
+
+    .receipt-row .val { font-weight: 700; color: #0f172a; }
+
+    .highlight-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-right: 4px solid var(--primary);
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin: 6px 0;
+    }
+
+    .separate-fee-box {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      border-right: 4px solid #f59e0b;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 10px;
+      color: #92400e;
+      line-height: 1.4;
+    }
+
+    .share-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 9px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* استایل متحرک و ظریف ورودی‌ها */
+    .animated-input-wrap {
+      position: relative;
+      border-radius: 10px;
+      padding: 1.5px;
+      background: linear-gradient(90deg, #10b981, #3b82f6, #ec4899, #10b981);
+      background-size: 300% 300%;
+      animation: borderGlow 4s ease infinite;
+    }
+
+    @keyframes borderGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .form-group-sm { margin-bottom: 6px; }
+    .form-group-sm label { display: block; font-size: 10px; font-weight: 600; color: #64748b; margin-bottom: 2px; }
+    
+    .form-group-sm input, .form-group-sm select {
+      width: 100%; padding: 7px 10px;
+      border: none; border-radius: 8px;
+      font-size: 13px; outline: none; background: #ffffff; color: #0f172a; font-weight: 600;
+      display: block;
+    }
+
+    /* ماشین‌حساب عادی */
+    .samsung-calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .calc-btn {
+      padding: 12px 0;
+      font-size: 20px;
+      font-weight: 600;
+      border: none;
+      border-radius: 50%;
+      width: 58px;
+      height: 58px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .btn-num { background-color: #f1f5f9; color: #0f172a; }
+    .btn-op { background-color: #e2e8f0; color: #334155; font-size: 22px; }
+    .btn-action { background-color: #fee2e2; color: #dc2626; }
+    .btn-equals { background-color: var(--primary); color: #ffffff; font-size: 24px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="top-bar">
-      <h2 style="font-size: 16px; color: #1e1b4b; font-weight: 800;">🧮 ماشین‌حساب هوشمند</h2>
-      <a href="index.html" class="back-btn">← بازگشت به منو</a>
+      <h2 style="font-size: 14px; color: #0f172a; font-weight: 800;">ماشین‌حساب و صرافی</h2>
+      <a href="index.html" class="back-btn">← بازگشت</a>
     </div>
 
     <!-- تب‌ها -->
     <div class="sub-tabs">
-      <button class="sub-tab active" onclick="switchCalc('normal', this)">🔢 عادی</button>
-      <button class="sub-tab" onclick="switchCalc('exchange', this)">💱 محاسبه‌گر ارز</button>
+      <button class="sub-tab active" onclick="switchCalc('normal', this)">🔢 ماشین‌حساب</button>
+      <button class="sub-tab" onclick="switchCalc('exchange', this)">💱 تبدیل ارز (رسید)</button>
     </div>
 
-    <!-- ماشین‌حساب عادی (همراه با گزینه درصد) -->
+    <!-- ۱. ماشین‌حساب عادی -->
     <div id="normalCalc" class="calc-box active">
-      <input type="text" id="calcDisplay" readonly class="eng-num" style="font-size: 24px; text-align: left; margin-bottom: 14px; background: #0f172a; color: #38bdf8; height: 55px; border-radius: 16px;">
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
-        <button onclick="calcClear()" style="padding: 14px; font-weight: 800; background: #dc2626; color: white; border:none; border-radius: 12px; cursor:pointer;">C</button>
-        <button onclick="calcAppend('/')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">÷</button>
-        <button onclick="calcAppend('*')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">×</button>
-        <button onclick="calcBack()" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">⌫</button>
+      <input type="text" id="calcDisplay" readonly class="eng-num" style="font-size: 32px; text-align: left; margin: 10px 0; background: transparent; border: none; color: #0f172a; height: 60px; font-weight: 700;">
+      
+      <div class="samsung-calc-grid">
+        <button class="calc-btn btn-action" onclick="calcClear()">C</button>
+        <button class="calc-btn btn-op" onclick="calcAppend('(')">(</button>
+        <button class="calc-btn btn-op" onclick="calcAppend('%')">%</button>
+        <button class="calc-btn btn-op" onclick="calcAppend('/')">÷</button>
 
-        <button onclick="calcAppend('7')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">7</button>
-        <button onclick="calcAppend('8')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">8</button>
-        <button onclick="calcAppend('9')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">9</button>
-        <button onclick="calcAppend('-')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">-</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('7')">7</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('8')">8</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('9')">9</button>
+        <button class="calc-btn btn-op" onclick="calcAppend('*')">×</button>
 
-        <button onclick="calcAppend('4')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">4</button>
-        <button onclick="calcAppend('5')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">5</button>
-        <button onclick="calcAppend('6')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">6</button>
-        <button onclick="calcAppend('+')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">+</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('4')">4</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('5')">5</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('6')">6</button>
+        <button class="calc-btn btn-op" onclick="calcAppend('-')">-</button>
 
-        <button onclick="calcAppend('1')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">1</button>
-        <button onclick="calcAppend('2')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">2</button>
-        <button onclick="calcAppend('3')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">3</button>
-        <button onclick="calcCompute()" style="padding: 14px; font-weight: 800; background: #6366f1; color: white; border:none; border-radius: 12px; cursor:pointer; grid-row: span 2; display:flex; align-items:center; justify-content:center;">=</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('1')">1</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('2')">2</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('3')">3</button>
+        <button class="calc-btn btn-op" onclick="calcAppend('+')">+</button>
 
-        <button onclick="calcAppend('0')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">0</button>
-        <button onclick="calcAppend('.')" style="padding: 14px; font-weight: 800; background: #f8fafc; border:1px solid #cbd5e1; border-radius: 12px; cursor:pointer;" class="eng-num">.</button>
-        <button onclick="calcAppend('%')" style="padding: 14px; font-weight: 800; background: #e2e8f0; border:none; border-radius: 12px; cursor:pointer;">%</button>
+        <button class="calc-btn btn-op eng-num" onclick="calcToggleSign()">+/-</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('0')">0</button>
+        <button class="calc-btn btn-num eng-num" onclick="calcAppend('.')">.</button>
+        <button class="calc-btn btn-equals" onclick="calcCompute()">=</button>
       </div>
     </div>
 
-    <!-- محاسبه‌گر ارز (همراه با کمیسیون/درصدی افزودنی و کسری) -->
+    <!-- ۲. صرافی و تبدیل ارز -->
     <div id="exchangeCalc" class="calc-box">
-      <div class="form-group">
-        <label>مبلغ پایه:</label>
-        <input type="number" id="exAmount" placeholder="مقدار مبلغ" class="eng-num" oninput="calculateExchange()">
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <div class="form-group">
-          <label>از ارز:</label>
-          <select id="exFrom" onchange="calculateExchange()">
-            <option value="USD">دلار ($)</option>
-            <option value="IRR">تومان</option>
-            <option value="AFN">افغانی</option>
-            <option value="IQD">دینار</option>
-            <option value="PKR">کلدار</option>
-          </select>
+      <!-- رسید فاکتور -->
+      <div id="receiptCardToExport" class="receipt-card">
+        <div class="receipt-header">
+          <span style="font-size: 11px; font-weight: 800; color: #0284c7;">📋 رسید تبدیل ارز</span>
+          <span style="font-size: 10px; color: #64748b; font-weight: 700;">امانت‌داری کریمی</span>
         </div>
-        <div class="form-group">
-          <label>به ارز:</label>
-          <select id="exTo" onchange="calculateExchange()">
-            <option value="IRR">تومان</option>
-            <option value="USD">دلار ($)</option>
-            <option value="AFN">افغانی</option>
-            <option value="IQD">دینار</option>
-            <option value="PKR">کلدار</option>
-          </select>
+
+        <div class="receipt-row">
+          <span>مبلغ اولیه (مبدأ):</span>
+          <span id="recInputAmount" class="val eng-num">0 IQD</span>
         </div>
-      </div>
-      <div class="form-group">
-        <label>نرخ تبدیل:</label>
-        <input type="number" id="exRate" placeholder="نرخ تبدیل" class="eng-num" value="1" oninput="calculateExchange()">
+
+        <div class="receipt-row">
+          <span>نرخ تبدیل (صرف):</span>
+          <span id="recRate" class="val eng-num">0</span>
+        </div>
+
+        <div class="receipt-row">
+          <span>معادل بدون کارمزد:</span>
+          <span id="recBaseConverted" class="val eng-num" style="color: #475569;">0 AFN</span>
+        </div>
+
+        <div class="receipt-row" style="border-top: 1px dashed #e2e8f0; padding-top: 3px; margin-top: 3px;">
+          <span>کارمزد (<span id="recFeePercent">0</span>٪ بر اساس ارز مبدأ):</span>
+          <span id="recFeeAmount" class="val eng-num" style="color: #dc2626;">0 IQD</span>
+        </div>
+
+        <!-- کادر نتیجه -->
+        <div class="highlight-box">
+          <div style="font-size: 9.5px; color: #15803d; font-weight: 700;" id="recFinalTitle">مبلغ تحویلی / پرداختی:</div>
+          <div id="recFinalAmount" class="eng-num" style="font-size: 18px; font-weight: 800; color: #047857;">0 AFN</div>
+        </div>
+
+        <!-- کادر پرداخت مجزا -->
+        <div id="separateFeeNotice" class="separate-fee-box">
+          💡 <strong>پرداخت جداگانه کارمزد:</strong>
+          اصل مبلغ دریافتی <strong id="recSeparateBase" class="eng-num">0 AFN</strong> باقی می‌ماند و کارمزد <strong id="recSeparateFee" class="eng-num">0 IQD</strong> جداگانه پرداخت می‌شود.
+        </div>
       </div>
 
-      <!-- تنظیمات درصد کارمزد / کمیسیون (افزودنی / کسری) -->
-      <div style="background: #f1f5f9; padding: 12px; border-radius: 14px; margin-top: 10px; margin-bottom: 12px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label>نوع درصد (کارمزد):</label>
+      <button class="share-btn" onclick="shareResultImage()">📸 ارسال / دانلود عکس رسید</button>
+
+      <!-- ورودی‌های صرافی با کادر متحرک ظریف -->
+      <div style="margin-top: 6px;">
+        <div class="form-group-sm">
+          <label>مبلغ اولیه ارز مبدأ:</label>
+          <div class="animated-input-wrap">
+            <input type="number" id="exAmount" inputmode="decimal" placeholder="" class="eng-num" value="" oninput="calculateExchange()">
+          </div>
+        </div>
+
+        <!-- انتخاب ارز مبدأ -->
+        <div class="form-group-sm">
+          <label>ارز مبدأ:</label>
+          <div class="currency-selector" id="fromCurrGroup">
+            <div class="curr-chip selected" onclick="setCurrency('from', 'IQD', this)">دینار (IQD)</div>
+            <div class="curr-chip" onclick="setCurrency('from', 'AFN', this)">افغانی (AFN)</div>
+            <div class="curr-chip" onclick="setCurrency('from', 'USD', this)">دلار ($)</div>
+            <div class="curr-chip" onclick="setCurrency('from', 'IRR', this)">تومان</div>
+          </div>
+        </div>
+
+        <!-- انتخاب ارز مقصد -->
+        <div class="form-group-sm">
+          <label>ارز مقصد:</label>
+          <div class="currency-selector" id="toCurrGroup">
+            <div class="curr-chip" onclick="setCurrency('to', 'IQD', this)">دینار (IQD)</div>
+            <div class="curr-chip selected" onclick="setCurrency('to', 'AFN', this)">افغانی (AFN)</div>
+            <div class="curr-chip" onclick="setCurrency('to', 'USD', this)">دلار ($)</div>
+            <div class="curr-chip" onclick="setCurrency('to', 'IRR', this)">تومان</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <div class="form-group-sm">
+            <label>نرخ تبدیل:</label>
+            <div class="animated-input-wrap">
+              <input type="number" id="exRate" inputmode="decimal" placeholder="" class="eng-num" value="" oninput="calculateExchange()">
+            </div>
+          </div>
+          <div class="form-group-sm">
+            <label>درصد کارمزد:</label>
+            <div class="animated-input-wrap">
+              <input type="number" id="feePercent" inputmode="decimal" placeholder="" class="eng-num" value="" oninput="calculateExchange()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group-sm" style="margin-bottom: 0;">
+          <label>نحوه محاسبه کارمزد:</label>
+          <div class="animated-input-wrap">
             <select id="feeType" onchange="calculateExchange()">
+              <option value="add" selected>➕ افزایش ارز مبدأ (پرداخت روی مبدأ)</option>
+              <option value="sub">➖ کسر از مبلغ دریافتی (کم شدن از مقصد)</option>
               <option value="none">بدون کارمزد (۰٪)</option>
-              <option value="add">➕ افزودنی (اضافه به مبلغ)</option>
-              <option value="sub">➖ کسری (کم شدن از مبلغ)</option>
             </select>
           </div>
-          <div class="form-group" style="margin-bottom: 0;">
-            <label>مقدار درصد (٪):</label>
-            <input type="number" id="feePercent" placeholder="مثلاً ۲" class="eng-num" value="0" oninput="calculateExchange()">
-          </div>
-        </div>
-      </div>
-
-      <!-- نتیجه محاسبه -->
-      <div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; padding: 18px; border-radius: 18px; text-align: center; margin-top: 12px;">
-        <div style="font-size: 12px; color: #c7d2fe;">مبلغ اصلی قبل از درصد:</div>
-        <div id="exBaseResult" class="eng-num" style="font-size: 16px; font-weight: 700; color: #93c5fd; margin-top: 2px;">0</div>
-        
-        <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px;">
-          <div style="font-size: 12px; color: #fbbf24;" id="feeLabelDisplay">مبلغ نهایی:</div>
-          <div id="exFinalResult" class="eng-num" style="font-size: 22px; font-weight: 800; color: #38bdf8; margin-top: 2px;">0</div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    let selectedFromCurr = 'IQD';
+    let selectedToCurr = 'AFN';
+
     function switchCalc(type, btn) {
       document.querySelectorAll('.calc-box').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active'));
@@ -208,17 +397,31 @@
       btn.classList.add('active');
     }
 
+    function setCurrency(type, val, el) {
+      let group = type === 'from' ? 'fromCurrGroup' : 'toCurrGroup';
+      document.querySelectorAll(`#${group} .curr-chip`).forEach(chip => chip.classList.remove('selected'));
+      el.classList.add('selected');
+      if (type === 'from') selectedFromCurr = val;
+      else selectedToCurr = val;
+      calculateExchange();
+    }
+
     function calcAppend(val) { document.getElementById('calcDisplay').value += val; }
     function calcClear() { document.getElementById('calcDisplay').value = ''; }
-    function calcBack() {
+    
+    function calcToggleSign() {
       let disp = document.getElementById('calcDisplay');
-      disp.value = disp.value.slice(0, -1);
+      if (disp.value.startsWith('-')) {
+        disp.value = disp.value.substring(1);
+      } else if (disp.value.length > 0) {
+        disp.value = '-' + disp.value;
+      }
     }
+
     function calcCompute() {
       let disp = document.getElementById('calcDisplay');
       try { 
         let expr = disp.value.replace(/×/g, '*').replace(/÷/g, '/');
-        // جایگزینی درصد (مثلا 100*5% => 100*0.05)
         expr = expr.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
         disp.value = eval(expr); 
       }
@@ -227,28 +430,67 @@
 
     function calculateExchange() {
       let amt = parseFloat(document.getElementById('exAmount').value) || 0;
-      let rate = parseFloat(document.getElementById('exRate').value) || 1;
+      let rate = parseFloat(document.getElementById('exRate').value) || 0;
+      let feePct = parseFloat(document.getElementById('feePercent').value) || 0;
+      let feeType = document.getElementById('feeType').value;
+
+      let feeInSource = (amt * feePct) / 100;
       let baseConverted = amt * rate;
 
-      let feeType = document.getElementById('feeType').value;
-      let feePct = parseFloat(document.getElementById('feePercent').value) || 0;
-      let feeAmount = (baseConverted * feePct) / 100;
-
-      let finalConverted = baseConverted;
-      let labelText = "مبلغ نهایی:";
+      let finalAmountVal = baseConverted;
+      let titleText = "مبلغ تحویلی ارز مقصد:";
 
       if (feeType === 'add' && feePct > 0) {
-        finalConverted = baseConverted + feeAmount;
-        labelText = `مبلغ نهایی با اضافه شدن ${feePct}٪ کارمزد (+${feeAmount.toLocaleString()}):`;
+        let totalSourceRequired = amt + feeInSource;
+        finalAmountVal = baseConverted;
+        titleText = `مبلغ کل پرداختی مشتری: ${totalSourceRequired.toLocaleString()} ${selectedFromCurr} (${amt.toLocaleString()} اصل + ${feeInSource.toLocaleString()} کارمزد)`;
       } else if (feeType === 'sub' && feePct > 0) {
-        finalConverted = baseConverted - feeAmount;
-        labelText = `مبلغ نهایی با کسر شدن ${feePct}٪ کارمزد (-${feeAmount.toLocaleString()}):`;
+        let feeInTarget = feeInSource * rate;
+        finalAmountVal = baseConverted - feeInTarget;
+        titleText = `مبلغ دریافتی مشتری پس از کسر ${feePct}٪ کارمزد:`;
       }
 
-      document.getElementById('exBaseResult').innerText = baseConverted.toLocaleString();
-      document.getElementById('feeLabelDisplay').innerText = labelText;
-      document.getElementById('exFinalResult').innerText = finalConverted.toLocaleString();
+      document.getElementById('recInputAmount').innerText = `${amt.toLocaleString()} ${selectedFromCurr}`;
+      document.getElementById('recRate').innerText = rate;
+      document.getElementById('recBaseConverted').innerText = `${baseConverted.toLocaleString()} ${selectedToCurr}`;
+      document.getElementById('recFeePercent').innerText = feePct;
+      document.getElementById('recFeeAmount').innerText = `${feeInSource.toLocaleString()} ${selectedFromCurr}`;
+      
+      document.getElementById('recFinalTitle').innerText = titleText;
+      document.getElementById('recFinalAmount').innerText = `${finalAmountVal.toLocaleString()} ${selectedToCurr}`;
+
+      let sepNotice = document.getElementById('separateFeeNotice');
+      if (feePct > 0 && amt > 0) {
+        sepNotice.style.display = 'block';
+        document.getElementById('recSeparateBase').innerText = `${baseConverted.toLocaleString()} ${selectedToCurr}`;
+        document.getElementById('recSeparateFee').innerText = `${feeInSource.toLocaleString()} ${selectedFromCurr}`;
+      } else {
+        sepNotice.style.display = 'none';
+      }
     }
+
+    function shareResultImage() {
+      const card = document.getElementById('receiptCardToExport');
+      html2canvas(card, { scale: 3, backgroundColor: '#ffffff' }).then(canvas => {
+        canvas.toBlob(blob => {
+          const file = new File([blob], 'factor-karimi.png', { type: 'image/png' });
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+              files: [file],
+              title: 'رسید صرافی',
+              text: 'رسید تبدیل ارز - امانت‌داری کریمی'
+            }).catch(() => {});
+          } else {
+            const link = document.createElement('a');
+            link.download = 'factor-karimi.png';
+            link.href = canvas.toDataURL();
+            link.click();
+          }
+        });
+      });
+    }
+
+    calculateExchange();
   </script>
 </body>
 </html>
