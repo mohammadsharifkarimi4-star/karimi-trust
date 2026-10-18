@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>دفترچه حساب و کتاب شخصی</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <!-- کتابخانه رسمی گوگل برای ورود با اکانت گوگل -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
 
@@ -69,9 +67,8 @@
     .user-avatar {
       width: 38px; height: 38px; border-radius: 50%;
       border: 2px solid var(--primary); background: #ecfdf5;
-      display: flex; align-items: center; justify-content: center; font-size: 16px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
     }
-    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
     .user-name-bold { font-size: 13px; font-weight: 800; color: var(--text-main); }
     .user-email-sub { font-size: 10.5px; color: var(--text-muted); }
@@ -183,7 +180,7 @@
 
     .login-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 2000;
-      display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px 20px;
+      display: flex; flex-direction: column; justify-content: center; padding: 24px 20px;
     }
 
     #cloudLoading {
@@ -364,33 +361,26 @@
       </div>
     </div>
 
-    <!-- صفحه ورود با دکمه استاندارد گوگل -->
+    <!-- صفحه ورود امن و مستقل -->
     <div id="loginOverlay" class="login-overlay">
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div style="font-size: 42px; margin-bottom: 6px;">☁️</div>
-        <h2 style="font-size: 17px; font-weight: 800; color: #0f172a;">دفترچه حساب و کتاب شخصی</h2>
-        <p style="font-size: 11px; color: #64748b; margin-top: 4px;">ورود امن و آنی با حساب گوگل شخصی شما</p>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div style="font-size: 38px; margin-bottom: 4px;">☁️</div>
+        <h2 style="font-size: 16.5px; font-weight: 800; color: #0f172a;">دفترچه حساب و کتاب شخصی</h2>
+        <p style="font-size: 11px; color: #64748b; margin-top: 3px;">ورود اختصاصی و ابری متصل به ایمیل شما</p>
       </div>
 
-      <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-        <!-- دکمه رسمی و گرافیکی گوگل -->
-        <div id="g_id_onload"
-             data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
-             data-callback="handleGoogleLogin"
-             data-auto_prompt="false">
+      <div>
+        <div class="form-label">نام و لقب شما:</div>
+        <div class="animated-input-wrap">
+          <input type="text" id="inputOwnerName" class="form-input" placeholder="مثلاً: محمد شریف">
         </div>
-        <div class="g_id_signin"
-             data-type="standard"
-             data-size="large"
-             data-theme="outline"
-             data-text="sign_in_with"
-             data-shape="rectangular"
-             data-logo_alignment="left">
+
+        <div class="form-label">ایمیل شما (شناسه دائمی حساب):</div>
+        <div class="animated-input-wrap">
+          <input type="email" id="inputOwnerEmail" class="form-input eng-num" placeholder="example@gmail.com">
         </div>
-        
-        <div style="margin-top: 20px; font-size: 10px; color: #94a3b8; text-align: center; line-height: 1.6;">
-          با انتخاب حساب گوگل، نام، ایمیل و تصویر پروفایل شما به صورت خودکار برای ورود امن ثبت می‌شود.
-        </div>
+
+        <button class="action-big-btn" style="margin-top: 10px;" onclick="registerOwner()">ورود به حساب اختصاصی</button>
       </div>
     </div>
   </div>
@@ -401,7 +391,6 @@
 
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
-    let ownerPicture = localStorage.getItem('cloud_owner_picture');
     let allRecords = [];
     let centralDatabase = { users: {} };
     let selectedTypeVal = '';
@@ -444,37 +433,28 @@
       }
     });
 
-    // پردازش توکن گوگل دریافتی پس از کلیک کاربر روی حساب گوگل
-    function handleGoogleLogin(response) {
-      playSound('success');
-      try {
-        // رمزگشایی اطلاعات امنیتی توکن JWT گوگل
-        let base64Url = response.credential.split('.')[1];
-        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-
-        let profile = JSON.parse(jsonPayload);
-        ownerEmail = profile.email;
-        ownerName = profile.name;
-        ownerPicture = profile.picture;
-
-        localStorage.setItem('cloud_owner_email', ownerEmail);
-        localStorage.setItem('cloud_owner_name', ownerName);
-        localStorage.setItem('cloud_owner_picture', ownerPicture);
-
-        document.getElementById('loginOverlay').style.display = 'none';
-        initApp();
-      } catch (e) {
-        alert('خطا در دریافت اطلاعات حساب گوگل. لطفاً دوباره تلاش کنید.');
-      }
-    }
-
     function backToMainTab() {
       playSound('click');
       document.querySelectorAll('.fullscreen-modal').forEach(m => m.classList.remove('open'));
       switchTab(0, 'debtsTab');
+    }
+
+    function registerOwner() {
+      playSound('click');
+      let name = document.getElementById('inputOwnerName').value.trim();
+      let email = document.getElementById('inputOwnerEmail').value.trim().toLowerCase();
+
+      if (!name || !email || !email.includes('@')) {
+        alert('لطفاً نام و ایمیل معتبر وارد کنید.');
+        return;
+      }
+
+      localStorage.setItem('cloud_owner_email', email);
+      localStorage.setItem('cloud_owner_name', name);
+      ownerEmail = email; ownerName = name;
+
+      document.getElementById('loginOverlay').style.display = 'none';
+      initApp();
     }
 
     function logoutUser() {
@@ -486,14 +466,9 @@
     }
 
     function initApp() {
-      document.getElementById('ownerNameDisplay').innerText = ownerName;
+      document.getElementById('ownerNameDisplay').innerText = `حسابِ ${ownerName}`;
       document.getElementById('ownerEmailDisplay').innerText = ownerEmail;
       document.getElementById('statsOwnerTag').innerText = `حسابِ ${ownerName}`;
-      
-      if (ownerPicture) {
-        document.getElementById('avatarDisplay').innerHTML = `<img src="${ownerPicture}" alt="avatar">`;
-      }
-
       loadUserDataFromCentralCloud();
     }
 
@@ -561,7 +536,6 @@
       centralDatabase.users[cleanEmailKey] = {
         name: ownerName,
         email: ownerEmail,
-        picture: ownerPicture,
         records: allRecords,
         updatedAt: new Date().toISOString()
       };
