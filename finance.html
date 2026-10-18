@@ -182,9 +182,17 @@
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 2000;
       display: flex; flex-direction: column; justify-content: center; padding: 24px 20px;
     }
+
+    /* لودر ابری */
+    #cloudLoading {
+      position: fixed; top: 10px; left: 10px; background: #059669; color: white;
+      padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; z-index: 9999; display: none;
+    }
   </style>
 </head>
 <body>
+
+  <div id="cloudLoading">☁️ در حال همگام‌سازی ابری...</div>
 
   <div class="app-viewport">
     <header class="app-header">
@@ -390,18 +398,15 @@
       </div>
       <div class="modal-scroll-body" style="font-size: 12px; line-height: 1.9; color: #334155;">
         <h3 style="font-size: 13.5px; font-weight: 800; color: #10b981; margin-bottom: 6px;">۱. نحوه ورود به سیستم</h3>
-        <p>ورود بسیار ساده است. کافیست نام و ایمیل خود را وارد کنید. حساب شما متصل به ایمیل شماست و هر وقت و از هر کجا که آن را باز کنید، تمامی اطلاعاتتان حاضر و دست‌نخورده باقی مانده است.</p>
+        <p>ورود بسیار ساده است. نام و ایمیل خود را وارد کنید تا پوشه ابری اختصاصی شما در فضای مستقل متصل شود.</p>
 
         <h3 style="font-size: 13.5px; font-weight: 800; color: #10b981; margin-top: 14px; margin-bottom: 6px;">۲. امکانات و کاربردها</h3>
         <ul style="padding-right: 18px; margin-bottom: 10px;">
-          <li><strong>ثبت طلب‌ها و بدهی‌ها:</strong> حساب تمام اشخاص را با مشخص کردن نوع ارز به راحتی تفکیک و ثبت کنید.</li>
-          <li><strong>ارسال یادآوری در واتساپ:</strong> تنها با یک کلیک متن یادآوری آماده برای بدهکاران بفرستید.</li>
-          <li><strong>مدیریت خرج و درآمدها:</strong> آگاهی کامل و شفاف از دخل و خرج‌های روزمره.</li>
-          <li><strong>تولید رسید تصویری:</strong> امکان تولید رسیدهای عکس‌دار شیک از تمامی تراکنش‌ها و آمار کل.</li>
+          <li><strong>ثبت طلب‌ها و بدهی‌ها:</strong> تفکیک حساب اشخاص بر اساس نوع ارز.</li>
+          <li><strong>ارسال یادآوری در واتساپ:</strong> ارتباط سریع با بدهکاران با یک کلیک.</li>
+          <li><strong>مدیریت خرج و درآمدها:</strong> آگاهی کامل از دخل و خرج روزمره.</li>
+          <li><strong>تولید رسید تصویری:</strong> خروجی عکس‌دار شیک از تراکنش‌ها.</li>
         </ul>
-
-        <h3 style="font-size: 13.5px; font-weight: 800; color: #10b981; margin-top: 14px; margin-bottom: 6px;">۳. ایجاد شفافیت مالی کامل</h3>
-        <p>با این دفترچه دیگر هیچ حساب یا طلبی فراموش نمی‌شود و همیشه آمار دقیق و شفاف حساب‌کتاب‌هایتان در دسترس شماست.</p>
 
         <button class="action-big-btn" style="margin-top: 16px;" onclick="closeGuideModal()">متوجه شدم، بازگشت به ورود</button>
       </div>
@@ -409,11 +414,14 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw71QkmB0QP_JL1snQz3u4VwbjI3TnrQEFpXimtZDbiwu8RdXc666ZER7N2fUWrpdMW/exec";
+    // تنظیمات اتصال ابری مستقل (JSONbin.io)
+    const MASTER_KEY = "$2a$10$svq5jxgbMpngh7sc5XY48U.IA9NrcAryVuo/whRmXUK82wv3l#e7lLK";
+    const BIN_ID_KEY = "independent_bin_id_";
 
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
     let allRecords = [];
+    let currentBinId = null;
     let selectedTypeVal = '';
     let selectedCurrVal = 'IQD';
     let currentStatsFilter = '30days';
@@ -457,9 +465,7 @@
 
     function backToMainTab() {
       playSound('click');
-      // بستن همه مودال‌های باز
       document.querySelectorAll('.fullscreen-modal').forEach(m => m.classList.remove('open'));
-      // رفتن به اولین تب (طلب و بدهی)
       switchTab(0, 'debtsTab');
     }
 
@@ -503,7 +509,7 @@
       document.getElementById('ownerNameDisplay').innerText = `حسابِ ${ownerName}`;
       document.getElementById('ownerEmailDisplay').innerText = ownerEmail;
       document.getElementById('statsOwnerTag').innerText = `حسابِ ${ownerName}`;
-      loadData();
+      loadDataFromCloud();
     }
 
     function switchTab(index, panelId) {
@@ -523,11 +529,73 @@
       if (group === 'currency') selectedCurrVal = val;
     }
 
-    function loadData() {
-      fetch(`${SCRIPT_URL}?email=${encodeURIComponent(ownerEmail)}`)
-        .then(res => res.json())
-        .then(data => { allRecords = Array.isArray(data) ? data : []; renderSummaries(); })
-        .catch(() => { allRecords = []; renderSummaries(); });
+    function showLoader(show) {
+      document.getElementById('cloudLoading').style.display = show ? 'block' : 'none';
+    }
+
+    // اتصال و خواندن داده از فضای ابری مستقل
+    async function loadDataFromCloud() {
+      showLoader(true);
+      currentBinId = localStorage.getItem(BIN_ID_KEY + ownerEmail);
+
+      if (!currentBinId) {
+        // ایجاد یک فایل/پوشه ابری جدید برای این کاربر
+        try {
+          let res = await fetch('https://api.jsonbin.io/v3/b', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Master-Key': MASTER_KEY,
+              'X-Bin-Name': `user_${ownerEmail}`
+            },
+            body: JSON.stringify({ records: [] })
+          });
+          let data = await res.json();
+          if (data && data.metadata && data.metadata.id) {
+            currentBinId = data.metadata.id;
+            localStorage.setItem(BIN_ID_KEY + ownerEmail, currentBinId);
+          }
+        } catch (e) {}
+        allRecords = [];
+        showLoader(false);
+        renderSummaries();
+        return;
+      }
+
+      // خواندن داده‌ها از Bin موجود
+      try {
+        let res = await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}/latest`, {
+          method: 'GET',
+          headers: { 'X-Master-Key': MASTER_KEY }
+        });
+        let data = await res.json();
+        allRecords = (data && data.record && data.record.records) ? data.record.records : [];
+      } catch (e) {
+        allRecords = [];
+      }
+      showLoader(false);
+      renderSummaries();
+    }
+
+    // ذخیره داده‌ها در فضای ابری مستقل با سرعت بالا
+    async function saveCloudData() {
+      showLoader(true);
+      if (!currentBinId) {
+        showLoader(false);
+        return;
+      }
+      try {
+        await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': MASTER_KEY
+          },
+          body: JSON.stringify({ records: allRecords })
+        });
+      } catch (e) {}
+      showLoader(false);
+      renderSummaries();
     }
 
     function setStatsFilter(filterType, btn) {
@@ -547,7 +615,6 @@
     }
 
     function renderSummaries() {
-      // ۱. محاسبات استاندارد برای تب‌های طلب و بدهی و خرج و درآمد (بدون تغییر)
       let debts = allRecords.filter(r => r.type === 'طلب' || r.type === 'بدهی');
       let debtSummary = {};
       debts.forEach(r => {
@@ -574,10 +641,9 @@
       }
       document.getElementById('expenseSummaryList').innerHTML = eHtml || 'داده‌ای ثبت نشده است.';
 
-      // ۲. فیلتر پیشرفته برای بخش آمار (۳۰ روزه، یک‌ساله، کل دوران دائمی)
       let now = new Date();
       let filteredForStats = allRecords.filter(r => {
-        if (!r.date) return currentStatsFilter === 'all'; // اگر تاریخ نداشت و حالت کل بود نگه دار
+        if (!r.date) return currentStatsFilter === 'all';
         let rDate = new Date(r.date);
         let diffTime = now - rDate;
         let diffDays = diffTime / (1000 * 60 * 60 * 24);
@@ -587,7 +653,7 @@
         } else if (currentStatsFilter === '1year') {
           return diffDays >= 0 && diffDays <= 365;
         } else {
-          return true; // کل دوران دائمی
+          return true;
         }
       });
 
@@ -629,13 +695,13 @@
       document.getElementById('recordsModalTitle').innerText = title;
 
       let filtered = allRecords.filter(r => mode === 'debt' ? (r.type === 'طلب' || r.type === 'بدهی') : (r.type === 'درآمد' || r.type === 'خرج'));
-      filtered.reverse();
+      let reversedFiltered = [...filtered].reverse();
 
       let html = '';
-      if (filtered.length === 0) {
+      if (reversedFiltered.length === 0) {
         html = '<div style="text-align:center; padding:20px; color:#64748b; font-size:12px;">هیچ سابقه‌ای ثبت نشده است.</div>';
       } else {
-        filtered.forEach(item => {
+        reversedFiltered.forEach(item => {
           let color = (item.type === 'طلب' || item.type === 'درآمد') ? '#10b981' : '#ef4444';
           html += `
             <div class="record-card-item" onclick='showRecordDetail(${JSON.stringify(item)})'>
@@ -678,7 +744,7 @@
       }
 
       document.getElementById('editRecordBtn').onclick = () => editRecord(item);
-      document.getElementById('deleteRecordBtn').onclick = () => deleteRecord(item.rowIndex);
+      document.getElementById('deleteRecordBtn').onclick = () => deleteRecord(item.id);
 
       document.getElementById('detailModal').classList.add('open');
     }
@@ -723,7 +789,7 @@
       let phone = document.getElementById('phone').value.trim();
       let date = document.getElementById('formDate').value;
       let desc = document.getElementById('formDesc').value.trim();
-      let rowIndex = document.getElementById('editRowIndex').value;
+      let editId = document.getElementById('editRowIndex').value;
 
       if (!title || amount <= 0) {
         alert('لطفاً عنوان و مبلغ را وارد کنید.');
@@ -732,31 +798,45 @@
 
       playSound('success');
 
-      let payload = {
-        action: rowIndex ? 'update' : 'save',
-        rowIndex: rowIndex || undefined,
-        email: ownerEmail,
-        type: selectedTypeVal,
-        nameOrTitle: title,
-        phone: phone,
-        amount: amount,
-        currency: selectedCurrVal,
-        date: date,
-        description: desc
-      };
+      if (editId) {
+        let index = allRecords.findIndex(r => r.id == editId);
+        if (index !== -1) {
+          allRecords[index] = {
+            id: editId,
+            type: selectedTypeVal,
+            nameOrTitle: title,
+            phone: phone,
+            amount: amount,
+            currency: selectedCurrVal,
+            date: date,
+            description: desc
+          };
+        }
+      } else {
+        let newRecord = {
+          id: Date.now().toString(),
+          type: selectedTypeVal,
+          nameOrTitle: title,
+          phone: phone,
+          amount: amount,
+          currency: selectedCurrVal,
+          date: date,
+          description: desc
+        };
+        allRecords.push(newRecord);
+      }
 
-      fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-        .then(() => {
-          closeModal('formModal'); closeModal('detailModal'); closeModal('recordsListModal');
-          loadData();
-        });
+      saveCloudData();
+      closeModal('formModal'); 
+      closeModal('detailModal'); 
+      closeModal('recordsListModal');
     }
 
     function editRecord(item) {
       playSound('click');
       closeModal('detailModal');
       openFormModal(item.type === 'طلب' || item.type === 'بدهی' ? 'debt' : 'expense');
-      document.getElementById('editRowIndex').value = item.rowIndex;
+      document.getElementById('editRowIndex').value = item.id;
       document.getElementById('formTitle').value = item.nameOrTitle || '';
       document.getElementById('formAmount').value = item.amount || '';
       document.getElementById('phone').value = item.phone || '';
@@ -764,14 +844,13 @@
       document.getElementById('formDate').value = item.date || '';
     }
 
-    function deleteRecord(rowIndex) {
+    function deleteRecord(id) {
       playSound('delete');
       if (confirm('آیا از حذف این تراکنش اطمینان دارید؟')) {
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', rowIndex: rowIndex }) })
-          .then(() => {
-            closeModal('detailModal'); closeModal('recordsListModal');
-            loadData();
-          });
+        allRecords = allRecords.filter(r => r.id != id);
+        saveCloudData();
+        closeModal('detailModal'); 
+        closeModal('recordsListModal');
       }
     }
 
