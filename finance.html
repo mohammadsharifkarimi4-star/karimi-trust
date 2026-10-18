@@ -73,6 +73,11 @@
     .user-name-bold { font-size: 13px; font-weight: 800; color: var(--text-main); }
     .user-email-sub { font-size: 10.5px; color: var(--text-muted); }
 
+    .header-actions { display: flex; gap: 6px; align-items: center; }
+    .btn-back-menu {
+      background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-color);
+      padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
     .btn-logout {
       background: #fef2f2; color: var(--danger); border: 1px solid #fee2e2;
       padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer;
@@ -124,6 +129,16 @@
       color: var(--text-main); font-size: 12.5px; font-weight: 800; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 6px;
     }
+
+    /* تب‌های داخل بخش آمار */
+    .stats-filter-tabs {
+      display: flex; gap: 4px; margin-bottom: 10px; background: #f1f5f9; padding: 3px; border-radius: 10px;
+    }
+    .stats-filter-btn {
+      flex: 1; padding: 6px 2px; font-size: 10.5px; font-weight: 700; border: none; background: transparent;
+      color: var(--text-muted); cursor: pointer; border-radius: 8px; text-align: center;
+    }
+    .stats-filter-btn.active { background: #ffffff; color: var(--text-main); font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
 
     /* چیپ‌ها */
     .chip-group { display: flex; gap: 4px; margin-bottom: 8px; }
@@ -180,7 +195,10 @@
           <div class="user-email-sub eng-num" id="ownerEmailDisplay">email@gmail.com</div>
         </div>
       </div>
-      <button class="btn-logout" onclick="logoutUser()">خروج</button>
+      <div class="header-actions">
+        <button class="btn-back-menu" onclick="backToMainTab()">🏠 منو</button>
+        <button class="btn-logout" onclick="logoutUser()">خروج</button>
+      </div>
     </header>
 
     <!-- تب‌های اصلی -->
@@ -219,17 +237,27 @@
         </div>
       </div>
 
-      <!-- ۳. آمار کل -->
+      <!-- ۳. آمار کل با قابلیت انتخاب بازه زمانی -->
       <div id="statsTab" class="tab-content-panel">
+        <!-- تب‌های فیلتر آمار -->
+        <div class="stats-filter-tabs">
+          <button class="stats-filter-btn active" onclick="setStatsFilter('30days', this)">۳۰ روز اخیر</button>
+          <button class="stats-filter-btn" onclick="setStatsFilter('1year', this)">یک‌ساله (دائمی)</button>
+          <button class="stats-filter-btn" onclick="setStatsFilter('all', this)">کل دوران (دائمی)</button>
+        </div>
+
         <div id="statsExportArea" style="background: #ffffff; padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
           <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 8px;">
-            <span style="font-size: 11.5px; font-weight: 800; color: #10b981;">📊 گزارش جامع آمار مالی</span>
+            <span style="font-size: 11.5px; font-weight: 800; color: #10b981;" id="statsTitleLabel">📊 گزارش آمار ۳۰ روزه</span>
             <span style="font-size: 10px; color: #64748b;" id="statsOwnerTag">دفترچه شخصی</span>
           </div>
           <div id="fullStatsBody" class="eng-num" style="font-size: 11px; line-height: 1.8;">در حال محاسبه آمار...</div>
         </div>
 
-        <button class="action-big-btn" style="margin-top: 12px;" onclick="shareStatsImage()">📸 ارسال و دانلود عکس گزارش آمار</button>
+        <div style="margin-top: auto; display: flex; gap: 8px;">
+          <button class="action-secondary-btn" style="flex: 1;" onclick="backToMainTab()">🏠 بازگشت به منو</button>
+          <button class="action-big-btn" style="flex: 2; margin-bottom: 0;" onclick="shareStatsImage()">📸 ارسال عکس گزارش آمار</button>
+        </div>
       </div>
     </main>
 
@@ -237,7 +265,10 @@
     <div id="recordsListModal" class="fullscreen-modal">
       <div class="modal-header">
         <div class="modal-title" id="recordsModalTitle">📋 لیست سوابق</div>
-        <button class="close-modal-btn" onclick="closeModal('recordsListModal')">✕</button>
+        <div style="display: flex; gap: 6px;">
+          <button class="action-secondary-btn" style="padding: 4px 8px; font-size: 10.5px;" onclick="closeModal('recordsListModal')">🏠 منو</button>
+          <button class="close-modal-btn" onclick="closeModal('recordsListModal')">✕</button>
+        </div>
       </div>
       <div class="modal-scroll-body" id="recordsListContainer"></div>
     </div>
@@ -246,7 +277,10 @@
     <div id="detailModal" class="fullscreen-modal">
       <div class="modal-header">
         <div class="modal-title">📄 جزئیات کامل تراکنش</div>
-        <button class="close-modal-btn" onclick="closeModal('detailModal')">✕</button>
+        <div style="display: flex; gap: 6px;">
+          <button class="action-secondary-btn" style="padding: 4px 8px; font-size: 10.5px;" onclick="closeModal('detailModal')">🏠 منو</button>
+          <button class="close-modal-btn" onclick="closeModal('detailModal')">✕</button>
+        </div>
       </div>
       <div class="modal-scroll-body">
         <div id="receiptToCapture" style="background: #ffffff; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 16px; margin-bottom: 12px;">
@@ -270,7 +304,10 @@
     <div id="formModal" class="fullscreen-modal">
       <div class="modal-header">
         <div class="modal-title" id="formModalTitle">➕ ثبت جدید</div>
-        <button class="close-modal-btn" onclick="closeModal('formModal')">✕</button>
+        <div style="display: flex; gap: 6px;">
+          <button class="action-secondary-btn" style="padding: 4px 8px; font-size: 10.5px;" onclick="closeModal('formModal')">🏠 منو</button>
+          <button class="close-modal-btn" onclick="closeModal('formModal')">✕</button>
+        </div>
       </div>
       <div class="modal-scroll-body">
         <input type="hidden" id="editRowIndex">
@@ -327,7 +364,6 @@
       </div>
 
       <div>
-        <!-- دکمه راهنما که اکنون مستقیماً تابع openGuideModal را صدا می‌زند -->
         <button type="button" class="action-secondary-btn" style="background: #f0fdf4; border-color: #bbf7d0; color: #047857; margin-bottom: 12px;" onclick="openGuideModal()">
           💡 راهنما و آشنایی با سیستم (کلیک کنید)
         </button>
@@ -346,7 +382,7 @@
       </div>
     </div>
 
-    <!-- صفحه راهنما (در بالاترین لایه z-index=3000 قرار گرفت تا حتماً روی صفحه ورود باز شود) -->
+    <!-- صفحه راهنما -->
     <div id="guideModal" class="fullscreen-modal">
       <div class="modal-header">
         <div class="modal-title">💡 راهنما و کاربرد دفترچه حساب</div>
@@ -380,6 +416,7 @@
     let allRecords = [];
     let selectedTypeVal = '';
     let selectedCurrVal = 'IQD';
+    let currentStatsFilter = '30days';
 
     function playSound(type) {
       try {
@@ -417,6 +454,14 @@
         initApp();
       }
     });
+
+    function backToMainTab() {
+      playSound('click');
+      // بستن همه مودال‌های باز
+      document.querySelectorAll('.fullscreen-modal').forEach(m => m.classList.remove('open'));
+      // رفتن به اولین تب (طلب و بدهی)
+      switchTab(0, 'debtsTab');
+    }
 
     function openGuideModal() {
       playSound('click');
@@ -485,7 +530,24 @@
         .catch(() => { allRecords = []; renderSummaries(); });
     }
 
+    function setStatsFilter(filterType, btn) {
+      playSound('click');
+      currentStatsFilter = filterType;
+      document.querySelectorAll('.stats-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (filterType === '30days') {
+        document.getElementById('statsTitleLabel').innerText = '📊 گزارش آمار ۳۰ روزه';
+      } else if (filterType === '1year') {
+        document.getElementById('statsTitleLabel').innerText = '📊 گزارش آمار یک‌ساله (دائمی)';
+      } else {
+        document.getElementById('statsTitleLabel').innerText = '📊 گزارش کل دوران (دائمی)';
+      }
+      renderSummaries();
+    }
+
     function renderSummaries() {
+      // ۱. محاسبات استاندارد برای تب‌های طلب و بدهی و خرج و درآمد (بدون تغییر)
       let debts = allRecords.filter(r => r.type === 'طلب' || r.type === 'بدهی');
       let debtSummary = {};
       debts.forEach(r => {
@@ -512,10 +574,52 @@
       }
       document.getElementById('expenseSummaryList').innerHTML = eHtml || 'داده‌ای ثبت نشده است.';
 
+      // ۲. فیلتر پیشرفته برای بخش آمار (۳۰ روزه، یک‌ساله، کل دوران دائمی)
+      let now = new Date();
+      let filteredForStats = allRecords.filter(r => {
+        if (!r.date) return currentStatsFilter === 'all'; // اگر تاریخ نداشت و حالت کل بود نگه دار
+        let rDate = new Date(r.date);
+        let diffTime = now - rDate;
+        let diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+        if (currentStatsFilter === '30days') {
+          return diffDays >= 0 && diffDays <= 30;
+        } else if (currentStatsFilter === '1year') {
+          return diffDays >= 0 && diffDays <= 365;
+        } else {
+          return true; // کل دوران دائمی
+        }
+      });
+
+      let statDebts = filteredForStats.filter(r => r.type === 'طلب' || r.type === 'بدهی');
+      let sDebtSummary = {};
+      statDebts.forEach(r => {
+        if (!sDebtSummary[r.currency]) sDebtSummary[r.currency] = { طلب: 0, بدهی: 0 };
+        sDebtSummary[r.currency][r.type] += Number(r.amount || 0);
+      });
+
+      let statExp = filteredForStats.filter(r => r.type === 'درآمد' || r.type === 'خرج');
+      let sExpSummary = {};
+      statExp.forEach(r => {
+        if (!sExpSummary[r.currency]) sExpSummary[r.currency] = { درآمد: 0, خرج: 0 };
+        sExpSummary[r.currency][r.type] += Number(r.amount || 0);
+      });
+
+      let sdHtml = '';
+      for (let c in sDebtSummary) {
+        sdHtml += `<div><strong>${c}:</strong> طلب: <span style="color:#10b981;">${sDebtSummary[c]['طلب'].toLocaleString()}</span> | بدهی: <span style="color:#ef4444;">${sDebtSummary[c]['بدهی'].toLocaleString()}</span></div>`;
+      }
+
+      let seHtml = '';
+      for (let c in sExpSummary) {
+        seHtml += `<div><strong>${c}:</strong> درآمد: <span style="color:#10b981;">${sExpSummary[c]['درآمد'].toLocaleString()}</span> | خرج: <span style="color:#ef4444;">${sExpSummary[c]['خرج'].toLocaleString()}</span></div>`;
+      }
+
       let statsHtml = `<div><strong>صاحب حساب:</strong> ${ownerName} (${ownerEmail})</div>`;
       statsHtml += `<hr style="margin: 6px 0; border: none; border-top: 1px dashed #cbd5e1;">`;
-      statsHtml += dHtml ? `<div><strong>طلب و بدهی:</strong><br>${dHtml}</div>` : '';
-      statsHtml += eHtml ? `<div style="margin-top:4px;"><strong>خرج و درآمد:</strong><br>${eHtml}</div>` : '';
+      statsHtml += sdHtml ? `<div><strong>طلب و بدهی در این دوره:</strong><br>${sdHtml}</div>` : '<div>طلب و بدهی ثبت شده‌ای در این بازه وجود ندارد.</div>';
+      statsHtml += seHtml ? `<div style="margin-top:4px;"><strong>خرج و درآمد در این دوره:</strong><br>${seHtml}</div>` : '<div style="margin-top:4px;">خرج و درآمدی ثبت نشده است.</div>';
+      
       document.getElementById('fullStatsBody').innerHTML = statsHtml;
     }
 
