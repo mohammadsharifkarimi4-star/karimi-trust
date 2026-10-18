@@ -183,7 +183,6 @@
       display: flex; flex-direction: column; justify-content: center; padding: 24px 20px;
     }
 
-    /* لودر ابری */
     #cloudLoading {
       position: fixed; top: 10px; left: 10px; background: #059669; color: white;
       padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; z-index: 9999; display: none;
@@ -192,7 +191,7 @@
 </head>
 <body>
 
-  <div id="cloudLoading">☁️ در حال همگام‌سازی ابری...</div>
+  <div id="cloudLoading">☁️ در حال ذخیره ابری آنی...</div>
 
   <div class="app-viewport">
     <header class="app-header">
@@ -245,9 +244,8 @@
         </div>
       </div>
 
-      <!-- ۳. آمار کل با قابلیت انتخاب بازه زمانی -->
+      <!-- ۳. آمار کل -->
       <div id="statsTab" class="tab-content-panel">
-        <!-- تب‌های فیلتر آمار -->
         <div class="stats-filter-tabs">
           <button class="stats-filter-btn active" onclick="setStatsFilter('30days', this)">۳۰ روز اخیر</button>
           <button class="stats-filter-btn" onclick="setStatsFilter('1year', this)">یک‌ساله (دائمی)</button>
@@ -368,14 +366,10 @@
       <div style="text-align: center; margin-bottom: 12px;">
         <div style="font-size: 38px; margin-bottom: 4px;">☁️</div>
         <h2 style="font-size: 16.5px; font-weight: 800; color: #0f172a;">دفترچه حساب و کتاب شخصی</h2>
-        <p style="font-size: 11px; color: #64748b; margin-top: 3px;">مدیریت هوشمند، شفاف و ابری تمام دارایی‌ها و خرج‌ها</p>
+        <p style="font-size: 11px; color: #64748b; margin-top: 3px;">مدیریت هوشمند، سریع و کاملاً ابری</p>
       </div>
 
       <div>
-        <button type="button" class="action-secondary-btn" style="background: #f0fdf4; border-color: #bbf7d0; color: #047857; margin-bottom: 12px;" onclick="openGuideModal()">
-          💡 راهنما و آشنایی با سیستم (کلیک کنید)
-        </button>
-
         <div class="form-label">نام و لقب شما:</div>
         <div class="animated-input-wrap">
           <input type="text" id="inputOwnerName" class="form-input">
@@ -389,39 +383,17 @@
         <button class="action-big-btn" style="margin-top: 10px;" onclick="registerOwner()">ورود به حساب شخصی</button>
       </div>
     </div>
-
-    <!-- صفحه راهنما -->
-    <div id="guideModal" class="fullscreen-modal">
-      <div class="modal-header">
-        <div class="modal-title">💡 راهنما و کاربرد دفترچه حساب</div>
-        <button class="close-modal-btn" onclick="closeGuideModal()">✕</button>
-      </div>
-      <div class="modal-scroll-body" style="font-size: 12px; line-height: 1.9; color: #334155;">
-        <h3 style="font-size: 13.5px; font-weight: 800; color: #10b981; margin-bottom: 6px;">۱. نحوه ورود به سیستم</h3>
-        <p>ورود بسیار ساده است. نام و ایمیل خود را وارد کنید تا پوشه ابری اختصاصی شما در فضای مستقل متصل شود.</p>
-
-        <h3 style="font-size: 13.5px; font-weight: 800; color: #10b981; margin-top: 14px; margin-bottom: 6px;">۲. امکانات و کاربردها</h3>
-        <ul style="padding-right: 18px; margin-bottom: 10px;">
-          <li><strong>ثبت طلب‌ها و بدهی‌ها:</strong> تفکیک حساب اشخاص بر اساس نوع ارز.</li>
-          <li><strong>ارسال یادآوری در واتساپ:</strong> ارتباط سریع با بدهکاران با یک کلیک.</li>
-          <li><strong>مدیریت خرج و درآمدها:</strong> آگاهی کامل از دخل و خرج روزمره.</li>
-          <li><strong>تولید رسید تصویری:</strong> خروجی عکس‌دار شیک از تراکنش‌ها.</li>
-        </ul>
-
-        <button class="action-big-btn" style="margin-top: 16px;" onclick="closeGuideModal()">متوجه شدم، بازگشت به ورود</button>
-      </div>
-    </div>
   </div>
 
   <script>
-    // تنظیمات اتصال ابری مستقل (JSONbin.io)
-    const MASTER_KEY = "$2a$10$svq5jxgbMpngh7sc5XY48U.IA9NrcAryVuo/whRmXUK82wv3l#e7lLK";
-    const BIN_ID_KEY = "independent_bin_id_";
+    // کلید اصلی تصحیح‌شده و دقیق از حساب شما
+    const MASTER_KEY = "$2a$10$sVq5jxgbMpmgh7scSY46U.IA9NcyArvUoe/whRmXUK2wv31eRt7LK";
+    const BIN_ID_KEY = "jsonbin_id_v2_";
 
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
     let allRecords = [];
-    let currentBinId = null;
+    let currentBinId = localStorage.getItem(BIN_ID_KEY + (ownerEmail || 'default'));
     let selectedTypeVal = '';
     let selectedCurrVal = 'IQD';
     let currentStatsFilter = '30days';
@@ -432,7 +404,6 @@
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.connect(gain); gain.connect(ctx.destination);
-
         if (type === 'click') {
           osc.frequency.setValueAtTime(450, ctx.currentTime);
           gain.gain.setValueAtTime(0.04, ctx.currentTime);
@@ -469,16 +440,6 @@
       switchTab(0, 'debtsTab');
     }
 
-    function openGuideModal() {
-      playSound('click');
-      document.getElementById('guideModal').classList.add('open');
-    }
-
-    function closeGuideModal() {
-      playSound('click');
-      document.getElementById('guideModal').classList.remove('open');
-    }
-
     function registerOwner() {
       playSound('click');
       let name = document.getElementById('inputOwnerName').value.trim();
@@ -492,6 +453,7 @@
       localStorage.setItem('cloud_owner_email', email);
       localStorage.setItem('cloud_owner_name', name);
       ownerEmail = email; ownerName = name;
+      currentBinId = localStorage.getItem(BIN_ID_KEY + ownerEmail);
 
       document.getElementById('loginOverlay').style.display = 'none';
       initApp();
@@ -533,20 +495,20 @@
       document.getElementById('cloudLoading').style.display = show ? 'block' : 'none';
     }
 
-    // اتصال و خواندن داده از فضای ابری مستقل
+    // خواندن داده با پایداری کامل از سرور
     async function loadDataFromCloud() {
       showLoader(true);
       currentBinId = localStorage.getItem(BIN_ID_KEY + ownerEmail);
 
       if (!currentBinId) {
-        // ایجاد یک فایل/پوشه ابری جدید برای این کاربر
         try {
           let res = await fetch('https://api.jsonbin.io/v3/b', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'X-Master-Key': MASTER_KEY,
-              'X-Bin-Name': `user_${ownerEmail}`
+              'X-Bin-Private': 'true',
+              'X-Bin-Name': `accounts_${ownerEmail}`
             },
             body: JSON.stringify({ records: [] })
           });
@@ -562,7 +524,6 @@
         return;
       }
 
-      // خواندن داده‌ها از Bin موجود
       try {
         let res = await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}/latest`, {
           method: 'GET',
@@ -577,7 +538,7 @@
       renderSummaries();
     }
 
-    // ذخیره داده‌ها در فضای ابری مستقل با سرعت بالا
+    // ذخیره آنی در سرور
     async function saveCloudData() {
       showLoader(true);
       if (!currentBinId) {
@@ -603,14 +564,6 @@
       currentStatsFilter = filterType;
       document.querySelectorAll('.stats-filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-
-      if (filterType === '30days') {
-        document.getElementById('statsTitleLabel').innerText = '📊 گزارش آمار ۳۰ روزه';
-      } else if (filterType === '1year') {
-        document.getElementById('statsTitleLabel').innerText = '📊 گزارش آمار یک‌ساله (دائمی)';
-      } else {
-        document.getElementById('statsTitleLabel').innerText = '📊 گزارش کل دوران (دائمی)';
-      }
       renderSummaries();
     }
 
@@ -647,14 +600,9 @@
         let rDate = new Date(r.date);
         let diffTime = now - rDate;
         let diffDays = diffTime / (1000 * 60 * 60 * 24);
-
-        if (currentStatsFilter === '30days') {
-          return diffDays >= 0 && diffDays <= 30;
-        } else if (currentStatsFilter === '1year') {
-          return diffDays >= 0 && diffDays <= 365;
-        } else {
-          return true;
-        }
+        if (currentStatsFilter === '30days') return diffDays >= 0 && diffDays <= 30;
+        if (currentStatsFilter === '1year') return diffDays >= 0 && diffDays <= 365;
+        return true;
       });
 
       let statDebts = filteredForStats.filter(r => r.type === 'طلب' || r.type === 'بدهی');
