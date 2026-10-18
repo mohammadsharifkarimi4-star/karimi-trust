@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>دفترچه حساب و کتاب شخصی</title>
+  <!-- Google Sign-In SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- HTML2Canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
@@ -68,7 +71,9 @@
       width: 38px; height: 38px; border-radius: 50%;
       border: 2px solid var(--primary); background: #ecfdf5;
       display: flex; align-items: center; justify-content: center; font-size: 16px;
+      overflow: hidden;
     }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
     .user-name-bold { font-size: 13px; font-weight: 800; color: var(--text-main); }
     .user-email-sub { font-size: 10.5px; color: var(--text-muted); }
@@ -163,9 +168,10 @@
     .form-label { display: block; font-size: 10.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px; }
     .form-input { width: 100%; padding: 8px 10px; border: none; border-radius: 8px; font-size: 12.5px; outline: none; background: #ffffff; color: var(--text-main); font-weight: 600; }
 
+    /* صفحه ورود گوگل */
     .login-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 2000;
-      display: flex; flex-direction: column; justify-content: center; padding: 24px 20px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px 20px;
     }
   </style>
 </head>
@@ -318,30 +324,31 @@
       </div>
     </div>
 
-    <!-- صفحه ورود اول -->
+    <!-- صفحه ورود گوگل -->
     <div id="loginOverlay" class="login-overlay">
-      <div style="text-align: center; margin-bottom: 12px;">
-        <div style="font-size: 38px; margin-bottom: 4px;">☁️</div>
-        <h2 style="font-size: 16.5px; font-weight: 800; color: #0f172a;">دفترچه حساب و کتاب شخصی</h2>
-        <p style="font-size: 11px; color: #64748b; margin-top: 3px;">مدیریت هوشمند، شفاف و ابری تمام دارایی‌ها و خرج‌ها</p>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 42px; margin-bottom: 8px;">☁️</div>
+        <h2 style="font-size: 18px; font-weight: 800; color: #0f172a;">دفترچه حساب و کتاب شخصی</h2>
+        <p style="font-size: 12px; color: #64748b; margin-top: 4px;">مدیریت هوشمند، شفاف و ابری تمام دارایی‌ها و خرج‌ها</p>
       </div>
 
-      <div>
-        <button type="button" class="action-secondary-btn" style="background: #f0fdf4; border-color: #bbf7d0; color: #047857; margin-bottom: 12px;" onclick="openGuideModal()">
-          💡 راهنما و آشنایی با سیستم (کلیک کنید)
-        </button>
+      <button type="button" class="action-secondary-btn" style="background: #f0fdf4; border-color: #bbf7d0; color: #047857; margin-bottom: 20px; width: 100%; max-width: 280px;" onclick="openGuideModal()">
+        💡 راهنما و آشنایی با سیستم
+      </button>
 
-        <div class="form-label">نام و لقب شما:</div>
-        <div class="animated-input-wrap">
-          <input type="text" id="inputOwnerName" class="form-input">
-        </div>
-
-        <div class="form-label">ایمیل اختصاصی (شناسه حساب شما):</div>
-        <div class="animated-input-wrap">
-          <input type="email" id="inputOwnerEmail" class="form-input eng-num">
-        </div>
-
-        <button class="action-big-btn" style="margin-top: 10px;" onclick="registerOwner()">ورود به حساب شخصی</button>
+      <!-- تنظیمات ورود گوگل با Client ID اختصاصی -->
+      <div id="g_id_onload"
+           data-client_id="295722018163-ckrb0g42a6c9o5udbfird31r8jvb3avn.apps.googleusercontent.com"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="outline"
+           data-text="sign_in_with"
+           data-shape="rectangular"
+           data-logo_alignment="left">
       </div>
     </div>
 
@@ -353,7 +360,7 @@
       </div>
       <div class="modal-scroll-body" style="font-size: 12px; line-height: 1.9; color: #334155;">
         <h3 style="font-size: 13.5px; font-weight: 800; color: #10b981; margin-bottom: 6px;">۱. نحوه ورود به سیستم</h3>
-        <p>ورود بسیار ساده است. کافیست نام و ایمیل خود را وارد کنید. حساب شما متصل به ایمیل شماست و هر وقت و از هر کجا که آن را باز کنید، تمامی اطلاعاتتان حاضر و دست‌نخورده باقی مانده است.</p>
+        <p>ورود از طریق حساب رسمی گوگل انجام می‌شود. اطلاعات حساب شما کاملاً امن بوده و بر روی گوگل‌سیت شخصی ذخیره می‌شود.</p>
 
         <h3 style="font-size: 13.5px; font-weight: 800; color: #10b981; margin-top: 14px; margin-bottom: 6px;">۲. امکانات و کاربردها</h3>
         <ul style="padding-right: 18px; margin-bottom: 10px;">
@@ -376,9 +383,34 @@
 
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
+    let ownerPicture = localStorage.getItem('cloud_owner_picture');
     let allRecords = [];
     let selectedTypeVal = '';
     let selectedCurrVal = 'IQD';
+
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    function handleCredentialResponse(response) {
+      playSound('success');
+      const user = parseJwt(response.credential);
+      ownerEmail = user.email.toLowerCase();
+      ownerName = user.name;
+      ownerPicture = user.picture;
+
+      localStorage.setItem('cloud_owner_email', ownerEmail);
+      localStorage.setItem('cloud_owner_name', ownerName);
+      if (ownerPicture) localStorage.setItem('cloud_owner_picture', ownerPicture);
+
+      document.getElementById('loginOverlay').style.display = 'none';
+      initApp();
+    }
 
     function playSound(type) {
       try {
@@ -427,24 +459,6 @@
       document.getElementById('guideModal').classList.remove('open');
     }
 
-    function registerOwner() {
-      playSound('click');
-      let name = document.getElementById('inputOwnerName').value.trim();
-      let email = document.getElementById('inputOwnerEmail').value.trim().toLowerCase();
-
-      if (!name || !email || !email.includes('@')) {
-        alert('لطفاً نام و ایمیل معتبر وارد کنید.');
-        return;
-      }
-
-      localStorage.setItem('cloud_owner_email', email);
-      localStorage.setItem('cloud_owner_name', name);
-      ownerEmail = email; ownerName = name;
-
-      document.getElementById('loginOverlay').style.display = 'none';
-      initApp();
-    }
-
     function logoutUser() {
       playSound('delete');
       if (confirm('آیا می‌خواهید از حساب خارج شوید؟')) {
@@ -454,9 +468,12 @@
     }
 
     function initApp() {
-      document.getElementById('ownerNameDisplay').innerText = `حسابِ ${ownerName}`;
+      document.getElementById('ownerNameDisplay').innerText = ownerName;
       document.getElementById('ownerEmailDisplay').innerText = ownerEmail;
       document.getElementById('statsOwnerTag').innerText = `حسابِ ${ownerName}`;
+      if (ownerPicture) {
+        document.getElementById('avatarDisplay').innerHTML = `<img src="${ownerPicture}" alt="avatar">`;
+      }
       loadData();
     }
 
