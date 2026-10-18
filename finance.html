@@ -4,13 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>دفترچه حساب و کتاب شخصی</title>
+  <!-- فونت فرهنگ (Farhang) -->
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Farhang';
+      src: url('https://cdn.jsdelivr.net/gh/font-store/farhang@main/Farhang-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Farhang';
+      src: url('https://cdn.jsdelivr.net/gh/font-store/farhang@main/Farhang-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+    }
+  </style>
   <!-- Google Sign-In SDK -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
-
     :root {
       --primary: #10b981;
       --primary-dark: #059669;
@@ -22,7 +36,7 @@
       --border-color: #e2e8f0;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', -apple-system, sans-serif; direction: rtl; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Farhang', 'Vazirmatn', -apple-system, sans-serif; direction: rtl; }
 
     body {
       background: #0f172a;
@@ -35,14 +49,14 @@
       overflow-x: hidden;
     }
 
-    .eng-num { font-family: Tahoma, 'Vazirmatn', sans-serif; direction: ltr; display: inline-block; }
+    .eng-num { font-family: Tahoma, 'Farhang', sans-serif; direction: ltr; display: inline-block; }
 
-    /* قاب اصلی موبایل - بهینه‌سازی ارتفاع برای جلوگیری از اسکرول اضافی */
+    /* قاب اصلی موبایل فیت و بدون اسکرول اضافی */
     .app-viewport {
       width: 100vw;
       height: 100vh;
       max-width: 440px;
-      max-height: 950px;
+      max-height: 900px;
       background: #ffffff;
       display: flex;
       flex-direction: column;
@@ -56,41 +70,42 @@
       .app-viewport { max-height: 100vh; border-radius: 0; }
     }
 
-    /* هدر برنامه */
+    /* هدر برنامه فشرده و مرتب */
     .app-header {
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: #ffffff;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-shrink: 0;
     }
 
     .user-profile-badge { display: flex; align-items: center; gap: 8px; }
     .user-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
+      width: 36px; height: 36px; border-radius: 50%;
       border: 2px solid var(--primary); background: #ecfdf5;
-      display: flex; align-items: center; justify-content: center; font-size: 16px;
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
       overflow: hidden; flex-shrink: 0;
     }
     .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-    .user-name-bold { font-size: 14px; font-weight: 800; color: var(--text-main); }
-    .user-email-sub { font-size: 11px; color: var(--text-muted); }
+    .user-name-bold { font-size: 13.5px; font-weight: 700; color: var(--text-main); }
+    .user-email-sub { font-size: 10.5px; color: var(--text-muted); }
 
     .btn-logout {
       background: #fef2f2; color: var(--danger); border: 1px solid #fee2e2;
-      padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+      padding: 5px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer;
     }
 
-    /* تب‌های کشویی متحرک */
+    /* تب‌های کشویی */
     .nav-tabs-container {
       padding: 4px 8px; background: #f1f5f9; margin: 6px 12px; border-radius: 12px;
       display: flex; gap: 4px; position: relative; flex-shrink: 0;
     }
 
     .tab-btn {
-      flex: 1; padding: 7px 2px; text-align: center; font-size: 12px; font-weight: 800;
+      flex: 1; padding: 6px 2px; text-align: center; font-size: 12.5px; font-weight: 700;
       border: none; background: transparent; color: var(--text-muted); cursor: pointer;
       border-radius: 9px; z-index: 2; transition: color 0.3s ease;
     }
@@ -102,38 +117,38 @@
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;
     }
 
-    /* محتوای اصلی */
-    .app-body { flex: 1; padding: 10px 12px; overflow-y: auto; display: flex; flex-direction: column; }
-    .tab-content-panel { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.3s ease-out; }
+    /* محتوای اصلی بهینه‌شده برای جلوگیری از بیرون‌زدگی دکمه‌ها */
+    .app-body { flex: 1; padding: 8px 12px; overflow-y: auto; display: flex; flex-direction: column; justify-content: space-between; }
+    .tab-content-panel { display: none; flex-direction: column; height: 100%; justify-content: space-between; animation: fadeIn 0.3s ease-out; }
     .tab-content-panel.active { display: flex; }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* خلاصه آمار - سایز فونت درشت‌تر */
+    /* کارت‌های آمار درشت‌تر، برجسته‌تر و ملایم */
     .summary-card-half {
       background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-      border: 1.5px solid #bbf7d0; border-radius: 16px; padding: 12px; margin-bottom: 8px;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.05); flex-shrink: 0;
+      border: 2px solid #a7f3d0; border-radius: 16px; padding: 14px; margin-bottom: 6px;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.08); flex-shrink: 0;
     }
 
-    .summary-title { font-size: 13px; font-weight: 800; color: var(--primary-dark); margin-bottom: 6px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px; }
+    .summary-title { font-size: 14px; font-weight: 700; color: var(--primary-dark); margin-bottom: 8px; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 6px; }
 
     .action-big-btn {
-      width: 100%; padding: 11px; border-radius: 12px; border: none; background: var(--primary);
-      color: white; font-size: 14px; font-weight: 800; cursor: pointer; margin-bottom: 6px;
+      width: 100%; padding: 10px; border-radius: 12px; border: none; background: var(--primary);
+      color: white; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 6px;
       display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
     }
 
     .action-secondary-btn {
-      width: 100%; padding: 11px; border-radius: 12px; border: 1.5px solid #cbd5e1; background: #ffffff;
-      color: var(--text-main); font-size: 13.5px; font-weight: 800; cursor: pointer;
+      width: 100%; padding: 10px; border-radius: 12px; border: 1.5px solid #cbd5e1; background: #ffffff;
+      color: var(--text-main); font-size: 13.5px; font-weight: 700; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 6px;
     }
 
     /* چیپ‌ها */
-    .chip-group { display: flex; gap: 4px; margin-bottom: 8px; }
+    .chip-group { display: flex; gap: 4px; margin-bottom: 6px; }
     .chip-btn {
-      flex: 1; padding: 8px 4px; font-size: 12px; font-weight: 700; border: 1px solid var(--border-color);
+      flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 700; border: 1px solid var(--border-color);
       border-radius: 8px; background: #f8fafc; color: #475569; cursor: pointer; text-align: center; transition: all 0.15s;
     }
     .chip-btn.selected {
@@ -147,9 +162,9 @@
     }
     .fullscreen-modal.open { transform: translateY(0); }
 
-    .modal-header { padding: 12px 14px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: #ffffff; }
-    .modal-title { font-size: 15px; font-weight: 800; color: var(--text-main); }
-    .close-modal-btn { background: none; border: none; font-size: 20px; font-weight: 800; color: var(--text-muted); cursor: pointer; }
+    .modal-header { padding: 12px 14px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-shrink: 0; }
+    .modal-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
+    .close-modal-btn { background: none; border: none; font-size: 20px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
 
     .modal-scroll-body { flex: 1; padding: 14px; overflow-y: auto; }
 
@@ -161,12 +176,12 @@
     .animated-input-wrap {
       position: relative; border-radius: 10px; padding: 1.5px;
       background: linear-gradient(90deg, #10b981, #3b82f6, #ec4899, #10b981);
-      background-size: 300% 300%; animation: borderGlow 4s ease infinite; margin-bottom: 8px;
+      background-size: 300% 300%; animation: borderGlow 4s ease infinite; margin-bottom: 6px;
     }
     @keyframes borderGlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
     .form-label { display: block; font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px; }
-    .form-input { width: 100%; padding: 9px 10px; border: none; border-radius: 8px; font-size: 14px; outline: none; background: #ffffff; color: var(--text-main); font-weight: 600; }
+    .form-input { width: 100%; padding: 8px 10px; border: none; border-radius: 8px; font-size: 14px; outline: none; background: #ffffff; color: var(--text-main); font-weight: 700; }
 
     .login-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 2000;
@@ -202,10 +217,10 @@
       <div id="debtsTab" class="tab-content-panel active">
         <div class="summary-card-half">
           <div class="summary-title">📈 خلاصه وضعیت طلب‌ها و بدهی‌ها</div>
-          <div id="debtSummaryList" class="eng-num" style="font-size: 12.5px; line-height: 1.8;">داده‌ای ثبت نشده است.</div>
+          <div id="debtSummaryList" class="eng-num" style="font-size: 14px; line-height: 1.9; font-weight: 700;">داده‌ای ثبت نشده است.</div>
         </div>
 
-        <div style="margin-top: auto; padding-bottom: 4px;">
+        <div style="padding-bottom: 4px;">
           <button class="action-big-btn" onclick="openFormModal('debt')">➕ ثبت طلب یا بدهی جدید</button>
           <button class="action-secondary-btn" onclick="openRecordsModal('debt')">📋 مشاهده و مدیریت لیست سوابق</button>
         </div>
@@ -215,10 +230,10 @@
       <div id="expensesTab" class="tab-content-panel">
         <div class="summary-card-half">
           <div class="summary-title">📊 خلاصه وضعیت خرج‌ها و درآمدها</div>
-          <div id="expenseSummaryList" class="eng-num" style="font-size: 12.5px; line-height: 1.8;">داده‌ای ثبت نشده است.</div>
+          <div id="expenseSummaryList" class="eng-num" style="font-size: 14px; line-height: 1.9; font-weight: 700;">داده‌ای ثبت نشده است.</div>
         </div>
 
-        <div style="margin-top: auto; padding-bottom: 4px;">
+        <div style="padding-bottom: 4px;">
           <button class="action-big-btn" onclick="openFormModal('expense')">➕ ثبت خرج یا درآمد جدید</button>
           <button class="action-secondary-btn" onclick="openRecordsModal('expense')">📋 مشاهده و مدیریت لیست سوابق</button>
         </div>
@@ -226,15 +241,15 @@
 
       <!-- ۳. آمار کل -->
       <div id="statsTab" class="tab-content-panel">
-        <div id="statsExportArea" style="background: #ffffff; padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 8px;">
-            <span style="font-size: 12.5px; font-weight: 800; color: #10b981;">📊 گزارش جامع آمار مالی</span>
-            <span style="font-size: 11px; color: #64748b;" id="statsOwnerTag">دفترچه شخصی</span>
+        <div id="statsExportArea" style="background: #ffffff; padding: 14px; border-radius: 16px; border: 2px solid #a7f3d0; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.08);">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 8px;">
+            <span style="font-size: 14px; font-weight: 700; color: #10b981;">📊 گزارش جامع آمار مالی</span>
+            <span style="font-size: 11.5px; color: #64748b; font-weight: 700;" id="statsOwnerTag">دفترچه شخصی</span>
           </div>
-          <div id="fullStatsBody" class="eng-num" style="font-size: 12px; line-height: 1.8;">در حال محاسبه آمار...</div>
+          <div id="fullStatsBody" class="eng-num" style="font-size: 13.5px; line-height: 1.9; font-weight: 700;">در حال محاسبه آمار...</div>
         </div>
 
-        <button class="action-big-btn" style="margin-top: 10px;" onclick="shareStatsImage()">📸 ارسال و دانلود عکس گزارش آمار</button>
+        <button class="action-big-btn" style="margin-top: 8px;" onclick="shareStatsImage()">📸 ارسال و دانلود عکس گزارش آمار</button>
       </div>
     </main>
 
@@ -256,10 +271,10 @@
       <div class="modal-scroll-body">
         <div id="receiptToCapture" style="background: #ffffff; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 16px; margin-bottom: 12px;">
           <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 8px;">
-            <span style="font-size: 13px; font-weight: 800; color: #0284c7;">📋 رسید حساب شخصی</span>
-            <span style="font-size: 11px; color: #64748b;">دفترچه حساب و کتاب</span>
+            <span style="font-size: 13px; font-weight: 700; color: #0284c7;">📋 رسید حساب شخصی</span>
+            <span style="font-size: 11px; color: #64748b; font-weight: 700;">دفترچه حساب و کتاب</span>
           </div>
-          <div id="detailCardContent" class="eng-num" style="font-size: 13px; line-height: 1.8;"></div>
+          <div id="detailCardContent" class="eng-num" style="font-size: 13.5px; line-height: 1.9; font-weight: 700;"></div>
         </div>
 
         <button class="action-big-btn" onclick="shareRecordImage()">📸 دانلود و ارسال عکس رسید</button>
@@ -327,8 +342,8 @@
     <div id="loginOverlay" class="login-overlay">
       <div style="text-align: center; margin-bottom: 20px;">
         <div style="font-size: 42px; margin-bottom: 4px;">☁️</div>
-        <h2 style="font-size: 18px; font-weight: 800; color: #0f172a;">دفترچه حساب و کتاب شخصی</h2>
-        <p style="font-size: 12px; color: #64748b; margin-top: 4px;">مدیریت هوشمند، شفاف و ابری تمام دارایی‌ها و خرج‌ها</p>
+        <h2 style="font-size: 18px; font-weight: 700; color: #0f172a;">دفترچه حساب و کتاب شخصی</h2>
+        <p style="font-size: 12px; color: #64748b; margin-top: 4px; font-weight: 700;">مدیریت هوشمند، شفاف و ابری تمام دارایی‌ها و خرج‌ها</p>
       </div>
 
       <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
@@ -359,11 +374,11 @@
         <div class="modal-title">💡 راهنما و کاربرد دفترچه حساب</div>
         <button class="close-modal-btn" onclick="closeGuideModal()">✕</button>
       </div>
-      <div class="modal-scroll-body" style="font-size: 13px; line-height: 1.9; color: #334155;">
-        <h3 style="font-size: 14.5px; font-weight: 800; color: #10b981; margin-bottom: 6px;">۱. نحوه ورود به سیستم</h3>
+      <div class="modal-scroll-body" style="font-size: 13.5px; line-height: 1.9; color: #334155; font-weight: 700;">
+        <h3 style="font-size: 15px; font-weight: 700; color: #10b981; margin-bottom: 6px;">۱. نحوه ورود به سیستم</h3>
         <p>ورود با حساب گوگل بسیار ساده و امن است. با کلیک روی دکمه ورود با گوگل، حساب شما متصل شده و تمامی اطلاعات مالی‌تان در سرور ابری همیشه محفوظ باقی می‌ماند.</p>
 
-        <h3 style="font-size: 14.5px; font-weight: 800; color: #10b981; margin-top: 14px; margin-bottom: 6px;">۲. امکانات و کاربردها</h3>
+        <h3 style="font-size: 15px; font-weight: 700; color: #10b981; margin-top: 14px; margin-bottom: 6px;">۲. امکانات و کاربردها</h3>
         <ul style="padding-right: 18px; margin-bottom: 10px;">
           <li><strong>ثبت طلب‌ها و بدهی‌ها:</strong> حساب تمام اشخاص را با مشخص کردن نوع ارز به راحتی تفکیک و ثبت کنید.</li>
           <li><strong>ارسال یادآوری در واتساپ:</strong> تنها با یک کلیک متن یادآوری آماده برای بدهکاران بفرستید.</li>
@@ -371,7 +386,7 @@
           <li><strong>تولید رسید تصویری:</strong> امکان تولید رسیدهای عکس‌دار شیک از تمامی تراکنش‌ها و آمار کل.</li>
         </ul>
 
-        <h3 style="font-size: 14.5px; font-weight: 800; color: #10b981; margin-top: 14px; margin-bottom: 6px;">۳. ایجاد شفافیت مالی کامل</h3>
+        <h3 style="font-size: 15px; font-weight: 700; color: #10b981; margin-top: 14px; margin-bottom: 6px;">۳. ایجاد شفافیت مالی کامل</h3>
         <p>با این دفترچه دیگر هیچ حساب یا طلبی فراموش نمی‌شود و همیشه آمار دقیق و شفاف حساب‌کتاب‌هایتان در دسترس شماست.</p>
 
         <button class="action-big-btn" style="margin-top: 16px;" onclick="closeGuideModal()">متوجه شدم، بازگشت به ورود</button>
@@ -518,7 +533,7 @@
 
       let dHtml = '';
       for (let c in debtSummary) {
-        dHtml += `<div><strong>${c}:</strong> طلب: <span style="color:#10b981;">${debtSummary[c]['طلب'].toLocaleString()}</span> | بدهی: <span style="color:#ef4444;">${debtSummary[c]['بدهی'].toLocaleString()}</span></div>`;
+        dHtml += `<div style="margin-bottom: 4px;"><strong>${c}:</strong> طلب: <span style="color:#059669; font-weight:700;">${debtSummary[c]['طلب'].toLocaleString()}</span> | بدهی: <span style="color:#dc2626; font-weight:700;">${debtSummary[c]['بدهی'].toLocaleString()}</span></div>`;
       }
       document.getElementById('debtSummaryList').innerHTML = dHtml || 'داده‌ای ثبت نشده است.';
 
@@ -531,14 +546,14 @@
 
       let eHtml = '';
       for (let c in expSummary) {
-        eHtml += `<div><strong>${c}:</strong> درآمد: <span style="color:#10b981;">${expSummary[c]['درآمد'].toLocaleString()}</span> | خرج: <span style="color:#ef4444;">${expSummary[c]['خرج'].toLocaleString()}</span></div>`;
+        eHtml += `<div style="margin-bottom: 4px;"><strong>${c}:</strong> درآمد: <span style="color:#059669; font-weight:700;">${expSummary[c]['درآمد'].toLocaleString()}</span> | خرج: <span style="color:#dc2626; font-weight:700;">${expSummary[c]['خرج'].toLocaleString()}</span></div>`;
       }
       document.getElementById('expenseSummaryList').innerHTML = eHtml || 'داده‌ای ثبت نشده است.';
 
       let statsHtml = `<div><strong>صاحب حساب:</strong> ${ownerName} (${ownerEmail})</div>`;
-      statsHtml += `<hr style="margin: 6px 0; border: none; border-top: 1px dashed #cbd5e1;">`;
+      statsHtml += `<hr style="margin: 8px 0; border: none; border-top: 1.5px dashed #cbd5e1;">`;
       statsHtml += dHtml ? `<div><strong>طلب و بدهی:</strong><br>${dHtml}</div>` : '';
-      statsHtml += eHtml ? `<div style="margin-top:4px;"><strong>خرج و درآمد:</strong><br>${eHtml}</div>` : '';
+      statsHtml += eHtml ? `<div style="margin-top:6px;"><strong>خرج و درآمد:</strong><br>${eHtml}</div>` : '';
       document.getElementById('fullStatsBody').innerHTML = statsHtml;
     }
 
@@ -552,17 +567,17 @@
 
       let html = '';
       if (filtered.length === 0) {
-        html = '<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">هیچ سابقه‌ای ثبت نشده است.</div>';
+        html = '<div style="text-align:center; padding:20px; color:#64748b; font-size:14px; font-weight:700;">هیچ سابقه‌ای ثبت نشده است.</div>';
       } else {
         filtered.forEach(item => {
-          let color = (item.type === 'طلب' || item.type === 'درآمد') ? '#10b981' : '#ef4444';
+          let color = (item.type === 'طلب' || item.type === 'درآمد') ? '#059669' : '#dc2626';
           html += `
             <div class="record-card-item" onclick='showRecordDetail(${JSON.stringify(item)})'>
               <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                <span style="font-weight:800; font-size:13.5px;">${item.nameOrTitle} (${item.type})</span>
-                <span style="font-size:11.5px; color:#64748b;" class="eng-num">${item.date || ''}</span>
+                <span style="font-weight:700; font-size:14px;">${item.nameOrTitle} (${item.type})</span>
+                <span style="font-size:12px; color:#64748b; font-weight:700;" class="eng-num">${item.date || ''}</span>
               </div>
-              <div class="eng-num" style="font-size:14.5px; font-weight:800; color:${color};">
+              <div class="eng-num" style="font-size:15px; font-weight:700; color:${color};">
                 ${Number(item.amount).toLocaleString()} ${item.currency}
               </div>
             </div>`;
@@ -575,12 +590,12 @@
 
     function showRecordDetail(item) {
       playSound('click');
-      let color = (item.type === 'طلب' || item.type === 'درآمد') ? '#10b981' : '#ef4444';
+      let color = (item.type === 'طلب' || item.type === 'درآمد') ? '#059669' : '#dc2626';
 
       let html = `
         <div><strong>عنوان / طرف حساب:</strong> ${item.nameOrTitle}</div>
         <div><strong>نوع تراکنش:</strong> ${item.type}</div>
-        <div><strong>مبلغ:</strong> <span style="color:${color}; font-weight:800;">${Number(item.amount).toLocaleString()} ${item.currency}</span></div>
+        <div><strong>مبلغ:</strong> <span style="color:${color}; font-weight:700;">${Number(item.amount).toLocaleString()} ${item.currency}</span></div>
         <div><strong>تاریخ:</strong> ${item.date || '-'}</div>
         <div><strong>شماره تماس:</strong> ${item.phone || '-'}</div>
         <div><strong>توضیحات:</strong> ${item.description || 'بدون توضیح'}</div>
