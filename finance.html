@@ -191,7 +191,7 @@
 </head>
 <body>
 
-  <div id="cloudLoading">☁️ همگام‌سازی ابری اختصاصی...</div>
+  <div id="cloudLoading">☁️ همگام‌سازی ابری...</div>
 
   <div class="app-viewport">
     <header class="app-header">
@@ -366,7 +366,7 @@
       <div style="text-align: center; margin-bottom: 12px;">
         <div style="font-size: 38px; margin-bottom: 4px;">☁️</div>
         <h2 style="font-size: 16.5px; font-weight: 800; color: #0f172a;">دفترچه حساب و کتاب شخصی</h2>
-        <p style="font-size: 11px; color: #64748b; margin-top: 3px;">ورود اختصاصی با ایمیل شخصی برای هر کاربر</p>
+        <p style="font-size: 11px; color: #64748b; margin-top: 3px;">ورود اختصاصی با ایمیل برای هر کاربر</p>
       </div>
 
       <div>
@@ -375,7 +375,7 @@
           <input type="text" id="inputOwnerName" class="form-input">
         </div>
 
-        <div class="form-label">ایمیل شما (شناسه کاملاً اختصاصی):</div>
+        <div class="form-label">ایمیل شما (شناسه دائمی حساب):</div>
         <div class="animated-input-wrap">
           <input type="email" id="inputOwnerEmail" class="form-input eng-num">
         </div>
@@ -387,11 +387,13 @@
 
   <script>
     const MASTER_KEY = "$2a$10$sVq5jxgbMpmgh7scSY46U.IA9NcyArvUoe/whRmXUK2wv31eRt7LK";
+    // شناسه ثابت پایگاه داده مرکزی ابری (مقاوم در برابر پاک شدن حافظه مرورگر)
+    const MASTER_BIN_ID = "679f223fe41b4d34e4f7a31a"; 
 
     let ownerEmail = localStorage.getItem('cloud_owner_email');
     let ownerName = localStorage.getItem('cloud_owner_name');
     let allRecords = [];
-    let currentBinId = null;
+    let centralDatabase = { users: {} };
     let selectedTypeVal = '';
     let selectedCurrVal = 'IQD';
     let currentStatsFilter = '30days';
@@ -468,7 +470,7 @@
       document.getElementById('ownerNameDisplay').innerText = `حسابِ ${ownerName}`;
       document.getElementById('ownerEmailDisplay').innerText = ownerEmail;
       document.getElementById('statsOwnerTag').innerText = `حسابِ ${ownerName}`;
-      findOrCreateUserBin();
+      loadUserDataFromCentralCloud();
     }
 
     function switchTab(index, panelId) {
@@ -492,69 +494,63 @@
       document.getElementById('cloudLoading').style.display = show ? 'block' : 'none';
     }
 
-    // جستجوی خودکار پوشه اختصاصی آن ایمیل در سرور بدون هیچ تداخلی با دیگران
-    async function findOrCreateUserBin() {
+    // بارگذاری اطلاعات کاربر از پایگاه داده مرکزی ابری بر اساس ایمیل
+    async function loadUserDataFromCentralCloud() {
       showLoader(true);
-      let targetBinName = `acc_${ownerEmail.replace(/[^a-zA-Z0-9]/g, '_')}`;
-
       try {
-        let listRes = await fetch('https://api.jsonbin.io/v3/b', {
+        let res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
           method: 'GET',
           headers: { 'X-Master-Key': MASTER_KEY }
         });
-        let listData = await listRes.json();
+        let data = await res.json();
+        centralDatabase = (data && data.record && data.record.users) ? data.record : { users: {} };
         
-        let found = listData.find(b => b.name === targetBinName);
-        if (found) {
-          currentBinId = found.id;
+        let cleanEmailKey = ownerEmail.replace(/[#$\[\]\/\\.]/g, '_');
+        if (centralDatabase.users && centralDatabase.users[cleanEmailKey]) {
+          allRecords = centralDatabase.users[cleanEmailKey].records || [];
         } else {
-          let createRes = await fetch('https://api.jsonbin.io/v3/b', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Master-Key': MASTER_KEY,
-              'X-Bin-Private': 'true',
-              'X-Bin-Name': targetBinName
-            },
-            body: JSON.stringify({ records: [] })
-          });
-          let createData = await createRes.json();
-          if (createData && createData.metadata && createData.metadata.id) {
-            currentBinId = createData.metadata.id;
-          }
-        }
-
-        if (currentBinId) {
-          let dataRes = await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}/latest`, {
-            method: 'GET',
-            headers: { 'X-Master-Key': MASTER_KEY }
-          });
-          let dataJson = await dataRes.json();
-          allRecords = (dataJson && dataJson.record && dataJson.record.records) ? dataJson.record.records : [];
+          allRecords = [];
         }
       } catch (e) {
+        centralDatabase = { users: {} };
         allRecords = [];
       }
-
       showLoader(false);
       renderSummaries();
     }
 
-    // ذخیره آنی در فضای اختصاصی همان ایمیل
+    // ذخیره آنی در پایگاه داده مرکزی ابری گره‌خورده به ایمیل کاربر
     async function saveCloudData() {
       showLoader(true);
-      if (!currentBinId) {
-        showLoader(false);
-        return;
-      }
       try {
-        await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}`, {
+        let res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
+          method: 'GET',
+          headers: { 'X-Master-Key': MASTER_KEY }
+        });
+        let data = await res.json();
+        if (data && data.record) {
+          centralDatabase = data.record;
+        }
+      } catch (e) {}
+
+      if (!centralDatabase.users) centralDatabase.users = {};
+      let cleanEmailKey = ownerEmail.replace(/[#$\[\]\/\\.]/g, '_');
+      
+      centralDatabase.users[cleanEmailKey] = {
+        name: ownerName,
+        email: ownerEmail,
+        records: allRecords,
+        updatedAt: new Date().toISOString()
+      };
+
+      try {
+        await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'X-Master-Key': MASTER_KEY
           },
-          body: JSON.stringify({ records: allRecords })
+          body: JSON.stringify(centralDatabase)
         });
       } catch (e) {}
       showLoader(false);
