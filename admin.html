@@ -70,32 +70,35 @@
     .stat-row { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 3px; }
     .stat-badge { text-align: center; padding: 6px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; margin-top: 4px; }
 
-    .btn { padding: 8px 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.82rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px; width: 100%; margin-bottom: 4px; }
+    .btn { padding: 10px 12px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.88rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-danger { background: var(--danger); }
     .btn-secondary { background: #475569; }
     .btn-warning { background: var(--warning); color: #fff; }
     .btn-info { background: var(--info); }
     .btn-whatsapp { background: #25d366; }
-    .btn-sm { padding: 5px 8px; font-size: 0.75rem; width: auto; }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; width: auto; margin-bottom: 0; }
     
+    /* کل سطح کارت کاملاً قابل کلیک شد */
     .account-item-card {
       background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px;
       margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 6px;
+      cursor: pointer; user-select: none; transition: all 0.2s;
     }
+    .account-item-card:active { background: #f1f5f9; transform: scale(0.99); }
     .account-item-header { display: flex; justify-content: space-between; align-items: center; }
-    .account-name-title { font-size: 1.1rem; font-weight: 900; color: var(--primary); cursor: pointer; }
+    .account-name-title { font-size: 1.1rem; font-weight: 900; color: var(--primary); }
 
     .tx-item-card {
       background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px;
       margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 6px;
-      cursor: pointer; transition: all 0.2s;
+      cursor: pointer; user-select: none; transition: all 0.2s;
     }
-    .tx-item-card:hover { border-color: var(--accent); background: #f8fafc; }
+    .tx-item-card:active { border-color: var(--accent); background: #f8fafc; transform: scale(0.99); }
 
     .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .back-home { display: block; text-align: center; margin-top: 12px; color: #475569; text-decoration: none; font-size: 12px; font-weight: 700; }
-    .currency-badge { display: inline-block; padding: 2px 6px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin: 2px; font-weight: bold; }
+    .currency-badge { display: inline-block; padding: 3px 8px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.78rem; margin: 2px; font-weight: bold; }
     
     .view-section { display: none; }
     .view-section.active { display: block; }
@@ -103,13 +106,13 @@
 </head>
 <body>
 
-  <!-- لودینگ چرخشی -->
+  <!-- صفحه لودینگ چرخشی -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
     <div id="loadingText">در حال پردازش و ثبت در سیستم...</div>
   </div>
 
-  <!-- لاگین -->
+  <!-- صفحه لاگین -->
   <div id="authOverlay">
     <div class="auth-card">
       <div class="auth-title">🔐 ورود به پنل مدیریت</div>
@@ -126,17 +129,31 @@
     </div>
   </div>
 
-  <!-- پنل اصلی -->
+  <!-- پنل اصلی مدیریت -->
   <div class="container" id="adminContainer">
     
-    <!-- بخش اول: آمار کلی و منوی دسترسی سریع جدید -->
+    <!-- صفحه اول: منوی اصلی منسجم و خلوت -->
     <div id="viewDashboard" class="view-section active">
       <div class="card flex-row" style="justify-content: space-between;">
-        <h3>📊 آمار کلی صرافی</h3>
+        <h3>🏛️ پنل مدیریت صرافی کریمی</h3>
         <div class="flex-row">
           <button class="btn btn-secondary btn-sm" onclick="loadData()">🔄</button>
           <button class="btn btn-danger btn-sm" onclick="handleLogout()">خروج</button>
         </div>
+      </div>
+
+      <div class="card" style="padding: 16px; text-align: center;">
+        <h3 style="margin-bottom: 12px; font-size: 1.1rem;">انتخاب بخش مدیریت:</h3>
+        <button class="btn btn-info" onclick="switchView('viewGlobalStatsPage')" style="padding: 14px; font-size: 1rem;">📊 دیدن آمارها و گزارشات کلی</button>
+        <button class="btn" onclick="switchView('viewAccounts')" style="padding: 14px; font-size: 1rem; margin-top: 6px;">👥 ورود به لیست حساب‌ها و مشتریان</button>
+      </div>
+    </div>
+
+    <!-- صفحه اختصاصی آمار کلی و دسترسی به گزارشات -->
+    <div id="viewGlobalStatsPage" class="view-section">
+      <div class="card flex-row" style="justify-content: space-between;">
+        <h3>📊 آمار و گزارشات کلی سیستم</h3>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت به منو</button>
       </div>
 
       <div class="card">
@@ -144,27 +161,26 @@
         <div class="stats-grid" id="globalStatsGrid"></div>
       </div>
 
-      <!-- منوهای جدید دسترسی سریع -->
       <div class="card">
-        <h3>🚀 منوی گزارش‌گیری پیشرفته</h3>
+        <h3>🚀 منوی گزارشات تفکیکی</h3>
         <div class="flex-row" style="gap: 6px; flex-direction: column;">
           <button class="btn btn-info" onclick="openTransfersReport()">📜 آمار و لیست حواله‌ها</button>
-          <button class="btn btn-danger" onclick="openDebtorsReport()">🔴 لیست بدهکاران</button>
-          <button class="btn btn-warning" onclick="openCreditorsReport()">🟢 لیست بستانکاران</button>
-          <button class="btn" onclick="switchView('viewAccounts')" style="margin-top: 4px;">👥 ورود به لیست حساب‌ها و مشتریان</button>
+          <button class="btn btn-danger" onclick="openDebtorsReport()">🔴 لیست حساب‌های بدهکار</button>
+          <button class="btn btn-warning" onclick="openCreditorsReport()">🟢 لیست حساب‌های بستانکار</button>
         </div>
       </div>
     </div>
 
-    <!-- بخش جدید: آمار و لیست حواله‌ها -->
+    <!-- صفحه آمار و لیست حواله‌ها (با آمار بالای صفحه و شماره‌گذاری) -->
     <div id="viewTransfersReport" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>📜 گزارش پیشرفته حواله‌ها</h3>
-        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت</button>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewGlobalStatsPage')">← بازگشت</button>
       </div>
+      
       <div class="card">
         <div class="form-group">
-          <label>فیلتر زمانی:</label>
+          <label>فیلتر زمانی حواله‌ها:</label>
           <select id="transferFilterPeriod" onchange="renderTransfersReport()">
             <option value="all">مجموع کل (همه حواله‌ها)</option>
             <option value="today">روزانه (امروز)</option>
@@ -172,33 +188,45 @@
             <option value="month">ماهانه (۳۰ روز گذشته)</option>
           </select>
         </div>
-        <div id="transfersReportContainer" style="margin-top: 10px;"></div>
+
+        <!-- آمار بالای صفحه حواله‌ها -->
+        <div id="transferSummaryHeader" class="stat-card" style="background:#ecfdf5; border-color:var(--accent); margin-bottom:10px;"></div>
+
+        <div id="transfersReportContainer"></div>
       </div>
     </div>
 
-    <!-- بخش جدید: لیست بدهکاران -->
+    <!-- صفحه لیست بدهکاران (با آمار بالای صفحه بر اساس ارز) -->
     <div id="viewDebtorsReport" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🔴 لیست حساب‌های بدهکار</h3>
-        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت</button>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewGlobalStatsPage')">← بازگشت</button>
       </div>
-      <div class="card" id="debtorsContainer"></div>
+      <div class="card">
+        <!-- آمار بالای صفحه بدهکاران -->
+        <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:var(--danger); margin-bottom:10px;"></div>
+        <div id="debtorsContainer"></div>
+      </div>
     </div>
 
-    <!-- بخش جدید: لیست بستانکاران -->
+    <!-- صفحه لیست بستانکاران (با آمار بالای صفحه بر اساس ارز) -->
     <div id="viewCreditorsReport" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🟢 لیست حساب‌های بستانکار (طلبکار)</h3>
-        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت</button>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewGlobalStatsPage')">← بازگشت</button>
       </div>
-      <div class="card" id="creditorsContainer"></div>
+      <div class="card">
+        <!-- آمار بالای صفحه بستانکاران -->
+        <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:var(--accent); margin-bottom:10px;"></div>
+        <div id="creditorsContainer"></div>
+      </div>
     </div>
 
-    <!-- بخش دوم: لیست حساب‌ها -->
+    <!-- صفحه لیست حساب‌ها -->
     <div id="viewAccounts" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>👥 لیست حساب‌ها</h3>
-        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت به آمار</button>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت به منو</button>
       </div>
 
       <div class="card">
@@ -213,7 +241,7 @@
       </div>
     </div>
 
-    <!-- بخش سوم: جزئیات حساب و تراکنش‌ها -->
+    <!-- صفحه جزئیات حساب و تراکنش‌ها -->
     <div id="viewAccountDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3 id="detailAccountTitle">جزئیات حساب</h3>
@@ -234,7 +262,7 @@
       </div>
     </div>
 
-    <!-- بخش چهارم: جزئیات تراکنش تکی -->
+    <!-- صفحه جزئیات تراکنش تکی -->
     <div id="viewTransactionDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🔍 جزئیات کامل تراکنش</h3>
@@ -518,7 +546,7 @@
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
     }
 
-    // منطق گزارش‌گیری‌های جدید (حواله‌ها، بدهکاران، بستانکاران)
+    // گزارش پیشرفته حواله‌ها با آمار بالای صفحه بر اساس ارز
     function openTransfersReport() {
       switchView('viewTransfersReport');
       renderTransfersReport();
@@ -527,7 +555,9 @@
     function renderTransfersReport() {
       const period = document.getElementById("transferFilterPeriod").value;
       const container = document.getElementById("transfersReportContainer");
+      const headerContainer = document.getElementById("transferSummaryHeader");
       container.innerHTML = "";
+      headerContainer.innerHTML = "";
 
       let now = new Date();
       let filteredTxs = allTransactions.filter(tx => {
@@ -549,12 +579,30 @@
         return false;
       });
 
+      // محاسبه آمار بالای صفحه حواله‌ها به تفکیک ارز
+      let currencyTotals = {};
+      filteredTxs.forEach(tx => {
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+        if (!currencyTotals[curr]) currencyTotals[curr] = 0;
+        currencyTotals[curr] += amt;
+      });
+
+      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل حواله‌ها:</b></span><b>${filteredTxs.length} عدد</b></div>`;
+      for (let curr in currencyTotals) {
+        summaryHtml += `<div class="stat-row"><span>مجموع حواله (${curr}):</span><b style="color:var(--accent);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+      }
+      headerContainer.innerHTML = summaryHtml;
+
       if (filteredTxs.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حواله‌ای در این بازه یافت نشد</div>`;
         return;
       }
 
-      filteredTxs.reverse().forEach(tx => {
+      // شماره‌گذاری ترتیبی از پایین به بالا (#1, #2, ...)
+      let totalCount = filteredTxs.length;
+      filteredTxs.reverse().forEach((tx, idx) => {
+        let txNum = totalCount - idx;
         let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
         let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
@@ -566,24 +614,32 @@
         container.innerHTML += `
           <div class="tx-item-card" onclick="selectAccount('${accId}', '${accName}')">
             <div class="stat-row">
-              <span><b>مشتری: ${accName}</b></span>
-              <span>تاریخ: ${date}</span>
+              <span style="font-weight:900; color:var(--info);">حواله #${txNum} - مشتری: ${accName}</span>
+              <span style="font-size:0.78rem; color:#64748b;">${date}</span>
             </div>
             <div class="stat-row">
-              <span>مبلغ: <b>${amt} ${curr}</b></span>
+              <span>مبلغ حواله:</span>
+              <b style="color:var(--primary); font-size:1rem;">${amt} ${curr}</b>
             </div>
-            <div style="font-size:0.8rem; color:#475569; margin-top:4px;">رسید انتقال: ${desc}</div>
+            <div style="font-size:0.82rem; color:#475569; margin-top:4px; background:#f1f5f9; padding:6px; border-radius:6px;">
+              <b>رسید انتقال:</b> ${desc}
+            </div>
           </div>
         `;
       });
     }
 
+    // گزارش بدهکاران با آمار بالای صفحه بر اساس ارز
     function openDebtorsReport() {
       switchView('viewDebtorsReport');
       const container = document.getElementById("debtorsContainer");
+      const headerContainer = document.getElementById("debtorsSummaryHeader");
       container.innerHTML = "";
+      headerContainer.innerHTML = "";
 
       let debtors = [];
+      let currencyTotals = {};
+
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
@@ -604,12 +660,20 @@
           let val = accCurrencies[curr];
           if(val > 0) { // یعنی بدهکار است
             debtors.push({ name: accName, id: accId, amount: val, currency: curr });
+            if (!currencyTotals[curr]) currencyTotals[curr] = 0;
+            currencyTotals[curr] += val;
           }
         }
       });
 
+      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بدهکاران:</b></span><b>${debtors.length} مورد</b></div>`;
+      for (let curr in currencyTotals) {
+        summaryHtml += `<div class="stat-row"><span>مجموع طلب ما (${curr}):</span><b style="color:var(--danger);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+      }
+      headerContainer.innerHTML = summaryHtml;
+
       if(debtors.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b;">هیچ حساب بدهکاری وجود ندارد</div>`;
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب بدهکاری وجود ندارد</div>`;
         return;
       }
 
@@ -617,20 +681,25 @@
         container.innerHTML += `
           <div class="tx-item-card" onclick="selectAccount('${d.id}', '${d.name}')">
             <div class="stat-row">
-              <span style="font-weight:bold; font-size:1rem; color:var(--primary);">${d.name}</span>
-              <span style="color:var(--danger); font-weight:bold;">${d.amount.toLocaleString()} ${d.currency}</span>
+              <span style="font-weight:bold; font-size:1.05rem; color:var(--primary);">${d.name}</span>
+              <span style="color:var(--danger); font-weight:bold; font-size:1rem;">${d.amount.toLocaleString()} ${d.currency}</span>
             </div>
           </div>
         `;
       });
     }
 
+    // گزارش بستانکاران با آمار بالای صفحه بر اساس ارز
     function openCreditorsReport() {
       switchView('viewCreditorsReport');
       const container = document.getElementById("creditorsContainer");
+      const headerContainer = document.getElementById("creditorsSummaryHeader");
       container.innerHTML = "";
+      headerContainer.innerHTML = "";
 
       let creditors = [];
+      let currencyTotals = {};
+
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
@@ -649,14 +718,23 @@
 
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
-          if(val < 0) { // یعنی بستانکار/طلبکار است
-            creditors.push({ name: accName, id: accId, amount: Math.abs(val), currency: curr });
+          if(val < 0) { // یعنی بستانکار است
+            let absVal = Math.abs(val);
+            creditors.push({ name: accName, id: accId, amount: absVal, currency: curr });
+            if (!currencyTotals[curr]) currencyTotals[curr] = 0;
+            currencyTotals[curr] += absVal;
           }
         }
       });
 
+      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بستانکاران:</b></span><b>${creditors.length} مورد</b></div>`;
+      for (let curr in currencyTotals) {
+        summaryHtml += `<div class="stat-row"><span>مجموع بدهی ما (${curr}):</span><b style="color:var(--accent);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+      }
+      headerContainer.innerHTML = summaryHtml;
+
       if(creditors.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b;">هیچ حساب بستانکاری وجود ندارد</div>`;
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب بستانکاری وجود ندارد</div>`;
         return;
       }
 
@@ -664,8 +742,8 @@
         container.innerHTML += `
           <div class="tx-item-card" onclick="selectAccount('${c.id}', '${c.name}')">
             <div class="stat-row">
-              <span style="font-weight:bold; font-size:1rem; color:var(--primary);">${c.name}</span>
-              <span style="color:var(--accent); font-weight:bold;">${c.amount.toLocaleString()} ${c.currency}</span>
+              <span style="font-weight:bold; font-size:1.05rem; color:var(--primary);">${c.name}</span>
+              <span style="color:var(--accent); font-weight:bold; font-size:1rem;">${c.amount.toLocaleString()} ${c.currency}</span>
             </div>
           </div>
         `;
@@ -708,13 +786,14 @@
 
         let cleanPhone = accPhone.replace(/\D/g, '');
 
+        // کل کادر به طور کامل قابلیت کلیک لمسی دارد
         container.innerHTML += `
-          <div class="account-item-card">
+          <div class="account-item-card" onclick="selectAccount('${accId}', '${accName}')">
             <div class="account-item-header">
-              <span class="account-name-title" onclick="selectAccount('${accId}', '${accName}')">${accName}</span>
-              <button class="btn btn-whatsapp btn-sm" onclick="openDirectWhatsApp('${cleanPhone}')">💬 واتساپ</button>
+              <span class="account-name-title">${accName}</span>
+              <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); openDirectWhatsApp('${cleanPhone}')">💬 واتساپ</button>
             </div>
-            <div onclick="selectAccount('${accId}', '${accName}')" style="cursor:pointer; font-size:0.85rem;">
+            <div style="font-size:0.85rem; margin-top:4px;">
               ${badgesHtml || 'تسویه حساب کامل'}
             </div>
           </div>
@@ -976,7 +1055,6 @@
 
       let msg = "";
       if(opType === "حواله") {
-        // متن اختصاصی حواله دقیقا مطابق خواسته شما
         msg = `رسید انتقال
 ------------------------
 ${desc}
