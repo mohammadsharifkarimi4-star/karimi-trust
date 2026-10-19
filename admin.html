@@ -31,14 +31,13 @@
     }
     .auth-title { font-size: 16px; font-weight: 900; text-align: center; color: var(--primary); }
 
-    /* لودینگ چرخشی و قفل صفحه برای جلوگیری از دوبار کلیک */
     #loadingOverlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-      display: none; justify-content: center; align-items: center; z-index: 4000; flex-direction: column; gap: 10px; color: white; font-weight: bold;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center; z-index: 4000; flex-direction: column; gap: 12px; color: white; font-weight: bold;
     }
     .spinner {
-      width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent);
+      width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent);
       border-radius: 50%; animation: spin 0.8s linear infinite;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -63,22 +62,31 @@
     .stat-badge { text-align: center; padding: 6px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; margin-top: 4px; }
 
     .btn { padding: 8px 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.82rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px; width: 100%; margin-bottom: 4px; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-danger { background: var(--danger); }
     .btn-secondary { background: #475569; }
     .btn-warning { background: var(--warning); color: #fff; }
     .btn-info { background: var(--info); }
+    .btn-whatsapp { background: #25d366; }
     .btn-sm { padding: 5px 8px; font-size: 0.75rem; width: auto; }
     
-    /* دکمه‌های انتخابی (گزینه‌ای/تیکی) */
-    .radio-group { display: flex; gap: 6px; flex-wrap: wrap; }
-    .radio-btn { flex: 1; padding: 8px; text-align: center; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: bold; background: #f8fafc; color: #475569; }
-    .radio-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+    /* استایل کارت‌های لیست حساب‌ها با کادرهای برجسته و مرتب */
+    .account-item-card {
+      background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px;
+      margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 6px;
+    }
+    .account-item-header { display: flex; justify-content: space-between; align-items: center; }
+    .account-name-title { font-size: 1.1rem; font-weight: 900; color: var(--primary); cursor: pointer; }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 0.82rem; }
-    th, td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: right; }
-    th { background: #f1f5f9; color: #475569; font-weight: 800; }
-    
-    .flex-row { display: flex; gap: 6px; align-items: center; }
+    /* استایل کارت‌های مجزا و برجسته برای تراکنش‌ها */
+    .tx-item-card {
+      background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px;
+      margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 6px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .tx-item-card:hover { border-color: var(--accent); background: #f8fafc; }
+
+    .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .back-home { display: block; text-align: center; margin-top: 12px; color: #475569; text-decoration: none; font-size: 12px; font-weight: 700; }
     .currency-badge { display: inline-block; padding: 2px 6px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin: 2px; font-weight: bold; }
     
@@ -88,13 +96,13 @@
 </head>
 <body>
 
-  <!-- لودینگ چرخان -->
+  <!-- صفحه لودینگ چرخشی تمام‌صفحه -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
-    <div id="loadingText">در حال ثبت و پردازش اطلاعات...</div>
+    <div id="loadingText">در حال پردازش و ثبت در سیستم...</div>
   </div>
 
-  <!-- لاگین -->
+  <!-- صفحه لاگین -->
   <div id="authOverlay">
     <div class="auth-card">
       <div class="auth-title">🔐 ورود به پنل مدیریت</div>
@@ -111,10 +119,10 @@
     </div>
   </div>
 
-  <!-- پنل اصلی -->
+  <!-- پنل اصلی مدیریت -->
   <div class="container" id="adminContainer">
     
-    <!-- ۱. صفحه اصلی آمار (خلاصه + دکمه دیدن بیشتر) -->
+    <!-- بخش اول: آمار کلی و داشبورد -->
     <div id="viewDashboard" class="view-section active">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>📊 آمار کلی صرافی</h3>
@@ -125,16 +133,21 @@
       </div>
 
       <div class="card">
-        <h3>خلاصه وضعیت مالی سیستم</h3>
+        <h3>وضعیت مانده حساب‌ها (ارزها)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
-        <button class="btn btn-info" style="margin-top: 10px;" onclick="switchView('viewAccounts')">مشاهده لیست کامل حساب‌ها و جزئیات بیشتر ↓</button>
+        <button class="btn btn-info btn-sm" style="margin-top: 8px;" onclick="toggleFullStats()">مشاهده جزئیات کامل آمار</button>
+        <div id="fullStatsContainer" style="display:none; margin-top:8px; border-top:1px dashed var(--border); padding-top:8px;"></div>
+      </div>
+
+      <div class="card" style="text-align: center;">
+        <button class="btn" onclick="switchView('viewAccounts')" style="font-size: 1rem; padding: 12px;">👥 ورود به لیست حساب‌ها و مشتریان</button>
       </div>
     </div>
 
-    <!-- ۲. صفحه لیست حساب‌ها -->
+    <!-- بخش دوم: لیست حساب‌ها (کادرهای برجسته و مرتب) -->
     <div id="viewAccounts" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
-        <h3>👥 لیست حساب‌ها و مشتریان</h3>
+        <h3>👥 لیست حساب‌ها</h3>
         <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت به آمار</button>
       </div>
 
@@ -146,22 +159,11 @@
           <input type="text" id="searchAccountInput" placeholder="🔍 جستجوی نام یا تلفن مشتری..." oninput="filterAccounts()">
         </div>
 
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>مشتری</th>
-                <th>بیلان وضعیت</th>
-                <th>واتساپ</th>
-              </tr>
-            </thead>
-            <tbody id="accountsTableBody"></tbody>
-          </table>
-        </div>
+        <div id="accountsListContainer" style="margin-top: 8px;"></div>
       </div>
     </div>
 
-    <!-- ۳. صفحه جزئیات حساب و تراکنش‌ها -->
+    <!-- بخش سوم: جزئیات حساب و تراکنش‌های جدا از هم -->
     <div id="viewAccountDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3 id="detailAccountTitle">جزئیات حساب</h3>
@@ -172,42 +174,36 @@
 
       <div class="card" style="margin-top: 8px;">
         <div class="flex-row" style="gap: 4px; flex-wrap: wrap; margin-bottom: 8px;">
-          <button class="btn btn-sm" onclick="openAddTransactionModal()">➕ ثبت تراکنش</button>
-          <button class="btn btn-warning btn-sm" onclick="openEditAccountModal()">✏️ ویرایش حساب</button>
+          <button class="btn btn-sm" onclick="openAddTransactionModal()">➕ ثبت تراکنش جدید</button>
+          <button class="btn btn-warning btn-sm" onclick="openEditAccountModal()">✏️ ویرایش نام/تلفن</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCurrentAccount()">🗑️ حذف حساب</button>
         </div>
 
-        <h3>📜 تراکنش‌های این حساب (با کلیک روی هر تراکنش برای جزئیات)</h3>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>تاریخ</th>
-                <th>جهت</th>
-                <th>مبلغ</th>
-                <th>ارز</th>
-                <th>شرح</th>
-              </tr>
-            </thead>
-            <tbody id="transactionsTableBody"></tbody>
-          </table>
-        </div>
+        <h3>📜 تراکنش‌های این حساب</h3>
+        <div id="transactionsListContainer" style="margin-top: 8px;"></div>
       </div>
     </div>
 
-    <!-- ۴. صفحه جزئیات تکی تراکنش (ویرایش، حذف، واتساپ) -->
+    <!-- بخش چهارم: جزئیات و مدیریت تراکنش تکی -->
     <div id="viewTransactionDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
-        <h3>📌 جزئیات و مدیریت تراکنش</h3>
-        <button class="btn btn-secondary btn-sm" onclick="backToAccountDetail()">← بازگشت به حساب</button>
+        <h3>🔍 جزئیات کامل تراکنش</h3>
+        <button class="btn btn-secondary btn-sm" onclick="selectAccount(currentAccountId, currentAccountName)">← بازگشت به حساب</button>
       </div>
-
       <div class="card" id="txDetailCard"></div>
+      <div class="card">
+        <div class="flex-row" style="gap: 6px;">
+          <button class="btn btn-warning btn-sm" onclick="openEditTransactionModal()">✏️ ویرایش تراکنش</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSingleTransaction()">🗑️ حذف تراکنش</button>
+          <button class="btn btn-whatsapp btn-sm" onclick="sendTxWhatsAppReport()">💬 ارسال رسید واتساپ</button>
+        </div>
+      </div>
     </div>
 
     <a href="index.html" class="back-home">← بازگشت به منوی اصلی</a>
   </div>
 
-  <!-- مودال حساب -->
+  <!-- مودال ایجاد/ویرایش حساب -->
   <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
       <h3 id="modalAccountTitle">حساب جدید</h3>
@@ -227,37 +223,34 @@
     </div>
   </div>
 
-  <!-- مودال ثبت تراکنش -->
+  <!-- مودال ثبت/ویرایش تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
-      <h3>ثبت تراکنش جدید</h3>
-      
+      <h3 id="txModalTitle">ثبت تراکنش جدید</h3>
+      <input type="hidden" id="editTransId">
       <div class="form-group">
         <label>جهت تراکنش:</label>
-        <div class="radio-group" id="txDirGroup">
-          <div class="radio-btn active" onclick="setRadio('txDirGroup', this, 'بستانکار')">بستانکار (+)</div>
-          <div class="radio-btn" onclick="setRadio('txDirGroup', this, 'بدهکار')">بدهکار (-)</div>
-        </div>
+        <select id="txDirection">
+          <option value="بستانکار">بستانکار (+)</option>
+          <option value="بدهکار">بدهکار (-)</option>
+        </select>
       </div>
-
       <div class="form-group">
         <label>مبلغ:</label>
         <input type="number" id="txAmount" placeholder="مقدار مبلغ...">
       </div>
-
       <div class="form-group">
         <label>ارز:</label>
-        <div class="radio-group" id="txCurrGroup">
-          <div class="radio-btn active" onclick="setRadio('txCurrGroup', this, 'IQD')">IQD</div>
-          <div class="radio-btn" onclick="setRadio('txCurrGroup', this, 'AFN')">AFN</div>
-          <div class="radio-btn" onclick="setRadio('txCurrGroup', this, 'USD')">USD</div>
-          <div class="radio-btn" onclick="setRadio('txCurrGroup', this, 'Tom')">تومان</div>
-        </div>
+        <select id="txCurrency">
+          <option value="AFN">AFN (افغانی)</option>
+          <option value="USD">USD (دلار)</option>
+          <option value="IQD">IQD (دینار)</option>
+          <option value="Tom">تومان</option>
+        </select>
       </div>
-
       <div class="form-group">
         <label>نوع عملیات:</label>
-        <select id="txOpType">
+        <select id="txOpType" onchange="toggleTransferDescField()">
           <option value="امانت">امانت</option>
           <option value="حواله">حواله</option>
           <option value="دریافت">دریافت</option>
@@ -265,15 +258,17 @@
           <option value="تسویه">تسویه</option>
         </select>
       </div>
-
-      <div class="form-group">
-        <label>شرح (کادر بزرگ‌شونده):</label>
-        <textarea id="txDesc" placeholder="توضیحات و شرح کامل تراکنش..."></textarea>
+      <div class="form-group" id="transferDescGroup" style="display:none;">
+        <label style="color:var(--info);">بخش رسید انتقال (حواله):</label>
+        <textarea id="txTransferDesc" placeholder="توضیحات و مشخصات انتقال حواله..."></textarea>
       </div>
-
+      <div class="form-group">
+        <label>شرح عمومی:</label>
+        <textarea id="txDesc" placeholder="توضیحات تراکنش..."></textarea>
+      </div>
       <div class="flex-row" style="justify-content: flex-end;">
         <button class="btn btn-secondary btn-sm" onclick="closeTransactionModal()">انصراف</button>
-        <button class="btn btn-sm" onclick="submitTransaction()">ثبت نهایی</button>
+        <button class="btn btn-sm" onclick="submitTransaction()">ثبت و ذخیره</button>
       </div>
     </div>
   </div>
@@ -286,7 +281,8 @@
     let allAccounts = [];
     let allTransactions = [];
     let currentAccountId = null;
-    let currentTransactionId = null;
+    let currentAccountName = "";
+    let selectedTxId = null;
 
     window.onload = function() {
       if (sessionStorage.getItem("adminAuthSession") === "active") {
@@ -319,20 +315,8 @@
       document.getElementById(viewId).classList.add('active');
     }
 
-    function setRadio(groupId, el, val) {
-      document.querySelectorAll(`#${groupId} .radio-btn`).forEach(b => b.classList.remove('active'));
-      el.classList.add('active');
-      el.setAttribute('data-value', val);
-    }
-
-    function getRadioVal(groupId) {
-      let active = document.querySelector(`#${groupId} .radio-btn.active`);
-      return active ? (active.getAttribute('data-value') || active.innerText.split(' ')[0]) : '';
-    }
-
-    // ارسال داده همراه با لودینگ چرخشی و پیام موفقیت
     async function postData(data) {
-      document.getElementById("loadingOverlay").style.display = "flex";
+      showLoading("در حال ثبت و بروزرسانی در شیت...");
       data.adminEmail = ADMIN_EMAIL;
       data.adminPin = ADMIN_PIN;
       let bodyData = new URLSearchParams();
@@ -345,20 +329,35 @@
           body: bodyData
         });
         let json = await res.json();
-        document.getElementById("loadingOverlay").style.display = "none";
-        alert("با موفقیت ثبت شد");
+        hideLoading();
+        if(json.status === "success") {
+          alert("با موفقیت ثبت شد");
+        }
         return json;
       } catch (e) {
-        document.getElementById("loadingOverlay").style.display = "none";
+        hideLoading();
         alert("با موفقیت ثبت شد");
         return { status: "success" };
       }
     }
 
+    function showLoading(text) {
+      document.getElementById("loadingText").innerText = text || "در حال بارگذاری...";
+      document.getElementById("loadingOverlay").style.display = "flex";
+      document.querySelectorAll("button").forEach(b => b.disabled = true);
+    }
+
+    function hideLoading() {
+      document.getElementById("loadingOverlay").style.display = "none";
+      document.querySelectorAll("button").forEach(b => b.disabled = false);
+    }
+
     async function loadData() {
+      showLoading("در حال خواندن اطلاعات از سرور...");
       try {
         const response = await fetch(SCRIPT_URL + "?action=getData");
         const res = await response.json();
+        hideLoading();
         if (res.accounts) {
           allAccounts = parseRowsToObjects(res.accounts);
           allTransactions = parseRowsToObjects(res.transactions);
@@ -370,6 +369,7 @@
           }
         }
       } catch (e) {
+        hideLoading();
         alert("خطا در بارگذاری اطلاعات");
       }
     }
@@ -401,27 +401,46 @@
       });
 
       let gridHtml = '';
+      let fullHtml = '';
       for (let curr in stats) {
         let net = stats[curr].credit - stats[curr].debit;
         let isDebtor = net > 0;
         let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `⚠️ بدهکار صرافی: ${Math.abs(net).toLocaleString()}` : (net < 0 ? `✅ طلبکار صرافی: ${Math.abs(net).toLocaleString()}` : "تسویه کامل");
+        let label = isDebtor ? `بدهکار: ${Math.abs(net).toLocaleString()}` : (net < 0 ? `طلبکار: ${Math.abs(net).toLocaleString()}` : "تسویه");
 
         gridHtml += `
           <div class="stat-card">
+            <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده: <b>${net.toLocaleString()}</b></span></div>
+            <div class="stat-badge" style="${bgStyle}">${label}</div>
+          </div>
+        `;
+        fullHtml += `
+          <div class="stat-card" style="margin-bottom:6px;">
             <div class="stat-row"><span><b>ارز: ${curr}</b></span></div>
-            <div class="stat-row"><span>مجموع بستانکار:</span><b style="color:#059669;">${stats[curr].credit.toLocaleString()}</b></div>
-            <div class="stat-row"><span>مجموع بدهکار:</span><b style="color:#dc2626;">${stats[curr].debit.toLocaleString()}</b></div>
-            <div class="stat-badge" style="${bgStyle}">مانده: ${Math.abs(net).toLocaleString()} (${label})</div>
+            <div class="stat-row"><span>کل بستانکار مشتریان:</span><b style="color:#059669;">${stats[curr].credit.toLocaleString()}</b></div>
+            <div class="stat-row"><span>کل بدهکار مشتریان:</span><b style="color:#dc2626;">${stats[curr].debit.toLocaleString()}</b></div>
+            <div class="stat-row"><span>مانده خالص صرافی:</span><b>${net.toLocaleString()}</b></div>
           </div>
         `;
       }
-      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center;">بدون اطلاعات مالی</div>';
+      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center;">بدون اطلاعات</div>';
+      document.getElementById("fullStatsContainer").innerHTML = fullHtml;
+    }
+
+    function toggleFullStats() {
+      let el = document.getElementById("fullStatsContainer");
+      el.style.display = el.style.display === "none" ? "block" : "none";
     }
 
     function renderAccountsList(accounts) {
-      const tbody = document.getElementById("accountsTableBody");
-      tbody.innerHTML = "";
+      const container = document.getElementById("accountsListContainer");
+      container.innerHTML = "";
+      
+      if(accounts.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b;">حسابی یافت نشد</div>`;
+        return;
+      }
+
       accounts.forEach(acc => {
         let accId = acc.AccountID || acc.accountid || '';
         let accName = acc.Name || acc.name || 'بدون نام';
@@ -449,19 +468,23 @@
 
         let cleanPhone = accPhone.replace(/\D/g, '');
 
-        tbody.innerHTML += `
-          <tr>
-            <td style="font-weight:bold; color:#0284c7; cursor:pointer;" onclick="selectAccount('${accId}', '${accName}')">
-              <div style="font-size:0.9rem; font-weight:800; color:#0f172a;">${accName}</div>
-              <div style="font-size:0.75rem; color:#64748b;" dir="ltr">${accPhone}</div>
-            </td>
-            <td style="cursor:pointer;" onclick="selectAccount('${accId}', '${accName}')">${badgesHtml || 'تسویه'}</td>
-            <td>
-              <button class="btn btn-info btn-sm" onclick="sendWhatsAppDirect('${cleanPhone}')">💬 واتساپ</button>
-            </td>
-          </tr>
+        container.innerHTML += `
+          <div class="account-item-card">
+            <div class="account-item-header">
+              <span class="account-name-title" onclick="selectAccount('${accId}', '${accName}')">${accName}</span>
+              <button class="btn btn-whatsapp btn-sm" onclick="openDirectWhatsApp('${cleanPhone}')">💬 واتساپ</button>
+            </div>
+            <div onclick="selectAccount('${accId}', '${accName}')" style="cursor:pointer; font-size:0.85rem;">
+              ${badgesHtml || 'تسویه حساب کامل'}
+            </div>
+          </div>
         `;
       });
+    }
+
+    function openDirectWhatsApp(phone) {
+      if(!phone) { alert("شماره تلفن مشتری موجود نیست"); return; }
+      window.open(`https://wa.me/${phone}`, '_blank');
     }
 
     function filterAccounts() {
@@ -472,11 +495,6 @@
         return name.includes(q) || phone.includes(q);
       });
       renderAccountsList(filtered);
-    }
-
-    function sendWhatsAppDirect(phone) {
-      if(!phone) { alert("شماره تلفن معتبر نیست"); return; }
-      window.open(`https://wa.me/${phone}`, '_blank');
     }
 
     function openAccountModal() {
@@ -505,18 +523,28 @@
       let editId = document.getElementById("editAccountId").value;
       let accName = document.getElementById("modalAccountName").value;
       let accPhone = document.getElementById("modalAccountPhone").value;
-      if (!accName) { alert("نام الزامی است"); return; }
+      if (!accName) { alert("نام مشتری الزامی است"); return; }
 
       let action = editId ? "editAccount" : "addAccount";
-      let accountId = editId ? editId : Math.random().toString(36).substring(2, 8);
+      // تولید خودکار اکانت آیدی یکتا و معتبر جهت ثبت قطعی در گوگل‌شیت
+      let accountId = editId ? editId : "ACC-" + Math.floor(100000 + Math.random() * 900000);
 
       closeAccountModal();
       await postData({ action: action, accountId: accountId, accountName: accName, phone: accPhone });
       await loadData();
     }
 
+    async function deleteCurrentAccount() {
+      if (!confirm("آیا از حذف این حساب و تمام تراکنش‌های آن مطمئن هستید؟")) return;
+      await postData({ action: "deleteAccount", accountId: currentAccountId });
+      currentAccountId = null;
+      switchView('viewAccounts');
+      await loadData();
+    }
+
     function selectAccount(accId, accName) {
       currentAccountId = accId;
+      currentAccountName = accName;
       document.getElementById("detailAccountTitle").innerText = `حساب: ${accName}`;
       switchView('viewAccountDetail');
       renderAccountDetailTransactions(accId);
@@ -524,8 +552,8 @@
 
     function renderAccountDetailTransactions(accId) {
       const txs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId)).reverse();
-      const tbody = document.getElementById("transactionsTableBody");
-      tbody.innerHTML = "";
+      const container = document.getElementById("transactionsListContainer");
+      container.innerHTML = "";
       let accCurrencies = {};
 
       allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId)).forEach(tx => {
@@ -538,24 +566,31 @@
       });
 
       if (txs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">تراکنشی نیست</td></tr>`;
+        container.innerHTML = `<div style="text-align:center; color:#64748b;">تراکنشی ثبت نشده است</div>`;
       } else {
         txs.forEach((tx, idx) => {
           let txId = tx.TransID || tx.transid || '';
           let dir = String(tx.Direction || tx.direction || '');
-          let amt = parseFloat(tx.Amount || tx.amount || 0);
-          let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
+          let amt = parseFloat(tx.Amount || tx.amount || 0).toLocaleString();
+          let curr = String(tx.Currency || tx.currency || '').toUpperCase();
+          let opType = tx.OperationType || tx.operationtype || 'امانت';
           let rawDate = String(tx.Date || tx.date || '');
           let cleanDate = rawDate.split('T')[0];
+          let txNumber = txs.length - idx; // شماره ترتیبی تراکنش
 
-          tbody.innerHTML += `
-            <tr style="cursor:pointer;" onclick="openTransactionDetail('${txId}')">
-              <td>${cleanDate}</td>
-              <td><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></td>
-              <td>${amt.toLocaleString()}</td>
-              <td>${curr}</td>
-              <td>${tx.Description || ''}</td>
-            </tr>
+          let dirColor = dir.includes('بستانکار') ? '#059669' : '#dc2626';
+
+          container.innerHTML += `
+            <div class="tx-item-card" onclick="selectTransaction('${txId}')">
+              <div class="stat-row">
+                <span><b>تراکنش شماره #${txNumber}</b> (${cleanDate})</span>
+                <span style="color:${dirColor}; font-weight:bold;">${dir}</span>
+              </div>
+              <div class="stat-row">
+                <span>نوع: <b>${opType}</b></span>
+                <span>مبلغ: <b>${amt} ${curr}</b></span>
+              </div>
+            </div>
           `;
         });
       }
@@ -569,68 +604,72 @@
 
         statsHtml += `
           <div class="stat-card">
-            <div class="stat-row"><span><b>ارز: ${curr}</b></span></div>
-            <div class="stat-row"><span>بستانکار:</span><b>${accCurrencies[curr].credit.toLocaleString()}</b></div>
-            <div class="stat-row"><span>بدهکار:</span><b>${accCurrencies[curr].debit.toLocaleString()}</b></div>
-            <div class="stat-badge" style="${bgStyle}">مانده: ${Math.abs(net).toLocaleString()} (${label})</div>
+            <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده: <b>${net.toLocaleString()}</b></span></div>
+            <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
       }
       document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center;">بدون بیلان</div>';
     }
 
-    function openTransactionDetail(txId) {
-      currentTransactionId = txId;
+    function selectTransaction(txId) {
+      selectedTxId = txId;
       let tx = allTransactions.find(t => String(t.TransID || t.transid) === String(txId));
-      let acc = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
-      if (!tx || !acc) return;
+      if(!tx) return;
 
-      let allAccTxs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(currentAccountId)).reverse();
-      let txIndex = allAccTxs.findIndex(t => String(t.TransID || t.transid) === String(txId)) + 1;
+      let dir = tx.Direction || tx.direction || '';
+      let amt = parseFloat(tx.Amount || tx.amount || 0).toLocaleString();
+      let curr = tx.Currency || tx.currency || '';
+      let opType = tx.OperationType || tx.operationtype || '';
+      let desc = tx.Description || tx.description || '';
+      let date = String(tx.Date || tx.date || '').split('T')[0];
 
-      let name = acc.Name || acc.name || 'مشتری';
-      let phone = (acc.Phone || acc.phone || '').replace(/\D/g, '');
-      let amount = parseFloat(tx.Amount || tx.amount || 0).toLocaleString();
-      let currency = String(tx.Currency || tx.currency || '').toUpperCase();
-      let opType = String(tx.OperationType || tx.operationtype || '');
-      let desc = String(tx.Description || tx.description || '');
-
-      let msg = `سلام آقای ${name} عزیز، تراکنش زیر به حساب شما اضافه شد:\nشماره تراکنش: ${txIndex}\nنوع تراکنش: ${opType}\nمبلغ: ${amount} ${currency}\n`;
-      if(desc) msg += `توضیحات: ${desc}\n`;
-      msg += `\nداشتن اسناد برای گرفتن پول الزامی است.`;
-
-      let transferHtml = '';
-      if(opType.includes("حواله")) {
-        let transferMsg = `رسید انتقال:\n${desc || 'بدون توضیح حواله'}`;
-        let transferUrl = `https://wa.me/${phone}?text=${encodeURIComponent(transferMsg)}`;
-        transferHtml = `<a class="btn btn-info" href="${transferUrl}" target="_blank">📄 ارسال رسید انتقال در واتساپ</a>`;
-      }
-
-      let waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      let transferSection = opType === "حواله" ? `<div style="background:#f1f5f9; padding:8px; border-radius:8px; margin-top:6px;"><b>رسید انتقال (حواله):</b> ${desc}</div>` : `<div style="margin-top:6px;"><b>شرح:</b> ${desc}</div>`;
 
       document.getElementById("txDetailCard").innerHTML = `
-        <div class="stat-row"><span>شماره تراکنش (ترتیب):</span><b>${txIndex}</b></div>
-        <div class="stat-row"><span>تاریخ:</span><b>${(tx.Date || '').split('T')[0]}</b></div>
-        <div class="stat-row"><span>جهت:</span><b>${tx.Direction || ''}</b></div>
-        <div class="stat-row"><span>مبلغ:</span><b>${amount} ${currency}</b></div>
+        <h3>جزئیات کامل تراکنش</h3>
+        <div class="stat-row"><span>تاریخ:</span><b>${date}</b></div>
+        <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
+        <div class="stat-row"><span>مبلغ:</span><b>${amt} ${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
-        <div class="stat-row"><span>شرح:</span><b>${desc || '-'}</b></div>
-        <hr style="margin: 10px 0; border:0; border-top:1px solid var(--border);">
-        <a class="btn btn-info" href="${waUrl}" target="_blank">💬 ارسال گزارش متنی در واتساپ</a>
-        ${transferHtml}
-        <button class="btn btn-danger" style="margin-top:6px;" onclick="deleteTransaction('${txId}')">🗑️ حذف این تراکنش</button>
+        ${transferSection}
+        <div style="margin-top:10px; font-size:0.75rem; color:#64748b; text-align:center;">⚠️ داشتن اسناد برای گرفتن پول الزامی هست</div>
       `;
-
       switchView('viewTransactionDetail');
     }
 
-    function backToAccountDetail() {
-      switchView('viewAccountDetail');
+    function toggleTransferDescField() {
+      let opType = document.getElementById("txOpType").value;
+      let group = document.getElementById("transferDescGroup");
+      group.style.display = opType === "حواله" ? "block" : "none";
     }
 
     function openAddTransactionModal() {
+      document.getElementById("editTransId").value = "";
+      document.getElementById("txModalTitle").innerText = "ثبت تراکنش جدید";
       document.getElementById("txAmount").value = "";
       document.getElementById("txDesc").value = "";
+      document.getElementById("txTransferDesc").value = "";
+      document.getElementById("txOpType").value = "امانت";
+      toggleTransferDescField();
+      document.getElementById("transactionModal").style.display = "flex";
+    }
+
+    function openEditTransactionModal() {
+      let tx = allTransactions.find(t => String(t.TransID || t.transid) === String(selectedTxId));
+      if (!tx) return;
+      document.getElementById("editTransId").value = selectedTxId;
+      document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
+      document.getElementById("txDirection").value = tx.Direction || tx.direction || "بستانکار";
+      document.getElementById("txAmount").value = tx.Amount || tx.amount || "";
+      document.getElementById("txCurrency").value = tx.Currency || tx.currency || "AFN";
+      document.getElementById("txOpType").value = tx.OperationType || tx.operationtype || "امانت";
+      toggleTransferDescField();
+      if(tx.OperationType === "حواله") {
+        document.getElementById("txTransferDesc").value = tx.Description || tx.description || "";
+      } else {
+        document.getElementById("txDesc").value = tx.Description || tx.description || "";
+      }
       document.getElementById("transactionModal").style.display = "flex";
     }
 
@@ -641,28 +680,73 @@
     async function submitTransaction() {
       let amt = document.getElementById("txAmount").value;
       if (!amt) { alert("مبلغ را وارد کنید"); return; }
+      let opType = document.getElementById("txOpType").value;
+      let desc = opType === "حواله" ? document.getElementById("txTransferDesc").value : document.getElementById("txDesc").value;
+      let editTransId = document.getElementById("editTransId").value;
 
       closeTransactionModal();
+      
       await postData({
         action: "addTransaction",
+        transId: editTransId || undefined,
         accountId: currentAccountId,
-        direction: getRadioVal('txDirGroup'),
+        direction: document.getElementById("txDirection").value,
         amount: amt,
-        currency: getRadioVal('txCurrGroup'),
-        operationType: document.getElementById("txOpType").value,
-        description: document.getElementById("txDesc").value
+        currency: document.getElementById("txCurrency").value,
+        operationType: opType,
+        description: desc
       });
 
       await loadData();
-      selectAccount(currentAccountId, document.getElementById("detailAccountTitle").innerText.replace("حساب: ", ""));
+      selectAccount(currentAccountId, currentAccountName);
     }
 
-    async function deleteTransaction(txId) {
-      if (!confirm("آیا از حذف این تراکنش اطمینان دارید؟")) return;
-      await postData({ action: "deleteTransaction", transId: txId });
+    async function deleteSingleTransaction() {
+      if (!confirm("آیا از حذف این تراکنش مطمئن هستید؟")) return;
+      await postData({ action: "deleteTransaction", transId: selectedTxId });
       await loadData();
-      selectAccount(currentAccountId, document.getElementById("detailAccountTitle").innerText.replace("حساب: ", ""));
-      switchView('viewAccountDetail');
+      selectAccount(currentAccountId, currentAccountName);
+    }
+
+    function sendTxWhatsAppReport() {
+      let acc = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
+      if (!acc) return;
+      let phone = (acc.Phone || acc.phone || '').replace(/\D/g, '');
+      let tx = allTransactions.find(t => String(t.TransID || t.transid) === String(selectedTxId));
+      if(!tx) return;
+
+      let allAccTxs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(currentAccountId)).reverse();
+      let txIndex = allAccTxs.findIndex(t => String(t.TransID || t.transid) === String(selectedTxId)) + 1;
+      let siteLink = window.location.href.split('?')[0];
+
+      let opType = tx.OperationType || tx.operationtype || '';
+      let desc = tx.Description || tx.description || '';
+
+      let msg = "";
+      if(opType === "حواله") {
+        msg = `سلام علیکم آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما اضافه شد.
+نوع تراکنش: ${opType}
+مبلغ: ${parseFloat(tx.Amount || tx.amount || 0).toLocaleString()} ${tx.Currency || tx.currency}
+
+رسید انتقال:
+${desc}
+
+برای جزئیات بیشتر به این لینک مراجعه کنید:
+${siteLink}
+
+⚠️ داشتن اسناد برای گرفتن پول الزامی هست`;
+      } else {
+        msg = `سلام علیکم آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما اضافه شد.
+نوع تراکنش: ${opType}
+مبلغ: ${parseFloat(tx.Amount || tx.amount || 0).toLocaleString()} ${tx.Currency || tx.currency}
+
+برای جزئیات بیشتر به این لینک مراجعه کنید:
+${siteLink}
+
+⚠️ داشتن اسناد برای گرفتن پول الزامی هست`;
+      }
+
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
   </script>
 </body>
