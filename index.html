@@ -55,6 +55,7 @@
     .welcome-box {
       display: flex;
       flex-direction: column;
+      cursor: pointer; /* برای قابلیت کلیک مخفی */
     }
 
     .welcome-title {
@@ -312,45 +313,32 @@
       line-height: 1.4;
     }
 
-    .quick-actions-banner {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      border-radius: 20px;
-      padding: 16px;
-      color: #ffffff;
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .quick-title {
-      font-size: 13px;
-      font-weight: 800;
-      color: #38bdf8;
+    /* کادر فریبنده (Honeypot) در پایین صفحه */
+    .decoy-footer-box {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 10px 14px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
     }
-
-    .quick-btns-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+    .decoy-label {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      font-weight: 700;
     }
-
-    .quick-btn {
-      background: #2563eb;
-      color: white;
-      padding: 10px 4px;
-      border-radius: 12px;
-      text-decoration: none;
+    .decoy-input {
+      width: 90px;
+      padding: 4px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
       font-size: 11px;
-      font-weight: 800;
       text-align: center;
-      transition: background 0.2s;
+      outline: none;
     }
-
-    .quick-btn:hover { background: #1d4ed8; }
 
     .eng-num {
       font-family: Tahoma, sans-serif;
@@ -364,7 +352,8 @@
   <div class="app-viewport">
     
     <div class="top-header">
-      <div class="welcome-box">
+      <!-- با 3 بار کلیک روی این قسمت، بخش رمز عبور ادمین فعال می‌شود -->
+      <div class="welcome-box" onclick="handleSecretClick()">
         <span class="welcome-title">خوش آمدید 👋</span>
         <span class="welcome-subtitle">سامانه حساب‌کتاب من</span>
       </div>
@@ -425,7 +414,6 @@
         </div>
       </a>
 
-      <!-- دکمه بخش پخش مخاطبین -->
       <a href="contacts.html" class="menu-card-large">
         <div class="icon-wrapper icon-contacts">📇</div>
         <div style="flex: 1; overflow: hidden;">
@@ -455,21 +443,16 @@
       </div>
     </div>
 
-    <div class="quick-actions-banner">
-      <div class="quick-title">
-        <span>⚡ دسترسی سریع به بخش‌ها</span>
-      </div>
-      <div class="quick-btns-grid">
-        <a href="finance.html" class="quick-btn">حساب شخصی</a>
-        <a href="contacts.html" class="quick-btn">پخش مخاطبین</a>
-        <a href="exchange.html" class="quick-btn">امانت‌داری کریمی</a>
-        <a href="calc.html" class="quick-btn">ماشین‌حساب</a>
-      </div>
+    <!-- کادر فریبنده (بدون هیچ خاصیت و کاملاً نمایشی برای افراد متفرقه) -->
+    <div class="decoy-footer-box">
+      <span class="decoy-label">نسخه پشتیبان سیستم:</span>
+      <input type="password" class="decoy-input" placeholder="کد تأیید..." onchange="alert('کد امنیتی منقضی شده است!')">
     </div>
 
   </div>
 
   <script>
+    // تابع تقویم و ساعت‌ها
     function updateLiveCalendarAndClocks() {
       const now = new Date();
       const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
@@ -520,6 +503,22 @@
 
     updateLiveCalendarAndClocks();
     setInterval(updateLiveCalendarAndClocks, 1000);
+
+    // قابلیت امنیتی مخفی: با ۳ بار کلیک روی عنوان خوش‌آمدید، صفحه پنل ادمین باز می‌شود
+    let clickCount = 0;
+    function handleSecretClick() {
+      clickCount++;
+      if (clickCount >= 3) {
+        clickCount = 0;
+        let pin = prompt("لطفاً رمز عبور ادمین را وارد کنید:");
+        if (pin === "1234") { // رمز ادمین شما
+          window.location.href = "admin-secret-karimi-99.html"; // نام فایل پنل مدیریت شما در گیت‌هاب
+        } else if (pin !== null) {
+          alert("رمز عبور اشتباه است!");
+        }
+      }
+      setTimeout(() => { clickCount = 0; }, 3000); // بازنشانی شمارشگر بعد از ۳ ثانیه
+    }
   </script>
 
 </body>
