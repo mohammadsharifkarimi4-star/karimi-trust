@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>پنل مدیریت پیشرفته سامانه کریمی</title>
+  <title>پنل مدیریت سامانه کریمی</title>
   <style>
     :root {
       --primary: #0f172a;
@@ -18,194 +18,193 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; direction: rtl; }
-    body { background-color: var(--bg); color: var(--text); padding: 12px; min-height: 100vh; }
+    body { background-color: var(--bg); color: var(--text); padding: 8px; font-size: 14px; }
 
-    /* لایه لاگین ادمین */
     #authOverlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(8px);
       display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 16px;
     }
     .auth-card {
-      background: #fff; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
+      background: #fff; width: 100%; max-width: 360px; padding: 20px; border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 12px;
     }
-    .auth-title { font-size: 18px; font-weight: 900; text-align: center; color: var(--primary); }
+    .auth-title { font-size: 16px; font-weight: 900; text-align: center; color: var(--primary); }
 
-    .container { max-width: 1000px; width: 100%; display: none; margin: auto; }
-    .card { background: var(--card); border-radius: 16px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border); margin-bottom: 16px; }
+    .container { max-width: 600px; width: 100%; display: none; margin: auto; }
+    .card { background: var(--card); border-radius: 14px; padding: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid var(--border); margin-bottom: 12px; }
     
-    h3 { margin-top: 0; color: var(--primary); font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: #475569; }
+    h3 { font-size: 1rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; color: #475569; }
     
-    input, select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.95rem; outline: none; background: #f8fafc; }
+    input, select { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 0.9rem; background: #f8fafc; outline: none; }
     input:focus, select:focus { border-color: var(--accent); background: #fff; }
 
-    /* کارت‌های آمار شیک برای موبایل و دسکتاپ */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    .stats-grid { display: flex; flex-direction: column; gap: 8px; }
     .stat-card {
-      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-      border: 1.5px solid var(--border); border-radius: 16px; padding: 14px;
-      display: flex; flex-direction: column; justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
-    .stat-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 8px; }
-    .stat-title { font-weight: 800; font-size: 1.05rem; color: #1e1b4b; }
-    .stat-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
-    .stat-badge { text-align: center; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; margin-top: 6px; }
+    .stat-row { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 3px; }
+    .stat-badge { text-align: center; padding: 6px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; margin-top: 4px; }
 
-    .btn { padding: 10px 14px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.88rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+    .btn { padding: 10px 14px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px; width: 100%; margin-bottom: 6px; }
     .btn-danger { background: var(--danger); }
     .btn-secondary { background: #475569; }
     .btn-warning { background: var(--warning); color: #fff; }
     .btn-info { background: var(--info); }
-    .btn-sm { padding: 6px 10px; font-size: 0.78rem; border-radius: 8px; }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; width: auto; }
     
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.88rem; }
-    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: right; }
-    th { background: #f1f5f9; color: #475569; font-weight: 800; white-space: nowrap; }
+    table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 0.82rem; }
+    th, td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: right; }
+    th { background: #f1f5f9; color: #475569; font-weight: 800; }
     
-    .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .back-home { display: block; text-align: center; margin-top: 16px; color: #475569; text-decoration: none; font-size: 13px; font-weight: 700; }
-    .currency-badge { display: inline-block; padding: 3px 8px; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; margin: 2px; font-weight: bold; }
+    .flex-row { display: flex; gap: 6px; align-items: center; }
+    .back-home { display: block; text-align: center; margin-top: 12px; color: #475569; text-decoration: none; font-size: 12px; font-weight: 700; }
+    .currency-badge { display: inline-block; padding: 2px 6px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin: 2px; font-weight: bold; }
     
-    @media (max-width: 600px) {
-      body { padding: 8px; }
-      .card { padding: 12px; border-radius: 14px; }
-      .btn { width: 100%; margin-bottom: 4px; }
-      .flex-row { flex-direction: column; align-items: stretch; }
-      .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      th, td { padding: 8px 4px; font-size: 0.8rem; }
-    }
+    .view-section { display: none; }
+    .view-section.active { display: block; }
   </style>
 </head>
 <body>
 
-  <!-- صفحه لاگین ادمین (فیلد ایمیل کاملاً خالی) -->
+  <!-- صفحه لاگین -->
   <div id="authOverlay">
     <div class="auth-card">
-      <div class="auth-title">🔐 ورود به پنل مدیریت سامانه کریمی</div>
+      <div class="auth-title">🔐 ورود به پنل مدیریت</div>
       <div class="form-group">
         <label>ایمیل مدیریت:</label>
-        <input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل خود را وارد کنید">
+        <input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل...">
       </div>
       <div class="form-group">
         <label>کد عبور (PIN):</label>
-        <input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور">
+        <input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور...">
       </div>
-      <button class="btn" style="width:100%; padding: 12px;" onclick="handleLogin()">ورود به پنل</button>
+      <button class="btn" onclick="handleLogin()">ورود به پنل</button>
       <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
     </div>
   </div>
 
-  <!-- پنل اصلی مدیریت -->
+  <!-- پنل اصلی (مرحله به مرحله) -->
   <div class="container" id="adminContainer">
     
-    <div class="card flex-row" style="justify-content: space-between;">
-      <h3>🛡️ مدیریت پیشرفته امانت‌داری کریمی</h3>
-      <div class="flex-row">
-        <button class="btn btn-secondary btn-sm" onclick="loadData()">🔄 بروزرسانی</button>
-        <button class="btn btn-danger btn-sm" onclick="handleLogout()">🚪 خروج</button>
+    <!-- بخش اول: داشبورد آمار کلی -->
+    <div id="viewDashboard" class="view-section active">
+      <div class="card flex-row" style="justify-content: space-between;">
+        <h3>📊 آمار کلی صرافی</h3>
+        <div class="flex-row">
+          <button class="btn btn-secondary btn-sm" onclick="loadData()">🔄</button>
+          <button class="btn btn-danger btn-sm" onclick="handleLogout()">خروج</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>وضعیت مالی سیستم (ارزها)</h3>
+        <div class="stats-grid" id="globalStatsGrid"></div>
+      </div>
+
+      <div class="card" style="text-align: center;">
+        <button class="btn" onclick="switchView('viewAccounts')" style="font-size: 1rem; padding: 12px;">👥 ورود به لیست حساب‌ها و مشتریان</button>
       </div>
     </div>
 
-    <!-- آمار کلی سیستم -->
-    <div class="card">
-      <h3>📊 وضعیت کلی مالی صرافی (به تفکیک ارزها)</h3>
-      <div class="stats-grid" id="globalStatsGrid"></div>
+    <!-- بخش دوم: لیست حساب‌ها با قابلیت جستجو -->
+    <div id="viewAccounts" class="view-section">
+      <div class="card flex-row" style="justify-content: space-between;">
+        <h3>👥 لیست حساب‌ها</h3>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت به آمار</button>
+      </div>
+
+      <div class="card">
+        <div class="flex-row" style="margin-bottom: 8px;">
+          <button class="btn btn-sm" onclick="openAccountModal()">+ ایجاد حساب</button>
+        </div>
+        <div class="form-group">
+          <input type="text" id="searchAccountInput" placeholder="🔍 جستجوی نام یا تلفن..." oninput="filterAccounts()">
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>مشتری</th>
+                <th>تلفن</th>
+                <th>بیلان</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="accountsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <!-- لیست حساب‌ها -->
-    <div class="card" id="accountsSection">
-      <div class="flex-row" style="justify-content: space-between; margin-bottom: 12px;">
-        <h3>👥 لیست مشتریان و حساب‌ها</h3>
-        <button class="btn" onclick="openAccountModal()">+ ایجاد حساب جدید</button>
-      </div>
-      
-      <div class="form-group">
-        <input type="text" id="searchAccountInput" placeholder="🔍 جستجوی نام مشتری یا شماره تلفن..." oninput="filterAccounts()">
-      </div>
-
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>نام مشتری</th>
-              <th>تلفن</th>
-              <th>بیلان وضعیت حساب</th>
-              <th>عملیات</th>
-            </tr>
-          </thead>
-          <tbody id="accountsTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- جزئیات حساب انتخاب شده -->
-    <div class="card" id="accountDetailSection" style="display: none;">
-      <div class="flex-row" style="justify-content: space-between;">
+    <!-- بخش سوم: جزئیات حساب خاص و تراکنش‌ها -->
+    <div id="viewAccountDetail" class="view-section">
+      <div class="card flex-row" style="justify-content: space-between;">
         <h3 id="detailAccountTitle">جزئیات حساب</h3>
-        <button class="btn btn-secondary btn-sm" onclick="backToAccountsList()">← بازگشت به لیست</button>
-      </div>
-      
-      <div class="stats-grid" id="accountStatsGrid" style="margin-top: 10px;"></div>
-
-      <div class="flex-row" style="margin: 14px 0;">
-        <button class="btn" onclick="openAddTransactionModal()">➕ ثبت تراکنش جدید</button>
-        <button class="btn btn-warning" onclick="openEditAccountModal()">✏️ ویرایش نام/تلفن مشتری</button>
-        <button class="btn btn-info" onclick="sendWhatsAppReport()">💬 ارسال بیلان در واتساپ</button>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewAccounts')">← لیست حساب‌ها</button>
       </div>
 
-      <h3>📜 تراکنش‌های این حساب</h3>
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>شناسه</th>
-              <th>تاریخ</th>
-              <th>جهت</th>
-              <th>مبلغ</th>
-              <th>ارز</th>
-              <th>نوع عملیات</th>
-              <th>شرح</th>
-              <th>حذف</th>
-            </tr>
-          </thead>
-          <tbody id="transactionsTableBody"></tbody>
-        </table>
+      <div class="stats-grid" id="accountStatsGrid"></div>
+
+      <div class="card" style="margin-top: 8px;">
+        <div class="flex-row" style="gap: 4px; flex-wrap: wrap;">
+          <button class="btn btn-sm" onclick="openAddTransactionModal()">➕ ثبت تراکنش</button>
+          <button class="btn btn-warning btn-sm" onclick="openEditAccountModal()">✏️ ویرایش</button>
+          <button class="btn btn-info btn-sm" onclick="sendWhatsAppReport()">💬 واتساپ</button>
+        </div>
+
+        <h3>📜 تراکنش‌های این حساب</h3>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>تاریخ</th>
+                <th>جهت</th>
+                <th>مبلغ</th>
+                <th>ارز</th>
+                <th>شرح</th>
+                <th>حذف</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTableBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <a href="index.html" class="back-home">← بازگشت به منوی اصلی</a>
   </div>
 
-  <!-- مودال ایجاد/ویرایش حساب -->
+  <!-- مودال حساب -->
   <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
-    <div class="card" style="width: 100%; max-width: 400px; margin: 0;">
-      <h3 id="modalAccountTitle">ایجاد حساب جدید</h3>
+    <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
+      <h3 id="modalAccountTitle">حساب جدید</h3>
       <input type="hidden" id="editAccountId">
       <div class="form-group">
-        <label>نام مشتری (Name):</label>
-        <input type="text" id="modalAccountName" placeholder="نام و نام خانوادگی">
+        <label>نام مشتری:</label>
+        <input type="text" id="modalAccountName" placeholder="نام...">
       </div>
       <div class="form-group">
-        <label>تلفن (Phone):</label>
-        <input type="text" id="modalAccountPhone" dir="ltr" placeholder="07xxxxxxxx">
+        <label>تلفن:</label>
+        <input type="text" id="modalAccountPhone" dir="ltr" placeholder="07...">
       </div>
-      <div class="flex-row" style="justify-content: flex-end; margin-top: 12px;">
-        <button class="btn btn-secondary" onclick="closeAccountModal()">انصراف</button>
-        <button class="btn" onclick="saveAccount()">ذخیره حساب</button>
+      <div class="flex-row" style="justify-content: flex-end;">
+        <button class="btn btn-secondary btn-sm" onclick="closeAccountModal()">انصراف</button>
+        <button class="btn btn-sm" onclick="saveAccount()">ذخیره</button>
       </div>
     </div>
   </div>
 
-  <!-- مودال ثبت تراکنش -->
+  <!-- مودال تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
-    <div class="card" style="width: 100%; max-width: 420px; margin: 0;">
+    <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
       <h3>ثبت تراکنش جدید</h3>
       <div class="form-group">
-        <label>جهت تراکنش:</label>
+        <label>جهت:</label>
         <select id="txDirection">
           <option value="بستانکار">بستانکار (+)</option>
           <option value="بدهکار">بدهکار (-)</option>
@@ -213,10 +212,10 @@
       </div>
       <div class="form-group">
         <label>مبلغ:</label>
-        <input type="number" id="txAmount" placeholder="مقدار مبلغ">
+        <input type="number" id="txAmount" placeholder="مقدار...">
       </div>
       <div class="form-group">
-        <label>واحد پول:</label>
+        <label>ارز:</label>
         <select id="txCurrency">
           <option value="AFN">AFN (افغانی)</option>
           <option value="USD">USD (دلار)</option>
@@ -235,19 +234,18 @@
         </select>
       </div>
       <div class="form-group">
-        <label>شرح و توضیحات:</label>
-        <input type="text" id="txDesc" placeholder="توضیحات تراکنش...">
+        <label>شرح:</label>
+        <input type="text" id="txDesc" placeholder="توضیحات...">
       </div>
-      <div class="flex-row" style="justify-content: flex-end; margin-top: 12px;">
-        <button class="btn btn-secondary" onclick="closeTransactionModal()">انصراف</button>
-        <button class="btn" onclick="submitTransaction()">ثبت تراکنش</button>
+      <div class="flex-row" style="justify-content: flex-end;">
+        <button class="btn btn-secondary btn-sm" onclick="closeTransactionModal()">انصراف</button>
+        <button class="btn btn-sm" onclick="submitTransaction()">ثبت</button>
       </div>
     </div>
   </div>
 
   <script>
-    // لینک جدید گوگل اسکریپت شما
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOtkYxAJcUJQmKkGKnfEetgrvrv-HUZxyqXarUTdk2zCnniUQ9urcVwVJlwUYZlPCy/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXLxV73wRsi4HlfPYm0RTYeeJ_QcMTcGrS1dZYAgnuBkTjiPIuiaK-RGzbHiTU5yud/exec";
     const ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
     const ADMIN_PIN = "77218731";
     
@@ -272,7 +270,7 @@
         document.getElementById("adminContainer").style.display = "block";
         loadData();
       } else {
-        alert("ایمیل یا رمز ادمین اشتباه است!");
+        alert("ایمیل یا رمز اشتباه است!");
       }
     }
 
@@ -281,6 +279,12 @@
       location.reload();
     }
 
+    function switchView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    // اصلاح ساختار ارسال داده به صورت فرم‌انکودد برای ثبت قطعی در شیت
     async function postData(data) {
       data.adminEmail = ADMIN_EMAIL;
       data.adminPin = ADMIN_PIN;
@@ -350,18 +354,18 @@
         let net = stats[curr].credit - stats[curr].debit;
         let isDebtor = net > 0;
         let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `⚠️ شما مجموعاً ${Math.abs(net).toLocaleString()} بدهکارید` : (net < 0 ? `✅ شما مجموعاً ${Math.abs(net).toLocaleString()} طلبکارید` : "بیلان تسویه است");
+        let label = isDebtor ? `⚠️ بدهکارید: ${Math.abs(net).toLocaleString()}` : (net < 0 ? `✅ طلبکارید: ${Math.abs(net).toLocaleString()}` : "تسویه");
 
         gridHtml += `
           <div class="stat-card">
-            <div class="stat-header"><span class="stat-title">ارز: ${curr}</span></div>
-            <div class="stat-row"><span>بستانکار مشتریان:</span><b style="color:#059669;">${stats[curr].credit.toLocaleString()}</b></div>
-            <div class="stat-row"><span>بدهکار مشتریان:</span><b style="color:#dc2626;">${stats[curr].debit.toLocaleString()}</b></div>
+            <div class="stat-row"><span><b>ارز: ${curr}</b></span></div>
+            <div class="stat-row"><span>بستانکار:</span><b style="color:#059669;">${stats[curr].credit.toLocaleString()}</b></div>
+            <div class="stat-row"><span>بدهکار:</span><b style="color:#dc2626;">${stats[curr].debit.toLocaleString()}</b></div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
       }
-      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b;">اطلاعاتی یافت نشد</div>';
+      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center;">بدون اطلاعات</div>';
     }
 
     function renderAccountsList(accounts) {
@@ -388,18 +392,16 @@
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
           let color = val > 0 ? '#dc2626' : (val < 0 ? '#059669' : '#64748b');
-          let label = val > 0 ? `بدهکاریم: ${Math.abs(val).toLocaleString()}` : (val < 0 ? `طلبکاریم: ${Math.abs(val).toLocaleString()}` : `تسویه`);
-          badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}: ${label}</span>`;
+          let label = val > 0 ? `بدهکاریم:${Math.abs(val)}` : (val < 0 ? `طلبکاریم:${Math.abs(val)}` : `تسویه`);
+          badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
         }
 
         tbody.innerHTML += `
           <tr>
-            <td style="font-weight:bold; cursor:pointer; color:#0284c7;" onclick="selectAccount('${accId}', '${accName}')">${accName}</td>
+            <td style="font-weight:bold; color:#0284c7; cursor:pointer;" onclick="selectAccount('${accId}', '${accName}')">${accName}</td>
             <td dir="ltr">${accPhone}</td>
             <td>${badgesHtml || 'تسویه'}</td>
-            <td>
-              <button class="btn btn-sm" onclick="selectAccount('${accId}', '${accName}')">مشاهده</button>
-            </td>
+            <td><button class="btn btn-sm" onclick="selectAccount('${accId}', '${accName}')">مشاهده</button></td>
           </tr>
         `;
       });
@@ -427,7 +429,7 @@
       let acc = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
       if (!acc) return;
       document.getElementById("editAccountId").value = currentAccountId;
-      document.getElementById("modalAccountTitle").innerText = "ویرایش حساب مشتری";
+      document.getElementById("modalAccountTitle").innerText = "ویرایش حساب";
       document.getElementById("modalAccountName").value = acc.Name || acc.name || "";
       document.getElementById("modalAccountPhone").value = acc.Phone || acc.phone || "";
       document.getElementById("accountModal").style.display = "flex";
@@ -441,41 +443,32 @@
       let editId = document.getElementById("editAccountId").value;
       let accName = document.getElementById("modalAccountName").value;
       let accPhone = document.getElementById("modalAccountPhone").value;
-
-      if (!accName) { alert("نام مشتری الزامی است"); return; }
+      if (!accName) { alert("نام الزامی است"); return; }
 
       let action = editId ? "editAccount" : "addAccount";
       let accountId = editId ? editId : Math.random().toString(36).substring(2, 8);
 
       closeAccountModal();
       await postData({ action: action, accountId: accountId, accountName: accName, phone: accPhone });
-      alert("تغییرات با موفقیت ذخیره شد");
-      setTimeout(loadData, 800);
+      alert("ذخیره شد");
+      setTimeout(loadData, 1000);
     }
 
     function selectAccount(accId, accName) {
       currentAccountId = accId;
-      document.getElementById("detailAccountTitle").innerText = `👤 حساب: ${accName}`;
-      document.getElementById("accountsSection").style.display = "none";
-      document.getElementById("accountDetailSection").style.display = "block";
+      document.getElementById("detailAccountTitle").innerText = `حساب: ${accName}`;
+      switchView('viewAccountDetail');
       renderAccountDetailTransactions(accId);
-    }
-
-    function backToAccountsList() {
-      currentAccountId = null;
-      document.getElementById("accountDetailSection").style.display = "none";
-      document.getElementById("accountsSection").style.display = "block";
     }
 
     function renderAccountDetailTransactions(accId) {
       const txs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId));
       const tbody = document.getElementById("transactionsTableBody");
       tbody.innerHTML = "";
-      
       let accCurrencies = {};
 
       if (txs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">تراکنشی ثبت نشده است</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">تراکنشی نیست</td></tr>`;
       } else {
         txs.forEach(tx => {
           let txId = tx.TransID || tx.transid || '';
@@ -489,16 +482,12 @@
 
           tbody.innerHTML += `
             <tr>
-              <td style="font-family:monospace;">${txId}</td>
-              <td>${tx.Date || tx.date || ''}</td>
+              <td>${tx.Date || ''}</td>
               <td><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></td>
               <td>${amt.toLocaleString()}</td>
               <td>${curr}</td>
-              <td>${tx.OperationType || tx.operationtype || ''}</td>
-              <td>${tx.Description || tx.description || ''}</td>
-              <td>
-                <button class="btn btn-danger btn-sm" onclick="deleteTransaction('${txId}')">حذف</button>
-              </td>
+              <td>${tx.Description || ''}</td>
+              <td><button class="btn btn-danger btn-sm" onclick="deleteTransaction('${txId}')">حذف</button></td>
             </tr>
           `;
         });
@@ -509,18 +498,18 @@
         let net = accCurrencies[curr].credit - accCurrencies[curr].debit;
         let isDebtor = net > 0;
         let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `بدهکاریم به مشتری: ${Math.abs(net).toLocaleString()}` : (net < 0 ? `طلبکاریم از مشتری: ${Math.abs(net).toLocaleString()}` : "تسویه کامل");
+        let label = isDebtor ? `بدهکاریم: ${Math.abs(net).toLocaleString()}` : (net < 0 ? `طلبکاریم: ${Math.abs(net).toLocaleString()}` : "تسویه");
 
         statsHtml += `
           <div class="stat-card">
-            <div class="stat-header"><span class="stat-title">ارز: ${curr}</span></div>
-            <div class="stat-row"><span>بستانکار مشتری:</span><b>${accCurrencies[curr].credit.toLocaleString()}</b></div>
-            <div class="stat-row"><span>بدهکار مشتری:</span><b>${accCurrencies[curr].debit.toLocaleString()}</b></div>
+            <div class="stat-row"><span><b>ارز: ${curr}</b></span></div>
+            <div class="stat-row"><span>بستانکار:</span><b>${accCurrencies[curr].credit.toLocaleString()}</b></div>
+            <div class="stat-row"><span>بدهکار:</span><b>${accCurrencies[curr].debit.toLocaleString()}</b></div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
       }
-      document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center; color:#64748b;">بدون بیلان مالی</div>';
+      document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center;">بدون بیلان</div>';
     }
 
     function openAddTransactionModal() {
@@ -535,7 +524,7 @@
 
     async function submitTransaction() {
       let amt = document.getElementById("txAmount").value;
-      if (!amt) { alert("لطفاً مبلغ را وارد کنید"); return; }
+      if (!amt) { alert("مبلغ را وارد کنید"); return; }
 
       closeTransactionModal();
       await postData({
@@ -548,22 +537,22 @@
         description: document.getElementById("txDesc").value
       });
 
-      alert("تراکنش با موفقیت ثبت شد");
-      setTimeout(loadData, 800);
+      alert("تراکنش ثبت شد");
+      setTimeout(loadData, 1000);
     }
 
     async function deleteTransaction(txId) {
-      if (!confirm("آیا از حذف این تراکنش اطمینان دارید؟")) return;
+      if (!confirm("حذف شود؟")) return;
       await postData({ action: "deleteTransaction", transId: txId });
-      alert("تراکنش حذف شد");
-      setTimeout(loadData, 800);
+      alert("حذف شد");
+      setTimeout(loadData, 1000);
     }
 
     function sendWhatsAppReport() {
       let acc = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
       if (!acc) return;
       let phone = (acc.Phone || acc.phone || '').replace(/\D/g, '');
-      let msg = `سلام ${acc.Name || acc.name} عزیز، وضعیت آخرین بیلان حساب شما در امانت‌داری کریمی بروزرسانی گردید.`;
+      let msg = `سلام ${acc.Name || acc.name} عزیز، بیلان حساب شما بروزرسانی شد.`;
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
   </script>
