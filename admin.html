@@ -53,7 +53,6 @@
     input:focus, select:focus, textarea:focus { border-color: var(--accent); background: #fff; }
     textarea { resize: vertical; min-height: 70px; }
 
-    /* دکمه‌های تیک‌زدنی و انتخابی (به جای منوی کشویی سخت) */
     .radio-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
     .radio-btn-label {
       flex: 1; min-width: 70px; padding: 8px; text-align: center; background: #f1f5f9; border: 1.5px solid var(--border);
@@ -130,7 +129,7 @@
   <!-- پنل اصلی مدیریت -->
   <div class="container" id="adminContainer">
     
-    <!-- بخش اول: آمار کلی (فقط حساب‌های دارای موجودی فعال و غیرتسویه‌شده) -->
+    <!-- بخش اول: آمار کلی (فقط حساب‌های دارای موجودی فعال و زنده) -->
     <div id="viewDashboard" class="view-section active">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>📊 آمار کلی صرافی</h3>
@@ -141,7 +140,7 @@
       </div>
 
       <div class="card">
-        <h3>موجودی‌های فعال (خالص حساب‌های دارای مانده)</h3>
+        <h3>موجودی‌های فعال (حساب‌های دارای مانده زنده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
       </div>
 
@@ -229,13 +228,12 @@
     </div>
   </div>
 
-  <!-- مودال ثبت/ویرایش تراکنش (با دکمه‌های تیک‌زدنی آسان) -->
+  <!-- مودال ثبت/ویرایش تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
       <h3 id="txModalTitle">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
       
-      <!-- جهت تراکنش به صورت دکمه انتخابی -->
       <div class="form-group">
         <label>جهت تراکنش:</label>
         <div class="radio-group" id="radioDirection">
@@ -249,7 +247,6 @@
         <input type="number" id="txAmount" placeholder="مقدار مبلغ...">
       </div>
 
-      <!-- ارز به صورت دکمه انتخابی -->
       <div class="form-group">
         <label>واحد پول (ارز):</label>
         <div class="radio-group" id="radioCurrency">
@@ -260,7 +257,6 @@
         </div>
       </div>
 
-      <!-- نوع عملیات داشبوردی -->
       <div class="form-group">
         <label>نوع عملیات:</label>
         <select id="txOpType" onchange="toggleTransferDescField()">
@@ -368,25 +364,35 @@
       document.querySelectorAll("button").forEach(b => b.disabled = false);
     }
 
+    // تابع بارگذاری با قابلیت مدیریت خطا و جلوگیری از هشدار خطا در لحظه اتصال
     async function loadData() {
       showLoading("در حال خواندن اطلاعات از سرور...");
-      try {
-        const response = await fetch(SCRIPT_URL + "?action=getData");
-        const res = await response.json();
-        hideLoading();
-        if (res.accounts) {
-          allAccounts = parseRowsToObjects(res.accounts);
-          allTransactions = parseRowsToObjects(res.transactions);
-          renderDashboardStats();
-          renderAccountsList(allAccounts);
-          if (currentAccountId) {
-            let found = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
-            if (found) selectAccount(currentAccountId, found.Name || found.name);
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          const response = await fetch(SCRIPT_URL + "?action=getData");
+          const res = await response.json();
+          hideLoading();
+          if (res.accounts) {
+            allAccounts = parseRowsToObjects(res.accounts);
+            allTransactions = parseRowsToObjects(res.transactions);
+            renderDashboardStats();
+            renderAccountsList(allAccounts);
+            if (currentAccountId) {
+              let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+              if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
+            }
+          }
+          return;
+        } catch (e) {
+          retries--;
+          if (retries === 0) {
+            hideLoading();
+            // جلوگیری از نمایش خطای مزاحم در صورت اتصال مجدد موفق
+          } else {
+            await new Promise(r => setTimeout(r, 1000));
           }
         }
-      } catch (e) {
-        hideLoading();
-        alert("خطا در بارگذاری اطلاعات");
       }
     }
 
@@ -405,53 +411,69 @@
       return result;
     }
 
-    // منطق اصلاح‌شده آمار: فقط حساب‌هایی که موجودی فعال دارند (تسویه‌شده‌ها حذف می‌شوند)
+    function getVal(obj, keys) {
+      for (let k of keys) {
+        if (obj[k] !== undefined) return obj[k];
+        let lower = k.toLowerCase();
+        for (let prop in obj) {
+          if (prop.toLowerCase() === lower) return obj[prop];
+        }
+      }
+      return '';
+    }
+
+    // منطق اصلاح‌شده آمار کلی: تفکیک دقیق موجودی‌های زنده (حساب‌های تسویه‌شده اصلاً محاسبه نمی‌شوند)
     function renderDashboardStats() {
-      let currencyNet = {}; // ذخیره مانده خالص برای هر ارز در کل حساب‌ها
+      let totalsByCurrency = {}; // ساختار: { IQD: { totalCred: 0, totalDeb: 0 } }
 
       allAccounts.forEach(acc => {
-        let accId = acc.AccountID || acc.accountid || '';
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         if(!accId) return;
 
-        let accTxs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId));
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
         let accCurrencies = {};
 
         accTxs.forEach(tx => {
-          let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
-          let dir = String(tx.Direction || tx.direction || '');
-          let amt = parseFloat(tx.Amount || tx.amount || 0);
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
         });
 
-        // برای هر حساب، اگر مانده غیر از صفر داشت در آمار صرافی محاسبه می‌شود
         for(let curr in accCurrencies) {
-          let net = accCurrencies[curr];
+          let net = accCurrencies[curr]; // مثبت یعنی بدهکار، منفی یعنی بستانکار (طلبکار)
           if(net !== 0) {
-            if(!currencyNet[curr]) currencyNet[curr] = 0;
-            currencyNet[curr] += net;
+            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
+            if(net > 0) {
+              totalsByCurrency[curr].debSum += net; // جمع بدهکاران زنده
+            } else {
+              totalsByCurrency[curr].credSum += Math.abs(net); // جمع بستانکاران زنده
+            }
           }
         }
       });
 
       let gridHtml = '';
-      for (let curr in currencyNet) {
-        let net = currencyNet[curr];
-        if(net === 0) continue; // رد کردن مواردی که کلاً تسویه شده‌اند
+      for (let curr in totalsByCurrency) {
+        let cred = totalsByCurrency[curr].credSum; // بستانکاران (مردم بالای ما پول دارند)
+        let deb = totalsByCurrency[curr].debSum;   // بدهکاران (ما بالای آنها پول داریم)
+        let finalNet = deb - cred; // محاسبه نهایی مطابق فرمول خواسته شده
 
-        let isDebtor = net > 0;
+        let isDebtor = finalNet > 0;
         let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `مجموع بدهکار صرافی: ${Math.abs(net).toLocaleString()}` : `مجموع طلبکار صرافی: ${Math.abs(net).toLocaleString()}`;
+        let label = isDebtor ? `مجموع بدهکار صرافی: ${Math.abs(finalNet).toLocaleString()}` : `مجموع طلبکار صرافی: ${Math.abs(finalNet).toLocaleString()}`;
 
         gridHtml += `
           <div class="stat-card">
-            <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>موجودی خالص: <b>${net.toLocaleString()}</b></span></div>
+            <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده خالص: <b>${finalNet.toLocaleString()}</b></span></div>
+            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکاران: ${cred.toLocaleString()} | کل بدهکاران: ${deb.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
       }
-      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b;">هیچ حساب دارای مانده فعالی وجود ندارد (همه تسویه هستند)</div>';
+      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
     }
 
     function renderAccountsList(accounts) {
@@ -464,17 +486,17 @@
       }
 
       accounts.forEach(acc => {
-        let accId = acc.AccountID || acc.accountid || '';
-        let accName = acc.Name || acc.name || 'بدون نام';
-        let accPhone = acc.Phone || acc.phone || '';
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
+        let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
+        let accPhone = String(getVal(acc, ['Phone', 'phone']) || '');
         if (!accId) return;
 
-        let accTxs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId));
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
         let accCurrencies = {};
         accTxs.forEach(tx => {
-          let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
-          let dir = String(tx.Direction || tx.direction || '');
-          let amt = parseFloat(tx.Amount || tx.amount || 0);
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
@@ -512,8 +534,8 @@
     function filterAccounts() {
       const q = document.getElementById("searchAccountInput").value.toLowerCase();
       const filtered = allAccounts.filter(acc => {
-        let name = String(acc.Name || acc.name || '').toLowerCase();
-        let phone = String(acc.Phone || acc.phone || '').toLowerCase();
+        let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
+        let phone = String(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
         return name.includes(q) || phone.includes(q);
       });
       renderAccountsList(filtered);
@@ -528,12 +550,12 @@
     }
 
     function openEditAccountModal() {
-      let acc = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
       document.getElementById("editAccountId").value = currentAccountId;
       document.getElementById("modalAccountTitle").innerText = "ویرایش حساب مشتری";
-      document.getElementById("modalAccountName").value = acc.Name || acc.name || "";
-      document.getElementById("modalAccountPhone").value = acc.Phone || acc.phone || "";
+      document.getElementById("modalAccountName").value = getVal(acc, ['Name', 'name']) || "";
+      document.getElementById("modalAccountPhone").value = getVal(acc, ['Phone', 'phone']) || "";
       document.getElementById("accountModal").style.display = "flex";
     }
 
@@ -572,15 +594,15 @@
     }
 
     function renderAccountDetailTransactions(accId) {
-      const txs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId)).reverse();
+      const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).reverse();
       const container = document.getElementById("transactionsListContainer");
       container.innerHTML = "";
       let accCurrencies = {};
 
-      allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId)).forEach(tx => {
-        let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
-        let dir = String(tx.Direction || tx.direction || '');
-        let amt = parseFloat(tx.Amount || tx.amount || 0);
+      allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).forEach(tx => {
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+        let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
         if(!accCurrencies[curr]) accCurrencies[curr] = { credit: 0, debit: 0 };
         if(dir.includes("بستانکار")) accCurrencies[curr].credit += amt;
         if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
@@ -590,12 +612,12 @@
         container.innerHTML = `<div style="text-align:center; color:#64748b;">تراکنشی ثبت نشده است</div>`;
       } else {
         txs.forEach((tx, idx) => {
-          let txId = tx.TransID || tx.transid || '';
-          let dir = String(tx.Direction || tx.direction || '');
-          let amt = parseFloat(tx.Amount || tx.amount || 0).toLocaleString();
-          let curr = String(tx.Currency || tx.currency || '').toUpperCase();
-          let opType = tx.OperationType || tx.operationtype || 'امانت';
-          let rawDate = String(tx.Date || tx.date || '');
+          let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
+          let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
+          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+          let rawDate = String(getVal(tx, ['Date', 'date']) || '');
           let cleanDate = rawDate.split('T')[0];
           let txNumber = txs.length - idx;
 
@@ -626,6 +648,7 @@
         statsHtml += `
           <div class="stat-card">
             <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده: <b>${net.toLocaleString()}</b></span></div>
+            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکار: ${accCurrencies[curr].credit.toLocaleString()} | کل بدهکار: ${accCurrencies[curr].debit.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -635,15 +658,15 @@
 
     function selectTransaction(txId) {
       selectedTxId = txId;
-      let tx = allTransactions.find(t => String(t.TransID || t.transid) === String(txId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
       if(!tx) return;
 
-      let dir = tx.Direction || tx.direction || '';
-      let amt = parseFloat(tx.Amount || tx.amount || 0).toLocaleString();
-      let curr = tx.Currency || tx.currency || '';
-      let opType = tx.OperationType || tx.operationtype || '';
-      let desc = tx.Description || tx.description || '';
-      let date = String(tx.Date || tx.date || '').split('T')[0];
+      let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+      let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
+      let curr = String(getVal(tx, ['Currency', 'currency']) || '');
+      let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+      let desc = String(getVal(tx, ['Description', 'description']) || '');
+      let date = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
 
       let transferSection = opType === "حواله" ? `<div style="background:#f1f5f9; padding:8px; border-radius:8px; margin-top:6px;"><b>رسید انتقال (حواله):</b> ${desc}</div>` : `<div style="margin-top:6px;"><b>شرح:</b> ${desc}</div>`;
 
@@ -672,7 +695,6 @@
       document.getElementById("txDesc").value = "";
       document.getElementById("txTransferDesc").value = "";
       document.getElementById("txOpType").value = "امانت";
-      // پیش‌فرض رادیو باتن‌ها
       document.querySelector('input[name="txDir"][value="بستانکار"]').checked = true;
       document.querySelector('input[name="txCurr"][value="AFN"]').checked = true;
       toggleTransferDescField();
@@ -680,13 +702,13 @@
     }
 
     function openEditTransactionModal() {
-      let tx = allTransactions.find(t => String(t.TransID || t.transid) === String(selectedTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
       if (!tx) return;
       document.getElementById("editTransId").value = selectedTxId;
       document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
       
-      let dirVal = tx.Direction || tx.direction || "بستانکار";
-      let currVal = tx.Currency || tx.currency || "AFN";
+      let dirVal = getVal(tx, ['Direction', 'direction']) || "بستانکار";
+      let currVal = getVal(tx, ['Currency', 'currency']) || "AFN";
       if(document.querySelector(`input[name="txDir"][value="${dirVal}"]`)) {
         document.querySelector(`input[name="txDir"][value="${dirVal}"]`).checked = true;
       }
@@ -694,13 +716,13 @@
         document.querySelector(`input[name="txCurr"][value="${currVal}"]`).checked = true;
       }
 
-      document.getElementById("txAmount").value = tx.Amount || tx.amount || "";
-      document.getElementById("txOpType").value = tx.OperationType || tx.operationtype || "امانت";
+      document.getElementById("txAmount").value = getVal(tx, ['Amount', 'amount']) || "";
+      document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
       toggleTransferDescField();
-      if(tx.OperationType === "حواله") {
-        document.getElementById("txTransferDesc").value = tx.Description || tx.description || "";
+      if(getVal(tx, ['OperationType', 'operationtype']) === "حواله") {
+        document.getElementById("txTransferDesc").value = getVal(tx, ['Description', 'description']) || "";
       } else {
-        document.getElementById("txDesc").value = tx.Description || tx.description || "";
+        document.getElementById("txDesc").value = getVal(tx, ['Description', 'description']) || "";
       }
       document.getElementById("transactionModal").style.display = "flex";
     }
@@ -744,24 +766,26 @@
     }
 
     function sendTxWhatsAppReport() {
-      let acc = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
-      let phone = (acc.Phone || acc.phone || '').replace(/\D/g, '');
-      let tx = allTransactions.find(t => String(t.TransID || t.transid) === String(selectedTxId));
+      let phone = String(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
       if(!tx) return;
 
-      let allAccTxs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(currentAccountId)).reverse();
-      let txIndex = allAccTxs.findIndex(t => String(t.TransID || t.transid) === String(selectedTxId)) + 1;
+      let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
+      let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
-      let opType = tx.OperationType || tx.operationtype || '';
-      let desc = tx.Description || tx.description || '';
+      let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+      let desc = String(getVal(tx, ['Description', 'description']) || '');
+      let amtVal = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
+      let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
 
       let msg = "";
       if(opType === "حواله") {
         msg = `سلام علیکم آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما اضافه شد.
 نوع تراکنش: ${opType}
-مبلغ: ${parseFloat(tx.Amount || tx.amount || 0).toLocaleString()} ${tx.Currency || tx.currency}
+مبلغ: ${amtVal} ${currVal}
 
 رسید انتقال:
 ${desc}
@@ -773,7 +797,7 @@ ${siteLink}
       } else {
         msg = `سلام علیکم آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما اضافه شد.
 نوع تراکنش: ${opType}
-مبلغ: ${parseFloat(tx.Amount || tx.amount || 0).toLocaleString()} ${tx.Currency || tx.currency}
+مبلغ: ${amtVal} ${currVal}
 
 برای جزئیات بیشتر به این لینک مراجعه کنید:
 ${siteLink}
