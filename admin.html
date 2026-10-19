@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پنل مدیریت پیشرفته - کریمی</title>
+  <title>پنل مدیریت سامانه کریمی</title>
   <style>
     :root {
       --primary: #0f172a;
@@ -19,7 +19,7 @@
 
     #authOverlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px);
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px);
       display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 16px;
     }
     .auth-card {
@@ -28,7 +28,7 @@
     }
     .auth-title { font-size: 18px; font-weight: 900; text-align: center; color: var(--primary); }
 
-    .container { max-width: 800px; width: 100%; display: none; margin: auto; }
+    .container { max-width: 850px; width: 100%; display: none; margin: auto; }
     .card { background: var(--card); border-radius: 16px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 16px; }
     
     h3 { margin-top: 0; color: var(--primary); font-size: 1.1rem; }
@@ -38,7 +38,7 @@
     input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 0.95rem; outline: none; background: #f8fafc; }
     input:focus, select:focus { border-color: var(--accent); background: #fff; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
     .stat-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
     .stat-val { font-size: 1.2rem; font-weight: 900; color: var(--accent); margin-top: 4px; }
 
@@ -56,38 +56,38 @@
 </head>
 <body>
 
-  <!-- صفحه احراز هویت ادمین -->
+  <!-- صفحه ورود امن ادمین (پیش‌فرض باز است تا حتماً احراز هویت انجام شود) -->
   <div id="authOverlay">
     <div class="auth-card">
-      <div class="auth-title">ورود به پنل مدیریت</div>
+      <div class="auth-title">ورود به پنل مدیریت کریمی</div>
       <div class="form-group">
-        <label>ایمیل:</label>
-        <input type="email" id="loginEmail" class="input-field" dir="ltr">
+        <label>ایمیل مدیریت:</label>
+        <input type="email" id="loginEmail" class="input-field" dir="ltr" placeholder="ایمیل خود را وارد کنید">
       </div>
       <div class="form-group">
         <label>کد عبور (PIN):</label>
-        <input type="password" id="loginPin" class="input-field" dir="ltr">
+        <input type="password" id="loginPin" class="input-field" dir="ltr" placeholder="رمز عبور">
       </div>
       <button class="btn" style="width:100%" onclick="handleLogin()">ورود به پنل</button>
       <a href="index.html" class="back-home" style="text-align: center;">← بازگشت به صفحه اصلی</a>
     </div>
   </div>
 
-  <!-- پنل اصلی مدیریت پیشرفته -->
+  <!-- پنل اصلی مدیریت -->
   <div class="container" id="adminContainer">
     
     <div class="card flex-row" style="justify-content: space-between;">
       <h3>پنل مدیریت پیشرفته سامانه کریمی</h3>
       <div class="flex-row">
         <button class="btn btn-secondary" onclick="loadData()">بارگذاری مجدد</button>
-        <button class="btn btn-danger" onclick="handleLogout()">خروج</button>
+        <button class="btn btn-danger" onclick="handleLogout()">خروج امن</button>
       </div>
     </div>
 
     <!-- آمار کلی سیستم -->
     <div class="card">
-      <h3>آمار کلی سیستم (بر اساس بستانکار و بدهکار)</h3>
-      <div class="stats-grid" id="statsContainer">
+      <h3>آمار کلی سیستم</h3>
+      <div class="stats-grid">
         <div class="stat-box"><div>مجموع بستانکار</div><div class="stat-val" id="totalCreditor">0</div></div>
         <div class="stat-box"><div>مجموع بدهکار</div><div class="stat-val" id="totalDebtor">0</div></div>
       </div>
@@ -101,21 +101,20 @@
       </div>
       
       <div class="form-group">
-        <input type="text" id="searchAccountInput" placeholder="جستجوی پیشرفته حساب‌ها..." oninput="filterAccounts()">
+        <input type="text" id="searchAccountInput" placeholder="جستجوی حساب‌ها..." oninput="filterAccounts()">
       </div>
 
       <div style="overflow-x:auto;">
         <table>
           <thead>
             <tr>
-              <th>شناسه حساب (AccountID)</th>
-              <th>نام حساب / مشتری</th>
+              <th>AccountID</th>
+              <th>نام (Name)</th>
+              <th>تلفن (Phone)</th>
               <th>عملیات</th>
             </tr>
           </thead>
-          <tbody id="accountsTableBody">
-            <!-- لیست حساب‌ها -->
-          </tbody>
+          <tbody id="accountsTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -141,17 +140,16 @@
         <table>
           <thead>
             <tr>
-              <th>شناسه تراکنش</th>
+              <th>TransID</th>
               <th>جهت</th>
-              <th>مبلغ و ارز</th>
-              <th>نوع</th>
+              <th>مبلغ</th>
+              <th>ارز</th>
+              <th>نوع عملیات</th>
               <th>شرح</th>
-              <th>اکشن‌ها</th>
+              <th>وضعیت</th>
             </tr>
           </thead>
-          <tbody id="transactionsTableBody">
-            <!-- تراکنش‌ها -->
-          </tbody>
+          <tbody id="transactionsTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -159,18 +157,22 @@
     <a href="index.html" class="back-home">← بازگشت به منوی اصلی</a>
   </div>
 
-  <!-- مودال ایجاد/ویرایش حساب -->
+  <!-- مودال حساب -->
   <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:3000;">
     <div class="card" style="width: 100%; max-width: 400px; margin: 0;">
       <h3 id="accModalTitle">ایجاد حساب جدید</h3>
       <input type="hidden" id="editOriginalAccountId">
       <div class="form-group">
-        <label>شناسه حساب (AccountID - خودکار):</label>
+        <label>AccountID:</label>
         <input type="text" id="modalAccountId" dir="ltr" readonly>
       </div>
       <div class="form-group">
-        <label>نام و مشخصات مشتری/حساب:</label>
+        <label>نام مشتری (Name):</label>
         <input type="text" id="modalAccountName">
+      </div>
+      <div class="form-group">
+        <label>تلفن (Phone):</label>
+        <input type="text" id="modalAccountPhone" dir="ltr">
       </div>
       <div class="flex-row" style="justify-content: flex-end;">
         <button class="btn btn-secondary" onclick="closeAccountModal()">انصراف</button>
@@ -179,41 +181,42 @@
     </div>
   </div>
 
-  <!-- مودال افزودن تراکنش -->
+  <!-- مودال تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:3000;">
     <div class="card" style="width: 100%; max-width: 450px; margin: 0;">
       <h3>افزودن تراکنش جدید</h3>
       <div class="form-group">
-        <label>جهت تراکنش:</label>
+        <label>جهت (Direction):</label>
         <select id="txDirection">
-          <option value="بستانکار">بستانکار (دریافت)</option>
-          <option value="بدهکار">بدهکار (پرداخت)</option>
+          <option value="بستانکار">بستانکار</option>
+          <option value="بدهکار">بدهکار</option>
         </select>
       </div>
       <div class="form-group">
-        <label>مبلغ:</label>
+        <label>مبلغ (Amount):</label>
         <input type="number" id="txAmount">
       </div>
       <div class="form-group">
-        <label>واحد پول:</label>
+        <label>واحد پول (Currency):</label>
         <select id="txCurrency">
-          <option value="دینار">دینار</option>
-          <option value="دلار">دلار</option>
-          <option value="افغانی">افغانی</option>
-          <option value="تومان">تومان</option>
+          <option value="IQD">IQD (دینار)</option>
+          <option value="USD">USD (دلار)</option>
+          <option value="AFN">AFN (افغانی)</option>
+          <option value="Tom">تومان</option>
         </select>
       </div>
       <div class="form-group">
-        <label>نوع عملیات:</label>
+        <label>نوع عملیات (OperationType):</label>
         <select id="txOpType">
+          <option value="امانت">امانت</option>
           <option value="حواله">حواله</option>
           <option value="دریافت">دریافت</option>
           <option value="پرداخت">پرداخت</option>
-          <option value="امانت">امانت</option>
+          <option value="تسویه">تسویه</option>
         </select>
       </div>
       <div class="form-group">
-        <label>شرح / توضیحات:</label>
+        <label>شرح و توضیحات (Description):</label>
         <input type="text" id="txDesc">
       </div>
       <div class="flex-row" style="justify-content: flex-end;">
@@ -224,8 +227,7 @@
   </div>
 
   <script>
-    // لینک جدید گوگل اسکریپت
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrFzxMWAr0yNNdbIU1AgN6wfMSSpqhRnuG402A1EGPPOiirKj4CoYB40mUoH8QNNsA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydWRXLbRz0CrVdOBNfO8CBdHa1BeriPisA5ixERNABIz2QyqPYPSuACtoR6QvjPYT1/exec";
     const ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
     const ADMIN_PIN = "77218731";
     
@@ -233,11 +235,17 @@
     let allTransactions = [];
     let currentSelectedAccountId = null;
 
+    // بررسی امنیتی اولیه هنگام لود صفحه
     window.onload = function() {
-      if (localStorage.getItem("isAdminLoggedIn") === "true") {
+      const isLogged = sessionStorage.getItem("adminAuthSession");
+      if (isLogged === "active") {
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
         loadData();
+      } else {
+        // حتماً صفحه ورود نمایش داده شود و پنل مخفی بماند
+        document.getElementById("authOverlay").style.display = "flex";
+        document.getElementById("adminContainer").style.display = "none";
       }
     };
 
@@ -246,24 +254,22 @@
       const pin = document.getElementById("loginPin").value.trim();
 
       if (!email || !pin) {
-        alert("لطفاً ایمیل و رمز عبور را وارد کنید");
+        alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
         return;
       }
 
-      if (pin === ADMIN_PIN && email === ADMIN_EMAIL) {
-        localStorage.setItem("isAdminLoggedIn", "true");
-        localStorage.setItem("adminEmail", email);
+      if (email === ADMIN_EMAIL && pin === ADMIN_PIN) {
+        sessionStorage.setItem("adminAuthSession", "active");
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
         loadData();
       } else {
-        alert("ایمیل یا کد عبور اشتباه است!");
+        alert("ایمیل یا کد عبور (PIN) اشتباه است!");
       }
     }
 
     function handleLogout() {
-      localStorage.removeItem("isAdminLoggedIn");
-      localStorage.removeItem("adminEmail");
+      sessionStorage.removeItem("adminAuthSession");
       location.reload();
     }
 
@@ -277,7 +283,7 @@
           renderDashboard();
           renderAccountsList(allAccounts);
         } else {
-          alert("خطا در دریافت اطلاعات: " + (res.message || "نامشخص"));
+          alert("خطا در دریافت اطلاعات: " + (res.message || ""));
         }
       } catch(e) {
         alert("خطا در ارتباط با سرور گوگل‌شیت");
@@ -288,8 +294,8 @@
       let totalCred = 0;
       let totalDeb = 0;
       allTransactions.forEach(tx => {
-        if(tx.direction === "بستانکار") totalCred += parseFloat(tx.amount || 0);
-        if(tx.direction === "بدهکار") totalDeb += parseFloat(tx.amount || 0);
+        if(tx.Direction === "بستانکار") totalCred += parseFloat(tx.Amount || 0);
+        if(tx.Direction === "بدهکار") totalDeb += parseFloat(tx.Amount || 0);
       });
       document.getElementById("totalCreditor").innerText = totalCred.toLocaleString();
       document.getElementById("totalDebtor").innerText = totalDeb.toLocaleString();
@@ -299,18 +305,18 @@
       const tbody = document.getElementById("accountsTableBody");
       tbody.innerHTML = "";
       if(accounts.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">هیچ حسابی یافت نشد</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">هیچ حسابی یافت نشد</td></tr>`;
         return;
       }
       accounts.forEach(acc => {
         tbody.innerHTML += `
           <tr>
-            <td style="font-family:monospace; font-weight:bold;">${acc.accountId}</td>
-            <td>${acc.accountName}</td>
+            <td style="font-family:monospace; font-weight:bold;">${acc.AccountID || ''}</td>
+            <td>${acc.Name || ''}</td>
+            <td dir="ltr">${acc.Phone || ''}</td>
             <td>
-              <button class="btn" style="padding:4px 8px; font-size:0.8rem;" onclick="selectAccount('${acc.accountId}', '${acc.accountName}')">مشاهده</button>
-              <button class="btn btn-secondary" style="padding:4px 8px; font-size:0.8rem;" onclick="openEditAccountModal('${acc.accountId}', '${acc.accountName}')">ویرایش</button>
-              <button class="btn btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteAccount('${acc.accountId}')">حذف</button>
+              <button class="btn" style="padding:4px 8px; font-size:0.8rem;" onclick="selectAccount('${acc.AccountID}', '${acc.Name}')">مشاهده</button>
+              <button class="btn btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteAccount('${acc.AccountID}')">حذف</button>
             </td>
           </tr>
         `;
@@ -319,23 +325,15 @@
 
     function filterAccounts() {
       const query = document.getElementById("searchAccountInput").value.toLowerCase();
-      const filtered = allAccounts.filter(acc => acc.accountId.toLowerCase().includes(query) || acc.accountName.toLowerCase().includes(query));
+      const filtered = allAccounts.filter(acc => String(acc.AccountID).toLowerCase().includes(query) || String(acc.Name).toLowerCase().includes(query));
       renderAccountsList(filtered);
     }
 
     function openNewAccountModal() {
-      document.getElementById("accModalTitle").innerText = "ایجاد حساب جدید";
       document.getElementById("editOriginalAccountId").value = "";
-      document.getElementById("modalAccountId").value = "ACC-" + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById("modalAccountId").value = Math.random().toString(36).substring(2, 8);
       document.getElementById("modalAccountName").value = "";
-      document.getElementById("accountModal").style.display = "flex";
-    }
-
-    function openEditAccountModal(id, name) {
-      document.getElementById("accModalTitle").innerText = "ویرایش حساب";
-      document.getElementById("editOriginalAccountId").value = id;
-      document.getElementById("modalAccountId").value = id;
-      document.getElementById("modalAccountName").value = name;
+      document.getElementById("modalAccountPhone").value = "";
       document.getElementById("accountModal").style.display = "flex";
     }
 
@@ -344,24 +342,21 @@
     }
 
     async function saveAccount() {
-      const accountId = document.getElementById("modalAccountId").value;
-      const accountName = document.getElementById("modalAccountName").value;
-      const originalId = document.getElementById("editOriginalAccountId").value;
-
       const payload = {
         adminPin: ADMIN_PIN,
         adminEmail: ADMIN_EMAIL,
-        action: originalId ? "editAccount" : "addAccount",
-        originalAccountId: originalId,
-        accountId: accountId,
-        accountName: accountName
+        action: "addAccount",
+        accountId: document.getElementById("modalAccountId").value,
+        accountName: document.getElementById("modalAccountName").value,
+        phone: document.getElementById("modalAccountPhone").value,
+        assignedUserEmail: ADMIN_EMAIL
       };
 
       try {
         const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         const res = await response.json();
         if(res.status === "success") {
-          alert("حساب با موفقیت ذخیره شد");
+          alert("حساب ثبت شد");
           closeAccountModal();
           loadData();
         } else {
@@ -373,7 +368,7 @@
     }
 
     async function deleteAccount(accountId) {
-      if(!confirm("آیا از حذف این حساب اطمینان دارید؟")) return;
+      if(!confirm("آیا از حذف این حساب مطمئن هستید؟")) return;
       try {
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
@@ -406,7 +401,7 @@
     }
 
     function renderAccountTransactions(accountId) {
-      const txs = allTransactions.filter(t => t.accountId === accountId);
+      const txs = allTransactions.filter(t => String(t.AccountID) === String(accountId));
       const tbody = document.getElementById("transactionsTableBody");
       tbody.innerHTML = "";
       
@@ -414,25 +409,21 @@
       let accDeb = 0;
 
       if(txs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">هیچ تراکنشی ثبت نشده است</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">هیچ تراکنشی یافت نشد</td></tr>`;
       } else {
         txs.forEach(tx => {
-          if(tx.direction === "بستانکار") accCred += parseFloat(tx.amount || 0);
-          if(tx.direction === "بدهکار") accDeb += parseFloat(tx.amount || 0);
+          if(tx.Direction === "بستانکار") accCred += parseFloat(tx.Amount || 0);
+          if(tx.Direction === "بدهکار") accDeb += parseFloat(tx.Amount || 0);
 
           tbody.innerHTML += `
             <tr>
-              <td style="font-family:monospace;">${tx.transactionId || '---'}</td>
-              <td><span style="color:${tx.direction==='بستانکار'?'#059669':'#ef4444'}; font-weight:bold;">${tx.direction}</span></td>
-              <td>${Number(tx.amount).toLocaleString()} ${tx.currency}</td>
-              <td>${tx.operationType}</td>
-              <td>${tx.description || ''}</td>
-              <td>
-                <button class="btn btn-secondary" style="padding:4px 6px; font-size:0.75rem;" onclick="editTransaction('${tx.transactionId}')">ویرایش</button>
-                <button class="btn btn-danger" style="padding:4px 6px; font-size:0.75rem;" onclick="deleteTransaction('${tx.transactionId}')">حذف</button>
-                <button class="btn" style="padding:4px 6px; font-size:0.75rem; background:#2563eb;" onclick="sendReceipt('${tx.transactionId}')">رسید</button>
-                <button class="btn" style="padding:4px 6px; font-size:0.75rem; background:#0284c7;" onclick="attachPhoto('${tx.transactionId}')">عکس</button>
-              </td>
+              <td style="font-family:monospace;">${tx.TransID || ''}</td>
+              <td><span style="color:${tx.Direction==='بستانکار'?'#059669':'#ef4444'}; font-weight:bold;">${tx.Direction || ''}</span></td>
+              <td>${Number(tx.Amount || 0).toLocaleString()}</td>
+              <td>${tx.Currency || ''}</td>
+              <td>${tx.OperationType || ''}</td>
+              <td>${tx.Description || ''}</td>
+              <td>${tx.Status || ''}</td>
             </tr>
           `;
         });
@@ -461,40 +452,24 @@
         amount: document.getElementById("txAmount").value,
         currency: document.getElementById("txCurrency").value,
         operationType: document.getElementById("txOpType").value,
-        description: document.getElementById("txDesc").value
+        description: document.getElementById("txDesc").value,
+        assignedUserEmail: ADMIN_EMAIL
       };
 
       try {
         const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         const res = await response.json();
         if(res.status === "success") {
-          alert("تراکنش با شناسه " + res.id + " با موفقیت ثبت شد!");
+          alert("تراکنش با شناسه " + res.id + " ثبت شد!");
           closeTransactionModal();
           loadData();
-          setTimeout(() => selectAccount(currentSelectedAccountId, document.getElementById("detailAccountTitle").innerText), 600);
+          setTimeout(() => selectAccount(currentSelectedAccountId, "حساب"), 500);
         } else {
           alert("خطا: " + res.message);
         }
       } catch(e) {
         alert("خطا در ارتباط با سرور");
       }
-    }
-
-    function deleteTransaction(txId) {
-      if(!confirm("آیا از حذف این تراکنش مطمئن هستید؟")) return;
-      alert("درخواست حذف تراکنش");
-    }
-
-    function editTransaction(txId) {
-      alert("ویرایش تراکنش");
-    }
-
-    function sendReceipt(txId) {
-      alert("ارسال رسید برای تراکنش: " + txId);
-    }
-
-    function attachPhoto(txId) {
-      alert("پیوست عکس برای تراکنش: " + txId);
     }
   </script>
 
