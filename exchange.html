@@ -45,7 +45,7 @@
       justify-content: center;
       align-items: center;
       padding: 0;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     .app-viewport {
@@ -197,7 +197,6 @@
       justify-content: center;
       gap: 8px;
       animation: pulseGlow 2s infinite;
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @keyframes pulseGlow {
@@ -354,10 +353,10 @@
             </div>
           </div>
 
-          <!-- دکمه بزرگ اعلان تراکنش جدید -->
+          <!-- اعلان تراکنش جدید (فقط در صورت وجود تراکنش جدید بعد از آخرین ورود) -->
           <div id="newTxNotificationWrapper" class="hidden">
             <button class="big-notification-btn" onclick="confirmNewTransaction()">
-              ✨ یک تراکنش جدید در حساب شما ثبت شده است!
+              ✨ تراکنش جدیدی در حساب شما ثبت شده است! (تأیید)
             </button>
           </div>
 
@@ -424,9 +423,24 @@
     let activeCurrencyIndex = 0;
     let selectedTxItem = null;
 
+    // صدای شاتر دوربین سامسونگ قدیمی و افکت‌های صوتی
     function playSound(type) {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (type === 'shutter') {
+          // شبیه‌سازی صدای شاتر دوربین قدیمی سامسونگ (کلیک مکانیکی همراه با پالس کوتاه)
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(800, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(ctx.currentTime + 0.08);
+          return;
+        }
+
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.connect(gain); gain.connect(ctx.destination);
@@ -559,6 +573,12 @@
         localStorage.setItem('karimi_phone', currentFoundUser.Phone || currentFoundUser.phone || '');
         localStorage.setItem('karimi_accId', sheetAccId);
         localStorage.setItem('karimi_email', verifiedEmail);
+        
+        // ثبت زمان آخرین ورود کاربر جهت تشخیص تراکنش‌های جدید بعد از این لحظه
+        if (!localStorage.getItem('karimi_last_login')) {
+          localStorage.setItem('karimi_last_login', new Date().getTime());
+        }
+
         processDashboard(sheetAccId);
       } else {
         accErr.innerText = 'کد حساب اشتباه است.';
@@ -571,7 +591,7 @@
       const found = accountsList.find(u => {
         let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
         const sheetPhone = cleanDigits(phoneVal);
-        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || sheetPhone.endsWith(sheetPhone) || sheetPhone.slice(-5) === userDigits.slice(-5));
+        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone) || sheetPhone.slice(-5) === userDigits.slice(-5));
       });
 
       if (found) {
@@ -683,9 +703,21 @@
       document.getElementById('activeCurrencyCard').innerHTML = cardHtml;
     }
 
+    // شرط هوشمند: بررسی وجود تراکنش جدید فقط بعد از آخرین ورود کاربر
     function checkNewTransactionsNotification() {
-      if (customerTransactions.length > 0) {
+      const lastLogin = Number(localStorage.getItem('karimi_last_login')) || 0;
+      // بررسی اینکه آیا تراکنشی وجود دارد که تاریخ ثبت آن جدیدتر از آخرین ورود باشد
+      // (اگر فیلد تاریخ در شیت موجود باشد مقایسه می‌کنیم، یا به عنوان مکانیزم هوشمند بررسی می‌کنیم)
+      let hasNew = customerTransactions.some(tx => {
+        let txTime = new Date(tx.Date || tx.date || Date.now()).getTime();
+        return txTime > lastLogin;
+      });
+
+      // برای اینکه تست هم راحت باشد اگر تعداد تراکنش‌ها زیاد بود و اولین بار بود، بررسی می‌کنیم
+      if (hasNew || (customerTransactions.length > 0 && lastLogin === 0)) {
         document.getElementById('newTxNotificationWrapper').classList.remove('hidden');
+      } else {
+        document.getElementById('newTxNotificationWrapper').classList.add('hidden');
       }
     }
 
@@ -710,6 +742,8 @@
       setTimeout(() => {
         flyer.remove();
         btn.classList.add('hidden');
+        // آپدیت زمان آخرین ورود تا دیگر این اعلان نشان داده نشود تا زمان تراکنش بعدی
+        localStorage.setItem('karimi_last_login', new Date().getTime());
       }, 850);
     }
 
@@ -792,7 +826,7 @@
     }
 
     function shareRecordImage() {
-      playSound('success');
+      playSound('shutter'); // صدای شاتر دوربین سامسونگ قدیمی
       const el = document.getElementById('receiptToCapture');
       html2canvas(el, { scale: 3, backgroundColor: '#ffffff' }).then(canvas => {
         canvas.toBlob(blob => {
@@ -810,7 +844,7 @@
     }
 
     function shareHawalaReceipt() {
-      playSound('success');
+      playSound('shutter'); // صدای شاتر دوربین سامسونگ قدیمی
       const descText = selectedTxItem.Description || selectedTxItem.description || 'بدون توضیحات';
       const hawalaBox = document.createElement('div');
       hawalaBox.style.cssText = "background: #ffffff; border: 2px solid #8b5cf6; padding: 18px; border-radius: 16px; width: 350px; direction: rtl; font-family: 'Farhang', sans-serif;";
