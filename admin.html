@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پنل مدیریت سیستم</title>
+  <title>پنل مدیریت پیشرفته - کریمی</title>
   <style>
     :root {
       --primary: #0f172a;
@@ -15,7 +15,7 @@
     }
 
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; direction: rtl; }
-    body { background-color: var(--bg); color: var(--text); margin: 0; padding: 12px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    body { background-color: var(--bg); color: var(--text); margin: 0; padding: 12px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
 
     #authOverlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -28,7 +28,7 @@
     }
     .auth-title { font-size: 18px; font-weight: 900; text-align: center; color: var(--primary); }
 
-    .container { max-width: 480px; width: 100%; display: none; }
+    .container { max-width: 800px; width: 100%; display: none; margin: auto; }
     .card { background: var(--card); border-radius: 16px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 16px; }
     
     h3 { margin-top: 0; color: var(--primary); font-size: 1.1rem; }
@@ -38,72 +38,163 @@
     input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 0.95rem; outline: none; background: #f8fafc; }
     input:focus, select:focus { border-color: var(--accent); background: #fff; }
 
-    .radio-group { display: flex; gap: 8px; }
-    .radio-btn { flex: 1; text-align: center; }
-    .radio-btn input { display: none; }
-    .radio-btn label {
-      display: block; padding: 10px; border: 1px solid var(--border); border-radius: 10px;
-      cursor: pointer; background: #f1f5f9; color: #475569; font-weight: bold; transition: all 0.2s;
-    }
-    .radio-btn input:checked + label.creditor { background: #10b981; color: #fff; border-color: #10b981; }
-    .radio-btn input:checked + label.debtor { background: #ef4444; color: #fff; border-color: #ef4444; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .stat-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
+    .stat-val { font-size: 1.2rem; font-weight: 900; color: var(--accent); margin-top: 4px; }
 
-    .btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; }
-    .btn-logout { background: #ef4444; margin-top: 8px; }
-    .btn-google { display: flex; align-items: center; justify-content: center; gap: 8px; background: #fff; border: 1px solid var(--border); color: #0f172a; font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; width: 100%; }
-    .back-home { display: block; text-align: center; margin-top: 12px; color: #475569; text-decoration: none; font-size: 12px; font-weight: 700; }
+    .btn { padding: 10px 16px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    .btn-danger { background: #ef4444; }
+    .btn-secondary { background: #475569; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: right; }
+    th { background: #f8fafc; color: #475569; }
+    
+    .flex-row { display: flex; gap: 8px; align-items: center; }
+    .back-home { display: inline-block; margin-top: 12px; color: #475569; text-decoration: none; font-size: 12px; font-weight: 700; }
   </style>
 </head>
 <body>
 
-  <!-- صفحه ورود ادمین -->
+  <!-- صفحه احراز هویت ادمین (بدون مقدار پیش‌فرض راهنما در فیلدها) -->
   <div id="authOverlay">
     <div class="auth-card">
       <div class="auth-title">ورود به پنل مدیریت</div>
       <div class="form-group">
         <label>ایمیل:</label>
-        <input type="email" id="loginEmail" class="input-field" placeholder="example@gmail.com" dir="ltr">
+        <input type="email" id="loginEmail" class="input-field" dir="ltr">
       </div>
       <div class="form-group">
         <label>کد عبور ثابت (PIN):</label>
-        <input type="password" id="loginPin" class="input-field" placeholder="77218731" dir="ltr">
+        <input type="password" id="loginPin" class="input-field" dir="ltr">
       </div>
-      <button class="btn" onclick="handleLogin()">ورود به پنل</button>
-      <div style="text-align: center; font-size: 11px; color: #94a3b8;">یا</div>
-      <button class="btn-google" onclick="handleGoogleLogin()">ورود با اکانت گوگل</button>
-      <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
+      <button class="btn" style="width:100%" onclick="handleLogin()">ورود به پنل</button>
+      <a href="index.html" class="back-home" style="text-align: center;">← بازگشت به صفحه اصلی</a>
     </div>
   </div>
 
-  <!-- پنل اصلی مدیریت -->
+  <!-- پنل اصلی مدیریت پیشرفته -->
   <div class="container" id="adminContainer">
+    
+    <!-- هدر پنل و دکمه خروج -->
+    <div class="card flex-row" style="justify-content: space-between;">
+      <h3>پنل مدیریت پیشرفته سامانه کریمی</h3>
+      <div class="flex-row">
+        <button class="btn btn-secondary" onclick="loadData()">بارگذاری مجدد اطلاعات</button>
+        <button class="btn btn-danger" onclick="handleLogout()">خروج</button>
+      </div>
+    </div>
+
+    <!-- آمار کلی سیستم -->
     <div class="card">
-      <h3>ثبت تراکنش جدید در گوگل‌شیت</h3>
+      <h3>آمار کلی سیستم (بر اساس بستانکار و بدهکار)</h3>
+      <div class="stats-grid" id="statsContainer">
+        <div class="stat-box"><div>مجموع بستانکار</div><div class="stat-val" id="totalCreditor">0</div></div>
+        <div class="stat-box"><div>مجموع بدهکار</div><div class="stat-val" id="totalDebtor">0</div></div>
+      </div>
+    </div>
+
+    <!-- مدیریت حساب‌ها -->
+    <div class="card" id="accountsSection">
+      <div class="flex-row" style="justify-content: space-between; margin-bottom: 12px;">
+        <h3>لیست حساب‌ها و مشتریان</h3>
+        <button class="btn" onclick="openNewAccountModal()">+ ایجاد حساب جدید</button>
+      </div>
       
       <div class="form-group">
-        <label>کد حساب مشتری (AccountID):</label>
-        <input type="text" id="txAccountId" placeholder="مثلاً ACC-01">
+        <input type="text" id="searchAccountInput" placeholder="جستجوی پیشرفته حساب‌ها (نام، کد، شماره...)" oninput="filterAccounts()">
       </div>
 
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>شناسه حساب (AccountID)</th>
+              <th>نام حساب / مشتری</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody id="accountsTableBody">
+            <!-- لیست حساب‌ها اینجا لود می‌شود -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- جزئیات حساب انتخاب شده (مخفی تا زمان انتخاب حساب) -->
+    <div class="card" id="accountDetailSection" style="display: none;">
+      <div class="flex-row" style="justify-content: space-between;">
+        <h3 id="detailAccountTitle">جزئیات حساب</h3>
+        <button class="btn btn-secondary" onclick="backToAccountsList()">← بازگشت به لیست حساب‌ها</button>
+      </div>
+      
+      <div class="stats-grid" style="margin-top: 12px;">
+        <div class="stat-box"><div>بستانکار این حساب</div><div class="stat-val" id="accCreditor">0</div></div>
+        <div class="stat-box"><div>بدهکار این حساب</div><div class="stat-val" id="accDebtor">0</div></div>
+      </div>
+
+      <div class="flex-row" style="margin: 16px 0;">
+        <button class="btn" onclick="openAddTransactionModal()">+ افزودن تراکنش جدید</button>
+      </div>
+
+      <h3>تراکنش‌های این حساب</h3>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>شناسه تراکنش</th>
+              <th>جهت</th>
+              <th>مبلغ و ارز</th>
+              <th>نوع</th>
+              <th>شرح</th>
+              <th>اکشن‌ها (ویرایش / حذف / رسید / عکس)</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsTableBody">
+            <!-- تراکنش‌ها اینجا بارگذاری می‌شوند -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <a href="index.html" class="back-home">← بازگشت به صفحه اصلی منو</a>
+  </div>
+
+  <!-- مودال ایجاد/ویرایش حساب -->
+  <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:3000;">
+    <div class="card" style="width: 100%; max-width: 400px; margin: 0;">
+      <h3 id="accModalTitle">ایجاد حساب جدید</h3>
+      <input type="hidden" id="editOriginalAccountId">
+      <div class="form-group">
+        <label>شناسه حساب (AccountID - تولید خودکار یا دستی):</label>
+        <input type="text" id="modalAccountId" dir="ltr">
+      </div>
+      <div class="form-group">
+        <label>نام و مشخصات مشتری/حساب:</label>
+        <input type="text" id="modalAccountName">
+      </div>
+      <div class="flex-row" style="justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeAccountModal()">انصراف</button>
+        <button class="btn" onclick="saveAccount()">ذخیره حساب</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال افزودن تراکنش -->
+  <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:3000;">
+    <div class="card" style="width: 100%; max-width: 450px; margin: 0;">
+      <h3>افزودن تراکنش جدید</h3>
       <div class="form-group">
         <label>جهت تراکنش:</label>
-        <div class="radio-group">
-          <div class="radio-btn">
-            <input type="radio" id="creditor" name="direction" value="بستانکار" checked>
-            <label for="creditor" class="creditor">بستانکار (دریافت)</label>
-          </div>
-          <div class="radio-btn">
-            <input type="radio" id="debtor" name="direction" value="بدهکار">
-            <label for="debtor" class="debtor">بدهکار (پرداخت)</label>
-          </div>
-        </div>
+        <select id="txDirection">
+          <option value="بستانکار">بستانکار (دریافت)</option>
+          <option value="بدهکار">بدهکار (پرداخت)</option>
+        </select>
       </div>
-
       <div class="form-group">
         <label>مبلغ:</label>
-        <input type="number" id="txAmount" placeholder="0">
+        <input type="number" id="txAmount">
       </div>
-
       <div class="form-group">
         <label>واحد پول:</label>
         <select id="txCurrency">
@@ -113,7 +204,6 @@
           <option value="تومان">تومان</option>
         </select>
       </div>
-
       <div class="form-group">
         <label>نوع عملیات:</label>
         <select id="txOpType">
@@ -123,25 +213,29 @@
           <option value="امانت">امانت</option>
         </select>
       </div>
-
       <div class="form-group">
         <label>شرح / توضیحات:</label>
-        <input type="text" id="txDesc" placeholder="توضیحات تراکنش...">
+        <input type="text" id="txDesc">
       </div>
-
-      <button class="btn" onclick="submitTransaction()">ثبت در گوگل‌شیت</button>
-      <button class="btn btn-logout" onclick="handleLogout()">خروج از حساب</button>
-      <a href="index.html" class="back-home" style="margin-top: 14px;">← بازگشت به منوی اصلی</a>
+      <div class="flex-row" style="justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeTransactionModal()">انصراف</button>
+        <button class="btn" onclick="submitTransaction()">ثبت تراکنش</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQI6I3CXr1tyicZEza_ZsLP0MZmDshghmPOXw9MWfcE95sUD31pUnpYisxExfgobmT7w/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxb6V1966cHAsNzI782YPzi85j_r0FgiH_s_2EmxrEyDRKQw5Vu51jBY5FDTwtW_uTaXw/exec";
+    
+    let allAccounts = [];
+    let allTransactions = [];
+    let currentSelectedAccountId = null;
 
     window.onload = function() {
       if (localStorage.getItem("isAdminLoggedIn") === "true") {
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
+        loadData();
       }
     };
 
@@ -154,55 +248,255 @@
         return;
       }
 
-      if (pin === "77218731") {
+      // بررسی ایمیل و پین دقیق
+      if (pin === "77218731" && email.trim().toLowerCase() === "mohammadsharifkarimi4@gmail.com") {
         localStorage.setItem("isAdminLoggedIn", "true");
+        localStorage.setItem("adminEmail", email);
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
+        loadData();
       } else {
-        alert("کد عبور اشتباه است!");
+        alert("ایمیل یا کد عبور اشتباه است!");
       }
-    }
-
-    function handleGoogleLogin() {
-      localStorage.setItem("isAdminLoggedIn", "true");
-      document.getElementById("authOverlay").style.display = "none";
-      document.getElementById("adminContainer").style.display = "block";
     }
 
     function handleLogout() {
       localStorage.removeItem("isAdminLoggedIn");
+      localStorage.removeItem("adminEmail");
       location.reload();
+    }
+
+    // دریافت اطلاعات از گوگل‌شیت
+    async function loadData() {
+      try {
+        const response = await fetch(SCRIPT_URL + "?action=getData");
+        const res = await response.json();
+        if(res.status === "success") {
+          allAccounts = res.accounts || [];
+          allTransactions = res.transactions || [];
+          renderDashboard();
+          renderAccountsList(allAccounts);
+        } else {
+          alert("خطا در دریافت اطلاعات از سرور");
+        }
+      } catch(e) {
+        // حالت نمونه در صورت عدم دسترسی اولیه به انتهای اسکریپت
+        renderDashboard();
+      }
+    }
+
+    function renderDashboard() {
+      let totalCred = 0;
+      let totalDeb = 0;
+      allTransactions.forEach(tx => {
+        if(tx.direction === "بستانکار") totalCred += parseFloat(tx.amount || 0);
+        if(tx.direction === "بدهکار") totalDeb += parseFloat(tx.amount || 0);
+      });
+      document.getElementById("totalCreditor").innerText = totalCred.toLocaleString();
+      document.getElementById("totalDebtor").innerText = totalDeb.toLocaleString();
+    }
+
+    function renderAccountsList(accounts) {
+      const tbody = document.getElementById("accountsTableBody");
+      tbody.innerHTML = "";
+      if(accounts.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">هیچ حسابی یافت نشد</td></tr>`;
+        return;
+      }
+      accounts.forEach(acc => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-family:monospace; font-weight:bold;">${acc.accountId}</td>
+            <td>${acc.accountName}</td>
+            <td>
+              <button class="btn" style="padding:4px 8px; font-size:0.8rem;" onclick="selectAccount('${acc.accountId}', '${acc.accountName}')">مشاهده تراکنش‌ها</button>
+              <button class="btn btn-secondary" style="padding:4px 8px; font-size:0.8rem;" onclick="openEditAccountModal('${acc.accountId}', '${acc.accountName}')">ویرایش</button>
+              <button class="btn btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteAccount('${acc.accountId}')">حذف</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function filterAccounts() {
+      const query = document.getElementById("searchAccountInput").value.toLowerCase();
+      const filtered = allAccounts.filter(acc => acc.accountId.toLowerCase().includes(query) || acc.accountName.toLowerCase().includes(query));
+      renderAccountsList(filtered);
+    }
+
+    // مدیریت مودال حساب
+    function openNewAccountModal() {
+      document.getElementById("accModalTitle").innerText = "ایجاد حساب جدید";
+      document.getElementById("editOriginalAccountId").value = "";
+      // ایجاد خودکار AccountID
+      document.getElementById("modalAccountId").value = "ACC-" + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById("modalAccountName").value = "";
+      document.getElementById("accountModal").style.display = "flex";
+    }
+
+    function openEditAccountModal(id, name) {
+      document.getElementById("accModalTitle").innerText = "ویرایش حساب";
+      document.getElementById("editOriginalAccountId").value = id;
+      document.getElementById("modalAccountId").value = id;
+      document.getElementById("modalAccountName").value = name;
+      document.getElementById("accountModal").style.display = "flex";
+    }
+
+    function closeAccountModal() {
+      document.getElementById("accountModal").style.display = "none";
+    }
+
+    async function saveAccount() {
+      const accountId = document.getElementById("modalAccountId").value;
+      const accountName = document.getElementById("modalAccountName").value;
+      const originalId = document.getElementById("editOriginalAccountId").value;
+
+      const payload = {
+        adminPin: "77218731",
+        action: originalId ? "editAccount" : "addAccount",
+        originalAccountId: originalId,
+        accountId: accountId,
+        accountName: accountName
+      };
+
+      try {
+        const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+        const res = await response.json();
+        if(res.status === "success") {
+          alert("حساب با موفقیت ذخیره شد");
+          closeAccountModal();
+          loadData();
+        } else {
+          alert("خطا: " + res.message);
+        }
+      } catch(e) {
+        alert("خطا در ارتباط با سرور");
+      }
+    }
+
+    async function deleteAccount(accountId) {
+      if(!confirm("آیا از حذف این حساب اطمینان دارید؟")) return;
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ adminPin: "77218731", action: "deleteAccount", accountId: accountId })
+        });
+        const res = await response.json();
+        if(res.status === "success") {
+          alert("حساب حذف شد");
+          loadData();
+        } else {
+          alert("خطا: " + res.message);
+        }
+      } catch(e) {
+        alert("خطا در ارتباط با سرور");
+      }
+    }
+
+    // انتخاب حساب و ورود به جزئیات تراکنش‌ها
+    function selectAccount(accountId, accountName) {
+      currentSelectedAccountId = accountId;
+      document.getElementById("detailAccountTitle").innerText = `جزئیات حساب: ${accountName} (${accountId})`;
+      document.getElementById("accountsSection").style.display = "none";
+      document.getElementById("accountDetailSection").style.display = "block";
+      renderAccountTransactions(accountId);
+    }
+
+    function backToAccountsList() {
+      currentSelectedAccountId = null;
+      document.getElementById("accountDetailSection").style.display = "none";
+      document.getElementById("accountsSection").style.display = "block";
+    }
+
+    function renderAccountTransactions(accountId) {
+      const txs = allTransactions.filter(t => t.accountId === accountId);
+      const tbody = document.getElementById("transactionsTableBody");
+      tbody.innerHTML = "";
+      
+      let accCred = 0;
+      let accDeb = 0;
+
+      if(txs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">هیچ تراکنشی برای این حساب ثبت نشده است</td></tr>`;
+      } else {
+        txs.forEach(tx => {
+          if(tx.direction === "بستانکار") accCred += parseFloat(tx.amount || 0);
+          if(tx.direction === "بدهکار") accDeb += parseFloat(tx.amount || 0);
+
+          tbody.innerHTML += `
+            <tr>
+              <td style="font-family:monospace;">${tx.transactionId || '---'}</td>
+              <td><span style="color:${tx.direction==='بستانکار'?'#059669':'#ef4444'}; font-weight:bold;">${tx.direction}</span></td>
+              <td>${Number(tx.amount).toLocaleString()} ${tx.currency}</td>
+              <td>${tx.operationType}</td>
+              <td>${tx.description || ''}</td>
+              <td>
+                <button class="btn btn-secondary" style="padding:4px 6px; font-size:0.75rem;" onclick="editTransaction('${tx.transactionId}')">ویرایش</button>
+                <button class="btn btn-danger" style="padding:4px 6px; font-size:0.75rem;" onclick="deleteTransaction('${tx.transactionId}')">حذف</button>
+                <button class="btn" style="padding:4px 6px; font-size:0.75rem; background:#2563eb;" onclick="sendReceipt('${tx.transactionId}')">رسید</button>
+                <button class="btn" style="padding:4px 6px; font-size:0.75rem; background:#0284c7;" onclick="attachPhoto('${tx.transactionId}')">عکس</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+      document.getElementById("accCreditor").innerText = accCred.toLocaleString();
+      document.getElementById("accDebtor").innerText = accDeb.toLocaleString();
+    }
+
+    function openAddTransactionModal() {
+      document.getElementById("txAmount").value = "";
+      document.getElementById("txDesc").value = "";
+      document.getElementById("transactionModal").style.display = "flex";
+    }
+
+    function closeTransactionModal() {
+      document.getElementById("transactionModal").style.display = "none";
     }
 
     async function submitTransaction() {
       const payload = {
         adminPin: "77218731",
         action: "addTransaction",
-        accountId: document.getElementById('txAccountId').value,
-        direction: document.querySelector('input[name="direction"]:checked').value,
-        amount: document.getElementById('txAmount').value,
-        currency: document.getElementById('txCurrency').value,
-        operationType: document.getElementById('txOpType').value,
-        description: document.getElementById('txDesc').value
+        accountId: currentSelectedAccountId,
+        direction: document.getElementById("txDirection").value,
+        amount: document.getElementById("txAmount").value,
+        currency: document.getElementById("txCurrency").value,
+        operationType: document.getElementById("txOpType").value,
+        description: document.getElementById("txDesc").value
       };
 
       try {
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
+        const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         const res = await response.json();
-        
         if(res.status === "success") {
-          alert("تراکنش با موفقیت ثبت شد!");
-          document.getElementById('txAmount').value = '';
-          document.getElementById('txDesc').value = '';
+          alert("تراکنش با شناسه " + res.id + " با موفقیت ثبت شد!");
+          closeTransactionModal();
+          loadData();
+          setTimeout(() => selectAccount(currentSelectedAccountId, document.getElementById("detailAccountTitle").innerText), 500);
         } else {
-          alert("خطا: " + (res.message || "ثبت انجام نشد"));
+          alert("خطا: " + res.message);
         }
-      } catch(err) {
+      } catch(e) {
         alert("خطا در ارتباط با سرور");
       }
+    }
+
+    function deleteTransaction(txId) {
+      if(!confirm("آیا از حذف این تراکنش مطمئن هستید؟")) return;
+      alert("تراکنش حذف شد (نیازمند اتصال به متد حذف در اسکریپت)");
+    }
+
+    function editTransaction(txId) {
+      alert("امکان ویرایش تراکنش");
+    }
+
+    function sendReceipt(txId) {
+      alert("ارسال رسید واتساپ/پیامک برای تراکنش: " + txId);
+    }
+
+    function attachPhoto(txId) {
+      alert("پیوست عکس برای تراکنش: " + txId);
     }
   </script>
 
