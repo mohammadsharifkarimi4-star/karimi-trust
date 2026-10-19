@@ -1,1 +1,211 @@
 
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تنظیمات سیستم</title>
+  <style>
+    :root {
+      --primary: #1e293b;
+      --accent: #2563eb;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); margin: 0; padding: 12px; }
+
+    .container { max-width: 480px; margin: 0 auto; }
+    .card { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid var(--border); margin-bottom: 16px; }
+    
+    h2, h3 { margin-top: 0; color: var(--primary); font-size: 1.1rem; }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
+    
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; outline: none; background: #fff; }
+    input:focus, select:focus { border-color: var(--accent); }
+
+    /* دکمه‌های رادیویی انتخابی بدهکار / بستانکار */
+    .radio-group { display: flex; gap: 8px; }
+    .radio-btn { flex: 1; text-align: center; }
+    .radio-btn input { display: none; }
+    .radio-btn label {
+      display: block; padding: 10px; border: 1px solid var(--border); border-radius: 8px;
+      cursor: pointer; background: #f1f5f9; color: #475569; font-weight: bold; transition: all 0.2s;
+    }
+    .radio-btn input:checked + label.creditor { background: #10b981; color: #fff; border-color: #10b981; }
+    .radio-btn input:checked + label.debtor { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+    .btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+    .btn:active { opacity: 0.9; }
+
+    /* کادر فریبنده و بی‌خاصیت در گوشه صفحه */
+    .decoy-box { background: #fff1f2; border: 1px dashed #fda4af; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 0.8rem; }
+    .decoy-box input { padding: 6px; font-size: 0.8rem; margin-top: 4px; }
+
+    /* مخفی بودن فرم اصلی قبل از تایید */
+    #mainAdminPanel { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- کادر فریبنده (Honeypot) در گوشه بالای صفحه -->
+  <div class="decoy-box">
+    <span>🔒 ورود به بخش پشتیبان‌گیری عمومی:</span>
+    <input type="password" id="decoyPin" placeholder="رمز عبور..." onchange="fakeCheck()">
+    <div id="decoyMsg" style="color: red; margin-top: 4px; display: none;">کد امنیتی اشتباه است!</div>
+  </div>
+
+  <!-- کادر اصلی ورود امنیت ادمین -->
+  <div class="card" id="loginCard">
+    <h2 id="secretTrigger" style="cursor: pointer;" onclick="countClicks()">ورود ادمین سیستم</h2>
+    <div class="form-group">
+      <label>رمز عبور ادمین (PIN):</label>
+      <input type="password" id="adminPinInput" placeholder="PIN ادمین را وارد کنید">
+    </div>
+    <button class="btn" onclick="unlockAdmin()">تایید و ورود</button>
+  </div>
+
+  <!-- پنل اصلی ادمین (بعد از ورود) -->
+  <div id="mainAdminPanel">
+
+    <!-- فرم ثبت تراکنش جدید -->
+    <div class="card">
+      <h3>ثبت تراکنش جدید</h3>
+      
+      <div class="form-group">
+        <label>کد حساب مشتری (AccountID):</label>
+        <input type="text" id="txAccountId" placeholder="مثلاً ACC-X1Y2Z3">
+      </div>
+
+      <div class="form-group">
+        <label>جهت تراکنش (انتخاب سریع):</label>
+        <div class="radio-group">
+          <div class="radio-btn">
+            <input type="radio" id="creditor" name="direction" value="بستانکار" checked>
+            <label for="creditor" class="creditor">بستانکار (دریافت)</label>
+          </div>
+          <div class="radio-btn">
+            <input type="radio" id="debtor" name="direction" value="بدهکار">
+            <label for="debtor" class="debtor">بدهکار (پرداخت)</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>مبلغ:</label>
+        <input type="number" id="txAmount" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label>واحد پول:</label>
+        <select id="txCurrency" onchange="toggleCustomCurrency(this)">
+          <option value="دینار">دینار</option>
+          <option value="دلار">دلار</option>
+          <option value="افغانی">افغانی</option>
+          <option value="تومان">تومان</option>
+          <option value="custom">-- ارز جدید / سایر --</option>
+        </select>
+        <input type="text" id="customCurrencyInput" placeholder="نام واحد پول را بنویسید" style="display:none; margin-top:6px;">
+      </div>
+
+      <div class="form-group">
+        <label>نوع عملیات (داشبورد هوشمند):</label>
+        <select id="txOpType" onchange="toggleCustomOp(this)">
+          <option value="حواله">حواله</option>
+          <option value="دریافت">دریافت</option>
+          <option value="پرداخت">پرداخت</option>
+          <option value="امانت">امانت</option>
+          <option value="custom">-- مورد جدید / آزاد --</option>
+        </select>
+        <input type="text" id="customOpInput" placeholder="عنوان عملیات جدید را بنویسید" style="display:none; margin-top:6px;">
+      </div>
+
+      <div class="form-group">
+        <label>شرح / توضیحات:</label>
+        <input type="text" id="txDesc" placeholder="توضیحات تراکنش...">
+      </div>
+
+      <button class="btn" style="background: #10b981;" onclick="submitTransaction()">ثبت اطلاعات در گوگل‌شیت</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // آدرس اختصاصی گوگل اسکریپت شما
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQI6I3CXr1tyicZEza_ZsLP0MZmDshghmPOXw9MWfcE95sUD31pUnpYisxExfgobmT7w/exec";
+  let activePin = "";
+
+  // کادر فریبنده
+  function fakeCheck() {
+    document.getElementById('decoyMsg').style.display = 'block';
+  }
+
+  // آنلاک پنل اصلی
+  function unlockAdmin() {
+    const pin = document.getElementById('adminPinInput').value;
+    if(!pin) { alert("لطفاً رمز را وارد کنید"); return; }
+    activePin = pin;
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('mainAdminPanel').style.display = 'block';
+  }
+
+  // نمایش فیلدهای سفارشی
+  function toggleCustomCurrency(select) {
+    document.getElementById('customCurrencyInput').style.display = select.value === 'custom' ? 'block' : 'none';
+  }
+  function toggleCustomOp(select) {
+    document.getElementById('customOpInput').style.display = select.value === 'custom' ? 'block' : 'none';
+  }
+
+  // ارسال داده به گوگل اسکریپت
+  async function submitTransaction() {
+    const currencySelect = document.getElementById('txCurrency').value;
+    const finalCurrency = currencySelect === 'custom' ? document.getElementById('customCurrencyInput').value : currencySelect;
+
+    const opSelect = document.getElementById('txOpType').value;
+    const finalOp = opSelect === 'custom' ? document.getElementById('customOpInput').value : opSelect;
+
+    const direction = document.querySelector('input[name="direction"]:checked').value;
+
+    const payload = {
+      adminPin: activePin,
+      action: "addTransaction",
+      accountId: document.getElementById('txAccountId').value,
+      direction: direction,
+      amount: document.getElementById('txAmount').value,
+      currency: finalCurrency,
+      operationType: finalOp,
+      description: document.getElementById('txDesc').value
+    };
+
+    try {
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      const res = await response.json();
+      
+      if(res.status === "success") {
+        alert("تراکنش با موفقیت ثبت شد! شناسه ثبت شده: " + res.id);
+        // ریست فرم
+        document.getElementById('txAmount').value = '';
+        document.getElementById('txDesc').value = '';
+      } else {
+        alert("خطا: " + res.message);
+      }
+    } catch(err) {
+      alert("خطا در ارتباط با سرور: " + err);
+    }
+  }
+</script>
+
+</body>
+</html>
