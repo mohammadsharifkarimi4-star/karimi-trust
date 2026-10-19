@@ -10,14 +10,12 @@
     @font-face {
       font-family: 'Farhang';
       src: url('https://cdn.jsdelivr.net/gh/font-store/farhang@main/Farhang-Bold.woff2') format('woff2');
-      font-weight: 700;
-      font-style: normal;
+      font-weight: 700; font-style: normal;
     }
     @font-face {
       font-family: 'Farhang';
       src: url('https://cdn.jsdelivr.net/gh/font-store/farhang@main/Farhang-Regular.woff2') format('woff2');
-      font-weight: 400;
-      font-style: normal;
+      font-weight: 400; font-style: normal;
     }
   </style>
   <!-- Google Sign-In SDK -->
@@ -27,74 +25,75 @@
   <style>
     :root {
       --primary: #4f46e5;
-      --primary-dark: #3730a3;
-      --success: #059669;
-      --danger: #dc2626;
-      --glass-bg: rgba(255, 255, 255, 0.95);
+      --success: #10b981;
+      --success-dark: #059669;
+      --danger: #ef4444;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
+      --border-color: #e2e8f0;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Farhang', 'Vazirmatn', sans-serif; direction: rtl; }
 
     body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
-      background-attachment: fixed;
+      background: #0f172a;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px;
+      padding: 0;
+      overflow: hidden;
     }
 
+    /* کادر اصلی برنامه - فیت کامل روی صفحه موبایل بدون اسکرول اضافی */
     .app-viewport {
       width: 100vw;
       height: 100vh;
       max-width: 440px;
       max-height: 920px;
-      background: #f8fafc;
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       position: relative;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
       overflow: hidden;
-      border-radius: 28px;
     }
 
-    @media (max-width: 480px) {
-      .app-viewport { max-height: 100vh; border-radius: 0; }
+    @media (min-width: 480px) {
+      .app-viewport { border-radius: 28px; height: 95vh; }
     }
 
     .app-header {
-      padding: 12px 16px;
+      padding: 10px 14px;
       background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-shrink: 0;
     }
 
-    .header-title { font-size: 16px; font-weight: 700; color: #1e1b4b; }
+    .header-title { font-size: 15px; font-weight: 700; color: #1e1b4b; }
     
     .app-body {
       flex: 1;
       padding: 12px;
-      overflow-y: auto;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
     }
 
-    .form-group { margin-bottom: 14px; }
-    label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 12.5px; color: #334155; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; margin-bottom: 4px; font-weight: 700; font-size: 12px; color: #334155; }
     
     input {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 14px;
       border: 2px solid #e2e8f0;
-      border-radius: 14px;
+      border-radius: 12px;
       font-size: 15px;
       text-align: center;
       outline: none;
@@ -104,20 +103,19 @@
       font-weight: 700;
     }
 
-    input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15); }
+    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
 
     button {
       width: 100%;
-      padding: 13px;
+      padding: 12px;
       background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
       color: white;
       border: none;
-      border-radius: 14px;
-      font-size: 15px;
+      border-radius: 12px;
+      font-size: 14px;
       cursor: pointer;
       font-weight: 700;
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
-      margin-top: 6px;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
       transition: transform 0.1s ease;
     }
 
@@ -127,89 +125,84 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
-      background: #ffffff;
-      border-radius: 16px;
-      margin-bottom: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-radius: 14px;
+      margin-bottom: 8px;
       border: 1px solid #e2e8f0;
       flex-shrink: 0;
     }
 
     .currency-tabs {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       margin-bottom: 8px;
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: 12px;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 10px;
       overflow-x: auto;
       flex-shrink: 0;
     }
 
     .currency-tab {
       flex: 1;
-      min-width: 65px;
-      padding: 8px;
+      min-width: 60px;
+      padding: 7px;
       text-align: center;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
-      border-radius: 9px;
+      border-radius: 8px;
       color: var(--text-muted);
       background: transparent;
       border: none;
       box-shadow: none;
-      margin-top: 0;
       transition: all 0.2s ease;
     }
 
     .currency-tab.active {
       background: #ffffff;
       color: var(--primary);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
     .currency-card {
       background: #ffffff;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 10px;
-      border-right: 5px solid var(--primary);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      border-radius: 14px;
+      padding: 12px;
+      border-right: 4px solid var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
       border: 1px solid #e2e8f0;
       flex-shrink: 0;
     }
 
-    /* بخش اعلان هوشمند با انیمیشن پرتابی */
-    .notification-box {
-      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-      border: 1.5px dashed #3b82f6;
+    /* دکمه اعلان هوشمند تراکنش جدید با انیمیشن فوق‌العاده */
+    .new-tx-action-card {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 2px dashed #10b981;
       border-radius: 16px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-      animation: pulseGlow 2s infinite;
-      transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+      animation: pulseGlow 2s infinite ease-in-out;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.2); }
-      70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
+      50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    .flying-tx {
-      position: fixed;
-      z-index: 9999;
-      background: #10b981;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 13px;
-      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-      pointer-events: none;
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    .new-tx-action-card.spin-fly {
+      animation: spinAndFly 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+    }
+
+    @keyframes spinAndFly {
+      0% { transform: scale(1) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+      100% { transform: scale(0.1) rotate(720deg) translateY(400px); opacity: 0; }
     }
 
     /* مودال‌های تمام‌صفحه */
@@ -226,7 +219,7 @@
     .fullscreen-modal.open { transform: translateY(0); }
 
     .modal-header {
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-bottom: 1px solid #e2e8f0;
       display: flex;
       justify-content: space-between;
@@ -235,44 +228,33 @@
       flex-shrink: 0;
     }
 
-    .modal-scroll-body { flex: 1; padding: 14px; overflow-y: auto; }
+    .modal-scroll-body { flex: 1; padding: 12px; overflow-y: auto; }
 
-    .tx-card {
+    .tx-card-item {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
       cursor: pointer;
-      position: relative;
     }
 
-    .whatsapp-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      text-decoration: none;
-      padding: 12px;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 14px;
-      margin-top: 10px;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    .action-secondary-btn {
+      width: 100%; padding: 11px; border-radius: 12px; border: 1.5px solid #cbd5e1; background: #ffffff;
+      color: var(--text-main); font-size: 13px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 6px;
     }
 
     .error-box {
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: var(--danger);
-      padding: 14px;
-      border-radius: 14px;
+      padding: 10px;
+      border-radius: 10px;
       text-align: center;
-      font-size: 12.5px;
-      margin-top: 12px;
+      font-size: 12px;
+      margin-top: 10px;
       font-weight: 700;
     }
 
@@ -286,30 +268,30 @@
     <header class="app-header">
       <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 12px; font-weight: 700;">← منو</a>
       <div class="header-title">🛡️ صرافی و امانت‌داری کریمی</div>
-      <div style="width: 30px;"></div>
+      <div style="width: 25px;"></div>
     </header>
 
     <main class="app-body">
-      <div id="loadingSheet" style="text-align: center; padding: 60px 0; font-weight: 700; color: #475569;">در حال اتصال به پایگاه داده مرکزی...</div>
+      <div id="loadingSheet" style="text-align: center; padding: 60px 0; font-weight: 700; color: #475569;">در حال اتصال به سیستم...</div>
 
-      <!-- مرحله ۱: ورود شماره تلفن -->
+      <!-- مرحله ۱: ورود شماره تلفن با تطبیق ۵ الی ۶ رقم آخر -->
       <div id="phoneSection" class="hidden" style="margin: auto 0;">
-        <div style="text-align: center; margin-bottom: 8px; font-weight: 700; font-size: 17px; color: #1e1b4b;">شناسایی شماره همراه</div>
-        <div style="text-align: center; font-size: 12.5px; color: var(--text-muted); margin-bottom: 20px;">لطفاً شماره همراه خود را وارد کنید.</div>
+        <div style="text-align: center; margin-bottom: 6px; font-weight: 700; font-size: 16px; color: #1e1b4b;">شناسایی شماره همراه</div>
+        <div style="text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">۵ یا ۶ رقم آخر شماره خود را وارد کنید.</div>
         <div class="form-group">
-          <input type="text" id="phoneInput" placeholder="7721878997">
+          <input type="text" id="phoneInput" placeholder="مثلاً: 878997">
         </div>
         <button id="btnCheckPhone" onclick="checkPhone()">مرحله بعد (احراز گوگل)</button>
-        <div id="phoneError" class="hidden error-box">شماره شما در سیستم یافت نشد.</div>
+        <div id="phoneError" class="hidden error-box">شماره شما یافت نشد.</div>
       </div>
 
       <!-- مرحله ۲: احراز هویت با گوگل -->
       <div id="googleAuthSection" class="hidden" style="margin: auto 0; text-align: center;">
-        <div style="font-size: 38px; margin-bottom: 8px;">🔐</div>
-        <div style="font-weight: 700; font-size: 17px; color: #1e1b4b; margin-bottom: 6px;">احراز هویت امن با گوگل</div>
-        <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 20px;">برای تأیید هویت حساب خود، روی دکمه زیر کلیک کنید.</div>
+        <div style="font-size: 36px; margin-bottom: 6px;">🔐</div>
+        <div style="font-weight: 700; font-size: 16px; color: #1e1b4b; margin-bottom: 4px;">احراز هویت امن با گوگل</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">روی دکمه زیر کلیک کنید.</div>
         
-        <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: center; margin-bottom: 10px;">
           <div id="g_id_onload"
                data-client_id="295722018163-ckrb0g42a6c9o5udbfird31r8jvb3avn.apps.googleusercontent.com"
                data-callback="handleGoogleLogin"
@@ -317,50 +299,50 @@
           </div>
           <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
         </div>
-        <button onclick="backToPhone()" style="background: #64748b; margin-top: 10px;">تغییر شماره همراه</button>
+        <button onclick="backToPhone()" style="background: #64748b; margin-top: 8px;">تغییر شماره</button>
       </div>
 
       <!-- مرحله ۳: کد اختصاصی حساب (Account ID) -->
       <div id="accountSection" class="hidden" style="margin: auto 0;">
-        <div id="greetingMsg" style="text-align:center; font-weight:700; color:var(--success); margin-bottom:12px; font-size:16px;"></div>
-        <div style="text-align: center; font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">کد اختصاصی حساب خود را وارد کنید.</div>
+        <div id="greetingMsg" style="text-align:center; font-weight:700; color:var(--success-dark); margin-bottom:10px; font-size:15px;"></div>
         <div class="form-group">
           <input type="password" id="accountIdInput" placeholder="Account ID">
         </div>
         <button id="btnVerifyAcc" onclick="verifyAccount()">ورود نهایی به حساب</button>
-        <button onclick="backToGoogle()" style="background: #64748b; margin-top: 8px;">بازگشت</button>
-        <div id="accountError" class="hidden error-box">کد حساب (Account ID) اشتباه است.</div>
+        <button onclick="backToGoogle()" style="background: #64748b; margin-top: 6px;">بازگشت</button>
+        <div id="accountError" class="hidden error-box">کد حساب اشتباه است.</div>
       </div>
 
-      <!-- داشبورد اصلی (نیمه صفحه بالا آمار، پایین دکمه معاملات) -->
-      <div id="dashboardSection" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+      <!-- داشبورد اصلی (کاملاً فیت صفحه) -->
+      <div id="dashboardSection" class="hidden" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
+        
+        <!-- نیمه بالای صفحه: پروفایل و آمار -->
         <div>
           <div class="user-profile-header">
             <div>
-              <div id="dashName" style="font-weight: 700; font-size: 15px; color: #1e1b4b;">---</div>
-              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;"><span id="dashPhone" class="eng-num">---</span></div>
+              <div id="dashName" style="font-weight: 700; font-size: 14px; color: #1e1b4b;">---</div>
+              <div style="font-size: 11px; color: var(--text-muted);"><span id="dashPhone" class="eng-num">---</span></div>
             </div>
-            <div>
-              <button onclick="logout()" style="width: auto; padding: 5px 10px; font-size: 11px; background: var(--danger); margin-top: 0; box-shadow: none;">خروج</button>
-            </div>
+            <button onclick="logout()" style="width: auto; padding: 4px 10px; font-size: 11px; background: var(--danger); margin-top: 0; box-shadow: none;">خروج</button>
           </div>
 
-          <!-- بخش اعلان هوشمند تراکنش جدید -->
-          <div id="smartNotificationBox" class="hidden notification-box">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 12.5px; font-weight: 700; color: #1e40af;">🔔 تراکنش جدیدی در حساب شما ثبت شده است!</span>
-              <button onclick="confirmNewTransaction()" style="width: auto; padding: 4px 10px; font-size: 11px; background: #2563eb; margin-top:0; box-shadow:none;">تأیید</button>
-            </div>
-          </div>
-
-          <div style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px;">📊 آمار موجودی حساب</div>
+          <div style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">📊 آمار موجودی حساب</div>
           <div class="currency-tabs" id="currencyTabs"></div>
           <div id="activeCurrencyCard"></div>
         </div>
 
-        <!-- دکمه ثابت انتهای صفحه برای باز کردن لیست معاملات -->
-        <div style="margin-top: auto; padding-top: 10px;">
-          <button onclick="openTransactionsModal()" style="padding: 14px; font-size: 15px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);">
+        <!-- وسط صفحه: دکمه بزرگ اعلان تراکنش جدید -->
+        <div id="smartNotificationBox" class="hidden">
+          <div class="new-tx-action-card" id="newTxCard" onclick="confirmNewTransaction()">
+            <div style="font-size: 22px; margin-bottom: 2px;">🔔</div>
+            <div style="font-size: 13.5px; font-weight: 700; color: #065f46;">تراکنش جدید ثبت گردیده است!</div>
+            <div style="font-size: 11px; color: #047857; margin-top: 2px;">جهت تأیید و انتقال به سوابق کلیک کنید</div>
+          </div>
+        </div>
+
+        <!-- پایین صفحه: تک‌دکمه مشاهده معاملات -->
+        <div style="padding-bottom: 4px;">
+          <button onclick="openTransactionsModal()" style="padding: 13px; font-size: 14.5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
             📋 مشاهده معاملات و تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
           </button>
         </div>
@@ -368,36 +350,40 @@
     </main>
   </div>
 
-  <!-- مودال لیست معاملات و تراکنش‌ها -->
+  <!-- مودال لیست معاملات (کشویی از پایین) -->
   <div id="transactionsModal" class="fullscreen-modal">
     <div class="modal-header">
-      <h3 style="font-size: 15px; color: #1e293b; font-weight: 700;">📋 لیست کامل معاملات</h3>
-      <button onclick="closeTransactionsModal()" style="width: auto; padding: 4px 10px; font-size: 12px; background: #64748b; margin-top:0; box-shadow:none;">بستن ✕</button>
+      <h3 style="font-size: 14.5px; color: #1e293b; font-weight: 700;">📋 ریز سوابق و تراکنش‌ها</h3>
+      <button onclick="closeTransactionsModal()" style="width: auto; padding: 4px 10px; font-size: 11.5px; background: #64748b; margin-top:0; box-shadow:none;">بستن ✕</button>
     </div>
     <div class="modal-scroll-body" id="transactionsContainer"></div>
   </div>
 
-  <!-- مودال جزئیات و اکشن‌های تراکنش -->
+  <!-- مودال جزئیات و اکشن‌های کامل تراکنش -->
   <div id="txDetailModal" class="fullscreen-modal">
     <div class="modal-header">
-      <h3 style="font-size: 15px; color: #1e293b; font-weight: 700;">📄 جزئیات تراکنش</h3>
-      <button onclick="closeDetailModal()" style="width: auto; padding: 4px 10px; font-size: 12px; background: #64748b; margin-top:0; box-shadow:none;">بازگشت</button>
+      <h3 style="font-size: 14.5px; color: #1e293b; font-weight: 700;">📄 جزئیات کامل تراکنش</h3>
+      <button onclick="closeDetailModal()" style="width: auto; padding: 4px 10px; font-size: 11.5px; background: #64748b; margin-top:0; box-shadow:none;">بازگشت</button>
     </div>
     <div class="modal-scroll-body">
-      <div id="receiptToCapture" style="background: #ffffff; border: 1.5px solid #e2e8f0; padding: 16px; border-radius: 16px; margin-bottom: 12px;">
+      <div id="receiptToCapture" style="background: #ffffff; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 14px; margin-bottom: 10px;">
         <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 8px;">
-          <span style="font-size: 12px; font-weight: 700; color: #0284c7;">🛡️ رسید رسمی صرافی کریمی</span>
-          <span style="font-size: 10.5px; color: #64748b;">امانت‌داری مرکزی</span>
+          <span style="font-size: 12px; font-weight: 700; color: #0284c7;">🛡️ رسید امانت‌داری کریمی</span>
+          <span style="font-size: 10px; color: #64748b;">امانت‌داری مرکزی</span>
         </div>
-        <div id="modalBody" style="font-size: 13px; color: #334155; line-height: 1.9;" class="eng-num"></div>
+        <div id="modalBody" style="font-size: 12.5px; color: #334155; line-height: 1.8;" class="eng-num"></div>
       </div>
 
-      <button onclick="shareRecordImage()" style="background: #3b82f6;">📸 ارسال و دانلود عکس گزارش</button>
+      <button onclick="shareRecordImage()" style="background: #2563eb; margin-bottom: 6px;">📸 ارسال و دانلود عکس گزارش</button>
+      <button onclick="shareTextReport()" class="action-secondary-btn">📝 ارسال گزارش متنی تراکنش</button>
       <button onclick="requestEdit()" style="background: #f59e0b; margin-top: 6px;">✏️ درخواست ویرایش این تراکنش</button>
+
+      <!-- دکمه اختصاصی رسید حواله (فقط برای نوع حواله) -->
       <div id="hawalaReceiptWrapper" class="hidden" style="margin-top: 6px;">
-        <button onclick="showHawalaReceipt()" style="background: #8b5cf6;">📜 مشاهده رسید حواله</button>
+        <button onclick="showHawalaReceipt()" style="background: #8b5cf6;">📜 ارسال رسید حواله (مشخصات و توضیحات)</button>
       </div>
-      <a id="modalWhatsApp" href="#" target="_blank" class="whatsapp-btn">💬 ارتباط با پشتیبانی در واتساپ</a>
+
+      <a id="modalWhatsApp" href="#" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; background: #10b981; color: white; text-decoration: none; padding: 11px; border-radius: 12px; font-weight: 700; font-size: 13px; margin-top: 6px;">💬 ارتباط با پشتیبانی در واتساپ</a>
     </div>
   </div>
 
@@ -428,14 +414,14 @@
         } else if (type === 'success') {
           osc.frequency.setValueAtTime(523, ctx.currentTime);
           osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
-          gain.gain.setValueAtTime(0.06, ctx.currentTime);
-          osc.start(); osc.stop(ctx.currentTime + 0.12);
-        } else if (type === 'fly') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(300, ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.2);
           gain.gain.setValueAtTime(0.05, ctx.currentTime);
-          osc.start(); osc.stop(ctx.currentTime + 0.2);
+          osc.start(); osc.stop(ctx.currentTime + 0.12);
+        } else if (type === 'spin') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(200, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.5);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          osc.start(); osc.stop(ctx.currentTime + 0.5);
         }
       } catch (e) {}
     }
@@ -478,7 +464,7 @@
         }
 
       } catch (err) {
-        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات. لطفاً صفحه را رفرش کنید.</div>';
+        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در دریافت اطلاعات. صفحه را رفرش کنید.</div>';
       }
     });
 
@@ -487,6 +473,7 @@
       return String(str).replace(/\D/g, '');
     }
 
+    // شرط مطابقت ۵ یا ۶ رقم آخر شماره تلفن
     function checkPhone() {
       playSound('click');
       const rawInput = document.getElementById('phoneInput').value.trim();
@@ -499,7 +486,8 @@
       const found = accountsList.find(u => {
         let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
         const sheetPhone = cleanDigits(phoneVal);
-        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone));
+        if (!sheetPhone) return false;
+        return sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone.slice(-5));
       });
 
       if (found) {
@@ -561,7 +549,7 @@
       const found = accountsList.find(u => {
         let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
         const sheetPhone = cleanDigits(phoneVal);
-        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone));
+        return sheetPhone && sheetPhone.endsWith(userDigits.slice(-5));
       });
 
       if (found) {
@@ -577,17 +565,8 @@
       document.getElementById('phoneSection').classList.remove('hidden');
     }
 
-    function backToPhone() {
-      playSound('click');
-      document.getElementById('googleAuthSection').classList.add('hidden');
-      document.getElementById('phoneSection').classList.remove('hidden');
-    }
-
-    function backToGoogle() {
-      playSound('click');
-      document.getElementById('accountSection').classList.add('hidden');
-      document.getElementById('googleAuthSection').classList.remove('hidden');
-    }
+    function backToPhone() { playSound('click'); document.getElementById('googleAuthSection').classList.add('hidden'); document.getElementById('phoneSection').classList.remove('hidden'); }
+    function backToGoogle() { playSound('click'); document.getElementById('accountSection').classList.add('hidden'); document.getElementById('googleAuthSection').classList.remove('hidden'); }
 
     function processDashboard(sheetAccId) {
       document.getElementById('phoneSection').classList.add('hidden');
@@ -612,9 +591,7 @@
         let amount = parseFloat(tx.Amount || tx.amount) || 0;
         let dir = String(tx.Direction || tx.direction || '').trim();
 
-        if (!customerBalances[curr]) {
-          customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
-        }
+        if (!customerBalances[curr]) customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
         if (dir.includes('بستانکار') || dir.includes('دریافت')) {
           customerBalances[curr].credit += amount;
         } else if (dir.includes('بدهکار') || dir.includes('پرداخت')) {
@@ -648,25 +625,21 @@
       renderActiveCurrencyCard();
     }
 
-    function switchCurrency(idx) {
-      playSound('click');
-      activeCurrencyIndex = idx;
-      renderCurrencyTabs();
-    }
+    function switchCurrency(idx) { playSound('click'); activeCurrencyIndex = idx; renderCurrencyTabs(); }
 
     function renderActiveCurrencyCard() {
       let currName = currencyList[activeCurrencyIndex];
       let b = customerBalances[currName] || { credit: 0, debit: 0, net: 0 };
-      let netColor = b.net >= 0 ? 'var(--success)' : 'var(--danger)';
+      let netColor = b.net >= 0 ? 'var(--success-dark)' : 'var(--danger)';
       
       let cardHtml = `
         <div class="currency-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="font-weight: 700; font-size: 13.5px; color: #1e293b;">ارز: ${currName}</span>
-            <span style="font-size: 17px; font-weight: 700; color: ${netColor};" class="eng-num">${b.net.toLocaleString()}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: 700; font-size: 13px; color: #1e293b;">ارز: ${currName}</span>
+            <span style="font-size: 16px; font-weight: 700; color: ${netColor};" class="eng-num">${b.net.toLocaleString()}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; font-size: 11.5px; border-top: 1px solid #f1f5f9; padding-top: 6px; color: var(--text-muted);">
-            <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.credit.toLocaleString()}</b></span>
+          <div style="display: flex; justify-content: space-between; font-size: 11px; border-top: 1px solid #f1f5f9; padding-top: 4px; color: var(--text-muted);">
+            <span>بستانکار (+): <b style="color: var(--success-dark);" class="eng-num">${b.credit.toLocaleString()}</b></span>
             <span>بدهکار (-): <b style="color: var(--danger);" class="eng-num">${b.debit.toLocaleString()}</b></span>
           </div>
         </div>`;
@@ -674,46 +647,25 @@
     }
 
     function checkNewTransactionsNotification() {
-      // شبیه‌سازی نمایش اعلان هوشمند تراکنش جدید
       if (customerTransactions.length > 0) {
         document.getElementById('smartNotificationBox').classList.remove('hidden');
       }
     }
 
+    // انیمیشن چرخش و پرتاب با صدا
     function confirmNewTransaction() {
-      playSound('fly');
-      const box = document.getElementById('smartNotificationBox');
-      
-      // ایجاد المان پرتابی
-      const flyer = document.createElement('div');
-      flyer.className = 'flying-tx';
-      flyer.innerText = '✨ تراکنش جدید تأیید شد';
-      document.body.appendChild(flyer);
-
-      const rect = box.getBoundingClientRect();
-      flyer.style.top = rect.top + 'px';
-      flyer.style.left = rect.left + 'px';
+      playSound('spin');
+      const card = document.getElementById('newTxCard');
+      card.classList.add('spin-fly');
 
       setTimeout(() => {
-        flyer.style.transform = 'translate(150px, 300px) scale(0.2)';
-        flyer.style.opacity = '0';
-      }, 50);
-
-      setTimeout(() => {
-        flyer.remove();
-        box.classList.add('hidden');
-      }, 850);
+        document.getElementById('smartNotificationBox').classList.add('hidden');
+        openTransactionsModal();
+      }, 750);
     }
 
-    function openTransactionsModal() {
-      playSound('click');
-      document.getElementById('transactionsModal').classList.add('open');
-    }
-
-    function closeTransactionsModal() {
-      playSound('click');
-      document.getElementById('transactionsModal').classList.remove('open');
-    }
+    function openTransactionsModal() { playSound('click'); document.getElementById('transactionsModal').classList.add('open'); }
+    function closeTransactionsModal() { playSound('click'); document.getElementById('transactionsModal').classList.remove('open'); }
 
     function renderTransactionsList() {
       let txHtml = '';
@@ -722,21 +674,21 @@
       } else {
         customerTransactions.forEach((tx, idx) => {
           let dir = String(tx.Direction || tx.direction || '');
-          let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
+          let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success-dark)' : 'var(--danger)';
           let amountVal = parseFloat(tx.Amount || tx.amount) || 0;
           
           txHtml += `
-            <div class="tx-card" onclick="openDetailModal(${idx})">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="font-weight:700; font-size:13.5px; color:#1e293b;">${tx.OperationType || tx.operationtype || 'عملیات مالی'}</span>
-                <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted); font-weight:700;" class="eng-num">${tx.Date || tx.date || '---'}</span>
+            <div class="tx-card-item" onclick="openDetailModal(${idx})">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span style="font-weight:700; font-size:13px; color:#1e293b;">${tx.OperationType || tx.operationtype || 'عملیات مالی'}</span>
+                <span style="font-size:10.5px; background:#f1f5f9; padding:2px 6px; border-radius:5px; color:var(--text-muted); font-weight:700;" class="eng-num">${tx.Date || tx.date || '---'}</span>
               </div>
-              <div style="font-size:11.5px; color:#334155; margin-bottom:8px; line-height:1.6;">
+              <div style="font-size:11.5px; color:#334155; margin-bottom:6px; line-height:1.5;">
                 ${tx.Description || tx.description || 'بدون شرح'}
               </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; paddingTop:6px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:4px;">
                 <span style="font-weight:700; font-size:13px; color:${amtColor};" class="eng-num">${tx.Currency || tx.currency || 'AFN'} ${amountVal.toLocaleString()} (${dir})</span>
-                <span style="color:#4f46e5; font-size:11px; font-weight:700;">جزئیات ➔</span>
+                <span style="color:#4f46e5; font-size:11px; font-weight:700;">مشاهده ➔</span>
               </div>
             </div>`;
         });
@@ -750,20 +702,20 @@
       selectedTxItem = customerTransactions[idx];
       let tx = selectedTxItem;
       let dir = String(tx.Direction || tx.direction || '');
-      let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
+      let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success-dark)' : 'var(--danger)';
 
       let bodyHtml = `
-        <p><b>شناسه:</b> <span class="eng-num">${tx.TransID || tx.transid || '---'}</span></p>
+        <p><b>شناسه تراکنش:</b> <span class="eng-num">${tx.TransID || tx.transid || '---'}</span></p>
         <p><b>نوع عملیات:</b> ${tx.OperationType || tx.operationtype || '---'}</p>
         <p><b>تاریخ:</b> <span class="eng-num">${tx.Date || tx.date || '---'}</span></p>
-        <p><b>شرح:</b> ${tx.Description || tx.description || '---'}</p>
+        <p><b>شرح / توضیحات:</b> ${tx.Description || tx.description || '---'}</p>
         <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:${amtColor};">${Number(tx.Amount || 0).toLocaleString()} ${tx.Currency || ''}</span></p>
-        <p><b>وضعیت:</b> <span style="color:var(--success); font-weight:bold;">${tx.Status || tx.status || 'تأیید شده'}</span></p>
+        <p><b>وضعیت:</b> <span style="color:var(--success-dark); font-weight:bold;">${tx.Status || tx.status || 'تأیید شده'}</span></p>
       `;
       document.getElementById('modalBody').innerHTML = bodyHtml;
       document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20پشتیبانی%20برای%20تراکنش%20شماره%20${tx.TransID || (idx+1)}%20را دارم`;
 
-      // بررسی اینکه آیا نوع آن حواله است
+      // بررسی نوع حواله
       let opType = String(tx.OperationType || tx.operationtype || '');
       if (opType.includes('حواله')) {
         document.getElementById('hawalaReceiptWrapper').classList.remove('hidden');
@@ -774,14 +726,29 @@
       document.getElementById('txDetailModal').classList.add('open');
     }
 
-    function closeDetailModal() {
-      playSound('click');
-      document.getElementById('txDetailModal').classList.remove('open');
-    }
+    function closeDetailModal() { playSound('click'); document.getElementById('txDetailModal').classList.remove('open'); }
 
+    // ارسال رسید مخصوص حواله به صورت گزارش متنی کامل
     function showHawalaReceipt() {
       playSound('click');
-      alert(`📜 رسید حواله:\n\n${selectedTxItem.Description || selectedTxItem.description || 'بدون توضیح'}`);
+      let txt = `📜 *رسید رسمی حواله صرافی کریمی*\n\n` +
+                `🔹 *شناسه:* ${selectedTxItem.TransID || '---'}\n` +
+                `🔹 *مبلغ:* ${Number(selectedTxItem.Amount || 0).toLocaleString()} ${selectedTxItem.Currency || ''}\n` +
+                `🔹 *تاریخ:* ${selectedTxItem.Date || '---'}\n` +
+                `📝 *مشخصات و توضیحات حواله:*\n${selectedTxItem.Description || selectedTxItem.description || 'بدون توضیح'}`;
+      
+      window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
+    }
+
+    // ارسال گزارش متنی
+    function shareTextReport() {
+      playSound('click');
+      let txt = `📄 *گزارش تراکنش امانت‌داری کریمی*\n\n` +
+                `نوع: ${selectedTxItem.OperationType || 'تراکنش'}\n` +
+                `مبلغ: ${Number(selectedTxItem.Amount || 0).toLocaleString()} ${selectedTxItem.Currency || ''}\n` +
+                `تاریخ: ${selectedTxItem.Date || ''}\n` +
+                `توضیحات: ${selectedTxItem.Description || ''}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
     }
 
     function requestEdit() {
