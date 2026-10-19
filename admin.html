@@ -3,472 +3,569 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>پخش مخاطبین - حساب‌کتاب من</title>
+  <title>پنل مدیریت پیشرفته سامانه کریمی</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
-
     :root {
-      --bg-color: #f1f5f9;
-      --card-bg: #ffffff;
-      --primary: #059669;
-      --primary-gradient: linear-gradient(135deg, #047857 0%, #059669 100%);
-      --text-dark: #0f172a;
-      --text-muted: #64748b;
-      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      --primary: #0f172a;
+      --accent: #059669;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --border: #cbd5e1;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --info: #0284c7;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Vazirmatn', sans-serif;
-      direction: rtl;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; direction: rtl; }
+    body { background-color: var(--bg); color: var(--text); padding: 12px; min-height: 100vh; }
 
-    body {
-      background: var(--bg-color);
-      color: var(--text-dark);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .app-viewport {
-      width: 100%;
-      max-width: 440px;
-      min-height: 100vh;
-      background: #f8fafc;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
+    /* لایه لاگین ادمین */
     #authOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 20px;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(8px);
+      display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 16px;
     }
-
     .auth-card {
-      background: #ffffff;
-      width: 100%;
-      max-width: 380px;
-      padding: 24px;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      text-align: center;
+      background: #fff; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
     }
+    .auth-title { font-size: 18px; font-weight: 900; text-align: center; color: var(--primary); }
 
-    .auth-title {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--text-dark);
+    .container { max-width: 1000px; width: 100%; display: none; margin: auto; }
+    .card { background: var(--card); border-radius: 16px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border); margin-bottom: 16px; }
+    
+    h3 { margin-top: 0; color: var(--primary); font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: #475569; }
+    
+    input, select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.95rem; outline: none; background: #f8fafc; }
+    input:focus, select:focus { border-color: var(--accent); background: #fff; }
+
+    /* کارت‌های آمار شیک برای موبایل و دسکتاپ */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    .stat-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+      border: 1.5px solid var(--border); border-radius: 16px; padding: 14px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
+    .stat-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 8px; }
+    .stat-title { font-weight: 800; font-size: 1.05rem; color: #1e1b4b; }
+    .stat-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
+    .stat-badge { text-align: center; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; margin-top: 6px; }
 
-    .auth-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.5;
+    .btn { padding: 10px 14px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.88rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+    .btn-danger { background: var(--danger); }
+    .btn-secondary { background: #475569; }
+    .btn-warning { background: var(--warning); color: #fff; }
+    .btn-info { background: var(--info); }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; border-radius: 8px; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.88rem; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: right; }
+    th { background: #f1f5f9; color: #475569; font-weight: 800; white-space: nowrap; }
+    
+    .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .back-home { display: block; text-align: center; margin-top: 16px; color: #475569; text-decoration: none; font-size: 13px; font-weight: 700; }
+    .currency-badge { display: inline-block; padding: 3px 8px; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; margin: 2px; font-weight: bold; }
+    
+    @media (max-width: 600px) {
+      body { padding: 8px; }
+      .card { padding: 12px; border-radius: 14px; }
+      .btn { width: 100%; margin-bottom: 4px; }
+      .flex-row { flex-direction: column; align-items: stretch; }
+      .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      th, td { padding: 8px 4px; font-size: 0.8rem; }
     }
-
-    .header-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card-bg);
-      padding: 12px 16px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid #e2e8f0;
-    }
-
-    .back-link {
-      text-decoration: none;
-      color: var(--primary);
-      font-weight: 800;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .user-badge {
-      font-size: 11px;
-      background: #d1fae5;
-      color: #065f46;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-weight: 700;
-      max-width: 180px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .form-card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid #e2e8f0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .form-title {
-      font-size: 13.5px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .input-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid #cbd5e1;
-      font-size: 13px;
-      outline: none;
-      background: #f8fafc;
-    }
-
-    .form-input:focus { border-color: var(--primary); background: #fff; }
-
-    .btn-submit {
-      background: var(--primary-gradient);
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 14px;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-    }
-
-    .search-box {
-      display: flex;
-      gap: 8px;
-    }
-
-    .contacts-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .contact-card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 14px;
-      box-shadow: var(--shadow);
-      border: 1px solid #e2e8f0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .contact-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .contact-name {
-      font-size: 14px;
-      font-weight: 900;
-      color: var(--text-dark);
-    }
-
-    .contact-details {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .eng-text {
-      font-family: Tahoma, sans-serif;
-      direction: ltr;
-      display: inline-block;
-    }
-
-    .actions-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 6px;
-      border-top: 1px solid #f1f5f9;
-      padding-top: 10px;
-    }
-
-    .action-btn {
-      padding: 8px 2px;
-      border-radius: 10px;
-      border: none;
-      font-size: 10.5px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      text-decoration: none;
-      text-align: center;
-    }
-
-    .btn-whatsapp { background: #dcfce7; color: #16a34a; }
-    .btn-sms { background: #e0f2fe; color: #0284c7; }
-    .btn-call { background: #fef3c7; color: #d97706; }
-    .btn-edit { background: #f1f5f9; color: #475569; }
-    .btn-delete { background: #fee2e2; color: #dc2626; }
-
-    .loading-box { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
   </style>
 </head>
 <body>
 
-  <!-- پنجره احراز هویت اولیه ایمیل -->
-  <div id="authOverlay" style="display:none;">
+  <!-- صفحه لاگین ادمین (فیلد ایمیل کاملاً خالی) -->
+  <div id="authOverlay">
     <div class="auth-card">
-      <div class="auth-title">ورود به حساب کاربری</div>
-      <div class="auth-desc">لطفاً ایمیل خود را وارد کنید تا اتصال برقرار شده و حساب شما در گوگل شیت ثبت شود.</div>
-      <input type="email" id="userEmailInput" class="form-input eng-text" placeholder="your-email@gmail.com">
-      <button class="btn-submit" id="authBtn" onclick="verifyAndSaveEmail()">بررسی اتصال و ورود</button>
+      <div class="auth-title">🔐 ورود به پنل مدیریت سامانه کریمی</div>
+      <div class="form-group">
+        <label>ایمیل مدیریت:</label>
+        <input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل خود را وارد کنید">
+      </div>
+      <div class="form-group">
+        <label>کد عبور (PIN):</label>
+        <input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور">
+      </div>
+      <button class="btn" style="width:100%; padding: 12px;" onclick="handleLogin()">ورود به پنل</button>
+      <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
     </div>
   </div>
 
-  <div class="app-viewport">
+  <!-- پنل اصلی مدیریت -->
+  <div class="container" id="adminContainer">
     
-    <div class="header-nav">
-      <a href="index.html" class="back-link">← بازگشت به منو</a>
-      <span id="currentUserDisplay" class="user-badge">کاربر: --</span>
+    <div class="card flex-row" style="justify-content: space-between;">
+      <h3>🛡️ مدیریت پیشرفته امانت‌داری کریمی</h3>
+      <div class="flex-row">
+        <button class="btn btn-secondary btn-sm" onclick="loadData()">🔄 بروزرسانی</button>
+        <button class="btn btn-danger btn-sm" onclick="handleLogout()">🚪 خروج</button>
+      </div>
     </div>
 
-    <div class="form-card">
-      <span class="form-title" id="formTitle">➕ افزودن مخاطب جدید</span>
-      <input type="hidden" id="editRowIndex" value="">
+    <!-- آمار کلی سیستم -->
+    <div class="card">
+      <h3>📊 وضعیت کلی مالی صرافی (به تفکیک ارزها)</h3>
+      <div class="stats-grid" id="globalStatsGrid"></div>
+    </div>
+
+    <!-- لیست حساب‌ها -->
+    <div class="card" id="accountsSection">
+      <div class="flex-row" style="justify-content: space-between; margin-bottom: 12px;">
+        <h3>👥 لیست مشتریان و حساب‌ها</h3>
+        <button class="btn" onclick="openAccountModal()">+ ایجاد حساب جدید</button>
+      </div>
       
-      <div class="input-group">
-        <span class="input-label">نام و نام خانوادگی:</span>
-        <input type="text" id="nameInput" class="form-input" placeholder="مثلاً احمد کریمی">
+      <div class="form-group">
+        <input type="text" id="searchAccountInput" placeholder="🔍 جستجوی نام مشتری یا شماره تلفن..." oninput="filterAccounts()">
       </div>
 
-      <div class="input-group">
-        <span class="input-label">شماره تماس (با کد کشور و علامت + همراه باشد):</span>
-        <input type="text" id="phoneInput" class="form-input eng-text" placeholder="+9647700000000">
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>نام مشتری</th>
+              <th>تلفن</th>
+              <th>بیلان وضعیت حساب</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody id="accountsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- جزئیات حساب انتخاب شده -->
+    <div class="card" id="accountDetailSection" style="display: none;">
+      <div class="flex-row" style="justify-content: space-between;">
+        <h3 id="detailAccountTitle">جزئیات حساب</h3>
+        <button class="btn btn-secondary btn-sm" onclick="backToAccountsList()">← بازگشت به لیست</button>
+      </div>
+      
+      <div class="stats-grid" id="accountStatsGrid" style="margin-top: 10px;"></div>
+
+      <div class="flex-row" style="margin: 14px 0;">
+        <button class="btn" onclick="openAddTransactionModal()">➕ ثبت تراکنش جدید</button>
+        <button class="btn btn-warning" onclick="openEditAccountModal()">✏️ ویرایش نام/تلفن مشتری</button>
+        <button class="btn btn-info" onclick="sendWhatsAppReport()">💬 ارسال بیلان در واتساپ</button>
       </div>
 
-      <button class="btn-submit" onclick="saveContact()" id="submitBtn">ذخیره مخاطب</button>
+      <h3>📜 تراکنش‌های این حساب</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>شناسه</th>
+              <th>تاریخ</th>
+              <th>جهت</th>
+              <th>مبلغ</th>
+              <th>ارز</th>
+              <th>نوع عملیات</th>
+              <th>شرح</th>
+              <th>حذف</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="search-box">
-      <input type="text" id="searchInput" class="form-input" placeholder="🔍 جستجو بر اساس نام مخاطب..." oninput="filterContacts()">
-    </div>
+    <a href="index.html" class="back-home">← بازگشت به منوی اصلی</a>
+  </div>
 
-    <div id="contactsList" class="contacts-container">
-      <div class="loading-box">در حال بارگذاری اطلاعات...</div>
+  <!-- مودال ایجاد/ویرایش حساب -->
+  <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
+    <div class="card" style="width: 100%; max-width: 400px; margin: 0;">
+      <h3 id="modalAccountTitle">ایجاد حساب جدید</h3>
+      <input type="hidden" id="editAccountId">
+      <div class="form-group">
+        <label>نام مشتری (Name):</label>
+        <input type="text" id="modalAccountName" placeholder="نام و نام خانوادگی">
+      </div>
+      <div class="form-group">
+        <label>تلفن (Phone):</label>
+        <input type="text" id="modalAccountPhone" dir="ltr" placeholder="07xxxxxxxx">
+      </div>
+      <div class="flex-row" style="justify-content: flex-end; margin-top: 12px;">
+        <button class="btn btn-secondary" onclick="closeAccountModal()">انصراف</button>
+        <button class="btn" onclick="saveAccount()">ذخیره حساب</button>
+      </div>
     </div>
+  </div>
 
+  <!-- مودال ثبت تراکنش -->
+  <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
+    <div class="card" style="width: 100%; max-width: 420px; margin: 0;">
+      <h3>ثبت تراکنش جدید</h3>
+      <div class="form-group">
+        <label>جهت تراکنش:</label>
+        <select id="txDirection">
+          <option value="بستانکار">بستانکار (+)</option>
+          <option value="بدهکار">بدهکار (-)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>مبلغ:</label>
+        <input type="number" id="txAmount" placeholder="مقدار مبلغ">
+      </div>
+      <div class="form-group">
+        <label>واحد پول:</label>
+        <select id="txCurrency">
+          <option value="AFN">AFN (افغانی)</option>
+          <option value="USD">USD (دلار)</option>
+          <option value="IQD">IQD (دینار)</option>
+          <option value="Tom">تومان</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>نوع عملیات:</label>
+        <select id="txOpType">
+          <option value="امانت">امانت</option>
+          <option value="حواله">حواله</option>
+          <option value="دریافت">دریافت</option>
+          <option value="پرداخت">پرداخت</option>
+          <option value="تسویه">تسویه</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>شرح و توضیحات:</label>
+        <input type="text" id="txDesc" placeholder="توضیحات تراکنش...">
+      </div>
+      <div class="flex-row" style="justify-content: flex-end; margin-top: 12px;">
+        <button class="btn btn-secondary" onclick="closeTransactionModal()">انصراف</button>
+        <button class="btn" onclick="submitTransaction()">ثبت تراکنش</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    // لینک جدید و نهایی گوگل اسکریپت شما
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_CcFXGVSM2KTy8Zl4lUIjHHboawklFv3-XdUmqTuaK1_u8d8MNLN1GJp02U3B4LBu1A/exec";
+    // لینک جدید گوگل اسکریپت شما
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOtkYxAJcUJQmKkGKnfEetgrvrv-HUZxyqXarUTdk2zCnniUQ9urcVwVJlwUYZlPCy/exec";
+    const ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
+    const ADMIN_PIN = "77218731";
     
-    let allContacts = [];
-    let currentUserEmail = localStorage.getItem('hesab_user_email') || "";
+    let allAccounts = [];
+    let allTransactions = [];
+    let currentAccountId = null;
 
     window.onload = function() {
-      if (!currentUserEmail) {
-        document.getElementById('authOverlay').style.display = 'flex';
-      } else {
-        document.getElementById('authOverlay').style.display = 'none';
-        document.getElementById('currentUserDisplay').innerText = currentUserEmail;
-        loadContacts();
+      if (sessionStorage.getItem("adminAuthSession") === "active") {
+        document.getElementById("authOverlay").style.display = "none";
+        document.getElementById("adminContainer").style.display = "block";
+        loadData();
       }
     };
 
-    function verifyAndSaveEmail() {
-      const email = document.getElementById('userEmailInput').value.trim();
-      if (!email || !email.includes('@')) {
-        alert("لطفاً یک ایمیل معتبر وارد کنید.");
-        return;
+    function handleLogin() {
+      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+      const pin = document.getElementById("loginPin").value.trim();
+      if (email === ADMIN_EMAIL && pin === ADMIN_PIN) {
+        sessionStorage.setItem("adminAuthSession", "active");
+        document.getElementById("authOverlay").style.display = "none";
+        document.getElementById("adminContainer").style.display = "block";
+        loadData();
+      } else {
+        alert("ایمیل یا رمز ادمین اشتباه است!");
       }
-
-      const btn = document.getElementById('authBtn');
-      btn.innerText = "در حال بررسی و ثبت در گوگل شیت...";
-
-      fetch(`${SCRIPT_URL}?action=verify_email&email=${encodeURIComponent(email)}`)
-        .then(res => res.json())
-        .then(res => {
-          localStorage.setItem('hesab_user_email', email);
-          currentUserEmail = email;
-          document.getElementById('authOverlay').style.display = 'none';
-          document.getElementById('currentUserDisplay').innerText = email;
-          loadContacts();
-        })
-        .catch(err => {
-          // برای اطمینان از اینکه حتی اگر شبکه محدود بود کاربر معطل نشود
-          localStorage.setItem('hesab_user_email', email);
-          currentUserEmail = email;
-          document.getElementById('authOverlay').style.display = 'none';
-          document.getElementById('currentUserDisplay').innerText = email;
-          loadContacts();
-        });
     }
 
-    function loadContacts() {
-      const container = document.getElementById('contactsList');
-      container.innerHTML = '<div class="loading-box">در حال دریافت اطلاعات...</div>';
-
-      fetch(`${SCRIPT_URL}?action=read&email=${encodeURIComponent(currentUserEmail)}`)
-        .then(res => res.json())
-        .then(data => {
-          allContacts = data || [];
-          renderContacts(allContacts);
-        })
-        .catch(err => {
-          container.innerHTML = '<div class="loading-box" style="color: #059669;">اتصال برقرار شد. آماده ثبت اولین مخاطب.</div>';
-        });
+    function handleLogout() {
+      sessionStorage.removeItem("adminAuthSession");
+      location.reload();
     }
 
-    function renderContacts(list) {
-      const container = document.getElementById('contactsList');
-      container.innerHTML = "";
-      
-      if (!list || list.length === 0) {
-        container.innerHTML = '<div class="loading-box">هیچ مخاطبی ثبت نشده است. اولین مخاطب خود را اضافه کنید.</div>';
-        return;
-      }
+    async function postData(data) {
+      data.adminEmail = ADMIN_EMAIL;
+      data.adminPin = ADMIN_PIN;
+      let bodyData = new URLSearchParams();
+      for (let k in data) bodyData.append(k, data[k]);
 
-      list.forEach(item => {
-        let rawPhone = item.phone ? item.phone.toString().trim() : '';
-        let cleanWhatsAppPhone = rawPhone.replace(/[^0-9]/g, '');
-        
-        let card = document.createElement('div');
-        card.className = 'contact-card';
-        card.innerHTML = `
-          <div class="contact-info">
-            <div>
-              <div class="contact-name">${item.name || 'بدون نام'}</div>
-              <div class="contact-details eng-text">📞 ${item.phone || '-'}</div>
-            </div>
-          </div>
-          <div class="actions-grid">
-            <a href="https://wa.me/${cleanWhatsAppPhone}" target="_blank" class="action-btn btn-whatsapp">
-              <span>💬</span> واتساپ
-            </a>
-            <a href="sms:${rawPhone}" class="action-btn btn-sms">
-              <span>📱</span> پیامک
-            </a>
-            <a href="tel:${rawPhone}" class="action-btn btn-call">
-              <span>📞</span> تماس
-            </a>
-            <button class="action-btn btn-edit" onclick="prepareEdit(${item.row}, '${item.name || ''}', '${item.phone || ''}')">
-              <span>✏️</span> ویرایش
-            </button>
-            <button class="action-btn btn-delete" onclick="deleteContact(${item.row})">
-              <span>🗑️</span> حذف
-            </button>
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: bodyData
+        });
+        return await res.json();
+      } catch (e) {
+        fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: bodyData });
+        return { status: "success" };
+      }
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch(SCRIPT_URL + "?action=getData");
+        const res = await response.json();
+        if (res.accounts) {
+          allAccounts = parseRowsToObjects(res.accounts);
+          allTransactions = parseRowsToObjects(res.transactions);
+          renderDashboardStats();
+          renderAccountsList(allAccounts);
+          if (currentAccountId) {
+            let found = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
+            if (found) selectAccount(currentAccountId, found.Name || found.name);
+          }
+        }
+      } catch (e) {
+        alert("خطا در بارگذاری اطلاعات");
+      }
+    }
+
+    function parseRowsToObjects(rows) {
+      if (!rows || rows.length <= 1) return [];
+      if (typeof rows[0] === 'object' && !Array.isArray(rows[0])) return rows;
+      let headers = rows[0].map(h => String(h).trim());
+      let result = [];
+      for (let i = 1; i < rows.length; i++) {
+        let obj = {};
+        for (let j = 0; j < headers.length; j++) {
+          obj[headers[j]] = rows[i][j];
+        }
+        result.push(obj);
+      }
+      return result;
+    }
+
+    function renderDashboardStats() {
+      let stats = {};
+      allTransactions.forEach(tx => {
+        let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
+        let dir = String(tx.Direction || tx.direction || '');
+        let amt = parseFloat(tx.Amount || tx.amount || 0);
+        if(!stats[curr]) stats[curr] = { credit: 0, debit: 0 };
+        if(dir.includes("بستانکار")) stats[curr].credit += amt;
+        if(dir.includes("بدهکار")) stats[curr].debit += amt;
+      });
+
+      let gridHtml = '';
+      for (let curr in stats) {
+        let net = stats[curr].credit - stats[curr].debit;
+        let isDebtor = net > 0;
+        let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
+        let label = isDebtor ? `⚠️ شما مجموعاً ${Math.abs(net).toLocaleString()} بدهکارید` : (net < 0 ? `✅ شما مجموعاً ${Math.abs(net).toLocaleString()} طلبکارید` : "بیلان تسویه است");
+
+        gridHtml += `
+          <div class="stat-card">
+            <div class="stat-header"><span class="stat-title">ارز: ${curr}</span></div>
+            <div class="stat-row"><span>بستانکار مشتریان:</span><b style="color:#059669;">${stats[curr].credit.toLocaleString()}</b></div>
+            <div class="stat-row"><span>بدهکار مشتریان:</span><b style="color:#dc2626;">${stats[curr].debit.toLocaleString()}</b></div>
+            <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
-        container.appendChild(card);
+      }
+      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b;">اطلاعاتی یافت نشد</div>';
+    }
+
+    function renderAccountsList(accounts) {
+      const tbody = document.getElementById("accountsTableBody");
+      tbody.innerHTML = "";
+      accounts.forEach(acc => {
+        let accId = acc.AccountID || acc.accountid || '';
+        let accName = acc.Name || acc.name || 'بدون نام';
+        let accPhone = acc.Phone || acc.phone || '';
+        if (!accId) return;
+
+        let accTxs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId));
+        let accCurrencies = {};
+        accTxs.forEach(tx => {
+          let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
+          let dir = String(tx.Direction || tx.direction || '');
+          let amt = parseFloat(tx.Amount || tx.amount || 0);
+          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+
+        let badgesHtml = '';
+        for(let curr in accCurrencies) {
+          let val = accCurrencies[curr];
+          let color = val > 0 ? '#dc2626' : (val < 0 ? '#059669' : '#64748b');
+          let label = val > 0 ? `بدهکاریم: ${Math.abs(val).toLocaleString()}` : (val < 0 ? `طلبکاریم: ${Math.abs(val).toLocaleString()}` : `تسویه`);
+          badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}: ${label}</span>`;
+        }
+
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-weight:bold; cursor:pointer; color:#0284c7;" onclick="selectAccount('${accId}', '${accName}')">${accName}</td>
+            <td dir="ltr">${accPhone}</td>
+            <td>${badgesHtml || 'تسویه'}</td>
+            <td>
+              <button class="btn btn-sm" onclick="selectAccount('${accId}', '${accName}')">مشاهده</button>
+            </td>
+          </tr>
+        `;
       });
     }
 
-    function filterContacts() {
-      const query = document.getElementById('searchInput').value.trim().toLowerCase();
-      const filtered = allContacts.filter(c => c.name && c.name.toLowerCase().includes(query));
-      renderContacts(filtered);
+    function filterAccounts() {
+      const q = document.getElementById("searchAccountInput").value.toLowerCase();
+      const filtered = allAccounts.filter(acc => {
+        let name = String(acc.Name || acc.name || '').toLowerCase();
+        let phone = String(acc.Phone || acc.phone || '').toLowerCase();
+        return name.includes(q) || phone.includes(q);
+      });
+      renderAccountsList(filtered);
     }
 
-    function saveContact() {
-      const row = document.getElementById('editRowIndex').value;
-      const name = document.getElementById('nameInput').value.trim();
-      const phone = document.getElementById('phoneInput').value.trim();
+    function openAccountModal() {
+      document.getElementById("editAccountId").value = "";
+      document.getElementById("modalAccountTitle").innerText = "ایجاد حساب جدید";
+      document.getElementById("modalAccountName").value = "";
+      document.getElementById("modalAccountPhone").value = "";
+      document.getElementById("accountModal").style.display = "flex";
+    }
 
-      if (!name || !phone) {
-        alert("لطفاً نام و شماره تماس را وارد کنید.");
-        return;
+    function openEditAccountModal() {
+      let acc = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
+      if (!acc) return;
+      document.getElementById("editAccountId").value = currentAccountId;
+      document.getElementById("modalAccountTitle").innerText = "ویرایش حساب مشتری";
+      document.getElementById("modalAccountName").value = acc.Name || acc.name || "";
+      document.getElementById("modalAccountPhone").value = acc.Phone || acc.phone || "";
+      document.getElementById("accountModal").style.display = "flex";
+    }
+
+    function closeAccountModal() {
+      document.getElementById("accountModal").style.display = "none";
+    }
+
+    async function saveAccount() {
+      let editId = document.getElementById("editAccountId").value;
+      let accName = document.getElementById("modalAccountName").value;
+      let accPhone = document.getElementById("modalAccountPhone").value;
+
+      if (!accName) { alert("نام مشتری الزامی است"); return; }
+
+      let action = editId ? "editAccount" : "addAccount";
+      let accountId = editId ? editId : Math.random().toString(36).substring(2, 8);
+
+      closeAccountModal();
+      await postData({ action: action, accountId: accountId, accountName: accName, phone: accPhone });
+      alert("تغییرات با موفقیت ذخیره شد");
+      setTimeout(loadData, 800);
+    }
+
+    function selectAccount(accId, accName) {
+      currentAccountId = accId;
+      document.getElementById("detailAccountTitle").innerText = `👤 حساب: ${accName}`;
+      document.getElementById("accountsSection").style.display = "none";
+      document.getElementById("accountDetailSection").style.display = "block";
+      renderAccountDetailTransactions(accId);
+    }
+
+    function backToAccountsList() {
+      currentAccountId = null;
+      document.getElementById("accountDetailSection").style.display = "none";
+      document.getElementById("accountsSection").style.display = "block";
+    }
+
+    function renderAccountDetailTransactions(accId) {
+      const txs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId));
+      const tbody = document.getElementById("transactionsTableBody");
+      tbody.innerHTML = "";
+      
+      let accCurrencies = {};
+
+      if (txs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">تراکنشی ثبت نشده است</td></tr>`;
+      } else {
+        txs.forEach(tx => {
+          let txId = tx.TransID || tx.transid || '';
+          let dir = String(tx.Direction || tx.direction || '');
+          let amt = parseFloat(tx.Amount || tx.amount || 0);
+          let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
+
+          if(!accCurrencies[curr]) accCurrencies[curr] = { credit: 0, debit: 0 };
+          if(dir.includes("بستانکار")) accCurrencies[curr].credit += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
+
+          tbody.innerHTML += `
+            <tr>
+              <td style="font-family:monospace;">${txId}</td>
+              <td>${tx.Date || tx.date || ''}</td>
+              <td><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></td>
+              <td>${amt.toLocaleString()}</td>
+              <td>${curr}</td>
+              <td>${tx.OperationType || tx.operationtype || ''}</td>
+              <td>${tx.Description || tx.description || ''}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteTransaction('${txId}')">حذف</button>
+              </td>
+            </tr>
+          `;
+        });
       }
 
-      const action = row ? "edit" : "add";
-      let url = `${SCRIPT_URL}?action=${action}&email=${encodeURIComponent(currentUserEmail)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`;
-      if (row) {
-        url += `&row=${row}`;
+      let statsHtml = '';
+      for (let curr in accCurrencies) {
+        let net = accCurrencies[curr].credit - accCurrencies[curr].debit;
+        let isDebtor = net > 0;
+        let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
+        let label = isDebtor ? `بدهکاریم به مشتری: ${Math.abs(net).toLocaleString()}` : (net < 0 ? `طلبکاریم از مشتری: ${Math.abs(net).toLocaleString()}` : "تسویه کامل");
+
+        statsHtml += `
+          <div class="stat-card">
+            <div class="stat-header"><span class="stat-title">ارز: ${curr}</span></div>
+            <div class="stat-row"><span>بستانکار مشتری:</span><b>${accCurrencies[curr].credit.toLocaleString()}</b></div>
+            <div class="stat-row"><span>بدهکار مشتری:</span><b>${accCurrencies[curr].debit.toLocaleString()}</b></div>
+            <div class="stat-badge" style="${bgStyle}">${label}</div>
+          </div>
+        `;
       }
-
-      document.getElementById('submitBtn').innerText = "در حال ذخیره در گوگل شیت...";
-
-      fetch(url)
-        .then(res => res.json())
-        .then(res => {
-          resetForm();
-          loadContacts();
-        })
-        .catch(err => {
-          resetForm();
-          loadContacts();
-        });
+      document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center; color:#64748b;">بدون بیلان مالی</div>';
     }
 
-    function prepareEdit(row, name, phone) {
-      document.getElementById('editRowIndex').value = row;
-      document.getElementById('nameInput').value = name;
-      document.getElementById('phoneInput').value = phone;
-      document.getElementById('formTitle').innerText = "✏️ ویرایش مشخصات مخاطب";
-      document.getElementById('submitBtn').innerText = "بروزرسانی مخاطب";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function openAddTransactionModal() {
+      document.getElementById("txAmount").value = "";
+      document.getElementById("txDesc").value = "";
+      document.getElementById("transactionModal").style.display = "flex";
     }
 
-    function deleteContact(row) {
-      if (!confirm("آیا از حذف این مخاطب مطمئن هستید؟")) return;
-
-      const url = `${SCRIPT_URL}?action=delete&row=${row}`;
-
-      fetch(url)
-        .then(res => res.json())
-        .then(res => {
-          loadContacts();
-        })
-        .catch(err => {
-          loadContacts();
-        });
+    function closeTransactionModal() {
+      document.getElementById("transactionModal").style.display = "none";
     }
 
-    function resetForm() {
-      document.getElementById('editRowIndex').value = "";
-      document.getElementById('nameInput').value = "";
-      document.getElementById('phoneInput').value = "";
-      document.getElementById('formTitle').innerText = "➕ افزودن مخاطب جدید";
-      document.getElementById('submitBtn').innerText = "ذخیره مخاطب";
+    async function submitTransaction() {
+      let amt = document.getElementById("txAmount").value;
+      if (!amt) { alert("لطفاً مبلغ را وارد کنید"); return; }
+
+      closeTransactionModal();
+      await postData({
+        action: "addTransaction",
+        accountId: currentAccountId,
+        direction: document.getElementById("txDirection").value,
+        amount: amt,
+        currency: document.getElementById("txCurrency").value,
+        operationType: document.getElementById("txOpType").value,
+        description: document.getElementById("txDesc").value
+      });
+
+      alert("تراکنش با موفقیت ثبت شد");
+      setTimeout(loadData, 800);
+    }
+
+    async function deleteTransaction(txId) {
+      if (!confirm("آیا از حذف این تراکنش اطمینان دارید؟")) return;
+      await postData({ action: "deleteTransaction", transId: txId });
+      alert("تراکنش حذف شد");
+      setTimeout(loadData, 800);
+    }
+
+    function sendWhatsAppReport() {
+      let acc = allAccounts.find(a => String(a.AccountID || a.accountid) === String(currentAccountId));
+      if (!acc) return;
+      let phone = (acc.Phone || acc.phone || '').replace(/\D/g, '');
+      let msg = `سلام ${acc.Name || acc.name} عزیز، وضعیت آخرین بیلان حساب شما در امانت‌داری کریمی بروزرسانی گردید.`;
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
   </script>
-
 </body>
 </html>
