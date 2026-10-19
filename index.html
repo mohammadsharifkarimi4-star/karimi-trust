@@ -2,232 +2,535 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پنل مدیریت سیستم - کریمی</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>حساب‌کتاب من</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
+
     :root {
-      --primary: #0f172a;
-      --accent: #059669;
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --border: #cbd5e1;
+      --card-bg: #f8fafc;
+      --accent-gradient: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+      --shadow-soft: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 15px 25px -5px rgba(5, 150, 105, 0.25);
     }
 
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; direction: rtl; }
-    body { background-color: var(--bg); color: var(--text); margin: 0; padding: 12px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-
-    #authOverlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px);
-      display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 16px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      direction: rtl;
+      -webkit-tap-highlight-color: transparent;
     }
-    .auth-card {
-      background: #fff; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
+
+    body {
+      background: #e2e8f0;
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
-    .auth-title { font-size: 18px; font-weight: 900; text-align: center; color: var(--primary); }
 
-    .container { max-width: 480px; width: 100%; display: none; }
-    .card { background: var(--card); border-radius: 16px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 16px; }
-    
-    h3 { margin-top: 0; color: var(--primary); font-size: 1.1rem; }
-    .form-group { margin-bottom: 14px; }
-    label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: #475569; }
-    
-    input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 0.95rem; outline: none; background: #f8fafc; }
-    input:focus, select:focus { border-color: var(--accent); background: #fff; }
-
-    .radio-group { display: flex; gap: 8px; }
-    .radio-btn { flex: 1; text-align: center; }
-    .radio-btn input { display: none; }
-    .radio-btn label {
-      display: block; padding: 10px; border: 1px solid var(--border); border-radius: 10px;
-      cursor: pointer; background: #f1f5f9; color: #475569; font-weight: bold; transition: all 0.2s;
+    .app-viewport {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background: #f1f5f9;
+      padding: 16px 16px 32px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
-    .radio-btn input:checked + label.creditor { background: #10b981; color: #fff; border-color: #10b981; }
-    .radio-btn input:checked + label.debtor { background: #ef4444; color: #fff; border-color: #ef4444; }
 
-    .btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; }
-    .btn-logout { background: #ef4444; margin-top: 8px; }
-    .btn-google { display: flex; align-items: center; justify-content: center; gap: 8px; background: #fff; border: 1px solid var(--border); color: #0f172a; font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; width: 100%; }
-    .back-home { display: block; text-align: center; margin-top: 12px; color: #475569; text-decoration: none; font-size: 12px; font-weight: 700; }
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 4px;
+    }
+
+    .welcome-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .welcome-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text-dark);
+      line-height: 1.2;
+    }
+
+    .welcome-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: 1px solid #cbd5e1;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #059669;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .dot-pulse {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .hero-card {
+      background: var(--accent-gradient);
+      border-radius: 24px;
+      padding: 18px;
+      color: #ffffff;
+      box-shadow: 0 15px 30px -8px rgba(5, 150, 105, 0.35);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-top-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hero-main-title {
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .day-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .dates-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .date-box-item {
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 10px 6px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .date-box-title {
+      font-size: 10.5px;
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .date-box-val {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .date-box-sub {
+      font-size: 9.5px;
+      color: #d1fae5;
+      font-weight: 600;
+    }
+
+    .world-clocks-ticker {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      padding: 8px 10px;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .clocks-track {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollClocks 20s linear infinite;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    @keyframes scrollClocks {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(100%); }
+    }
+
+    .clock-item {
+      margin-left: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .clock-label {
+      color: #6ee7b7;
+    }
+
+    .section-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-top: 2px;
+    }
+
+    .menu-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .menu-card-large {
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 18px 16px;
+      text-decoration: none;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid #cbd5e1;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+
+    .menu-card-large:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .marquee-wrapper {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .marquee-text {
+      display: inline-block;
+      padding-right: 100%;
+      animation: marquee 14s linear infinite;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(100%); }
+    }
+
+    .menu-row-small {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .menu-card-small {
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 16px 12px;
+      text-decoration: none;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+      border: 1px solid #cbd5e1;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.25s ease;
+    }
+
+    .menu-card-small:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .icon-wrapper {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 6px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0284c7; }
+    .icon-exchange { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #16a34a; }
+    .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
+    .icon-contacts { background: linear-gradient(135deg, #fae8ff 0%, #f5d0fe 100%); color: #c026d3; }
+    .icon-admin { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); color: #0f172a; }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .card-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .quick-actions-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 20px;
+      padding: 16px;
+      color: #ffffff;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quick-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quick-btns-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .quick-btn {
+      background: #2563eb;
+      color: white;
+      padding: 10px 4px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+      transition: background 0.2s;
+    }
+
+    .quick-btn:hover { background: #1d4ed8; }
+
+    .eng-num {
+      font-family: Tahoma, sans-serif;
+      direction: ltr;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
 
-  <!-- صفحه احراز هویت ادمین -->
-  <div id="authOverlay">
-    <div class="auth-card">
-      <div class="auth-title">احراز هویت ادمین</div>
-      <div class="form-group">
-        <label>ایمیل:</label>
-        <input type="email" id="loginEmail" class="input-field" placeholder="example@gmail.com" dir="ltr">
+  <div class="app-viewport">
+    
+    <div class="top-header">
+      <div class="welcome-box">
+        <span class="welcome-title">خوش آمدید 👋</span>
+        <span class="welcome-subtitle">سامانه حساب‌کتاب من</span>
       </div>
-      <div class="form-group">
-        <label>کد عبور ثابت (PIN):</label>
-        <input type="password" id="loginPin" class="input-field" placeholder="77218731" dir="ltr">
+      <div class="status-badge">
+        <div class="dot-pulse"></div>
+        <span>فعال</span>
       </div>
-      <button class="btn" onclick="handleLogin()">ورود به پنل</button>
-      <div style="text-align: center; font-size: 11px; color: #94a3b8;">یا</div>
-      <button class="btn-google" onclick="handleGoogleLogin()">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-        ورود با اکانت گوگل
-      </button>
-      <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
     </div>
-  </div>
 
-  <!-- پنل مدیریت -->
-  <div class="container" id="adminContainer">
-    <div class="card">
-      <h3>ثبت تراکنش جدید در گوگل‌شیت</h3>
-      
-      <div class="form-group">
-        <label>کد حساب مشتری (AccountID):</label>
-        <input type="text" id="txAccountId" placeholder="مثلاً ACC-X1Y2Z3">
+    <div class="hero-card">
+      <div class="hero-top-info">
+        <span class="hero-main-title">حساب‌کتاب من</span>
+        <span class="day-badge" id="dayNameDisplay">شنبه</span>
       </div>
 
-      <div class="form-group">
-        <label>جهت تراکنش:</label>
-        <div class="radio-group">
-          <div class="radio-btn">
-            <input type="radio" id="creditor" name="direction" value="بستانکار" checked>
-            <label for="creditor" class="creditor">بستانکار (دریافت)</label>
-          </div>
-          <div class="radio-btn">
-            <input type="radio" id="debtor" name="direction" value="بدهکار">
-            <label for="debtor" class="debtor">بدهکار (پرداخت)</label>
-          </div>
+      <div class="dates-grid-3">
+        <div class="date-box-item">
+          <span class="date-box-title">شمسی</span>
+          <span class="date-box-val" id="shamsiDayVal">۲۵</span>
+          <span class="date-box-sub" id="shamsiMonthVal">میزان ۱۴۰۵</span>
+        </div>
+
+        <div class="date-box-item">
+          <span class="date-box-title">قمری</span>
+          <span class="date-box-val" id="hijriDayVal">۵</span>
+          <span class="date-box-sub" id="hijriMonthVal">جمادی الاول</span>
+        </div>
+
+        <div class="date-box-item">
+          <span class="date-box-title">میلادی</span>
+          <span class="date-box-val eng-num" id="gregDayVal">17</span>
+          <span class="date-box-sub eng-num" id="gregMonthVal">Oct 2026</span>
         </div>
       </div>
 
-      <div class="form-group">
-        <label>مبلغ:</label>
-        <input type="number" id="txAmount" placeholder="0">
+      <div class="world-clocks-ticker">
+        <div class="clocks-track">
+          <span class="clock-item"><span class="clock-label">کابل:</span> <span id="clockKabul" class="eng-num">--:--:--</span></span>
+          <span class="clock-item"><span class="clock-label">بغداد:</span> <span id="clockBaghdad" class="eng-num">--:--:--</span></span>
+          <span class="clock-item"><span class="clock-label">لندن:</span> <span id="clockLondon" class="eng-num">--:--:--</span></span>
+          <span class="clock-item"><span class="clock-label">آمریکا (نیویورک):</span> <span id="clockNewYork" class="eng-num">--:--:--</span></span>
+        </div>
       </div>
-
-      <div class="form-group">
-        <label>واحد پول:</label>
-        <select id="txCurrency" onchange="toggleCustomCurrency(this)">
-          <option value="دینار">دینار</option>
-          <option value="دلار">دلار</option>
-          <option value="افغانی">افغانی</option>
-          <option value="تومان">تومان</option>
-          <option value="custom">-- ارز جدید / سایر --</option>
-        </select>
-        <input type="text" id="customCurrencyInput" placeholder="نام واحد پول را بنویسید" style="display:none; margin-top:6px;">
-      </div>
-
-      <div class="form-group">
-        <label>نوع عملیات:</label>
-        <select id="txOpType" onchange="toggleCustomOp(this)">
-          <option value="حواله">حواله</option>
-          <option value="دریافت">دریافت</option>
-          <option value="پرداخت">پرداخت</option>
-          <option value="امانت">امانت</option>
-          <option value="custom">-- مورد جدید / آزاد --</option>
-        </select>
-        <input type="text" id="customOpInput" placeholder="عنوان عملیات جدید را بنویسید" style="display:none; margin-top:6px;">
-      </div>
-
-      <div class="form-group">
-        <label>شرح / توضیحات:</label>
-        <input type="text" id="txDesc" placeholder="توضیحات تراکنش...">
-      </div>
-
-      <button class="btn" onclick="submitTransaction()">ثبت در گوگل‌شیت</button>
-      <button class="btn btn-logout" onclick="handleLogout()">خروج از حساب (قفل کردن پنل)</button>
-      <a href="index.html" class="back-home" style="margin-top: 14px;">← بازگشت به منوی اصلی</a>
     </div>
+
+    <div class="section-label">
+      <span>خدمات</span>
+    </div>
+
+    <div class="menu-container">
+      <a href="finance.html" class="menu-card-large">
+        <div class="icon-wrapper icon-finance">📁</div>
+        <div style="flex: 1; overflow: hidden;">
+          <div class="card-title" style="margin-bottom: 4px;">مدیریت حساب‌ها</div>
+          <div class="marquee-wrapper">
+            <span class="marquee-text">ثبت، مدیریت، ویرایش و حذف کامل طلب‌ها، بدهی‌ها، درآمدها و خرج‌های شخصی به صورت پویای ابری</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="contacts.html" class="menu-card-large">
+        <div class="icon-wrapper icon-contacts">📇</div>
+        <div style="flex: 1; overflow: hidden;">
+          <div class="card-title" style="margin-bottom: 4px;">پخش مخاطبین</div>
+          <div class="marquee-wrapper">
+            <span class="marquee-text">مدیریت شماره‌ها، ارسال پیام واتساپ، پیامک متنی، تماس صوتی، ویرایش و حذف مخاطبین ابری</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="menu-row-small">
+        <a href="exchange.html" class="menu-card-small">
+          <div class="icon-wrapper icon-exchange">🤝</div>
+          <div>
+            <div class="card-title">امانت‌داری کریمی</div>
+            <div class="card-desc" style="margin-top: 4px;">اشراف به حساب، موجودی و تراکنش‌ها</div>
+          </div>
+        </a>
+
+        <a href="calc.html" class="menu-card-small">
+          <div class="icon-wrapper icon-calc">🧮</div>
+          <div>
+            <div class="card-title">محاسبه‌گر ارز</div>
+            <div class="card-desc" style="margin-top: 4px;">ماشین‌حساب و تبدیل دقیق ارزها</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- کارت مدیریت سیستم (متصل به صفحه ادمین) -->
+      <a href="admin.html" class="menu-card-large" style="background: #ffffff; border-color: #cbd5e1;">
+        <div class="icon-wrapper icon-admin">⚙️</div>
+        <div style="flex: 1; overflow: hidden;">
+          <div class="card-title" style="margin-bottom: 4px; color: #0f172a;">مدیریت سیستم (ادمین)</div>
+          <div class="marquee-wrapper">
+            <span class="marquee-text">ورود به بخش امن، ثبت تراکنش‌ها و ارتباط مستقیم با گوگل‌شیت سامانه کریمی</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="quick-actions-banner">
+      <div class="quick-title">
+        <span>⚡ دسترسی سریع به بخش‌ها</span>
+      </div>
+      <div class="quick-btns-grid">
+        <a href="finance.html" class="quick-btn">حساب شخصی</a>
+        <a href="contacts.html" class="quick-btn">پخش مخاطبین</a>
+        <a href="exchange.html" class="quick-btn">امانت‌داری کریمی</a>
+        <a href="calc.html" class="quick-btn">ماشین‌حساب</a>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQI6I3CXr1tyicZEza_ZsLP0MZmDshghmPOXw9MWfcE95sUD31pUnpYisxExfgobmT7w/exec";
+    function updateLiveCalendarAndClocks() {
+      const now = new Date();
+      const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+      document.getElementById('dayNameDisplay').innerText = weekDays[now.getDay()];
 
-    window.onload = function() {
-      if (localStorage.getItem("isAdminLoggedIn") === "true") {
-        document.getElementById("authOverlay").style.display = "none";
-        document.getElementById("adminContainer").style.display = "block";
+      const afMonths = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'];
+      const formatterSF = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'numeric', year: 'numeric' });
+      const partsSF = formatterSF.formatToParts(now);
+      let daySF = '', monthSF = '', yearSF = '';
+      partsSF.forEach(p => {
+        if (p.type === 'day') daySF = p.value;
+        if (p.type === 'month') monthSF = parseInt(p.value, 10);
+        if (p.type === 'year') yearSF = p.value;
+      });
+      document.getElementById('shamsiDayVal').innerText = daySF;
+      document.getElementById('shamsiMonthVal').innerText = `${afMonths[monthSF - 1] || ''} ${yearSF}`;
+
+      const islamicMonths = ['محرم', 'صفر', 'ربیع‌الاول', 'ربیع‌الثانی', 'جمادی‌الاول', 'جمادی‌الثانی', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذیقعده', 'ذیحجه'];
+      try {
+        const formatterIslamic = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', { day: 'numeric', month: 'numeric', year: 'numeric' });
+        const partsHijri = formatterIslamic.formatToParts(now);
+        let dH = '', mH = '', yH = '';
+        partsHijri.forEach(p => {
+          if (p.type === 'day') dH = p.value;
+          if (p.type === 'month') mH = parseInt(p.value, 10);
+          if (p.type === 'year') yH = p.value;
+        });
+        document.getElementById('hijriDayVal').innerText = dH;
+        document.getElementById('hijriMonthVal').innerText = islamicMonths[mH - 1] || 'جمادی الاول';
+      } catch (e) {
+        document.getElementById('hijriDayVal').innerText = '۵';
+        document.getElementById('hijriMonthVal').innerText = 'جمادی الاول';
       }
-    };
 
-    function handleLogin() {
-      const email = document.getElementById("loginEmail").value;
-      const pin = document.getElementById("loginPin").value;
+      document.getElementById('gregDayVal').innerText = now.getDate();
+      const engMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      document.getElementById('gregMonthVal').innerText = `${engMonths[now.getMonth()]} ${now.getFullYear()}`;
 
-      if (!email || !pin) {
-        alert("لطفاً ایمیل و رمز عبور را وارد کنید");
-        return;
-      }
-
-      if (pin === "77218731") {
-        localStorage.setItem("isAdminLoggedIn", "true");
-        localStorage.setItem("adminEmail", email);
-        document.getElementById("authOverlay").style.display = "none";
-        document.getElementById("adminContainer").style.display = "block";
-      } else {
-        alert("کد عبور اشتباه است!");
-      }
-    }
-
-    function handleGoogleLogin() {
-      localStorage.setItem("isAdminLoggedIn", "true");
-      document.getElementById("authOverlay").style.display = "none";
-      document.getElementById("adminContainer").style.display = "block";
-    }
-
-    function handleLogout() {
-      localStorage.removeItem("isAdminLoggedIn");
-      localStorage.removeItem("adminEmail");
-      location.reload();
-    }
-
-    function toggleCustomCurrency(select) {
-      document.getElementById('customCurrencyInput').style.display = select.value === 'custom' ? 'block' : 'none';
-    }
-    function toggleCustomOp(select) {
-      document.getElementById('customOpInput').style.display = select.value === 'custom' ? 'block' : 'none';
-    }
-
-    async function submitTransaction() {
-      const currencySelect = document.getElementById('txCurrency').value;
-      const finalCurrency = currencySelect === 'custom' ? document.getElementById('customCurrencyInput').value : currencySelect;
-
-      const opSelect = document.getElementById('txOpType').value;
-      const finalOp = opSelect === 'custom' ? document.getElementById('customOpInput').value : opSelect;
-
-      const direction = document.querySelector('input[name="direction"]:checked').value;
-
-      const payload = {
-        adminPin: "77218731",
-        action: "addTransaction",
-        accountId: document.getElementById('txAccountId').value,
-        direction: direction,
-        amount: document.getElementById('txAmount').value,
-        currency: finalCurrency,
-        operationType: finalOp,
-        description: document.getElementById('txDesc').value
+      const getTimeZoneString = (timeZone) => {
+        return now.toLocaleTimeString('en-US', { timeZone, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
       };
 
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-        const res = await response.json();
-        
-        if(res.status === "success") {
-          alert("تراکنش با موفقیت ثبت شد! شناسه: " + res.id);
-          document.getElementById('txAmount').value = '';
-          document.getElementById('txDesc').value = '';
-        } else {
-          alert("خطا: " + res.message);
-        }
-      } catch(err) {
-        alert("خطا در ارتباط با سرور: " + err);
-      }
+      document.getElementById('clockKabul').innerText = getTimeZoneString('Asia/Kabul');
+      document.getElementById('clockBaghdad').innerText = getTimeZoneString('Asia/Baghdad');
+      document.getElementById('clockLondon').innerText = getTimeZoneString('Europe/London');
+      document.getElementById('clockNewYork').innerText = getTimeZoneString('America/New_York');
     }
+
+    updateLiveCalendarAndClocks();
+    setInterval(updateLiveCalendarAndClocks, 1000);
   </script>
 
 </body>
