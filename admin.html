@@ -79,7 +79,6 @@
     .btn-whatsapp { background: #25d366; }
     .btn-sm { padding: 6px 10px; font-size: 0.78rem; width: auto; margin-bottom: 0; }
     
-    /* کل سطح کارت کاملاً قابل کلیک شد */
     .account-item-card {
       background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px;
       margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 6px;
@@ -171,7 +170,7 @@
       </div>
     </div>
 
-    <!-- صفحه آمار و لیست حواله‌ها (با آمار بالای صفحه و شماره‌گذاری) -->
+    <!-- صفحه آمار و لیست حواله‌ها -->
     <div id="viewTransfersReport" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>📜 گزارش پیشرفته حواله‌ها</h3>
@@ -189,34 +188,31 @@
           </select>
         </div>
 
-        <!-- آمار بالای صفحه حواله‌ها -->
         <div id="transferSummaryHeader" class="stat-card" style="background:#ecfdf5; border-color:var(--accent); margin-bottom:10px;"></div>
 
         <div id="transfersReportContainer"></div>
       </div>
     </div>
 
-    <!-- صفحه لیست بدهکاران (با آمار بالای صفحه بر اساس ارز) -->
+    <!-- صفحه لیست بدهکاران -->
     <div id="viewDebtorsReport" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🔴 لیست حساب‌های بدهکار</h3>
         <button class="btn btn-secondary btn-sm" onclick="switchView('viewGlobalStatsPage')">← بازگشت</button>
       </div>
       <div class="card">
-        <!-- آمار بالای صفحه بدهکاران -->
         <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:var(--danger); margin-bottom:10px;"></div>
         <div id="debtorsContainer"></div>
       </div>
     </div>
 
-    <!-- صفحه لیست بستانکاران (با آمار بالای صفحه بر اساس ارز) -->
+    <!-- صفحه لیست بستانکاران -->
     <div id="viewCreditorsReport" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🟢 لیست حساب‌های بستانکار (طلبکار)</h3>
         <button class="btn btn-secondary btn-sm" onclick="switchView('viewGlobalStatsPage')">← بازگشت</button>
       </div>
       <div class="card">
-        <!-- آمار بالای صفحه بستانکاران -->
         <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:var(--accent); margin-bottom:10px;"></div>
         <div id="creditorsContainer"></div>
       </div>
@@ -546,7 +542,6 @@
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
     }
 
-    // گزارش پیشرفته حواله‌ها با آمار بالای صفحه بر اساس ارز
     function openTransfersReport() {
       switchView('viewTransfersReport');
       renderTransfersReport();
@@ -579,7 +574,6 @@
         return false;
       });
 
-      // محاسبه آمار بالای صفحه حواله‌ها به تفکیک ارز
       let currencyTotals = {};
       filteredTxs.forEach(tx => {
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -599,7 +593,6 @@
         return;
       }
 
-      // شماره‌گذاری ترتیبی از پایین به بالا (#1, #2, ...)
       let totalCount = filteredTxs.length;
       filteredTxs.reverse().forEach((tx, idx) => {
         let txNum = totalCount - idx;
@@ -629,7 +622,6 @@
       });
     }
 
-    // گزارش بدهکاران با آمار بالای صفحه بر اساس ارز
     function openDebtorsReport() {
       switchView('viewDebtorsReport');
       const container = document.getElementById("debtorsContainer");
@@ -658,7 +650,7 @@
 
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
-          if(val > 0) { // یعنی بدهکار است
+          if(val > 0) {
             debtors.push({ name: accName, id: accId, amount: val, currency: curr });
             if (!currencyTotals[curr]) currencyTotals[curr] = 0;
             currencyTotals[curr] += val;
@@ -689,7 +681,6 @@
       });
     }
 
-    // گزارش بستانکاران با آمار بالای صفحه بر اساس ارز
     function openCreditorsReport() {
       switchView('viewCreditorsReport');
       const container = document.getElementById("creditorsContainer");
@@ -718,7 +709,7 @@
 
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
-          if(val < 0) { // یعنی بستانکار است
+          if(val < 0) {
             let absVal = Math.abs(val);
             creditors.push({ name: accName, id: accId, amount: absVal, currency: curr });
             if (!currencyTotals[curr]) currencyTotals[curr] = 0;
@@ -786,7 +777,6 @@
 
         let cleanPhone = accPhone.replace(/\D/g, '');
 
-        // کل کادر به طور کامل قابلیت کلیک لمسی دارد
         container.innerHTML += `
           <div class="account-item-card" onclick="selectAccount('${accId}', '${accName}')">
             <div class="account-item-header">
@@ -1040,6 +1030,7 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
+    // تابع ارسال پیام متنی واتساپ با تفکیک کامل رسید حواله و گزارش عمومی تراکنش‌ها
     function sendTxWhatsAppReport() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
@@ -1051,27 +1042,30 @@
       let desc = String(getVal(tx, ['Description', 'description']) || '');
       let amtVal = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
+      let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let msg = "";
+
       if(opType === "حواله") {
+        // ۱. فرمت رسید اختصاصی حواله (دقیقاً بدون متن اضافه)
         msg = `رسید انتقال
 ------------------------
 ${desc}
 ------------------------
 داشتن اسناد برای موقع گرفتن پول الزامی هست`;
       } else {
+        // ۲. فرمت گزارش متنی عمومی برای سایر تراکنش‌ها
         let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
         let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
 
-        msg = `سلام علیکم آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما اضافه شد.
-نوع تراکنش: ${opType}
+        msg = `سلام آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما ثبت شد.
+نوع تراکنش: ${opType} (${dirVal})
 مبلغ: ${amtVal} ${currVal}
+شرح: ${desc || 'بدون شرح'}
 
-برای جزئیات بیشتر به این لینک مراجعه کنید:
-${siteLink}
-
-⚠️ داشتن اسناد برای گرفتن پول الزامی هست`;
+برای دیدن تراکنش، معلومات کامل و جزئیات بیشتر می‌توانید از طریق لینک زیر به حسابتان مراجعه کنید:
+${siteLink}`;
       }
 
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
