@@ -53,6 +53,16 @@
     input:focus, select:focus, textarea:focus { border-color: var(--accent); background: #fff; }
     textarea { resize: vertical; min-height: 70px; }
 
+    /* دکمه‌های تیک‌زدنی و انتخابی (به جای منوی کشویی سخت) */
+    .radio-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .radio-btn-label {
+      flex: 1; min-width: 70px; padding: 8px; text-align: center; background: #f1f5f9; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 0.82rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+    }
+    .radio-btn-label input { display: none; }
+    .radio-btn-label input:checked + span { color: var(--accent); }
+    .radio-btn-label:has(input:checked) { background: #ecfdf5; border-color: var(--accent); color: var(--accent); }
+
     .stats-grid { display: flex; flex-direction: column; gap: 8px; }
     .stat-card {
       background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 10px;
@@ -70,7 +80,6 @@
     .btn-whatsapp { background: #25d366; }
     .btn-sm { padding: 5px 8px; font-size: 0.75rem; width: auto; }
     
-    /* استایل کارت‌های لیست حساب‌ها با کادرهای برجسته و مرتب */
     .account-item-card {
       background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px;
       margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 6px;
@@ -78,7 +87,6 @@
     .account-item-header { display: flex; justify-content: space-between; align-items: center; }
     .account-name-title { font-size: 1.1rem; font-weight: 900; color: var(--primary); cursor: pointer; }
 
-    /* استایل کارت‌های مجزا و برجسته برای تراکنش‌ها */
     .tx-item-card {
       background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px;
       margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 6px;
@@ -96,7 +104,7 @@
 </head>
 <body>
 
-  <!-- صفحه لودینگ چرخشی تمام‌صفحه -->
+  <!-- صفحه لودینگ چرخشی -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
     <div id="loadingText">در حال پردازش و ثبت در سیستم...</div>
@@ -122,7 +130,7 @@
   <!-- پنل اصلی مدیریت -->
   <div class="container" id="adminContainer">
     
-    <!-- بخش اول: آمار کلی و داشبورد -->
+    <!-- بخش اول: آمار کلی (فقط حساب‌های دارای موجودی فعال و غیرتسویه‌شده) -->
     <div id="viewDashboard" class="view-section active">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>📊 آمار کلی صرافی</h3>
@@ -133,10 +141,8 @@
       </div>
 
       <div class="card">
-        <h3>وضعیت مانده حساب‌ها (ارزها)</h3>
+        <h3>موجودی‌های فعال (خالص حساب‌های دارای مانده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
-        <button class="btn btn-info btn-sm" style="margin-top: 8px;" onclick="toggleFullStats()">مشاهده جزئیات کامل آمار</button>
-        <div id="fullStatsContainer" style="display:none; margin-top:8px; border-top:1px dashed var(--border); padding-top:8px;"></div>
       </div>
 
       <div class="card" style="text-align: center;">
@@ -144,7 +150,7 @@
       </div>
     </div>
 
-    <!-- بخش دوم: لیست حساب‌ها (کادرهای برجسته و مرتب) -->
+    <!-- بخش دوم: لیست حساب‌ها -->
     <div id="viewAccounts" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>👥 لیست حساب‌ها</h3>
@@ -163,7 +169,7 @@
       </div>
     </div>
 
-    <!-- بخش سوم: جزئیات حساب و تراکنش‌های جدا از هم -->
+    <!-- بخش سوم: جزئیات حساب و تراکنش‌ها -->
     <div id="viewAccountDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3 id="detailAccountTitle">جزئیات حساب</h3>
@@ -184,7 +190,7 @@
       </div>
     </div>
 
-    <!-- بخش چهارم: جزئیات و مدیریت تراکنش تکی -->
+    <!-- بخش چهارم: جزئیات تراکنش تکی -->
     <div id="viewTransactionDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🔍 جزئیات کامل تراکنش</h3>
@@ -223,31 +229,38 @@
     </div>
   </div>
 
-  <!-- مودال ثبت/ویرایش تراکنش -->
+  <!-- مودال ثبت/ویرایش تراکنش (با دکمه‌های تیک‌زدنی آسان) -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
       <h3 id="txModalTitle">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
+      
+      <!-- جهت تراکنش به صورت دکمه انتخابی -->
       <div class="form-group">
         <label>جهت تراکنش:</label>
-        <select id="txDirection">
-          <option value="بستانکار">بستانکار (+)</option>
-          <option value="بدهکار">بدهکار (-)</option>
-        </select>
+        <div class="radio-group" id="radioDirection">
+          <label class="radio-btn-label"><input type="radio" name="txDir" value="بستانکار" checked><span>بستانکار (+)</span></label>
+          <label class="radio-btn-label"><input type="radio" name="txDir" value="بدهکار"><span>بدهکار (-)</span></label>
+        </div>
       </div>
+
       <div class="form-group">
         <label>مبلغ:</label>
         <input type="number" id="txAmount" placeholder="مقدار مبلغ...">
       </div>
+
+      <!-- ارز به صورت دکمه انتخابی -->
       <div class="form-group">
-        <label>ارز:</label>
-        <select id="txCurrency">
-          <option value="AFN">AFN (افغانی)</option>
-          <option value="USD">USD (دلار)</option>
-          <option value="IQD">IQD (دینار)</option>
-          <option value="Tom">تومان</option>
-        </select>
+        <label>واحد پول (ارز):</label>
+        <div class="radio-group" id="radioCurrency">
+          <label class="radio-btn-label"><input type="radio" name="txCurr" value="AFN" checked><span>AFN</span></label>
+          <label class="radio-btn-label"><input type="radio" name="txCurr" value="USD"><span>USD</span></label>
+          <label class="radio-btn-label"><input type="radio" name="txCurr" value="IQD"><span>IQD</span></label>
+          <label class="radio-btn-label"><input type="radio" name="txCurr" value="Tom"><span>تومان</span></label>
+        </div>
       </div>
+
+      <!-- نوع عملیات داشبوردی -->
       <div class="form-group">
         <label>نوع عملیات:</label>
         <select id="txOpType" onchange="toggleTransferDescField()">
@@ -258,14 +271,17 @@
           <option value="تسویه">تسویه</option>
         </select>
       </div>
+
       <div class="form-group" id="transferDescGroup" style="display:none;">
         <label style="color:var(--info);">بخش رسید انتقال (حواله):</label>
         <textarea id="txTransferDesc" placeholder="توضیحات و مشخصات انتقال حواله..."></textarea>
       </div>
+
       <div class="form-group">
         <label>شرح عمومی:</label>
         <textarea id="txDesc" placeholder="توضیحات تراکنش..."></textarea>
       </div>
+
       <div class="flex-row" style="justify-content: flex-end;">
         <button class="btn btn-secondary btn-sm" onclick="closeTransactionModal()">انصراف</button>
         <button class="btn btn-sm" onclick="submitTransaction()">ثبت و ذخیره</button>
@@ -389,47 +405,53 @@
       return result;
     }
 
+    // منطق اصلاح‌شده آمار: فقط حساب‌هایی که موجودی فعال دارند (تسویه‌شده‌ها حذف می‌شوند)
     function renderDashboardStats() {
-      let stats = {};
-      allTransactions.forEach(tx => {
-        let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
-        let dir = String(tx.Direction || tx.direction || '');
-        let amt = parseFloat(tx.Amount || tx.amount || 0);
-        if(!stats[curr]) stats[curr] = { credit: 0, debit: 0 };
-        if(dir.includes("بستانکار")) stats[curr].credit += amt;
-        if(dir.includes("بدهکار")) stats[curr].debit += amt;
+      let currencyNet = {}; // ذخیره مانده خالص برای هر ارز در کل حساب‌ها
+
+      allAccounts.forEach(acc => {
+        let accId = acc.AccountID || acc.accountid || '';
+        if(!accId) return;
+
+        let accTxs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(accId));
+        let accCurrencies = {};
+
+        accTxs.forEach(tx => {
+          let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
+          let dir = String(tx.Direction || tx.direction || '');
+          let amt = parseFloat(tx.Amount || tx.amount || 0);
+          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+
+        // برای هر حساب، اگر مانده غیر از صفر داشت در آمار صرافی محاسبه می‌شود
+        for(let curr in accCurrencies) {
+          let net = accCurrencies[curr];
+          if(net !== 0) {
+            if(!currencyNet[curr]) currencyNet[curr] = 0;
+            currencyNet[curr] += net;
+          }
+        }
       });
 
       let gridHtml = '';
-      let fullHtml = '';
-      for (let curr in stats) {
-        let net = stats[curr].credit - stats[curr].debit;
+      for (let curr in currencyNet) {
+        let net = currencyNet[curr];
+        if(net === 0) continue; // رد کردن مواردی که کلاً تسویه شده‌اند
+
         let isDebtor = net > 0;
         let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `بدهکار: ${Math.abs(net).toLocaleString()}` : (net < 0 ? `طلبکار: ${Math.abs(net).toLocaleString()}` : "تسویه");
+        let label = isDebtor ? `مجموع بدهکار صرافی: ${Math.abs(net).toLocaleString()}` : `مجموع طلبکار صرافی: ${Math.abs(net).toLocaleString()}`;
 
         gridHtml += `
           <div class="stat-card">
-            <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده: <b>${net.toLocaleString()}</b></span></div>
+            <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>موجودی خالص: <b>${net.toLocaleString()}</b></span></div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
-        fullHtml += `
-          <div class="stat-card" style="margin-bottom:6px;">
-            <div class="stat-row"><span><b>ارز: ${curr}</b></span></div>
-            <div class="stat-row"><span>کل بستانکار مشتریان:</span><b style="color:#059669;">${stats[curr].credit.toLocaleString()}</b></div>
-            <div class="stat-row"><span>کل بدهکار مشتریان:</span><b style="color:#dc2626;">${stats[curr].debit.toLocaleString()}</b></div>
-            <div class="stat-row"><span>مانده خالص صرافی:</span><b>${net.toLocaleString()}</b></div>
-          </div>
-        `;
       }
-      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center;">بدون اطلاعات</div>';
-      document.getElementById("fullStatsContainer").innerHTML = fullHtml;
-    }
-
-    function toggleFullStats() {
-      let el = document.getElementById("fullStatsContainer");
-      el.style.display = el.style.display === "none" ? "block" : "none";
+      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b;">هیچ حساب دارای مانده فعالی وجود ندارد (همه تسویه هستند)</div>';
     }
 
     function renderAccountsList(accounts) {
@@ -526,7 +548,6 @@
       if (!accName) { alert("نام مشتری الزامی است"); return; }
 
       let action = editId ? "editAccount" : "addAccount";
-      // تولید خودکار اکانت آیدی یکتا و معتبر جهت ثبت قطعی در گوگل‌شیت
       let accountId = editId ? editId : "ACC-" + Math.floor(100000 + Math.random() * 900000);
 
       closeAccountModal();
@@ -576,7 +597,7 @@
           let opType = tx.OperationType || tx.operationtype || 'امانت';
           let rawDate = String(tx.Date || tx.date || '');
           let cleanDate = rawDate.split('T')[0];
-          let txNumber = txs.length - idx; // شماره ترتیبی تراکنش
+          let txNumber = txs.length - idx;
 
           let dirColor = dir.includes('بستانکار') ? '#059669' : '#dc2626';
 
@@ -651,6 +672,9 @@
       document.getElementById("txDesc").value = "";
       document.getElementById("txTransferDesc").value = "";
       document.getElementById("txOpType").value = "امانت";
+      // پیش‌فرض رادیو باتن‌ها
+      document.querySelector('input[name="txDir"][value="بستانکار"]').checked = true;
+      document.querySelector('input[name="txCurr"][value="AFN"]').checked = true;
       toggleTransferDescField();
       document.getElementById("transactionModal").style.display = "flex";
     }
@@ -660,9 +684,17 @@
       if (!tx) return;
       document.getElementById("editTransId").value = selectedTxId;
       document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
-      document.getElementById("txDirection").value = tx.Direction || tx.direction || "بستانکار";
+      
+      let dirVal = tx.Direction || tx.direction || "بستانکار";
+      let currVal = tx.Currency || tx.currency || "AFN";
+      if(document.querySelector(`input[name="txDir"][value="${dirVal}"]`)) {
+        document.querySelector(`input[name="txDir"][value="${dirVal}"]`).checked = true;
+      }
+      if(document.querySelector(`input[name="txCurr"][value="${currVal}"]`)) {
+        document.querySelector(`input[name="txCurr"][value="${currVal}"]`).checked = true;
+      }
+
       document.getElementById("txAmount").value = tx.Amount || tx.amount || "";
-      document.getElementById("txCurrency").value = tx.Currency || tx.currency || "AFN";
       document.getElementById("txOpType").value = tx.OperationType || tx.operationtype || "امانت";
       toggleTransferDescField();
       if(tx.OperationType === "حواله") {
@@ -684,15 +716,18 @@
       let desc = opType === "حواله" ? document.getElementById("txTransferDesc").value : document.getElementById("txDesc").value;
       let editTransId = document.getElementById("editTransId").value;
 
+      let selectedDir = document.querySelector('input[name="txDir"]:checked').value;
+      let selectedCurr = document.querySelector('input[name="txCurr"]:checked').value;
+
       closeTransactionModal();
       
       await postData({
         action: "addTransaction",
         transId: editTransId || undefined,
         accountId: currentAccountId,
-        direction: document.getElementById("txDirection").value,
+        direction: selectedDir,
         amount: amt,
-        currency: document.getElementById("txCurrency").value,
+        currency: selectedCurr,
         operationType: opType,
         description: desc
       });
@@ -717,7 +752,7 @@
 
       let allAccTxs = allTransactions.filter(t => String(t.AccountID || t.accountid) === String(currentAccountId)).reverse();
       let txIndex = allAccTxs.findIndex(t => String(t.TransID || t.transid) === String(selectedTxId)) + 1;
-      let siteLink = window.location.href.split('?')[0];
+      let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let opType = tx.OperationType || tx.operationtype || '';
       let desc = tx.Description || tx.description || '';
