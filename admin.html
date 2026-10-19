@@ -76,7 +76,7 @@
     .btn-secondary { background: #475569; }
     .btn-warning { background: var(--warning); color: #fff; }
     .btn-info { background: var(--info); }
-    .btn-whatsapp { background: #25d366; }
+    .btn-whatsapp { background: #25d366; color: #ffffff; }
     .btn-sm { padding: 6px 10px; font-size: 0.78rem; width: auto; margin-bottom: 0; }
     
     .account-item-card {
@@ -258,7 +258,7 @@
       </div>
     </div>
 
-    <!-- صفحه جزئیات تراکنش تکی -->
+    <!-- صفحه جزئیات تراکنش تکی (شامل دکمه‌های آکشن دوگانه برای حواله) -->
     <div id="viewTransactionDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🔍 جزئیات کامل تراکنش</h3>
@@ -266,10 +266,8 @@
       </div>
       <div class="card" id="txDetailCard"></div>
       <div class="card">
-        <div class="flex-row" style="gap: 6px;">
-          <button class="btn btn-warning btn-sm" onclick="openEditTransactionModal()">✏️ ویرایش تراکنش</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteSingleTransaction()">🗑️ حذف تراکنش</button>
-          <button class="btn btn-whatsapp btn-sm" onclick="sendTxWhatsAppReport()">💬 ارسال رسید واتساپ</button>
+        <div class="flex-row" style="gap: 6px; flex-direction: column;" id="txActionButtonsContainer">
+          <!-- دکمه‌های آکشن پویا از جاوااسکریپت بارگذاری می‌شوند -->
         </div>
       </div>
     </div>
@@ -944,6 +942,30 @@
         ${transferSection}
         <div style="margin-top:10px; font-size:0.75rem; color:#64748b; text-align:center;">⚠️ داشتن اسناد برای گرفتن پول الزامی هست</div>
       `;
+
+      // مدیریت هوشمند دکمه‌های آکشن بر اساس نوع تراکنش
+      let btnContainer = document.getElementById("txActionButtonsContainer");
+      if (opType === "حواله") {
+        // برای تراکنش‌های حواله: ۲ دکمه مجزا (گزارش عمومی + رسید اختصاصی حواله)
+        btnContainer.innerHTML = `
+          <div class="flex-row" style="gap: 6px;">
+            <button class="btn btn-warning btn-sm" onclick="openEditTransactionModal()">✏️ ویرایش</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSingleTransaction()">🗑️ حذف</button>
+          </div>
+          <button class="btn btn-whatsapp" onclick="sendGeneralWhatsAppReport()">💬 ارسال گزارش عمومی در واتساپ</button>
+          <button class="btn btn-whatsapp" style="background:#128c7e;" onclick="sendTransferReceiptWhatsApp()">📄 ارسال رسید اختصاصی حواله در واتساپ</button>
+        `;
+      } else {
+        // برای تراکنش‌های معمولی: ۱ دکمه ارسال به واتساپ (گزارش عمومی)
+        btnContainer.innerHTML = `
+          <div class="flex-row" style="gap: 6px;">
+            <button class="btn btn-warning btn-sm" onclick="openEditTransactionModal()">✏️ ویرایش</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSingleTransaction()">🗑️ حذف</button>
+          </div>
+          <button class="btn btn-whatsapp" onclick="sendGeneralWhatsAppReport()">💬 ارسال گزارش متنی در واتساپ</button>
+        `;
+      }
+
       switchView('viewTransactionDetail');
     }
 
@@ -1030,8 +1052,8 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    // تابع ارسال پیام متنی واتساپ با تفکیک کامل رسید حواله و گزارش عمومی تراکنش‌ها
-    function sendTxWhatsAppReport() {
+    // ۱. ارسال گزارش عمومی واتساپ (برای همه تراکنش‌ها شامل حواله و غیره با فرمت زیبا و شیک)
+    function sendGeneralWhatsAppReport() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
       let phone = String(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
@@ -1045,28 +1067,39 @@
       let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
-      let msg = "";
+      let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
+      let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
 
-      if(opType === "حواله") {
-        // ۱. فرمت رسید اختصاصی حواله (دقیقاً بدون متن اضافه)
-        msg = `رسید انتقال
+      // فرمت گزارش عمومی زیبا با برجسته‌سازی اسم صاحب حساب
+      let msg = `سلام و احترام خدمت *آقای ${currentAccountName}*
+
+تراکنش شماره #${txIndex} در حساب شما ثبت گردید.
+
+📌 **نوع تراکنش:** ${opType} (${dirVal})
+💰 **مبلغ:** ${amtVal} ${currVal}
+📝 **توضیحات:** ${desc || 'ثبت شده در سیستم'}
+
+جهت مشاهده بیلان کامل و جزئیات تراکنش از لینک زیر استفاده نمایید:
+🔗 ${siteLink}`;
+
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // ۲. ارسال رسید اختصاصی حواله (دقیقاً مخصوص گیرنده حواله، بدون لینک و متن اضافی)
+    function sendTransferReceiptWhatsApp() {
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      if (!acc) return;
+      let phone = String(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
+      if(!tx) return;
+
+      let desc = String(getVal(tx, ['Description', 'description']) || '');
+
+      let msg = `رسید انتقال
 ------------------------
 ${desc}
 ------------------------
 داشتن اسناد برای موقع گرفتن پول الزامی هست`;
-      } else {
-        // ۲. فرمت گزارش متنی عمومی برای سایر تراکنش‌ها
-        let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
-        let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
-
-        msg = `سلام آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما ثبت شد.
-نوع تراکنش: ${opType} (${dirVal})
-مبلغ: ${amtVal} ${currVal}
-شرح: ${desc || 'بدون شرح'}
-
-برای دیدن تراکنش، معلومات کامل و جزئیات بیشتر می‌توانید از طریق لینک زیر به حسابتان مراجعه کنید:
-${siteLink}`;
-      }
 
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
