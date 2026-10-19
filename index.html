@@ -166,39 +166,15 @@
       font-weight: 600;
     }
 
-    .world-clocks-ticker {
-      background: rgba(0, 0, 0, 0.25);
+    .live-clock-box {
+      background: rgba(0, 0, 0, 0.2);
       border-radius: 12px;
-      padding: 8px 10px;
-      overflow: hidden;
-      white-space: nowrap;
-      position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .clocks-track {
-      display: inline-block;
-      padding-left: 100%;
-      animation: scrollClocks 20s linear infinite;
-      font-size: 11.5px;
+      padding: 8px 12px;
+      text-align: center;
+      font-size: 13px;
       font-weight: 700;
-      color: #e2e8f0;
-    }
-
-    @keyframes scrollClocks {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(100%); }
-    }
-
-    .clock-item {
-      margin-left: 24px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .clock-label {
-      color: #6ee7b7;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .section-label {
@@ -226,33 +202,11 @@
       border: 1px solid #cbd5e1;
       box-shadow: var(--shadow-soft);
       transition: all 0.25s ease;
-      overflow: hidden;
     }
 
     .menu-card-large:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow-hover);
-    }
-
-    .marquee-wrapper {
-      width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      position: relative;
-    }
-
-    .marquee-text {
-      display: inline-block;
-      padding-right: 100%;
-      animation: marquee 14s linear infinite;
-      font-size: 11.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    @keyframes marquee {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(100%); }
     }
 
     .menu-row-small {
@@ -313,46 +267,6 @@
       line-height: 1.4;
     }
 
-    .quick-actions-banner {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      border-radius: 20px;
-      padding: 16px;
-      color: #ffffff;
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .quick-title {
-      font-size: 13px;
-      font-weight: 800;
-      color: #38bdf8;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .quick-btns-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-
-    .quick-btn {
-      background: #2563eb;
-      color: white;
-      padding: 10px 4px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: 800;
-      text-align: center;
-      transition: background 0.2s;
-    }
-
-    .quick-btn:hover { background: #1d4ed8; }
-
     .eng-num {
       font-family: Tahoma, sans-serif;
       direction: ltr;
@@ -401,13 +315,9 @@
         </div>
       </div>
 
-      <div class="world-clocks-ticker">
-        <div class="clocks-track">
-          <span class="clock-item"><span class="clock-label">کابل:</span> <span id="clockKabul" class="eng-num">--:--:--</span></span>
-          <span class="clock-item"><span class="clock-label">بغداد:</span> <span id="clockBaghdad" class="eng-num">--:--:--</span></span>
-          <span class="clock-item"><span class="clock-label">لندن:</span> <span id="clockLondon" class="eng-num">--:--:--</span></span>
-          <span class="clock-item"><span class="clock-label">آمریکا (نیویورک):</span> <span id="clockNewYork" class="eng-num">--:--:--</span></span>
-        </div>
+      <!-- ساعت زنده و تمیز (بدون به هم ریختگی) -->
+      <div class="live-clock-box">
+        ساعت کنونی: <span id="liveClock" class="eng-num">00:00:00</span>
       </div>
     </div>
 
@@ -418,21 +328,17 @@
     <div class="menu-container">
       <a href="finance.html" class="menu-card-large">
         <div class="icon-wrapper icon-finance">📁</div>
-        <div style="flex: 1; overflow: hidden;">
-          <div class="card-title" style="margin-bottom: 4px;">مدیریت حساب‌ها</div>
-          <div class="marquee-wrapper">
-            <span class="marquee-text">ثبت، مدیریت، ویرایش و حذف کامل طلب‌ها، بدهی‌ها، درآمدها و خرج‌های شخصی به صورت پویای ابری</span>
-          </div>
+        <div>
+          <div class="card-title">مدیریت حساب‌ها</div>
+          <div class="card-desc">ثبت و مدیریت طلب‌ها و بدهی‌ها</div>
         </div>
       </a>
 
       <a href="contacts.html" class="menu-card-large">
         <div class="icon-wrapper icon-contacts">📇</div>
-        <div style="flex: 1; overflow: hidden;">
-          <div class="card-title" style="margin-bottom: 4px;">پخش مخاطبین</div>
-          <div class="marquee-wrapper">
-            <span class="marquee-text">مدیریت شماره‌ها، ارسال پیام واتساپ، پیامک متنی، تماس صوتی، ویرایش و حذف مخاطبین ابری</span>
-          </div>
+        <div>
+          <div class="card-title">پخش مخاطبین</div>
+          <div class="card-desc">مدیریت شماره‌ها و ارتباطات</div>
         </div>
       </a>
 
@@ -441,7 +347,7 @@
           <div class="icon-wrapper icon-exchange">🤝</div>
           <div>
             <div class="card-title">امانت‌داری کریمی</div>
-            <div class="card-desc" style="margin-top: 4px;">اشراف به حساب، موجودی و تراکنش‌ها</div>
+            <div class="card-desc">اشراف به موجودی</div>
           </div>
         </a>
 
@@ -449,88 +355,53 @@
           <div class="icon-wrapper icon-calc">🧮</div>
           <div>
             <div class="card-title">محاسبه‌گر ارز</div>
-            <div class="card-desc" style="margin-top: 4px;">ماشین‌حساب و تبدیل دقیق ارزها</div>
+            <div class="card-desc">تبدیل دقیق ارزها</div>
           </div>
         </a>
       </div>
 
-      <!-- کارت مدیریت سیستم (متصل به صفحه ادمین) -->
+      <!-- گزینه مدیریت سیستم (ادمین) -->
       <a href="admin.html" class="menu-card-large" style="background: #ffffff; border-color: #cbd5e1;">
         <div class="icon-wrapper icon-admin">⚙️</div>
-        <div style="flex: 1; overflow: hidden;">
-          <div class="card-title" style="margin-bottom: 4px; color: #0f172a;">مدیریت سیستم (ادمین)</div>
-          <div class="marquee-wrapper">
-            <span class="marquee-text">ورود به بخش امن، ثبت تراکنش‌ها و ارتباط مستقیم با گوگل‌شیت سامانه کریمی</span>
-          </div>
+        <div>
+          <div class="card-title">مدیریت سیستم (ادمین)</div>
+          <div class="card-desc">ورود به پنل امنیتی ثبت تراکنش‌ها</div>
         </div>
       </a>
-    </div>
-
-    <div class="quick-actions-banner">
-      <div class="quick-title">
-        <span>⚡ دسترسی سریع به بخش‌ها</span>
-      </div>
-      <div class="quick-btns-grid">
-        <a href="finance.html" class="quick-btn">حساب شخصی</a>
-        <a href="contacts.html" class="quick-btn">پخش مخاطبین</a>
-        <a href="exchange.html" class="quick-btn">امانت‌داری کریمی</a>
-        <a href="calc.html" class="quick-btn">ماشین‌حساب</a>
-      </div>
     </div>
 
   </div>
 
   <script>
-    function updateLiveCalendarAndClocks() {
+    function updateCalendarAndClock() {
       const now = new Date();
       const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
       document.getElementById('dayNameDisplay').innerText = weekDays[now.getDay()];
 
-      const afMonths = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'];
-      const formatterSF = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'numeric', year: 'numeric' });
-      const partsSF = formatterSF.formatToParts(now);
-      let daySF = '', monthSF = '', yearSF = '';
-      partsSF.forEach(p => {
-        if (p.type === 'day') daySF = p.value;
-        if (p.type === 'month') monthSF = parseInt(p.value, 10);
-        if (p.type === 'year') yearSF = p.value;
-      });
-      document.getElementById('shamsiDayVal').innerText = daySF;
-      document.getElementById('shamsiMonthVal').innerText = `${afMonths[monthSF - 1] || ''} ${yearSF}`;
-
-      const islamicMonths = ['محرم', 'صفر', 'ربیع‌الاول', 'ربیع‌الثانی', 'جمادی‌الاول', 'جمادی‌الثانی', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذیقعده', 'ذیحجه'];
+      const afMonths = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'حوت'];
       try {
-        const formatterIslamic = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', { day: 'numeric', month: 'numeric', year: 'numeric' });
-        const partsHijri = formatterIslamic.formatToParts(now);
-        let dH = '', mH = '', yH = '';
-        partsHijri.forEach(p => {
-          if (p.type === 'day') dH = p.value;
-          if (p.type === 'month') mH = parseInt(p.value, 10);
-          if (p.type === 'year') yH = p.value;
+        const formatterSF = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'numeric', year: 'numeric' });
+        const partsSF = formatterSF.formatToParts(now);
+        let d = '', m = '', y = '';
+        partsSF.forEach(p => {
+          if (p.type === 'day') d = p.value;
+          if (p.type === 'month') m = parseInt(p.value, 10);
+          if (p.type === 'year') y = p.value;
         });
-        document.getElementById('hijriDayVal').innerText = dH;
-        document.getElementById('hijriMonthVal').innerText = islamicMonths[mH - 1] || 'جمادی الاول';
-      } catch (e) {
-        document.getElementById('hijriDayVal').innerText = '۵';
-        document.getElementById('hijriMonthVal').innerText = 'جمادی الاول';
-      }
+        document.getElementById('shamsiDayVal').innerText = d;
+        document.getElementById('shamsiMonthVal').innerText = `${afMonths[m - 1] || ''} ${y}`;
+      } catch(e) {}
 
       document.getElementById('gregDayVal').innerText = now.getDate();
       const engMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       document.getElementById('gregMonthVal').innerText = `${engMonths[now.getMonth()]} ${now.getFullYear()}`;
 
-      const getTimeZoneString = (timeZone) => {
-        return now.toLocaleTimeString('en-US', { timeZone, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      };
-
-      document.getElementById('clockKabul').innerText = getTimeZoneString('Asia/Kabul');
-      document.getElementById('clockBaghdad').innerText = getTimeZoneString('Asia/Baghdad');
-      document.getElementById('clockLondon').innerText = getTimeZoneString('Europe/London');
-      document.getElementById('clockNewYork').innerText = getTimeZoneString('America/New_York');
+      // ساعت زنده
+      document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
     }
 
-    updateLiveCalendarAndClocks();
-    setInterval(updateLiveCalendarAndClocks, 1000);
+    updateCalendarAndClock();
+    setInterval(updateCalendarAndClock, 1000);
   </script>
 
 </body>
