@@ -55,7 +55,7 @@
     .welcome-box {
       display: flex;
       flex-direction: column;
-      cursor: pointer; /* برای قابلیت کلیک مخفی */
+      cursor: pointer;
     }
 
     .welcome-title {
@@ -313,33 +313,6 @@
       line-height: 1.4;
     }
 
-    /* کادر فریبنده (Honeypot) در پایین صفحه */
-    .decoy-footer-box {
-      background: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      border-radius: 14px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .decoy-label {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      font-weight: 700;
-    }
-    .decoy-input {
-      width: 90px;
-      padding: 4px 8px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 11px;
-      text-align: center;
-      outline: none;
-    }
-
     .eng-num {
       font-family: Tahoma, sans-serif;
       direction: ltr;
@@ -352,7 +325,7 @@
   <div class="app-viewport">
     
     <div class="top-header">
-      <!-- با 3 بار کلیک روی این قسمت، بخش رمز عبور ادمین فعال می‌شود -->
+      <!-- ۳ بار کلیک/لمس روی این بخش، مستقیماً شما را به صفحه مدیریت هدایت می‌کند -->
       <div class="welcome-box" onclick="handleSecretClick()">
         <span class="welcome-title">خوش آمدید 👋</span>
         <span class="welcome-subtitle">سامانه حساب‌کتاب من</span>
@@ -443,12 +416,6 @@
       </div>
     </div>
 
-    <!-- کادر فریبنده (بدون هیچ خاصیت و کاملاً نمایشی برای افراد متفرقه) -->
-    <div class="decoy-footer-box">
-      <span class="decoy-label">نسخه پشتیبان سیستم:</span>
-      <input type="password" class="decoy-input" placeholder="کد تأیید..." onchange="alert('کد امنیتی منقضی شده است!')">
-    </div>
-
   </div>
 
   <script>
@@ -504,20 +471,16 @@
     updateLiveCalendarAndClocks();
     setInterval(updateLiveCalendarAndClocks, 1000);
 
-    // قابلیت امنیتی مخفی: با ۳ بار کلیک روی عنوان خوش‌آمدید، صفحه پنل ادمین باز می‌شود
+    // قابلیت ۳ بار کلیک روی عنوان: بررسی اینکه آیا قبلاً لاگین کرده‌اید یا خیر
     let clickCount = 0;
     function handleSecretClick() {
       clickCount++;
       if (clickCount >= 3) {
         clickCount = 0;
-        let pin = prompt("لطفاً رمز عبور ادمین را وارد کنید:");
-        if (pin === "1234") { // رمز ادمین شما
-          window.location.href = "admin-secret-karimi-99.html"; // نام فایل پنل مدیریت شما در گیت‌هاب
-        } else if (pin !== null) {
-          alert("رمز عبور اشتباه است!");
-        }
+        // انتقال به صفحه ادمین (نام فایل ادمین خود را در گیت‌هاب قرار دهید، مثلاً admin-secret-karimi-99.html)
+        window.location.href = "admin-secret-karimi-99.html";
       }
-      setTimeout(() => { clickCount = 0; }, 3000); // بازنشانی شمارشگر بعد از ۳ ثانیه
+      setTimeout(() => { clickCount = 0; }, 2500);
     }
   </script>
 
