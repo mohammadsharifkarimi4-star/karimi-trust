@@ -45,29 +45,25 @@
       justify-content: center;
       align-items: center;
       padding: 0;
-      overflow: hidden;
     }
 
     .app-viewport {
       width: 100vw;
-      height: 100vh;
+      min-height: 100vh;
       max-width: 440px;
-      max-height: 920px;
       background: #f8fafc;
       display: flex;
       flex-direction: column;
       position: relative;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-      overflow: hidden;
-      border-radius: 24px;
     }
 
-    @media (max-width: 480px) {
-      .app-viewport { max-height: 100vh; border-radius: 0; }
+    @media (min-width: 441px) {
+      .app-viewport { min-height: 920px; border-radius: 24px; overflow: hidden; }
     }
 
     .app-header {
-      padding: 10px 14px;
+      padding: 12px 16px;
       background: #ffffff;
       border-bottom: 1px solid #e2e8f0;
       display: flex;
@@ -80,14 +76,13 @@
     
     .app-body {
       flex: 1;
-      padding: 10px 12px;
+      padding: 16px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
     }
 
-    .form-group { margin-bottom: 12px; }
+    .form-group { margin-bottom: 14px; }
     
     input {
       width: 100%;
@@ -107,12 +102,12 @@
 
     button {
       width: 100%;
-      padding: 12px;
+      padding: 13px;
       background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
       color: white;
       border: none;
       border-radius: 12px;
-      font-size: 14px;
+      font-size: 14.5px;
       cursor: pointer;
       font-weight: 700;
       box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
@@ -126,30 +121,28 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 14px;
+      padding: 12px 16px;
       background: #ffffff;
       border-radius: 14px;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.03);
       border: 1px solid #e2e8f0;
-      flex-shrink: 0;
     }
 
     .currency-tabs {
       display: flex;
       gap: 6px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       background: #e2e8f0;
       padding: 4px;
       border-radius: 10px;
       overflow-x: auto;
-      flex-shrink: 0;
     }
 
     .currency-tab {
       flex: 1;
       min-width: 60px;
-      padding: 7px;
+      padding: 8px;
       text-align: center;
       font-size: 12px;
       font-weight: 700;
@@ -172,17 +165,16 @@
     .currency-card {
       background: #ffffff;
       border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 8px;
+      padding: 14px;
+      margin-bottom: 14px;
       border-right: 5px solid var(--primary);
       box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
       border: 1px solid #e2e8f0;
-      flex-shrink: 0;
     }
 
     .big-notification-btn {
       width: 100%;
-      padding: 12px;
+      padding: 13px;
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       color: white;
       border: none;
@@ -191,7 +183,7 @@
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3);
-      margin-bottom: 8px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -220,7 +212,7 @@
     }
 
     .fullscreen-modal {
-      position: absolute;
+      position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       background: #ffffff;
       z-index: 2000;
@@ -232,7 +224,7 @@
     .fullscreen-modal.open { transform: translateY(0); }
 
     .modal-header {
-      padding: 12px 14px;
+      padding: 14px 16px;
       border-bottom: 1px solid #e2e8f0;
       display: flex;
       justify-content: space-between;
@@ -241,27 +233,27 @@
       flex-shrink: 0;
     }
 
-    .modal-scroll-body { flex: 1; padding: 14px; overflow-y: auto; }
+    .modal-scroll-body { flex: 1; padding: 16px; overflow-y: auto; }
 
     .tx-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
       border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
       cursor: pointer;
     }
 
     .action-btn {
       width: 100%;
-      padding: 11px;
+      padding: 12px;
       border-radius: 12px;
       border: none;
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -282,7 +274,7 @@
       padding: 12px;
       border-radius: 12px;
       text-align: center;
-      font-size: 12px;
+      font-size: 12.5px;
       margin-top: 10px;
       font-weight: 700;
     }
@@ -295,13 +287,13 @@
 
   <div class="app-viewport">
     <header class="app-header">
-      <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 12px; font-weight: 700;">← منو</a>
+      <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 12.5px; font-weight: 700;">← منو</a>
       <div class="header-title">🛡️ صرافی و امانت‌داری کریمی</div>
       <div style="width: 25px;"></div>
     </header>
 
     <main class="app-body">
-      <div id="loadingSheet" style="text-align: center; padding: 60px 0; font-weight: 700; color: #475569;">در حال اتصال به پایگاه داده...</div>
+      <div id="loadingSheet" style="text-align: center; padding: 80px 0; font-weight: 700; color: #475569;">در حال اتصال به پایگاه داده...</div>
 
       <!-- مرحله ۱: ورود شماره تلفن -->
       <div id="phoneSection" class="hidden" style="margin: auto 0;">
@@ -315,7 +307,7 @@
 
       <!-- مرحله ۲: احراز هویت با گوگل -->
       <div id="googleAuthSection" class="hidden" style="margin: auto 0; text-align: center;">
-        <div style="font-size: 36px; margin-bottom: 6px;">🔐</div>
+        <div style="font-size: 38px; margin-bottom: 8px;">🔐</div>
         <div style="font-weight: 700; font-size: 16px; color: #1e1b4b; margin-bottom: 16px;">احراز هویت با گوگل</div>
         
         <div style="display: flex; justify-content: center; margin-bottom: 10px;">
@@ -341,15 +333,15 @@
       </div>
 
       <!-- داشبورد اصلی -->
-      <div id="dashboardSection" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+      <div id="dashboardSection" class="hidden" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 100%;">
         <div>
           <div class="user-profile-header">
             <div>
-              <div id="dashName" style="font-weight: 700; font-size: 14.5px; color: #1e1b4b;">---</div>
-              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;"><span id="dashPhone" class="eng-num">---</span></div>
+              <div id="dashName" style="font-weight: 700; font-size: 15px; color: #1e1b4b;">---</div>
+              <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;"><span id="dashPhone" class="eng-num">---</span></div>
             </div>
             <div>
-              <button onclick="logout()" style="width: auto; padding: 4px 10px; font-size: 11px; background: var(--danger); margin-top: 0; box-shadow: none;">خروج</button>
+              <button onclick="logout()" style="width: auto; padding: 5px 12px; font-size: 11.5px; background: var(--danger); margin-top: 0; box-shadow: none;">خروج</button>
             </div>
           </div>
 
@@ -360,14 +352,14 @@
             </button>
           </div>
 
-          <div style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">📊 آمار موجودی حساب</div>
+          <div style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px;">📊 آمار موجودی حساب</div>
           <div class="currency-tabs" id="currencyTabs"></div>
           <div id="activeCurrencyCard"></div>
         </div>
 
-        <!-- دکمه ثابت انتهای صفحه برای باز کردن لیست معاملات -->
-        <div style="margin-top: auto; padding-top: 6px;">
-          <button onclick="openTransactionsModal()" style="padding: 13px; font-size: 14.5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
+        <!-- دکمه معاملات با فاصله ایمن و استاندارد از پایین صفحه -->
+        <div style="margin-top: 24px; padding-bottom: 24px;">
+          <button onclick="openTransactionsModal()" style="padding: 14px; font-size: 15px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);">
             📋 مشاهده معاملات و تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
           </button>
         </div>
@@ -378,8 +370,8 @@
   <!-- مودال لیست معاملات و تراکنش‌ها -->
   <div id="transactionsModal" class="fullscreen-modal">
     <div class="modal-header">
-      <h3 style="font-size: 14.5px; color: #1e293b; font-weight: 700;">📋 لیست کامل معاملات</h3>
-      <button onclick="closeTransactionsModal()" style="width: auto; padding: 4px 10px; font-size: 11.5px; background: #64748b; margin-top:0; box-shadow:none;">بستن ✕</button>
+      <h3 style="font-size: 15px; color: #1e293b; font-weight: 700;">📋 لیست کامل معاملات</h3>
+      <button onclick="closeTransactionsModal()" style="width: auto; padding: 6px 12px; font-size: 12px; background: #64748b; margin-top:0; box-shadow:none;">بستن ✕</button>
     </div>
     <div class="modal-scroll-body" id="transactionsContainer"></div>
   </div>
@@ -387,16 +379,16 @@
   <!-- مودال جزئیات و اکشن‌های تراکنش -->
   <div id="txDetailModal" class="fullscreen-modal">
     <div class="modal-header">
-      <h3 style="font-size: 14.5px; color: #1e293b; font-weight: 700;">📄 جزئیات تراکنش</h3>
-      <button onclick="closeDetailModal()" style="width: auto; padding: 4px 10px; font-size: 11.5px; background: #64748b; margin-top:0; box-shadow:none;">بازگشت</button>
+      <h3 style="font-size: 15px; color: #1e293b; font-weight: 700;">📄 جزئیات تراکنش</h3>
+      <button onclick="closeDetailModal()" style="width: auto; padding: 6px 12px; font-size: 12px; background: #64748b; margin-top:0; box-shadow:none;">بازگشت</button>
     </div>
     <div class="modal-scroll-body">
-      <div id="receiptToCapture" style="background: #ffffff; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 14px; margin-bottom: 10px;">
-        <div style="display: flex; justify-content: space-between; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 8px;">
-          <span style="font-size: 11.5px; font-weight: 700; color: #0284c7;">🛡️ رسید رسمی صرافی کریمی</span>
-          <span style="font-size: 10px; color: #64748b;">امانت‌داری مرکزی</span>
+      <div id="receiptToCapture" style="background: #ffffff; border: 1.5px solid #e2e8f0; padding: 16px; border-radius: 14px; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 10px;">
+          <span style="font-size: 12px; font-weight: 700; color: #0284c7;">🛡️ رسید رسمی صرافی کریمی</span>
+          <span style="font-size: 10.5px; color: #64748b;">امانت‌داری مرکزی</span>
         </div>
-        <div id="modalBody" style="font-size: 12.5px; color: #334155; line-height: 1.8;" class="eng-num"></div>
+        <div id="modalBody" style="font-size: 13px; color: #334155; line-height: 1.9;" class="eng-num"></div>
       </div>
 
       <button class="action-btn" onclick="shareRecordImage()" style="background: #3b82f6;">📸 ارسال و دانلود عکس گزارش</button>
@@ -423,12 +415,10 @@
     let activeCurrencyIndex = 0;
     let selectedTxItem = null;
 
-    // صدای شاتر دوربین سامسونگ قدیمی و افکت‌های صوتی
     function playSound(type) {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         if (type === 'shutter') {
-          // شبیه‌سازی صدای شاتر دوربین قدیمی سامسونگ (کلیک مکانیکی همراه با پالس کوتاه)
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'square';
@@ -574,7 +564,6 @@
         localStorage.setItem('karimi_accId', sheetAccId);
         localStorage.setItem('karimi_email', verifiedEmail);
         
-        // ثبت زمان آخرین ورود کاربر جهت تشخیص تراکنش‌های جدید بعد از این لحظه
         if (!localStorage.getItem('karimi_last_login')) {
           localStorage.setItem('karimi_last_login', new Date().getTime());
         }
@@ -591,7 +580,7 @@
       const found = accountsList.find(u => {
         let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
         const sheetPhone = cleanDigits(phoneVal);
-        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone) || sheetPhone.slice(-5) === userDigits.slice(-5));
+        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || sheetPhone.endsWith(sheetPhone) || sheetPhone.slice(-5) === userDigits.slice(-5));
       });
 
       if (found) {
@@ -692,10 +681,10 @@
       let cardHtml = `
         <div class="currency-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="font-weight: 700; font-size: 13px; color: #1e293b;">ارز: ${currName}</span>
-            <span style="font-size: 16px; font-weight: 700; color: ${netColor};" class="eng-num">${b.net.toLocaleString()}</span>
+            <span style="font-weight: 700; font-size: 13.5px; color: #1e293b;">ارز: ${currName}</span>
+            <span style="font-size: 17px; font-weight: 700; color: ${netColor};" class="eng-num">${b.net.toLocaleString()}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; font-size: 11px; border-top: 1px solid #f1f5f9; padding-top: 6px; color: var(--text-muted);">
+          <div style="display: flex; justify-content: space-between; font-size: 11.5px; border-top: 1px solid #f1f5f9; padding-top: 6px; color: var(--text-muted);">
             <span>بستانکار (+): <b style="color: var(--success);" class="eng-num">${b.credit.toLocaleString()}</b></span>
             <span>بدهکار (-): <b style="color: var(--danger);" class="eng-num">${b.debit.toLocaleString()}</b></span>
           </div>
@@ -703,17 +692,13 @@
       document.getElementById('activeCurrencyCard').innerHTML = cardHtml;
     }
 
-    // شرط هوشمند: بررسی وجود تراکنش جدید فقط بعد از آخرین ورود کاربر
     function checkNewTransactionsNotification() {
       const lastLogin = Number(localStorage.getItem('karimi_last_login')) || 0;
-      // بررسی اینکه آیا تراکنشی وجود دارد که تاریخ ثبت آن جدیدتر از آخرین ورود باشد
-      // (اگر فیلد تاریخ در شیت موجود باشد مقایسه می‌کنیم، یا به عنوان مکانیزم هوشمند بررسی می‌کنیم)
       let hasNew = customerTransactions.some(tx => {
         let txTime = new Date(tx.Date || tx.date || Date.now()).getTime();
         return txTime > lastLogin;
       });
 
-      // برای اینکه تست هم راحت باشد اگر تعداد تراکنش‌ها زیاد بود و اولین بار بود، بررسی می‌کنیم
       if (hasNew || (customerTransactions.length > 0 && lastLogin === 0)) {
         document.getElementById('newTxNotificationWrapper').classList.remove('hidden');
       } else {
@@ -735,14 +720,13 @@
       flyer.style.left = rect.left + 'px';
 
       setTimeout(() => {
-        flyer.style.transform = 'translate(120px, 320px) scale(0.2) rotate(360deg)';
+        flyer.style.transform = 'translate(100px, 200px) scale(0.2) rotate(360deg)';
         flyer.style.opacity = '0';
       }, 50);
 
       setTimeout(() => {
         flyer.remove();
         btn.classList.add('hidden');
-        // آپدیت زمان آخرین ورود تا دیگر این اعلان نشان داده نشود تا زمان تراکنش بعدی
         localStorage.setItem('karimi_last_login', new Date().getTime());
       }, 850);
     }
@@ -760,7 +744,7 @@
     function renderTransactionsList() {
       let txHtml = '';
       if (customerTransactions.length === 0) {
-        txHtml = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12.5px;">هیچ معامله‌ای یافت نشد.</div>';
+        txHtml = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:13px;">هیچ معامله‌ای یافت نشد.</div>';
       } else {
         customerTransactions.forEach((tx, idx) => {
           let dir = String(tx.Direction || tx.direction || '');
@@ -770,14 +754,14 @@
           txHtml += `
             <div class="tx-card" onclick="openDetailModal(${idx})">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="font-weight:700; font-size:13px; color:#1e293b;">${tx.OperationType || tx.operationtype || 'عملیات مالی'}</span>
+                <span style="font-weight:700; font-size:13.5px; color:#1e293b;">${tx.OperationType || tx.operationtype || 'عملیات مالی'}</span>
                 <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted); font-weight:700;" class="eng-num">${tx.Date || tx.date || '---'}</span>
               </div>
-              <div style="font-size:11px; color:#334155; margin-bottom:8px; line-height:1.5;">
+              <div style="font-size:11.5px; color:#334155; margin-bottom:8px; line-height:1.6;">
                 ${tx.Description || tx.description || 'بدون شرح'}
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:6px;">
-                <span style="font-weight:700; font-size:12.5px; color:${amtColor};" class="eng-num">${tx.Currency || tx.currency || 'AFN'} ${amountVal.toLocaleString()} (${dir})</span>
+                <span style="font-weight:700; font-size:13px; color:${amtColor};" class="eng-num">${tx.Currency || tx.currency || 'AFN'} ${amountVal.toLocaleString()} (${dir})</span>
                 <span style="color:#4f46e5; font-size:11px; font-weight:700;">جزئیات ➔</span>
               </div>
             </div>`;
@@ -826,7 +810,7 @@
     }
 
     function shareRecordImage() {
-      playSound('shutter'); // صدای شاتر دوربین سامسونگ قدیمی
+      playSound('shutter');
       const el = document.getElementById('receiptToCapture');
       html2canvas(el, { scale: 3, backgroundColor: '#ffffff' }).then(canvas => {
         canvas.toBlob(blob => {
@@ -844,7 +828,7 @@
     }
 
     function shareHawalaReceipt() {
-      playSound('shutter'); // صدای شاتر دوربین سامسونگ قدیمی
+      playSound('shutter');
       const descText = selectedTxItem.Description || selectedTxItem.description || 'بدون توضیحات';
       const hawalaBox = document.createElement('div');
       hawalaBox.style.cssText = "background: #ffffff; border: 2px solid #8b5cf6; padding: 18px; border-radius: 16px; width: 350px; direction: rtl; font-family: 'Farhang', sans-serif;";
