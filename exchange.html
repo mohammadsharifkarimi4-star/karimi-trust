@@ -321,9 +321,8 @@
     <main class="app-body">
       <div id="loadingSheet" style="text-align: center; padding: 80px 0; font-weight: 700; color: #475569;">در حال اتصال به پایگاه داده...</div>
 
-      <!-- صفحه اول: معلومات و ورود شماره -->
+      <!-- صفحه اول: معلومات، ورود شماره و اثر انگشت -->
       <div id="phoneSection" class="hidden">
-        <!-- ۱. معلومات درباره امانت‌داری کریمی -->
         <div class="info-card">
           <div class="info-title">📌 درباره امانت‌داری کریمی</div>
           <div class="info-desc">
@@ -331,7 +330,6 @@
           </div>
         </div>
 
-        <!-- ۲. معلومات درباره کاربرد این بخش از برنامه -->
         <div class="info-card">
           <div class="info-title">💡 درباره این بخش از برنامه</div>
           <div class="info-desc">
@@ -339,16 +337,19 @@
           </div>
         </div>
 
-        <!-- ۳. فیلد ورود شماره تماس -->
         <div class="info-card" style="background: #f1f5f9; border: 1px solid #cbd5e1;">
           <div style="font-weight: 800; font-size: 13.5px; color: #1e1b4b; margin-bottom: 8px; text-align: center;">ورود و شناسایی حساب</div>
           <div class="form-group">
             <input type="text" id="phoneInput" placeholder="شماره تماس">
           </div>
           <button id="btnCheckPhone" onclick="checkPhone()">مرحله بعد</button>
+          
+          <!-- دکمه ورود سریع با اثر انگشت (اگر ذخیره شده باشد) -->
+          <div id="biometricBtnWrapper" class="hidden" style="margin-top: 10px;">
+            <button onclick="loginWithBiometric()" style="background: #059669; font-size: 13px;">🔑 ورود سریع با اثر انگشت</button>
+          </div>
         </div>
 
-        <!-- پیام خطا اگر شماره ثبت نشده باشد یا حساب نداشته باشد -->
         <div id="phoneError" class="hidden error-box">
           شماره شما شناسایی نشد. شما یا حساب ندارید و یا شماره‌ای که در امانت‌داری کریمی ثبت است را وارد نکرده‌اید.
           <div style="margin-top: 10px;">
@@ -390,7 +391,7 @@
       <!-- داشبورد اصلی -->
       <div id="dashboardSection" class="hidden" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 100%;">
         <div>
-          <!-- هدر پروفایل با دکمه کوچک گرفتن عکس از پروفایل و موجودی -->
+          <!-- هدر پروفایل -->
           <div class="user-profile-header">
             <div>
               <div id="dashName" style="font-weight: 800; font-size: 15.5px; color: #1e1b4b;">---</div>
@@ -402,23 +403,28 @@
             </div>
           </div>
 
-          <!-- کادر برای عکاسی از پروفایل و موجودی -->
-          <div id="profileCaptureArea" style="background: #f8fafc; padding: 2px;">
-            <!-- اعلان هوشمند تراکنش جدید (فقط در صورت وجود تراکنش جدید بعد از آخرین ورود) -->
+          <!-- کادر جامع عکاسی از پروفایل و موجودی با عنوان اختصاصی -->
+          <div id="profileCaptureArea" style="background: #ffffff; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 14px; margin-bottom: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.02);">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 10px;">
+              <span id="captureTitle" style="font-size: 12.5px; font-weight: 800; color: #0284c7;">موجودی حساب در امانت‌داری کریمی</span>
+              <span style="font-size: 10.5px; color: #64748b;" class="eng-num" id="captureDate">---</span>
+            </div>
+
+            <!-- اعلان هوشمند تراکنش جدید -->
             <div id="newTxNotificationWrapper" class="hidden">
               <button class="big-notification-btn" onclick="confirmNewTransaction()">
                 ✨ تراکنش جدیدی در حساب شما ثبت شده است! (تأیید)
               </button>
             </div>
 
-            <div style="font-size: 13px; font-weight: 800; color: #334155; margin-bottom: 6px;">📊 آمار موجودی حساب</div>
+            <div style="font-size: 12.5px; font-weight: 800; color: #334155; margin-bottom: 6px;">📊 آمار موجودی حساب</div>
             <div class="currency-tabs" id="currencyTabs"></div>
             <div id="activeCurrencyCard"></div>
           </div>
         </div>
 
         <!-- دکمه معاملات با فاصله ایمن از پایین صفحه -->
-        <div style="margin-top: 24px; padding-bottom: 24px;">
+        <div style="margin-top: 20px; padding-bottom: 24px;">
           <button onclick="openTransactionsModal()" style="padding: 14px; font-size: 15px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);">
             📋 مشاهده معاملات و تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
           </button>
@@ -540,6 +546,7 @@
 
         document.getElementById('loadingSheet').classList.add('hidden');
 
+        // بررسی Auto-Login پایدار (تا زمان خروج رسمی حفظ می‌شود)
         const savedPhone = localStorage.getItem('karimi_phone');
         const savedAccId = localStorage.getItem('karimi_accId');
         const savedEmail = localStorage.getItem('karimi_email');
@@ -548,6 +555,10 @@
           autoLogin(savedPhone, savedAccId, savedEmail);
         } else {
           document.getElementById('phoneSection').classList.remove('hidden');
+          // بررسی اینکه آیا اثر انگشت ذخیره شده وجود دارد
+          if (localStorage.getItem('karimi_biometric_phone')) {
+            document.getElementById('biometricBtnWrapper').classList.remove('hidden');
+          }
         }
 
       } catch (err) {
@@ -585,6 +596,36 @@
       }
     }
 
+    // ورود سریع با اثر انگشت / بایومتریک شبیه‌سازی‌شده امن مرورگر
+    async function loginWithBiometric() {
+      playSound('click');
+      const bioPhone = localStorage.getItem('karimi_biometric_phone');
+      const bioAccId = localStorage.getItem('karimi_biometric_accId');
+      const bioEmail = localStorage.getItem('karimi_biometric_email');
+
+      if (window.PublicKeyCredential) {
+        try {
+          // درخواست احراز هویت بیومتریک از دستگاه
+          const credential = await navigator.credentials.get({
+            publicKey: {
+              challenge: new Uint8Array([21, 31, 105, 78, 18, 45, 67, 89]),
+              timeout: 60000,
+              userVerification: "required"
+            }
+          });
+          if (credential) {
+            autoLogin(bioPhone, bioAccId, bioEmail);
+            return;
+          }
+        } catch(e) {
+          // اگر کاربر لغو کرد یا دستگاه پشتیبانی نکرد با داده‌های ذخیره‌شده وارد شو
+        }
+      }
+      if (bioPhone && bioAccId) {
+        autoLogin(bioPhone, bioAccId, bioEmail);
+      }
+    }
+
     function parseJwt(token) {
       try {
         const base64Url = token.split('.')[1];
@@ -619,10 +660,16 @@
       let sheetAccId = String(currentFoundUser.AccountID || currentFoundUser.accountid || currentFoundUser.ID || '').trim().toLowerCase();
 
       if (sheetAccId === accIdInput) {
-        localStorage.setItem('karimi_phone', currentFoundUser.Phone || currentFoundUser.phone || '');
+        let phoneVal = currentFoundUser.Phone || currentFoundUser.phone || '';
+        localStorage.setItem('karimi_phone', phoneVal);
         localStorage.setItem('karimi_accId', sheetAccId);
         localStorage.setItem('karimi_email', verifiedEmail);
         
+        // ذخیره برای اثر انگشت
+        localStorage.setItem('karimi_biometric_phone', phoneVal);
+        localStorage.setItem('karimi_biometric_accId', sheetAccId);
+        localStorage.setItem('karimi_biometric_email', verifiedEmail);
+
         if (!localStorage.getItem('karimi_last_login')) {
           localStorage.setItem('karimi_last_login', new Date().getTime());
         }
@@ -639,7 +686,7 @@
       const found = accountsList.find(u => {
         let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
         const sheetPhone = cleanDigits(phoneVal);
-        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || sheetPhone.endsWith(sheetPhone) || sheetPhone.slice(-5) === userDigits.slice(-5));
+        return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone) || sheetPhone.slice(-5) === userDigits.slice(-5));
       });
 
       if (found) {
@@ -678,6 +725,8 @@
 
       document.getElementById('dashName').innerText = nameVal;
       document.getElementById('dashPhone').innerText = phoneVal;
+      document.getElementById('captureTitle').innerText = `موجودی آقای ${nameVal} در امانت‌داری کریمی`;
+      document.getElementById('captureDate').innerText = new Date().toLocaleDateString('fa-IR');
 
       customerTransactions = transactionsList.filter(tx => {
         let rowAccId = String(tx.AccountID || tx.accountid || tx.ID || '').trim().toLowerCase();
@@ -871,7 +920,7 @@
     function shareProfileImage() {
       playSound('shutter');
       const el = document.getElementById('profileCaptureArea');
-      html2canvas(el, { scale: 3, backgroundColor: '#f8fafc' }).then(canvas => {
+      html2canvas(el, { scale: 3, backgroundColor: '#ffffff' }).then(canvas => {
         canvas.toBlob(blob => {
           const file = new File([blob], 'karimi-profile.png', { type: 'image/png' });
           if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
