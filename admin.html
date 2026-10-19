@@ -129,7 +129,7 @@
   <!-- پنل اصلی مدیریت -->
   <div class="container" id="adminContainer">
     
-    <!-- بخش اول: آمار کلی (فقط حساب‌های دارای موجودی فعال و زنده) -->
+    <!-- بخش اول: آمار کلی -->
     <div id="viewDashboard" class="view-section active">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>📊 آمار کلی صرافی</h3>
@@ -364,7 +364,6 @@
       document.querySelectorAll("button").forEach(b => b.disabled = false);
     }
 
-    // تابع بارگذاری با قابلیت مدیریت خطا و جلوگیری از هشدار خطا در لحظه اتصال
     async function loadData() {
       showLoading("در حال خواندن اطلاعات از سرور...");
       let retries = 3;
@@ -388,7 +387,6 @@
           retries--;
           if (retries === 0) {
             hideLoading();
-            // جلوگیری از نمایش خطای مزاحم در صورت اتصال مجدد موفق
           } else {
             await new Promise(r => setTimeout(r, 1000));
           }
@@ -422,9 +420,8 @@
       return '';
     }
 
-    // منطق اصلاح‌شده آمار کلی: تفکیک دقیق موجودی‌های زنده (حساب‌های تسویه‌شده اصلاً محاسبه نمی‌شوند)
     function renderDashboardStats() {
-      let totalsByCurrency = {}; // ساختار: { IQD: { totalCred: 0, totalDeb: 0 } }
+      let totalsByCurrency = {};
 
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
@@ -443,13 +440,13 @@
         });
 
         for(let curr in accCurrencies) {
-          let net = accCurrencies[curr]; // مثبت یعنی بدهکار، منفی یعنی بستانکار (طلبکار)
+          let net = accCurrencies[curr];
           if(net !== 0) {
             if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
             if(net > 0) {
-              totalsByCurrency[curr].debSum += net; // جمع بدهکاران زنده
+              totalsByCurrency[curr].debSum += net;
             } else {
-              totalsByCurrency[curr].credSum += Math.abs(net); // جمع بستانکاران زنده
+              totalsByCurrency[curr].credSum += Math.abs(net);
             }
           }
         }
@@ -457,9 +454,9 @@
 
       let gridHtml = '';
       for (let curr in totalsByCurrency) {
-        let cred = totalsByCurrency[curr].credSum; // بستانکاران (مردم بالای ما پول دارند)
-        let deb = totalsByCurrency[curr].debSum;   // بدهکاران (ما بالای آنها پول داریم)
-        let finalNet = deb - cred; // محاسبه نهایی مطابق فرمول خواسته شده
+        let cred = totalsByCurrency[curr].credSum;
+        let deb = totalsByCurrency[curr].debSum;
+        let finalNet = deb - cred;
 
         let isDebtor = finalNet > 0;
         let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
@@ -783,17 +780,12 @@
 
       let msg = "";
       if(opType === "حواله") {
-        msg = `سلام علیکم آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما اضافه شد.
-نوع تراکنش: ${opType}
-مبلغ: ${amtVal} ${currVal}
-
-رسید انتقال:
+        // ساختار اختصاصی رسید انتقال حواله دقیقاً طبق خواسته شما
+        msg = `رسید انتقال
+------------------------
 ${desc}
-
-برای جزئیات بیشتر به این لینک مراجعه کنید:
-${siteLink}
-
-⚠️ داشتن اسناد برای گرفتن پول الزامی هست`;
+------------------------
+داشتن اسناد برای موقع گرفتن پول الزامی هست`;
       } else {
         msg = `سلام علیکم آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما اضافه شد.
 نوع تراکنش: ${opType}
