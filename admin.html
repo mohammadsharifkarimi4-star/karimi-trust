@@ -103,13 +103,13 @@
 </head>
 <body>
 
-  <!-- صفحه لودینگ چرخشی -->
+  <!-- لودینگ چرخشی -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
     <div id="loadingText">در حال پردازش و ثبت در سیستم...</div>
   </div>
 
-  <!-- صفحه لاگین -->
+  <!-- لاگین -->
   <div id="authOverlay">
     <div class="auth-card">
       <div class="auth-title">🔐 ورود به پنل مدیریت</div>
@@ -126,10 +126,10 @@
     </div>
   </div>
 
-  <!-- پنل اصلی مدیریت -->
+  <!-- پنل اصلی -->
   <div class="container" id="adminContainer">
     
-    <!-- بخش اول: آمار کلی -->
+    <!-- بخش اول: آمار کلی و منوی دسترسی سریع جدید -->
     <div id="viewDashboard" class="view-section active">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>📊 آمار کلی صرافی</h3>
@@ -144,9 +144,54 @@
         <div class="stats-grid" id="globalStatsGrid"></div>
       </div>
 
-      <div class="card" style="text-align: center;">
-        <button class="btn" onclick="switchView('viewAccounts')" style="font-size: 1rem; padding: 12px;">👥 ورود به لیست حساب‌ها و مشتریان</button>
+      <!-- منوهای جدید دسترسی سریع -->
+      <div class="card">
+        <h3>🚀 منوی گزارش‌گیری پیشرفته</h3>
+        <div class="flex-row" style="gap: 6px; flex-direction: column;">
+          <button class="btn btn-info" onclick="openTransfersReport()">📜 آمار و لیست حواله‌ها</button>
+          <button class="btn btn-danger" onclick="openDebtorsReport()">🔴 لیست بدهکاران</button>
+          <button class="btn btn-warning" onclick="openCreditorsReport()">🟢 لیست بستانکاران</button>
+          <button class="btn" onclick="switchView('viewAccounts')" style="margin-top: 4px;">👥 ورود به لیست حساب‌ها و مشتریان</button>
+        </div>
       </div>
+    </div>
+
+    <!-- بخش جدید: آمار و لیست حواله‌ها -->
+    <div id="viewTransfersReport" class="view-section">
+      <div class="card flex-row" style="justify-content: space-between;">
+        <h3>📜 گزارش پیشرفته حواله‌ها</h3>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت</button>
+      </div>
+      <div class="card">
+        <div class="form-group">
+          <label>فیلتر زمانی:</label>
+          <select id="transferFilterPeriod" onchange="renderTransfersReport()">
+            <option value="all">مجموع کل (همه حواله‌ها)</option>
+            <option value="today">روزانه (امروز)</option>
+            <option value="week">هفتگی (۷ روز گذشته)</option>
+            <option value="month">ماهانه (۳۰ روز گذشته)</option>
+          </select>
+        </div>
+        <div id="transfersReportContainer" style="margin-top: 10px;"></div>
+      </div>
+    </div>
+
+    <!-- بخش جدید: لیست بدهکاران -->
+    <div id="viewDebtorsReport" class="view-section">
+      <div class="card flex-row" style="justify-content: space-between;">
+        <h3>🔴 لیست حساب‌های بدهکار</h3>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت</button>
+      </div>
+      <div class="card" id="debtorsContainer"></div>
+    </div>
+
+    <!-- بخش جدید: لیست بستانکاران -->
+    <div id="viewCreditorsReport" class="view-section">
+      <div class="card flex-row" style="justify-content: space-between;">
+        <h3>🟢 لیست حساب‌های بستانکار (طلبکار)</h3>
+        <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت</button>
+      </div>
+      <div class="card" id="creditorsContainer"></div>
     </div>
 
     <!-- بخش دوم: لیست حساب‌ها -->
@@ -208,7 +253,7 @@
     <a href="index.html" class="back-home">← بازگشت به منوی اصلی</a>
   </div>
 
-  <!-- مودال ایجاد/ویرایش حساب -->
+  <!-- مودال حساب -->
   <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
       <h3 id="modalAccountTitle">حساب جدید</h3>
@@ -228,7 +273,7 @@
     </div>
   </div>
 
-  <!-- مودال ثبت/ویرایش تراکنش -->
+  <!-- مودال تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
       <h3 id="txModalTitle">ثبت تراکنش جدید</h3>
@@ -471,6 +516,160 @@
         `;
       }
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
+    }
+
+    // منطق گزارش‌گیری‌های جدید (حواله‌ها، بدهکاران، بستانکاران)
+    function openTransfersReport() {
+      switchView('viewTransfersReport');
+      renderTransfersReport();
+    }
+
+    function renderTransfersReport() {
+      const period = document.getElementById("transferFilterPeriod").value;
+      const container = document.getElementById("transfersReportContainer");
+      container.innerHTML = "";
+
+      let now = new Date();
+      let filteredTxs = allTransactions.filter(tx => {
+        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+        if (opType !== "حواله") return false;
+
+        if (period === "all") return true;
+
+        let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+        if (!txDateStr) return false;
+        let txDate = new Date(txDateStr);
+        let diffTime = Math.abs(now - txDate);
+        let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (period === "today" && diffDays <= 1) return true;
+        if (period === "week" && diffDays <= 7) return true;
+        if (period === "month" && diffDays <= 30) return true;
+
+        return false;
+      });
+
+      if (filteredTxs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حواله‌ای در این بازه یافت نشد</div>`;
+        return;
+      }
+
+      filteredTxs.reverse().forEach(tx => {
+        let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
+        let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
+        let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
+        let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
+        let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
+        let desc = String(getVal(tx, ['Description', 'description']) || '');
+        let date = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+
+        container.innerHTML += `
+          <div class="tx-item-card" onclick="selectAccount('${accId}', '${accName}')">
+            <div class="stat-row">
+              <span><b>مشتری: ${accName}</b></span>
+              <span>تاریخ: ${date}</span>
+            </div>
+            <div class="stat-row">
+              <span>مبلغ: <b>${amt} ${curr}</b></span>
+            </div>
+            <div style="font-size:0.8rem; color:#475569; margin-top:4px;">رسید انتقال: ${desc}</div>
+          </div>
+        `;
+      });
+    }
+
+    function openDebtorsReport() {
+      switchView('viewDebtorsReport');
+      const container = document.getElementById("debtorsContainer");
+      container.innerHTML = "";
+
+      let debtors = [];
+      allAccounts.forEach(acc => {
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
+        let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
+        if(!accId) return;
+
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        let accCurrencies = {};
+        accTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+
+        for(let curr in accCurrencies) {
+          let val = accCurrencies[curr];
+          if(val > 0) { // یعنی بدهکار است
+            debtors.push({ name: accName, id: accId, amount: val, currency: curr });
+          }
+        }
+      });
+
+      if(debtors.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b;">هیچ حساب بدهکاری وجود ندارد</div>`;
+        return;
+      }
+
+      debtors.forEach(d => {
+        container.innerHTML += `
+          <div class="tx-item-card" onclick="selectAccount('${d.id}', '${d.name}')">
+            <div class="stat-row">
+              <span style="font-weight:bold; font-size:1rem; color:var(--primary);">${d.name}</span>
+              <span style="color:var(--danger); font-weight:bold;">${d.amount.toLocaleString()} ${d.currency}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openCreditorsReport() {
+      switchView('viewCreditorsReport');
+      const container = document.getElementById("creditorsContainer");
+      container.innerHTML = "";
+
+      let creditors = [];
+      allAccounts.forEach(acc => {
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
+        let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
+        if(!accId) return;
+
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        let accCurrencies = {};
+        accTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+
+        for(let curr in accCurrencies) {
+          let val = accCurrencies[curr];
+          if(val < 0) { // یعنی بستانکار/طلبکار است
+            creditors.push({ name: accName, id: accId, amount: Math.abs(val), currency: curr });
+          }
+        }
+      });
+
+      if(creditors.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b;">هیچ حساب بستانکاری وجود ندارد</div>`;
+        return;
+      }
+
+      creditors.forEach(c => {
+        container.innerHTML += `
+          <div class="tx-item-card" onclick="selectAccount('${c.id}', '${c.name}')">
+            <div class="stat-row">
+              <span style="font-weight:bold; font-size:1rem; color:var(--primary);">${c.name}</span>
+              <span style="color:var(--accent); font-weight:bold;">${c.amount.toLocaleString()} ${c.currency}</span>
+            </div>
+          </div>
+        `;
+      });
     }
 
     function renderAccountsList(accounts) {
@@ -769,24 +968,24 @@
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
       if(!tx) return;
 
-      let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
-      let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
-      let siteLink = "https://karimi-trust-app.vercel.app/";
-
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let desc = String(getVal(tx, ['Description', 'description']) || '');
       let amtVal = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
+      let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let msg = "";
       if(opType === "حواله") {
-        // ساختار اختصاصی رسید انتقال حواله دقیقاً طبق خواسته شما
+        // متن اختصاصی حواله دقیقا مطابق خواسته شما
         msg = `رسید انتقال
 ------------------------
 ${desc}
 ------------------------
 داشتن اسناد برای موقع گرفتن پول الزامی هست`;
       } else {
+        let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
+        let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
+
         msg = `سلام علیکم آقای ${currentAccountName}، تراکنش شماره #${txIndex} در حساب شما اضافه شد.
 نوع تراکنش: ${opType}
 مبلغ: ${amtVal} ${currVal}
