@@ -8,12 +8,12 @@
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
     :root {
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --accent-gradient: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --accent-gradient: linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%);
       --text-dark: #0f172a;
       --text-muted: #64748b;
-      --shadow-3d: 0 8px 20px -4px rgba(0, 0, 0, 0.15);
-      --shadow-hover: 0 12px 25px -4px rgba(16, 185, 129, 0.3);
+      --shadow-3d: 0 6px 16px -3px rgba(0, 0, 0, 0.12);
+      --shadow-hover: 0 10px 22px -3px rgba(16, 185, 129, 0.25);
     }
 
     * {
@@ -25,24 +25,23 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
+    html, body {
       background: #090d16;
       color: var(--text-dark);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
     }
 
     .app-viewport {
       width: 100%;
       max-width: 440px;
-      min-height: 100vh;
+      height: 100vh;
       background: #f1f5f9;
-      padding: 12px 14px 24px 14px;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      justify-content: space-between;
     }
 
     /* هدر اصلی */
@@ -51,6 +50,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 2px 4px;
+      flex-shrink: 0;
     }
 
     .welcome-box {
@@ -61,17 +61,16 @@
     }
 
     .welcome-title {
-      font-size: 21px;
+      font-size: 19px;
       font-weight: 900;
       color: var(--text-dark);
-      line-height: 1.2;
+      line-height: 1.1;
     }
 
     .welcome-subtitle {
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--text-muted);
       font-weight: 700;
-      margin-top: 1px;
     }
 
     .status-badge {
@@ -79,18 +78,17 @@
       align-items: center;
       gap: 5px;
       background: #ffffff;
-      padding: 5px 12px;
-      border-radius: 30px;
+      padding: 4px 10px;
+      border-radius: 20px;
       border: 1.5px solid #cbd5e1;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
       color: #059669;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
     }
 
     .dot-pulse {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       background-color: #10b981;
       border-radius: 50%;
       animation: pulse 1.6s infinite;
@@ -98,22 +96,23 @@
 
     @keyframes pulse {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* بنر اصلی تقویم، ساعت و احادیث */
+    /* بنر اصلی تقویم، ساعت و احادیث (فیکس و متناسب) */
     .hero-card {
       background: var(--accent-gradient);
-      border-radius: 22px;
-      padding: 12px 14px;
+      border-radius: 20px;
+      padding: 10px 12px;
       color: #ffffff;
-      box-shadow: 0 10px 25px -6px rgba(5, 150, 105, 0.35);
+      box-shadow: 0 10px 22px -5px rgba(5, 150, 105, 0.35);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .hero-top-info {
@@ -123,82 +122,93 @@
     }
 
     .hero-main-title {
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 900;
     }
 
     .day-badge {
       background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(6px);
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 11px;
+      backdrop-filter: blur(4px);
+      padding: 2px 8px;
+      border-radius: 14px;
+      font-size: 10.5px;
       font-weight: 800;
     }
 
     .dates-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
+      gap: 4px;
     }
 
     .date-box-item {
       background: rgba(0, 0, 0, 0.18);
-      backdrop-filter: blur(4px);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      padding: 6px 3px;
+      border-radius: 10px;
+      padding: 4px 2px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 1px;
     }
 
     .date-box-title {
-      font-size: 9.5px;
+      font-size: 9px;
       color: #a7f3d0;
       font-weight: 800;
     }
 
     .date-box-val {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       color: #ffffff;
     }
 
     .date-box-sub {
-      font-size: 8.5px;
+      font-size: 8px;
       color: #e6fffa;
       font-weight: 700;
     }
 
-    .live-clock-box {
-      background: rgba(0, 0, 0, 0.22);
-      border-radius: 10px;
-      padding: 5px;
-      text-align: center;
-      font-size: 12px;
+    /* ساعت‌های جهانی و محلی فشرده */
+    .world-clocks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 9px;
+      padding: 4px 6px;
+      font-size: 10px;
       font-weight: 800;
-      color: #ffffff;
+      text-align: center;
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    /* کادر زنده احادیث با نوردهی رنگارنگ خفیف و ظریف (Glow) */
+    .world-clock-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .world-clock-item span:first-child {
+      font-size: 8.5px;
+      color: #a7f3d0;
+    }
+
+    /* کادر حدیث بزرگ‌تر با نوردهی رنگارنگ و متحرک (Glow) */
     .hadith-display-box {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1.5px solid rgba(255, 255, 255, 0.45);
-      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 2px solid rgba(252, 211, 77, 0.8);
+      border-radius: 11px;
       padding: 8px 10px;
       display: flex;
       flex-direction: column;
       gap: 3px;
-      box-shadow: 0 0 12px rgba(52, 211, 153, 0.3), 0 0 20px rgba(251, 191, 36, 0.15), inset 0 0 8px rgba(255, 255, 255, 0.15);
-      animation: fadeIn 0.5s ease-in-out;
+      box-shadow: 0 0 15px rgba(252, 211, 77, 0.5), 0 0 25px rgba(52, 211, 153, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.2);
+      animation: glowPulse 2.5s infinite alternate;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
+    @keyframes glowPulse {
+      0% { box-shadow: 0 0 10px rgba(252, 211, 77, 0.4), 0 0 18px rgba(52, 211, 153, 0.3); }
+      100% { box-shadow: 0 0 20px rgba(252, 211, 77, 0.8), 0 0 32px rgba(52, 211, 153, 0.7); }
     }
 
     .hadith-header-row {
@@ -206,53 +216,63 @@
       justify-content: space-between;
       align-items: center;
       font-size: 10px;
-      color: #6ee7b7;
+      color: #fde047;
       font-weight: 900;
     }
 
     .hadith-text {
-      font-size: 11px;
+      font-size: 10.5px;
       color: #ffffff;
-      font-weight: 700;
-      line-height: 1.4;
+      font-weight: 800;
+      line-height: 1.35;
       text-align: justify;
-      text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+    }
+
+    .hadith-translation {
+      font-size: 10px;
+      color: #a7f3d0;
+      font-weight: 700;
+      line-height: 1.3;
+      border-top: 1px dashed rgba(255, 255, 255, 0.2);
+      padding-top: 2px;
+      margin-top: 1px;
     }
 
     .hadith-source {
-      font-size: 9px;
-      color: #fde047;
-      font-weight: 700;
+      font-size: 8.5px;
+      color: #cbd5e1;
+      font-weight: 600;
       text-align: left;
       direction: ltr;
     }
 
     .section-label {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 900;
       color: var(--text-dark);
       display: flex;
       align-items: center;
-      gap: 5px;
-      margin-top: 4px;
+      gap: 4px;
+      flex-shrink: 0;
     }
 
-    /* کارت‌های منوی اصلی (فشرده، شیک و مرتب) */
+    /* کارت‌های منوی اصلی (فشرده، مرتب و بدون بیرون‌زدگی) */
     .menu-container {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .menu-card-large {
       background: var(--card-bg);
-      border-radius: 16px;
-      padding: 12px 14px;
+      border-radius: 14px;
+      padding: 10px 12px;
       text-decoration: none;
       color: var(--text-dark);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       border: 2px solid #ffffff;
       box-shadow: var(--shadow-3d);
       transition: all 0.2s ease;
@@ -265,15 +285,15 @@
     }
 
     .icon-wrapper {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 20px;
       flex-shrink: 0;
-      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 5px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.9), 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%); color: #0284c7; }
@@ -281,13 +301,13 @@
     .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #facc15 100%); color: #d97706; }
 
     .card-title {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 900;
       color: var(--text-dark);
     }
 
     .card-desc {
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--text-muted);
       font-weight: 600;
       margin-top: 1px;
@@ -316,7 +336,7 @@
       </div>
     </div>
 
-    <!-- بنر اصلی تقویم، ساعت و احادیث -->
+    <!-- بنر اصلی تقویم، ساعت‌ها و احادیث -->
     <div class="hero-card">
       <div class="hero-top-info">
         <span class="hero-main-title">حساب‌کتاب من</span>
@@ -343,19 +363,34 @@
         </div>
       </div>
 
-      <!-- ساعت زنده -->
-      <div class="live-clock-box">
-        ساعت کنونی: <span id="liveClock" class="eng-num">00:00:00</span>
+      <!-- ساعت‌های جهانی (کابل، بغداد، لندن، نیویورک) -->
+      <div class="world-clocks-grid">
+        <div class="world-clock-item">
+          <span>کابل</span>
+          <span id="clockKabul" class="eng-num">00:00</span>
+        </div>
+        <div class="world-clock-item">
+          <span>بغداد</span>
+          <span id="clockBaghdad" class="eng-num">00:00</span>
+        </div>
+        <div class="world-clock-item">
+          <span>لندن</span>
+          <span id="clockLondon" class="eng-num">00:00</span>
+        </div>
+        <div class="world-clock-item" style="grid-column: span 3;">
+          <span>نیویورک: <strong id="clockNY" class="eng-num">00:00</strong></span>
+        </div>
       </div>
 
-      <!-- کادر زنده و خودکار احادیث با نوردهی رنگارنگ خفیف -->
+      <!-- کادر زنده و متحرک احادیث با ترجمه فارسی و نوردهی رنگارنگ -->
       <div class="hadith-display-box" id="hadithBox">
         <div class="hadith-header-row">
           <span id="hadithAuthor">✨ کلام معصوم (ع)</span>
           <span>📜 رزق حلال و امانت‌داری</span>
         </div>
-        <div class="hadith-text" id="hadithText">«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ...»</div>
-        <div class="hadith-source" id="hadithSource">[ بحارالأنوار ]</div>
+        <div class="hadith-text" id="hadithText">«أدِّ الأَمانَةَ...»</div>
+        <div class="hadith-translation" id="hadithTrans">ترجمه...</div>
+        <div class="hadith-source" id="hadithSource">[ منبع ]</div>
       </div>
     </div>
 
@@ -398,61 +433,52 @@
   </div>
 
   <script>
-    // بانک احادیث معتبر شیعی (۱۲ امامی) با محوریت امانت‌داری، رزق حلال، تجارت و اخلاق
+    // بانک احادیث همراه با ترجمه فارسی دقیق و معتبر شیعی
     const shiaHadiths = [
       {
         author: "امام علی (ع)",
         text: "«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ و إن خانَکَ، و لا تَخُنْ مَن خانَکَ.»",
+        trans: "ترجمه: امانت را به امانت‌گذار بازگردان، گرچه خیانت کرده باشد؛ و به کسی که خیانت کرده، خیانت مکن.",
         source: "بحارالأنوار، ج ۷۴"
       },
       {
         author: "پیامبر اکرم (ص)",
         text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ.»",
+        trans: "ترجمه: عبادت هفتاد جزء است و برترینِ آن‌ها به دست آوردن روزی حلال است.",
         source: "مستدرک الوسائل، ج ۱۳"
       },
       {
         author: "امام صادق (ع)",
         text: "«إِنَّ اللَّهَ عَزَّ وَ جَلَّ يُحِبُّ إِعْثَارَ الرَّجُلِ فِي طَلَبِ الْحَلَالِ.»",
+        trans: "ترجمه: خداوند دوست دارد که انسان در راه طلب روزی حلال به زحمت بیفتد.",
         source: "کافی، ج ۵"
       },
       {
         author: "امام باقر (ع)",
         text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ دَوَامُهَا وَ إِنْ قَلَّ.»",
+        trans: "ترجمه: محبوب‌ترین کارها نزد خدا کار مداوم است، هرچند اندک باشد.",
         source: "کافی، ج ۲"
-      },
-      {
-        author: "امام علی (ع)",
-        text: "«رِزْقُكَ يَطْلُبُكَ كَمَا تَطْلُبُهُ.»",
-        source: "غررالحکم"
-      },
-      {
-        author: "امام صادق (ع)",
-        text: "«الصِّدْقُ مَمْسَحَةٌ وَ الْكَذِبُ مَنْقَصَةٌ.»",
-        source: "تحف العقول"
       },
       {
         author: "پیامبر اکرم (ص)",
         text: "«التَّاجِرُ الصَّدُوقُ الأَمِينُ مَعَ النَّبِيِّينَ وَ الصِّدِّيقِينَ.»",
+        trans: "ترجمه: تاجر راستگو و امانت‌دار در قیامت با انبیاء و صدیقین خواهد بود.",
         source: "من لایحضره الفقیه، ج ۳"
-      },
-      {
-        author: "امام رضا (ع)",
-        text: "«اَلْبَحْثُ عَنِ الْحَلَالِ يُعَزِّزُ الإِنْسَانَ.»",
-        source: "مستدرک الوسائل"
       },
       {
         author: "امام صادق (ع)",
         text: "«الْبَرَكَةُ فِي‌ التِّجَارَةِ مَعَ الصِّدْقِ وَ الْأَمَانَةِ.»",
+        trans: "ترجمه: برکت در تجارت همراه با راستگویی و امانت‌داری است.",
         source: "کافی، ج ۵"
       }
     ];
 
-    // نمایش تصادفی حدیث جدید با هر بار ورود و باز شدن صفحه
     function loadRandomHadith() {
       const randomIndex = Math.floor(Math.random() * shiaHadiths.length);
       const item = shiaHadiths[randomIndex];
       document.getElementById('hadithAuthor').innerText = `✨ ${item.author}`;
       document.getElementById('hadithText').innerText = item.text;
+      document.getElementById('hadithTrans').innerText = item.trans;
       document.getElementById('hadithSource').innerText = `[ ${item.source} ]`;
     }
 
@@ -463,18 +489,15 @@
     function handleSecretAdminClick() {
       secretClickCount++;
       clearTimeout(secretClickTimer);
-
       if (secretClickCount >= 3) {
         secretClickCount = 0;
         window.location.href = "admin.html";
       } else {
-        secretClickTimer = setTimeout(() => {
-          secretClickCount = 0;
-        }, 1200);
+        secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 1200);
       }
     }
 
-    function updateCalendarAndClock() {
+    function updateTimeAndClocks() {
       const now = new Date();
       const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
       document.getElementById('dayNameDisplay').innerText = weekDays[now.getDay()];
@@ -497,13 +520,18 @@
       const engMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       document.getElementById('gregMonthVal').innerText = `${engMonths[now.getMonth()]} ${now.getFullYear()}`;
 
-      // ساعت زنده
-      document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+      // ساعت‌های جهانی
+      const getTimeInZone = (timeZone) => now.toLocaleTimeString('en-US', { timeZone, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      
+      document.getElementById('clockKabul').innerText = getTimeInZone('Asia/Kabul');
+      document.getElementById('clockBaghdad').innerText = getTimeInZone('Asia/Baghdad');
+      document.getElementById('clockLondon').innerText = getTimeInZone('Europe/London');
+      document.getElementById('clockNY').innerText = getTimeInZone('America/New_York');
     }
 
-    updateCalendarAndClock();
+    updateTimeAndClocks();
     loadRandomHadith();
-    setInterval(updateCalendarAndClock, 1000);
+    setInterval(updateTimeAndClocks, 1000);
   </script>
 
 </body>
