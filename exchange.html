@@ -319,7 +319,7 @@
     </header>
 
     <main class="app-body">
-      <div id="loadingSheet" style="text-align: center; padding: 80px 0; font-weight: 700; color: #475569;">در حال اتصال به پایگاه داده...</div>
+      <div id="loadingSheet" class="hidden" style="text-align: center; padding: 40px 0; font-weight: 700; color: #475569;">در حال بروزرسانی اطلاعات...</div>
 
       <!-- صفحه اول: معلومات، ورود شماره و اثر انگشت -->
       <div id="phoneSection" class="hidden">
@@ -344,7 +344,6 @@
           </div>
           <button id="btnCheckPhone" onclick="checkPhone()">مرحله بعد</button>
           
-          <!-- دکمه ورود سریع با اثر انگشت (اگر ذخیره شده باشد) -->
           <div id="biometricBtnWrapper" class="hidden" style="margin-top: 10px;">
             <button onclick="loginWithBiometric()" style="background: #059669; font-size: 13px;">🔑 ورود سریع با اثر انگشت</button>
           </div>
@@ -360,8 +359,7 @@
           </a>
         </div>
       </div>
-
-      <!-- مرحله ۲: احراز هویت با گوگل -->
+<!-- مرحله ۲: احراز هویت با گوگل -->
       <div id="googleAuthSection" class="hidden" style="margin: auto 0; text-align: center;">
         <div style="font-size: 38px; margin-bottom: 8px;">🔐</div>
         <div style="font-weight: 700; font-size: 16px; color: #1e1b4b; margin-bottom: 16px;">احراز هویت با گوگل</div>
@@ -423,7 +421,7 @@
           </div>
         </div>
 
-        <!-- دکمه معاملات با فاصله ایمن از پایین صفحه -->
+        <!-- دکمه معاملات -->
         <div style="margin-top: 20px; padding-bottom: 24px;">
           <button onclick="openTransactionsModal()" style="padding: 14px; font-size: 15px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);">
             📋 مشاهده معاملات و تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
@@ -519,52 +517,92 @@
       } catch (e) {}
     }
 
+    function getVal(obj, keys) {
+      if (!obj) return '';
+      for (let k of keys) {
+        if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
+        let lower = k.toLowerCase();
+        for (let prop in obj) {
+          if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") {
+            return obj[prop];
+          }
+        }
+      }
+      return '';
+    }
+
     window.addEventListener('DOMContentLoaded', async () => {
+      let cachedAcc = localStorage.getItem("cached_accounts");
+      let cachedTx = localStorage.getItem("cached_transactions");
+
+      if (cachedAcc && cachedTx) {
+        accountsList = JSON.parse(cachedAcc);
+        transactionsList = JSON.parse(cachedTx);
+        initUserSession();
+      } else {
+        document.getElementById('loadingSheet').classList.remove('hidden');
+      }
+
+      fetchDataFromSheet();
+    });
+
+    async function fetchDataFromSheet() {
       try {
         const res = await fetch(APPS_SCRIPT_URL);
         const data = await res.json();
 
         if (data.accounts && data.accounts.length > 0) {
           let accRows = data.accounts;
-          let accHeaders = accRows[0];
-          accountsList = accRows.slice(1).map(row => {
-            let obj = {};
-            accHeaders.forEach((h, i) => obj[h.toString().trim()] = row[i]);
-            return obj;
-          });
+          if (Array.isArray(accRows[0])) {
+            let accHeaders = accRows[0].map(h => String(h).trim());
+            accountsList = accRows.slice(1).map(row => {
+              let obj = {};
+              accHeaders.forEach((h, i) => obj[h] = row[i]);
+              return obj;
+            });
+          } else {
+            accountsList = accRows;
+          }
+          localStorage.setItem("cached_accounts", JSON.stringify(accountsList));
         }
 
         if (data.transactions && data.transactions.length > 0) {
           let txRows = data.transactions;
-          let txHeaders = txRows[0];
-          transactionsList = txRows.slice(1).map(row => {
-            let obj = {};
-            txHeaders.forEach((h, i) => obj[h.toString().trim()] = row[i]);
-            return obj;
-          });
+          if (Array.isArray(txRows[0])) {
+            let txHeaders = txRows[0].map(h => String(h).trim());
+            transactionsList = txRows.slice(1).map(row => {
+              let obj = {};
+              txHeaders.forEach((h, i) => obj[h] = row[i]);
+              return obj;
+            });
+          } else {
+            transactionsList = txRows;
+          }
+          localStorage.setItem("cached_transactions", JSON.stringify(transactionsList));
         }
 
         document.getElementById('loadingSheet').classList.add('hidden');
-
-        // بررسی Auto-Login پایدار (تا زمان خروج رسمی حفظ می‌شود)
-        const savedPhone = localStorage.getItem('karimi_phone');
-        const savedAccId = localStorage.getItem('karimi_accId');
-        const savedEmail = localStorage.getItem('karimi_email');
-
-        if (savedPhone && savedAccId && savedEmail) {
-          autoLogin(savedPhone, savedAccId, savedEmail);
-        } else {
-          document.getElementById('phoneSection').classList.remove('hidden');
-          // بررسی اینکه آیا اثر انگشت ذخیره شده وجود دارد
-          if (localStorage.getItem('karimi_biometric_phone')) {
-            document.getElementById('biometricBtnWrapper').classList.remove('hidden');
-          }
-        }
+        initUserSession();
 
       } catch (err) {
-        document.getElementById('loadingSheet').innerHTML = '<div class="error-box">خطا در بارگذاری اطلاعات.</div>';
+        document.getElementById('loadingSheet').classList.add('hidden');
       }
-    });
+    }
+
+    function initUserSession() {
+      const savedPhone = localStorage.getItem('karimi_phone');
+      const savedAccId = localStorage.getItem('karimi_accId');
+      const savedEmail = localStorage.getItem('karimi_email');
+
+      if (savedPhone && savedAccId) {
+        autoLogin(savedPhone, savedAccId, savedEmail || '');
+      } else {
+        document.getElementById('phoneSection').classList.remove('hidden');
+        if (localStorage.getItem('karimi_biometric_phone')) {
+          document.getElementById('biometricBtnWrapper').classList.remove('hidden');
+        }
+      }
+    }
 
     function cleanDigits(str) {
       if (!str) return '';
@@ -581,7 +619,7 @@
       const userDigits = cleanDigits(rawInput);
 
       const found = accountsList.find(u => {
-        let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
+        let phoneVal = getVal(u, ['Phone', 'phone', 'تلفن']);
         const sheetPhone = cleanDigits(phoneVal);
         if (!sheetPhone) return false;
         return sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone) || (userDigits.length >= 5 && sheetPhone.slice(-5) === userDigits.slice(-5));
@@ -596,7 +634,6 @@
       }
     }
 
-    // ورود سریع با اثر انگشت / بایومتریک شبیه‌سازی‌شده امن مرورگر
     async function loginWithBiometric() {
       playSound('click');
       const bioPhone = localStorage.getItem('karimi_biometric_phone');
@@ -605,7 +642,6 @@
 
       if (window.PublicKeyCredential) {
         try {
-          // درخواست احراز هویت بیومتریک از دستگاه
           const credential = await navigator.credentials.get({
             publicKey: {
               challenge: new Uint8Array([21, 31, 105, 78, 18, 45, 67, 89]),
@@ -617,9 +653,7 @@
             autoLogin(bioPhone, bioAccId, bioEmail);
             return;
           }
-        } catch(e) {
-          // اگر کاربر لغو کرد یا دستگاه پشتیبانی نکرد با داده‌های ذخیره‌شده وارد شو
-        }
+        } catch(e) {}
       }
       if (bioPhone && bioAccId) {
         autoLogin(bioPhone, bioAccId, bioEmail);
@@ -644,7 +678,7 @@
         verifiedEmail = payload.email.toLowerCase();
         document.getElementById('googleAuthSection').classList.add('hidden');
         document.getElementById('accountSection').classList.remove('hidden');
-        let nameVal = currentFoundUser.Name || currentFoundUser.name || 'مشتری عزیز';
+        let nameVal = getVal(currentFoundUser, ['Name', 'name']) || 'مشتری عزیز';
         document.getElementById('greetingMsg').innerText = `سلام ${nameVal}، خوش آمدید!`;
       }
     }
@@ -657,15 +691,14 @@
 
       if (!accIdInput) return;
 
-      let sheetAccId = String(currentFoundUser.AccountID || currentFoundUser.accountid || currentFoundUser.ID || '').trim().toLowerCase();
+      let sheetAccId = String(getVal(currentFoundUser, ['AccountID', 'accountid', 'ID'])).trim().toLowerCase();
 
       if (sheetAccId === accIdInput) {
-        let phoneVal = currentFoundUser.Phone || currentFoundUser.phone || '';
+        let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']);
         localStorage.setItem('karimi_phone', phoneVal);
         localStorage.setItem('karimi_accId', sheetAccId);
         localStorage.setItem('karimi_email', verifiedEmail);
         
-        // ذخیره برای اثر انگشت
         localStorage.setItem('karimi_biometric_phone', phoneVal);
         localStorage.setItem('karimi_biometric_accId', sheetAccId);
         localStorage.setItem('karimi_biometric_email', verifiedEmail);
@@ -684,13 +717,13 @@
     function autoLogin(phone, accId, email) {
       const userDigits = cleanDigits(phone);
       const found = accountsList.find(u => {
-        let phoneVal = u.Phone || u.phone || u['تلفن'] || '';
+        let phoneVal = getVal(u, ['Phone', 'phone', 'تلفن']);
         const sheetPhone = cleanDigits(phoneVal);
         return sheetPhone && (sheetPhone === userDigits || sheetPhone.endsWith(userDigits) || userDigits.endsWith(sheetPhone) || sheetPhone.slice(-5) === userDigits.slice(-5));
       });
 
       if (found) {
-        let sheetAccId = String(found.AccountID || found.accountid || found.ID || '').trim().toLowerCase();
+        let sheetAccId = String(getVal(found, ['AccountID', 'accountid', 'ID'])).trim().toLowerCase();
         if (sheetAccId === accId.toLowerCase()) {
           currentFoundUser = found;
           verifiedEmail = email;
@@ -698,7 +731,8 @@
           return;
         }
       }
-      localStorage.clear();
+      localStorage.removeItem('karimi_phone');
+      localStorage.removeItem('karimi_accId');
       document.getElementById('phoneSection').classList.remove('hidden');
     }
 
@@ -714,14 +748,22 @@
       document.getElementById('googleAuthSection').classList.remove('hidden');
     }
 
+    function logout() {
+      playSound('click');
+      localStorage.removeItem('karimi_phone');
+      localStorage.removeItem('karimi_accId');
+      localStorage.removeItem('karimi_email');
+      location.reload();
+    }
+
     function processDashboard(sheetAccId) {
       document.getElementById('phoneSection').classList.add('hidden');
       document.getElementById('googleAuthSection').classList.add('hidden');
       document.getElementById('accountSection').classList.add('hidden');
       document.getElementById('dashboardSection').classList.remove('hidden');
       
-      let nameVal = currentFoundUser.Name || currentFoundUser.name || '---';
-      let phoneVal = currentFoundUser.Phone || currentFoundUser.phone || '---';
+      let nameVal = getVal(currentFoundUser, ['Name', 'name']) || '---';
+      let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']) || '---';
 
       document.getElementById('dashName').innerText = nameVal;
       document.getElementById('dashPhone').innerText = phoneVal;
@@ -729,15 +771,16 @@
       document.getElementById('captureDate').innerText = new Date().toLocaleDateString('fa-IR');
 
       customerTransactions = transactionsList.filter(tx => {
-        let rowAccId = String(tx.AccountID || tx.accountid || tx.ID || '').trim().toLowerCase();
+        let rowAccId = String(getVal(tx, ['AccountID', 'accountid', 'ID'])).trim().toLowerCase();
         return rowAccId === sheetAccId;
       }).reverse();
 
       customerBalances = {};
       customerTransactions.forEach(tx => {
-        let curr = String(tx.Currency || tx.currency || 'AFN').toUpperCase();
-        let amount = parseFloat(tx.Amount || tx.amount) || 0;
-        let dir = String(tx.Direction || tx.direction || '').trim();
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let rawAmt = getVal(tx, ['Amount', 'amount']);
+        let amount = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
+        let dir = String(getVal(tx, ['Direction', 'direction'])).trim();
 
         if (!customerBalances[curr]) {
           customerBalances[curr] = { credit: 0, debit: 0, net: 0 };
@@ -803,7 +846,8 @@
     function checkNewTransactionsNotification() {
       const lastLogin = Number(localStorage.getItem('karimi_last_login')) || 0;
       let hasNew = customerTransactions.some(tx => {
-        let txTime = new Date(tx.Date || tx.date || Date.now()).getTime();
+        let rawDate = getVal(tx, ['Date', 'date']);
+        let txTime = new Date(rawDate || Date.now()).getTime();
         return txTime > lastLogin;
       });
 
@@ -820,7 +864,7 @@
       
       const flyer = document.createElement('div');
       flyer.className = 'flying-tx-element';
-      flyer.innerText = '✨ تراکنش جدید تأیید و منتقل شد';
+      flyer.innerText = '✨ تراکنش جدید تأیید شد';
       document.body.appendChild(flyer);
 
       const rect = btn.getBoundingClientRect();
@@ -855,21 +899,26 @@
         txHtml = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:13px;">هیچ معامله‌ای یافت نشد.</div>';
       } else {
         customerTransactions.forEach((tx, idx) => {
-          let dir = String(tx.Direction || tx.direction || '');
+          let dir = String(getVal(tx, ['Direction', 'direction']));
           let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
-          let amountVal = parseFloat(tx.Amount || tx.amount) || 0;
-          
+          let rawAmt = getVal(tx, ['Amount', 'amount']);
+          let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
+          let opType = getVal(tx, ['OperationType', 'operationtype']) || 'عملیات مالی';
+          let dateStr = getVal(tx, ['Date', 'date']) || '---';
+          let descStr = (getVal(tx, ['Description', 'description']) || 'بدون شرح').replaceAll('+', ' ');
+          let currStr = getVal(tx, ['Currency', 'currency']) || 'AFN';
+
           txHtml += `
             <div class="tx-card" onclick="openDetailModal(${idx})">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="font-weight:700; font-size:13.5px; color:#1e293b;">${tx.OperationType || tx.operationtype || 'عملیات مالی'}</span>
-                <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted); font-weight:700;" class="eng-num">${tx.Date || tx.date || '---'}</span>
+                <span style="font-weight:700; font-size:13.5px; color:#1e293b;">${opType}</span>
+                <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:6px; color:var(--text-muted); font-weight:700;" class="eng-num">${dateStr.split('T')[0]}</span>
               </div>
               <div style="font-size:11.5px; color:#334155; margin-bottom:8px; line-height:1.6;">
-                ${tx.Description || tx.description || 'بدون شرح'}
+                ${descStr}
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:6px;">
-                <span style="font-weight:700; font-size:13px; color:${amtColor};" class="eng-num">${tx.Currency || tx.currency || 'AFN'} ${amountVal.toLocaleString()} (${dir})</span>
+                <span style="font-weight:700; font-size:13px; color:${amtColor};" class="eng-num">${currStr} ${amountVal.toLocaleString()} (${dir})</span>
                 <span style="color:#4f46e5; font-size:11px; font-weight:700;">جزئیات ➔</span>
               </div>
             </div>`;
@@ -883,21 +932,28 @@
       playSound('click');
       selectedTxItem = customerTransactions[idx];
       let tx = selectedTxItem;
-      let dir = String(tx.Direction || tx.direction || '');
+      let dir = String(getVal(tx, ['Direction', 'direction']));
       let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
+      let rawAmt = getVal(tx, ['Amount', 'amount']);
+      let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
+      let transId = getVal(tx, ['TransID', 'transid']) || '---';
+      let opType = getVal(tx, ['OperationType', 'operationtype']) || '---';
+      let dateStr = getVal(tx, ['Date', 'date']) || '---';
+      let descStr = (getVal(tx, ['Description', 'description']) || '---').replaceAll('+', ' ');
+      let currStr = getVal(tx, ['Currency', 'currency']) || '';
+      let statusStr = getVal(tx, ['Status', 'status']) || 'تأیید شده';
 
       let bodyHtml = `
-        <p><b>شناسه:</b> <span class="eng-num">${tx.TransID || tx.transid || '---'}</span></p>
-        <p><b>نوع عملیات:</b> ${tx.OperationType || tx.operationtype || '---'}</p>
-        <p><b>تاریخ:</b> <span class="eng-num">${tx.Date || tx.date || '---'}</span></p>
-        <p><b>شرح و جزئیات:</b> ${tx.Description || tx.description || '---'}</p>
-        <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:${amtColor};">${Number(tx.Amount || 0).toLocaleString()} ${tx.Currency || ''}</span></p>
-        <p><b>وضعیت:</b> <span style="color:var(--success); font-weight:bold;">${tx.Status || tx.status || 'تأیید شده'}</span></p>
+        <p><b>شناسه:</b> <span class="eng-num">${transId}</span></p>
+        <p><b>نوع عملیات:</b> ${opType}</p>
+        <p><b>تاریخ:</b> <span class="eng-num">${dateStr.split('T')[0]}</span></p>
+        <p><b>شرح و جزئیات:</b> ${descStr}</p>
+        <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:${amtColor};">${amountVal.toLocaleString()} ${currStr}</span></p>
+        <p><b>وضعیت:</b> <span style="color:var(--success); font-weight:bold;">${statusStr}</span></p>
       `;
       document.getElementById('modalBody').innerHTML = bodyHtml;
-      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20پشتیبانی%20برای%20تراکنش%20شماره%20${tx.TransID || (idx+1)}%20را دارم`;
+      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20پشتیبانی%20برای%20تراکنش%20شماره%20${transId}%20را دارم`;
 
-      let opType = String(tx.OperationType || tx.operationtype || '');
       if (opType.includes('حواله')) {
         document.getElementById('hawalaReceiptWrapper').classList.remove('hidden');
       } else {
@@ -914,7 +970,8 @@
 
     function requestEdit() {
       playSound('click');
-      window.open(`https://wa.me/9647721878997?text=سلام%20درخواست%20ویرایش%20تراکنش%20با%20شناسه%20${selectedTxItem.TransID || ''}%20را دارم`, '_blank');
+      let transId = getVal(selectedTxItem, ['TransID', 'transid']) || '';
+      window.open(`https://wa.me/9647721878997?text=سلام%20درخواست%20ویرایش%20تراکنش%20با%20شناسه%20${transId}%20را دارم`, '_blank');
     }
 
     function shareProfileImage() {
@@ -955,7 +1012,8 @@
 
     function shareHawalaReceipt() {
       playSound('shutter');
-      const descText = selectedTxItem.Description || selectedTxItem.description || 'بدون توضیحات';
+      const descText = (getVal(selectedTxItem, ['Description', 'description']) || 'بدون توضیحات').replaceAll('+', ' ');
+      const dateText = getVal(selectedTxItem, ['Date', 'date']) || '';
       const hawalaBox = document.createElement('div');
       hawalaBox.style.cssText = "background: #ffffff; border: 2px solid #8b5cf6; padding: 18px; border-radius: 16px; width: 350px; direction: rtl; font-family: 'Farhang', sans-serif;";
       hawalaBox.innerHTML = `
@@ -964,7 +1022,7 @@
           <b>مشخصات و توضیحات حواله:</b><br>
           <span class="eng-num">${descText}</span>
         </div>
-        <div style="margin-top: 10px; font-size: 10px; color: #64748b; text-align: left;" class="eng-num">Date: ${selectedTxItem.Date || ''}</div>
+        <div style="margin-top: 10px; font-size: 10px; color: #64748b; text-align: left;" class="eng-num">Date: ${dateText.split('T')[0]}</div>
       `;
       document.body.appendChild(hawalaBox);
 
@@ -982,14 +1040,6 @@
           }
         });
       });
-    }
-
-    function logout() {
-      playSound('click');
-      if (confirm('آیا می‌خواهید از حساب خارج شوید؟')) {
-        localStorage.clear();
-        location.reload();
-      }
     }
   </script>
 </body>
