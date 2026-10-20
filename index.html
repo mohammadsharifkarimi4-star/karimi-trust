@@ -26,24 +26,27 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
+    html, body {
       background: #090d16;
       color: var(--text-dark);
-      min-height: 100vh;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
     }
 
     .app-viewport {
       width: 100%;
       max-width: 440px;
-      min-height: 100vh;
+      height: 100vh;
       background: #f1f5f9;
-      padding: 20px 16px 32px 16px;
+      padding: 16px 16px 20px 16px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      justify-content: space-between;
+      overflow-y: auto;
     }
 
     /* هدر اصلی */
@@ -51,7 +54,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 6px;
+      padding: 2px 4px;
+      flex-shrink: 0;
     }
 
     .welcome-box {
@@ -62,22 +66,17 @@
     }
 
     .welcome-title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
       color: var(--text-dark);
       line-height: 1.2;
-      transition: transform 0.2s;
-    }
-
-    .welcome-title:active {
-      transform: scale(0.95);
     }
 
     .welcome-subtitle {
-      font-size: 12.5px;
+      font-size: 12px;
       color: var(--text-muted);
       font-weight: 700;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
     .status-badge {
@@ -85,18 +84,18 @@
       align-items: center;
       gap: 6px;
       background: #ffffff;
-      padding: 7px 16px;
+      padding: 6px 14px;
       border-radius: 30px;
       border: 1.5px solid #cbd5e1;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       color: #059669;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
 
     .dot-pulse {
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       background-color: #10b981;
       border-radius: 50%;
       animation: pulse 1.6s infinite;
@@ -104,28 +103,23 @@
 
     @keyframes pulse {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
     /* بنر تقویم و ساعت 3D */
     .hero-card {
       background: var(--accent-gradient);
-      border-radius: 28px;
-      padding: 20px;
+      border-radius: 24px;
+      padding: 16px;
       color: #ffffff;
-      box-shadow: 0 18px 35px -8px rgba(5, 150, 105, 0.4);
+      box-shadow: 0 14px 30px -8px rgba(5, 150, 105, 0.4);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      animation: floatIn 0.8s ease-out;
-    }
-
-    @keyframes floatIn {
-      from { opacity: 0; transform: translateY(-15px); }
-      to { opacity: 1; transform: translateY(0); }
+      gap: 10px;
+      flex-shrink: 0;
     }
 
     .hero-top-info {
@@ -135,78 +129,113 @@
     }
 
     .hero-main-title {
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 900;
-      letter-spacing: -0.3px;
     }
 
     .day-badge {
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(8px);
-      padding: 4px 14px;
+      padding: 3px 12px;
       border-radius: 20px;
-      font-size: 12.5px;
+      font-size: 11.5px;
       font-weight: 800;
     }
 
     .dates-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 6px;
     }
 
     .date-box-item {
       background: rgba(0, 0, 0, 0.18);
       backdrop-filter: blur(6px);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 18px;
-      padding: 10px 6px;
+      border-radius: 14px;
+      padding: 8px 4px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      transition: transform 0.2s;
-    }
-
-    .date-box-item:hover {
-      transform: scale(1.03);
+      gap: 2px;
     }
 
     .date-box-title {
-      font-size: 10.5px;
+      font-size: 10px;
       color: #a7f3d0;
       font-weight: 800;
     }
 
     .date-box-val {
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 900;
       color: #ffffff;
     }
 
     .date-box-sub {
-      font-size: 9.5px;
+      font-size: 9px;
       color: #e6fffa;
       font-weight: 700;
     }
 
     .live-clock-box {
       background: rgba(0, 0, 0, 0.22);
-      border-radius: 14px;
-      padding: 10px 14px;
+      border-radius: 12px;
+      padding: 7px;
       text-align: center;
-      font-size: 13.5px;
+      font-size: 12.5px;
       font-weight: 800;
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      letter-spacing: 0.5px;
+    }
+
+    /* کادر زنده و متحرک روایات و احادیث معتبر درون کارت سبز */
+    .hadith-display-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hadith-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #6ee7b7;
+      font-weight: 900;
+    }
+
+    .hadith-text {
+      font-size: 11.5px;
+      color: #ffffff;
+      font-weight: 700;
+      line-height: 1.5;
+      text-align: justify;
+    }
+
+    .hadith-source {
+      font-size: 9.5px;
+      color: #a7f3d0;
+      font-weight: 600;
+      text-align: left;
+      direction: ltr;
     }
 
     .section-label {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 900;
       color: var(--text-dark);
-      margin-top: 4px;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -216,46 +245,40 @@
     .menu-container {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
+      flex-shrink: 0;
     }
 
     .menu-card-large {
       background: var(--card-bg);
-      border-radius: 24px;
-      padding: 20px 18px;
+      border-radius: 20px;
+      padding: 14px 16px;
       text-decoration: none;
       color: var(--text-dark);
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       border: 2px solid #ffffff;
       box-shadow: var(--shadow-3d);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      position: relative;
-      overflow: hidden;
+      transition: all 0.25s ease;
     }
 
     .menu-card-large:hover, .menu-card-large:active {
-      transform: translateY(-5px) scale(1.01);
+      transform: translateY(-2px);
       box-shadow: var(--shadow-hover);
       border-color: #10b981;
     }
 
     .icon-wrapper {
-      width: 60px;
-      height: 60px;
-      border-radius: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 30px;
+      font-size: 26px;
       flex-shrink: 0;
-      box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.9), 0 8px 20px rgba(0, 0, 0, 0.08);
-      transition: transform 0.3s ease;
-    }
-
-    .menu-card-large:hover .icon-wrapper {
-      transform: rotate(-8deg) scale(1.1);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 6px 15px rgba(0, 0, 0, 0.06);
     }
 
     .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%); color: #0284c7; }
@@ -263,17 +286,17 @@
     .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #facc15 100%); color: #d97706; }
 
     .card-title {
-      font-size: 15.5px;
+      font-size: 14.5px;
       font-weight: 900;
       color: var(--text-dark);
     }
 
     .card-desc {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
       font-weight: 600;
-      margin-top: 3px;
-      line-height: 1.4;
+      margin-top: 2px;
+      line-height: 1.3;
     }
 
     .eng-num {
@@ -289,7 +312,6 @@
     
     <!-- هدر بالای صفحه -->
     <div class="top-header">
-      <!-- با ۳ بار کلیک روی این عنوان وارد بخش ادمین شوید -->
       <div class="welcome-box" onclick="handleSecretAdminClick()">
         <span class="welcome-title">خوش آمدید 👋</span>
         <span class="welcome-subtitle">سامانه حساب‌کتاب من</span>
@@ -300,7 +322,7 @@
       </div>
     </div>
 
-    <!-- بنر اصلی تقویم و ساعت -->
+    <!-- بنر اصلی تقویم، ساعت و احادیث -->
     <div class="hero-card">
       <div class="hero-top-info">
         <span class="hero-main-title">حساب‌کتاب من</span>
@@ -331,10 +353,20 @@
       <div class="live-clock-box">
         ساعت کنونی: <span id="liveClock" class="eng-num">00:00:00</span>
       </div>
+
+      <!-- کادر زنده و خودکار احادیث و معارف اهل بیت (ع) -->
+      <div class="hadith-display-box" id="hadithBox">
+        <div class="hadith-header-row">
+          <span id="hadithAuthor">✨ کلام معصوم (ع)</span>
+          <span>📜 پند اخلاقی و رزق حلال</span>
+        </div>
+        <div class="hadith-text" id="hadithText">«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ و إن خانَکَ...»</div>
+        <div class="hadith-source" id="hadithSource">[ بحارالأنوار، ج ۷۴ ]</div>
+      </div>
     </div>
 
     <div class="section-label">
-      <span>✨ خدمات اصلی</span>
+      <span>✨ خدمات اصلی سامانه</span>
     </div>
 
     <!-- دکمه‌های منوی اصلی -->
@@ -349,7 +381,7 @@
         </div>
       </a>
 
-      <!-- ۲. امانت‌داری کریمی (متصل به exchange.html) -->
+      <!-- ۲. امانت‌داری کریمی -->
       <a href="exchange.html" class="menu-card-large">
         <div class="icon-wrapper icon-exchange">🛡️</div>
         <div>
@@ -363,7 +395,7 @@
         <div class="icon-wrapper icon-calc">🧮</div>
         <div>
           <div class="card-title">ماشین حساب عادی و پیشرفته</div>
-          <div class="card-desc">تبدیل دقیق ارزها و محاسبات مالی پیشرفته</div>
+          <div class="card-desc">تبدیل دقیق ارزها و محاسبات مالی</div>
         </div>
       </a>
 
@@ -372,6 +404,73 @@
   </div>
 
   <script>
+    // بانک احادیث معتبر شیعی (۱۲ امامی) با محوریت امانت‌داری، رزق حلال، تجارت و اخلاق
+    const shiaHadiths = [
+      {
+        author: "امام علی (ع)",
+        text: "«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ و إن خانَکَ، و لا تَخُنْ مَن خانَکَ.» (امانت را به امانت‌گذار بازگردان، گرچه خیانت کرده باشد).",
+        source: "بحارالأنوار، ج ۷۴"
+      },
+      {
+        author: "پیامبر اکرم (ص)",
+        text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ.» (عبادت هفتاد جزء است که برترین آن طلب روزی حلال است).",
+        source: "مستدرک الوسائل، ج ۱۳"
+      },
+      {
+        author: "امام صادق (ع)",
+        text: "«إِنَّ اللَّهَ عَزَّ وَ جَلَّ يُحِبُّ إِعْثَارَ الرَّجُلِ فِي طَلَبِ الْحَلَالِ.» (خوند دوست دارد انسان در راه کسب روزی حلال به زحمت بیفتد).",
+        source: "کافی، ج ۵"
+      },
+      {
+        author: "امام باقر (ع)",
+        text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ دَوَامُهَا وَ إِنْ قَلَّ.» (محبوب‌ترین کارها نزد خدا کار مداوم است، هرچند اندک باشد).",
+        source: "کافی، ج ۲"
+      },
+      {
+        author: "امام علی (ع)",
+        text: "«رِزْقُكَ يَطْلُبُكَ كَمَا تَطْلُبُهُ.» (روزیِ تو به دنبال توست، همان‌گونه که تو به دنبال آنی).",
+        source: "غررالحکم"
+      },
+      {
+        author: "امام صادق (ع)",
+        text: "«الصِّدْقُ مَمْسَحَةٌ وَ الْكَذِبُ مَنْقَصَةٌ.» (راستگویی مایه پاکی و دروغ‌گویی مایه کاستی است).",
+        source: "تحف العقول"
+      },
+      {
+        author: "پیامبر اکرم (ص)",
+        text: "«التَّاجِرُ الصَّدُوقُ الأَمِينُ مَعَ النَّبِيِّينَ وَ الصِّدِّيقِينَ.» (تاجر راستگو و امانت‌دار در قیامت با انبیاء و صدیقین خواهد بود).",
+        source: "من لایحضره الفقیه، ج ۳"
+      },
+      {
+        author: "امام رضا (ع)",
+        text: "«اَلْبَحْثُ عَنِ الْحَلَالِ يُعَزِّزُ الإِنْسَانَ.» (تلاش و جستجو برای کسب حلال، انسان را عزیز می‌گرداند).",
+        source: "مستدرک الوسائل"
+      },
+      {
+        author: "امام علی (ع)",
+        text: "«مَنْ تَجَرَ بِلَا فِقْهٍ فَقَدِ ارْتَمَى فِي الرِّبَا.» (کسی که بدون آگاهی و احکام دینی تجارت کند، در ورطه ربا می‌افتد).",
+        source: "وسائل الشيعة"
+      },
+      {
+        author: "امام صادق (ع)",
+        text: "«الْبَرَكَةُ فِي‌ التِّجَارَةِ مَعَ الصِّدْقِ وَ الْأَمَانَةِ.» (برکت در تجارت همراه با راستگویی و امانت‌داری است).",
+        source: "کافی، ج ۵"
+      }
+    ];
+
+    // سیستم چرخش خودکار احادیث (هر ۱۲ ساعت یک‌بار یا تغییر روز)
+    function loadDailyHadith() {
+      const now = new Date();
+      // محاسبه کلید زمان (هر ۱۲ ساعت یک تغییر)
+      const timeBlock = Math.floor(now.getTime() / (12 * 60 * 60 * 1000));
+      const index = timeBlock % shiaHadiths.length;
+      
+      const item = shiaHadiths[index];
+      document.getElementById('hadithAuthor').innerText = `✨ ${item.author}`;
+      document.getElementById('hadithText').innerText = item.text;
+      document.getElementById('hadithSource').innerText = `[ ${item.source} ]`;
+    }
+
     // کلیک مخفی ۳ باره روی «خوش آمدید» برای ورود به بخش مدیریت (ادمین)
     let secretClickCount = 0;
     let secretClickTimer = null;
@@ -418,6 +517,7 @@
     }
 
     updateCalendarAndClock();
+    loadDailyHadith();
     setInterval(updateCalendarAndClock, 1000);
   </script>
 
