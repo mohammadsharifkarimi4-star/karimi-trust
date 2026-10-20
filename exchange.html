@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>امانت‌داری کریمی مرکزی</title>
-  <!-- فونت فرهنگ (Farhang) -->
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
     @font-face {
@@ -20,9 +19,7 @@
       font-style: normal;
     }
   </style>
-  <!-- Google Sign-In SDK -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <!-- html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
@@ -305,7 +302,6 @@
       line-height: 1.6;
     }
 
-    /* کادر ثابت عکس‌برداری کادر استاندارد رسید */
     .capture-container {
       width: 100%;
       max-width: 380px;
@@ -333,7 +329,6 @@
     <main class="app-body">
       <div id="loadingSheet" class="hidden" style="text-align: center; padding: 40px 0; font-weight: 700; color: #475569;">در حال بروزرسانی اطلاعات...</div>
 
-      <!-- صفحه اول: ورود شماره -->
       <div id="phoneSection" class="hidden">
         <div class="info-card">
           <div class="info-title">📌 درباره امانت‌داری کریمی</div>
@@ -356,7 +351,6 @@
           </div>
           <button id="btnCheckPhone" onclick="checkPhone()">مرحله بعد</button>
           
-          <!-- دکمه ورود با اثر انگشت (فقط اگر توسط خود کاربر فعال شده باشد) -->
           <div id="biometricBtnWrapper" class="hidden" style="margin-top: 10px;">
             <button onclick="loginWithBiometric()" style="background: #059669; font-size: 13px;">🔑 ورود سریع با اثر انگشت</button>
           </div>
@@ -367,12 +361,12 @@
           <div style="margin-top: 10px;">
             اگر تمایل دارید با امانت‌داری کریمی حساب داشته باشید، در واتساپ پیام دهید:
           </div>
-          <a href="https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20تمایل%20دارم%20با%20امانت‌داری%20کریمی%20حساب%20داشته%20باشم" target="_blank" class="action-btn whatsapp-btn" style="margin-top: 10px; font-size: 12.5px;">
+          <a id="whatsappNoAccountBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-top: 10px; font-size: 12.5px;">
             💬 پیام به واتساپ امانت‌داری کریمی
           </a>
         </div>
       </div>
-      <!-- مرحله ۲: احراز هویت با گوگل -->
+
       <div id="googleAuthSection" class="hidden" style="margin: auto 0; text-align: center;">
         <div style="font-size: 38px; margin-bottom: 8px;">🔐</div>
         <div style="font-weight: 700; font-size: 16px; color: #1e1b4b; margin-bottom: 16px;">احراز هویت با گوگل</div>
@@ -388,7 +382,6 @@
         <button onclick="backToPhone()" style="background: #64748b; margin-top: 6px;">بازگشت</button>
       </div>
 
-      <!-- مرحله ۳: کد اختصاصی حساب (Account ID) -->
       <div id="accountSection" class="hidden" style="margin: auto 0;">
         <div id="greetingMsg" style="text-align:center; font-weight:700; color:var(--success); margin-bottom:14px; font-size:15px;"></div>
         <div class="form-group">
@@ -396,13 +389,16 @@
         </div>
         <button id="btnVerifyAcc" onclick="verifyAccount()">ورود به سیستم</button>
         <button onclick="backToGoogle()" style="background: #64748b; margin-top: 6px;">بازگشت</button>
-        <div id="accountError" class="hidden error-box">کد حساب اشتباه است.</div>
+        <div id="accountError" class="hidden error-box">
+          <div>کد حساب اشتباه است.</div>
+          <a id="whatsappWrongAccBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-top: 10px; font-size: 12.5px;">
+            💬 ارتباط با پشتیبانی واتساپ
+          </a>
+        </div>
       </div>
 
-      <!-- داشبورد اصلی -->
       <div id="dashboardSection" class="hidden" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 100%;">
         <div>
-          <!-- هدر پروفایل -->
           <div class="user-profile-header">
             <div>
               <div id="dashName" style="font-weight: 800; font-size: 15.5px; color: #1e1b4b;">---</div>
@@ -415,14 +411,12 @@
             </div>
           </div>
 
-          <!-- کادر جامع عکاسی از پروفایل و موجودی با ابعاد استاندارد -->
           <div id="profileCaptureArea" class="capture-container">
             <div style="display: flex; justify-content: space-between; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 10px;">
               <span id="captureTitle" style="font-size: 12.5px; font-weight: 800; color: #0284c7;">صورت‌حساب موجودی</span>
               <span style="font-size: 10.5px; color: #64748b;" class="eng-num" id="captureDate">---</span>
             </div>
 
-            <!-- اعلان هوشمند تراکنش جدید -->
             <div id="newTxNotificationWrapper" class="hidden">
               <button class="big-notification-btn" onclick="confirmNewTransaction()">
                 ✨ تراکنش جدیدی در حساب شما ثبت شده است! (تأیید)
@@ -435,7 +429,6 @@
           </div>
         </div>
 
-        <!-- دکمه معاملات -->
         <div style="margin-top: 20px; padding-bottom: 24px;">
           <button onclick="openTransactionsModal()" style="padding: 14px; font-size: 15px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);">
             📋 مشاهده معاملات و تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
@@ -445,7 +438,6 @@
     </main>
   </div>
 
-  <!-- مودال لیست معاملات و تراکنش‌ها -->
   <div id="transactionsModal" class="fullscreen-modal">
     <div class="modal-header">
       <h3 style="font-size: 15px; color: #1e293b; font-weight: 700;">📋 لیست کامل معاملات</h3>
@@ -454,14 +446,12 @@
     <div class="modal-scroll-body" id="transactionsContainer"></div>
   </div>
 
-  <!-- مودال جزئیات تراکنش -->
   <div id="txDetailModal" class="fullscreen-modal">
     <div class="modal-header">
       <h3 style="font-size: 15px; color: #1e293b; font-weight: 700;">📄 جزئیات تراکنش</h3>
       <button onclick="closeDetailModal()" style="width: auto; padding: 6px 12px; font-size: 12px; background: #64748b; margin-top:0; box-shadow:none;">بازگشت</button>
     </div>
     <div class="modal-scroll-body">
-      <!-- کادر رسید جهت عکس‌برداری (بدون عبارت امانت‌داری کریمی در سر رسید) -->
       <div id="receiptToCapture" class="capture-container">
         <div style="display: flex; justify-content: space-between; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 10px;">
           <span style="font-size: 13px; font-weight: 800; color: #0284c7;">🧾 رسید معامله</span>
@@ -480,7 +470,6 @@
       <a id="modalWhatsApp" href="#" target="_blank" class="action-btn whatsapp-btn">💬 ارتباط با پشتیبانی در واتساپ</a>
     </div>
   </div>
-
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaCdwpY7tcQj-_sDC47fUO8PBoL2ncDtIFeHgbk3HhpxuQr4biosiaK_jOFCq0Xu7v/exec";
 
@@ -546,14 +535,14 @@
       return '';
     }
 
-    // استخراج دقیق ۹ رقم آخر تلفن
     function getLast9Digits(str) {
       if (!str) return '';
       let cleaned = String(str).replace(/\D/g, '');
       return cleaned.slice(-9);
     }
 
-    window.addEventListener('DOMContentLoaded', async () => {
+    // لود آنی از کش برای صفر شدن تأخیر اولیه (سرعت بالا)
+    window.addEventListener('DOMContentLoaded', () => {
       let cachedAcc = localStorage.getItem("cached_accounts");
       let cachedTx = localStorage.getItem("cached_transactions");
 
@@ -604,7 +593,12 @@
         }
 
         document.getElementById('loadingSheet').classList.add('hidden');
-        initUserSession();
+        if (document.getElementById('phoneSection').classList.contains('hidden') && 
+            document.getElementById('googleAuthSection').classList.contains('hidden') && 
+            document.getElementById('accountSection').classList.contains('hidden') && 
+            document.getElementById('dashboardSection').classList.contains('hidden')) {
+          initUserSession();
+        }
 
       } catch (err) {
         document.getElementById('loadingSheet').classList.add('hidden');
@@ -620,7 +614,6 @@
         autoLogin(savedPhone, savedAccId, savedEmail || '');
       } else {
         document.getElementById('phoneSection').classList.remove('hidden');
-        // نمایش ورود با اثر انگشت فقط اگر کاربر خودش در گذشته آن را فعال کرده باشد
         if (localStorage.getItem('karimi_biometric_enabled') === 'true') {
           document.getElementById('biometricBtnWrapper').classList.remove('hidden');
         } else {
@@ -629,7 +622,6 @@
       }
     }
 
-    // تطابق دقیق ۹ رقم آخر شماره
     function checkPhone() {
       playSound('click');
       const rawInput = document.getElementById('phoneInput').value.trim();
@@ -656,7 +648,12 @@
         document.getElementById('phoneSection').classList.add('hidden');
         document.getElementById('googleAuthSection').classList.remove('hidden');
       } else {
-        errBox.innerText = "شماره شما شناسایی نشد. شما یا حساب ندارید و یا شماره‌ای که در سامانه ثبت است را وارد نکرده‌اید.";
+        errBox.innerText = "شماره شما شناسایی نشد. شما یا حساب ندارید و یا شماره‌ای که در امانت‌داری کریمی ثبت است را وارد نکرده‌اید.";
+        
+        // تنظیم لینک واتساپ بدون متن پیش‌فرض برای کاربرانی که حساب ندارند
+        const cleanPhone = rawInput.replace(/\D/g, '');
+        document.getElementById('whatsappNoAccountBtn').href = `https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20${cleanPhone}%20است%20و%20میخواهم%20حساب%20داشته%20باشم`;
+        
         errBox.classList.remove('hidden');
       }
     }
@@ -741,7 +738,6 @@
       }
     }
 
-    // تطابق ۱۰۰٪ دقیق کد حساب (Account ID)
     function verifyAccount() {
       playSound('click');
       const accIdInput = document.getElementById('accountIdInput').value.trim();
@@ -754,6 +750,7 @@
 
       if (sheetAccId === accIdInput) {
         let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']);
+        let nameVal = getVal(currentFoundUser, ['Name', 'name']) || 'مشتری';
         localStorage.setItem('karimi_phone', phoneVal);
         localStorage.setItem('karimi_accId', sheetAccId);
         localStorage.setItem('karimi_email', verifiedEmail);
@@ -764,7 +761,12 @@
 
         processDashboard(sheetAccId);
       } else {
-        accErr.innerText = 'کد حساب (Account ID) اشتباه است.';
+        let nameVal = getVal(currentFoundUser, ['Name', 'name']) || 'مشتری';
+        let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']) || '';
+        
+        // تنظیم لینک واتساپ پیش‌فرض با نام، شماره و اکانت آیدی اشتباه وارد شده
+        document.getElementById('whatsappWrongAccBtn').href = `https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20من%20${encodeURIComponent(nameVal)}%20هستم%20با%20شماره%20${phoneVal}.%20کد%20حساب%20(Account%20ID)%20خود%20را%20(${encodeURIComponent(accIdInput)})%20اشتباه%20وارد%20کرده‌ام،%20لطفاً%20راهنمایی‌ام%20کنید`;
+        
         accErr.classList.remove('hidden');
       }
     }
@@ -1069,7 +1071,6 @@
       });
     }
 
-    // عکس‌برداری اختصاصی رسید حواله (کادر فیکس، بدون عنوان اضافی در سربرگ)
     function shareHawalaReceipt() {
       playSound('shutter');
       const descText = (getVal(selectedTxItem, ['Description', 'description']) || 'بدون توضیحات').replaceAll('+', ' ');
