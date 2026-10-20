@@ -327,7 +327,7 @@
     </header>
 
     <main class="app-body">
-      <div id="loadingSheet" class="hidden" style="text-align: center; padding: 40px 0; font-weight: 700; color: #475569;">در حال بروزرسانی اطلاعات...</div>
+      <!-- لودینگ کاملاً حذف شد تا صفحه معطل نشود -->
 
       <div id="phoneSection" class="hidden">
         <div class="info-card">
@@ -541,23 +541,21 @@
       return cleaned.slice(-9);
     }
 
-    // لود آنی از کش برای صفر شدن تأخیر اولیه (سرعت بالا)
     window.addEventListener('DOMContentLoaded', () => {
       let cachedAcc = localStorage.getItem("cached_accounts");
       let cachedTx = localStorage.getItem("cached_transactions");
 
-      if (cachedAcc && cachedTx) {
-        accountsList = JSON.parse(cachedAcc);
-        transactionsList = JSON.parse(cachedTx);
-        initUserSession();
-      } else {
-        document.getElementById('loadingSheet').classList.remove('hidden');
-      }
+      if (cachedAcc) accountsList = JSON.parse(cachedAcc);
+      if (cachedTx) transactionsList = JSON.parse(cachedTx);
 
-      fetchDataFromSheet();
+      // ورود آنی بدون معطلیِ صفحه لودینگ
+      initUserSession();
+
+      // بروزرسانی اطلاعات از گوگل‌شیت در پشت صحنه (بدون اینکه کاربر معطل شود)
+      fetchDataFromSheetBackground();
     });
 
-    async function fetchDataFromSheet() {
+    async function fetchDataFromSheetBackground() {
       try {
         const res = await fetch(APPS_SCRIPT_URL + "?action=getData");
         const data = await res.json();
@@ -592,17 +590,11 @@
           localStorage.setItem("cached_transactions", JSON.stringify(transactionsList));
         }
 
-        document.getElementById('loadingSheet').classList.add('hidden');
-        if (document.getElementById('phoneSection').classList.contains('hidden') && 
-            document.getElementById('googleAuthSection').classList.contains('hidden') && 
-            document.getElementById('accountSection').classList.contains('hidden') && 
-            document.getElementById('dashboardSection').classList.contains('hidden')) {
+        // اگر کاربر در صفحه ورود بود و اطلاعات جدید رسید، بررسی مجدد جلسات در پشت صحنه
+        if (!document.getElementById('phoneSection').classList.contains('hidden') && localStorage.getItem('karimi_phone')) {
           initUserSession();
         }
-
-      } catch (err) {
-        document.getElementById('loadingSheet').classList.add('hidden');
-      }
+      } catch (err) {}
     }
 
     function initUserSession() {
@@ -648,12 +640,17 @@
         document.getElementById('phoneSection').classList.add('hidden');
         document.getElementById('googleAuthSection').classList.remove('hidden');
       } else {
-        errBox.innerText = "شماره شما شناسایی نشد. شما یا حساب ندارید و یا شماره‌ای که در امانت‌داری کریمی ثبت است را وارد نکرده‌اید.";
-        
-        // تنظیم لینک واتساپ بدون متن پیش‌فرض برای کاربرانی که حساب ندارند
-        const cleanPhone = rawInput.replace(/\D/g, '');
-        document.getElementById('whatsappNoAccountBtn').href = `https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20شماره%20من%20${cleanPhone}%20است%20و%20میخواهم%20حساب%20داشته%20باشم`;
-        
+        const whatsappBtn = document.getElementById('whatsappNoAccountBtn');
+        const encodedText = encodeURIComponent(`سلام کریمی عزیز، شماره تماس من ${rawInput} است. تمایل دارم با امانت‌داری کریمی حساب داشته باشم.`);
+        whatsappBtn.href = `https://wa.me/9647721878997?text=${encodedText}`;
+
+        errBox.innerHTML = `
+          شماره شما شناسایی نشد. شما یا حساب ندارید و یا شماره‌ای که در امانت‌داری کریمی ثبت است را وارد نکرده‌اید.
+          <div style="margin-top: 10px;">اگر تمایل دارید با امانت‌داری کریمی حساب داشته باشید، در واتساپ پیام دهید:</div>
+          <a id="whatsappNoAccountBtn" href="https://wa.me/9647721878997?text=${encodedText}" target="_blank" class="action-btn whatsapp-btn" style="margin-top: 10px; font-size: 12.5px;">
+            💬 پیام به واتساپ امانت‌داری کریمی
+          </a>
+        `;
         errBox.classList.remove('hidden');
       }
     }
@@ -750,7 +747,6 @@
 
       if (sheetAccId === accIdInput) {
         let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']);
-        let nameVal = getVal(currentFoundUser, ['Name', 'name']) || 'مشتری';
         localStorage.setItem('karimi_phone', phoneVal);
         localStorage.setItem('karimi_accId', sheetAccId);
         localStorage.setItem('karimi_email', verifiedEmail);
@@ -761,12 +757,12 @@
 
         processDashboard(sheetAccId);
       } else {
-        let nameVal = getVal(currentFoundUser, ['Name', 'name']) || 'مشتری';
         let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']) || '';
-        
-        // تنظیم لینک واتساپ پیش‌فرض با نام، شماره و اکانت آیدی اشتباه وارد شده
-        document.getElementById('whatsappWrongAccBtn').href = `https://wa.me/9647721878997?text=سلام%20کریمی%20عزیز،%20من%20${encodeURIComponent(nameVal)}%20هستم%20با%20شماره%20${phoneVal}.%20کد%20حساب%20(Account%20ID)%20خود%20را%20(${encodeURIComponent(accIdInput)})%20اشتباه%20وارد%20کرده‌ام،%20لطفاً%20راهنمایی‌ام%20کنید`;
-        
+        let nameVal = getVal(currentFoundUser, ['Name', 'name']) || '';
+        const whatsappWrongBtn = document.getElementById('whatsappWrongAccBtn');
+        const errText = encodeURIComponent(`سلام کریمی عزیز، من نامم ${nameVal} و شماره‌ام ${phoneVal} است. کد حسابی که وارد کردم (${accIdInput}) ظاهراً اشتباه است، لطفاً بررسی کنید.`);
+        whatsappWrongBtn.href = `https://wa.me/9647721878997?text=${errText}`;
+
         accErr.classList.remove('hidden');
       }
     }
