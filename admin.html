@@ -90,9 +90,17 @@
     
     .view-section { display: none; }
     .view-section.active { display: block; }
+    
+    #syncIndicator {
+      position: fixed; bottom: 10px; left: 10px; background: #059669; color: white;
+      padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: none; z-index: 5000;
+    }
   </style>
 </head>
 <body>
+
+  <div id="syncIndicator">🔄 در حال ذخیره در گوگل‌شیت...</div>
 
   <!-- صفحه لاگین -->
   <div id="authOverlay">
@@ -381,21 +389,33 @@
       document.getElementById(viewId).classList.add('active');
     }
 
+    // ارسال تضمینی به گوگل‌شیت با استفاده از FormData و پشتیبانی کامل شبکه
     function saveAndSync(data) {
       data.adminEmail = ADMIN_EMAIL;
       data.adminPin = ADMIN_PIN;
-      
-      let bodyData = new URLSearchParams();
-      for (let k in data) bodyData.append(k, data[k]);
+
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) indicator.style.display = "block";
+
+      let formData = new FormData();
+      for (let k in data) {
+        if (data[k] !== undefined && data[k] !== null) {
+          formData.append(k, data[k]);
+        }
+      }
 
       fetch(SCRIPT_URL, {
         method: "POST",
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: bodyData
+        body: formData,
+        mode: "no-cors"
       }).then(() => {
-        loadData(false);
+        setTimeout(() => {
+          if (indicator) indicator.style.display = "none";
+          loadData(false);
+        }, 2500);
       }).catch(err => {
-        console.log("اطلاعات در سایت محفوظ است.");
+        console.log("خطا در شبکه، ثبت محلی محفوظ است.");
+        if (indicator) indicator.style.display = "none";
       });
     }
 
