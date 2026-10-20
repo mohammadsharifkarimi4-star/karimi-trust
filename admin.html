@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -389,13 +390,16 @@
       document.getElementById(viewId).classList.add('active');
     }
 
-    // ارسال تضمینی به گوگل‌شیت با استفاده از FormData و پشتیبانی کامل شبکه
-    function saveAndSync(data) {
+    // تابع اصلی ارسال تضمینی برای ثبت، ویرایش و حذف به صورت آنی
+    function saveAndSync(data, statusText) {
       data.adminEmail = ADMIN_EMAIL;
       data.adminPin = ADMIN_PIN;
 
       const indicator = document.getElementById("syncIndicator");
-      if (indicator) indicator.style.display = "block";
+      if (indicator) {
+        indicator.innerText = statusText || "🔄 در حال ذخیره در گوگل‌شیت...";
+        indicator.style.display = "block";
+      }
 
       let formData = new FormData();
       for (let k in data) {
@@ -824,6 +828,8 @@
 
       closeAccountModal();
 
+      let statusMsg = editId ? "✏️ در حال ویرایش حساب در گوگل‌شیت..." : "🔄 در حال ثبت حساب جدید در گوگل‌شیت...";
+
       if (editId) {
         let accIndex = allAccounts.findIndex(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId));
         if (accIndex !== -1) {
@@ -837,7 +843,7 @@
       saveToLocalCache();
       renderAccountsList(allAccounts);
 
-      saveAndSync({ action: action, accountId: accountId, accountName: accName, phone: accPhone });
+      saveAndSync({ action: action, accountId: accountId, accountName: accName, phone: accPhone }, statusMsg);
     }
 
     function deleteCurrentAccount() {
@@ -853,7 +859,7 @@
       switchView('viewAccounts');
       renderAccountsList(allAccounts);
 
-      saveAndSync({ action: "deleteAccount", accountId: accIdToDelete });
+      saveAndSync({ action: "deleteAccount", accountId: accIdToDelete }, "🗑️ در حال حذف حساب از گوگل‌شیت...");
     }
 
     function selectAccount(accId, accName) {
@@ -1021,6 +1027,7 @@
       closeTransactionModal();
 
       let transIdToSave = editTransId || ("TX-" + Math.floor(10000000 + Math.random() * 90000000));
+      let statusMsg = editTransId ? "✏️ در حال ویرایش تراکنش در گوگل‌شیت..." : "🔄 در حال ثبت تراکنش جدید در گوگل‌شیت...";
 
       if (editTransId) {
         let index = allTransactions.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
@@ -1058,7 +1065,7 @@
         currency: selectedCurr,
         operationType: opType,
         description: desc
-      });
+      }, statusMsg);
     }
 
     function deleteSingleTransaction() {
@@ -1072,7 +1079,7 @@
       selectAccount(currentAccountId, currentAccountName);
       renderDashboardStats();
 
-      saveAndSync({ action: "deleteTransaction", transId: txIdToDelete });
+      saveAndSync({ action: "deleteTransaction", transId: txIdToDelete }, "🗑️ در حال حذف تراکنش از گوگل‌شیت...");
     }
 
     function sendGeneralWhatsAppReport() {
