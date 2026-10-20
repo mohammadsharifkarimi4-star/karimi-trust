@@ -241,35 +241,6 @@
       border-color: #10b981;
     }
 
-    .menu-row-small {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    .menu-card-small {
-      background: var(--card-bg);
-      border-radius: 24px;
-      padding: 20px 14px;
-      text-decoration: none;
-      color: var(--text-dark);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 12px;
-      border: 2px solid #ffffff;
-      box-shadow: var(--shadow-3d);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .menu-card-small:hover, .menu-card-small:active {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: var(--shadow-hover);
-      border-color: #10b981;
-    }
-
-    /* آیکون‌های درشت و سه بعدی */
     .icon-wrapper {
       width: 60px;
       height: 60px;
@@ -283,7 +254,7 @@
       transition: transform 0.3s ease;
     }
 
-    .menu-card-large:hover .icon-wrapper, .menu-card-small:hover .icon-wrapper {
+    .menu-card-large:hover .icon-wrapper {
       transform: rotate(-8deg) scale(1.1);
     }
 
@@ -378,8 +349,8 @@
         </div>
       </a>
 
-      <!-- ۲. امانت‌داری کریمی -->
-      <a href="index.html" class="menu-card-large">
+      <!-- ۲. امانت‌داری کریمی (متصل به exchange.html) -->
+      <a href="exchange.html" class="menu-card-large">
         <div class="icon-wrapper icon-exchange">🛡️</div>
         <div>
           <div class="card-title">امانت‌داری کریمی</div>
