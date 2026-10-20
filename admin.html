@@ -51,7 +51,7 @@
     
     input, select, textarea { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 0.9rem; background: #f8fafc; outline: none; }
     input:focus, select:focus, textarea:focus { border-color: var(--accent); background: #fff; }
-    textarea { resize: vertical; min-height: 70px; }
+    textarea { resize: vertical; min-height: 80px; }
 
     .radio-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
     .radio-btn-label {
@@ -131,7 +131,7 @@
   <!-- پنل اصلی مدیریت -->
   <div class="container" id="adminContainer">
     
-    <!-- صفحه اول: منوی اصلی منسجم و خلوت -->
+    <!-- صفحه اول: منوی اصلی -->
     <div id="viewDashboard" class="view-section active">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🏛️ پنل مدیریت صرافی کریمی</h3>
@@ -148,7 +148,7 @@
       </div>
     </div>
 
-    <!-- صفحه اختصاصی آمار کلی و دسترسی به گزارشات -->
+    <!-- صفحه اختصاصی آمار کلی -->
     <div id="viewGlobalStatsPage" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>📊 آمار و گزارشات کلی سیستم</h3>
@@ -258,7 +258,7 @@
       </div>
     </div>
 
-    <!-- صفحه جزئیات تراکنش تکی (شامل دکمه‌های آکشن دوگانه برای حواله) -->
+    <!-- صفحه جزئیات تراکنش تکی -->
     <div id="viewTransactionDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🔍 جزئیات کامل تراکنش</h3>
@@ -266,9 +266,7 @@
       </div>
       <div class="card" id="txDetailCard"></div>
       <div class="card">
-        <div class="flex-row" style="gap: 6px; flex-direction: column;" id="txActionButtonsContainer">
-          <!-- دکمه‌های آکشن پویا از جاوااسکریپت بارگذاری می‌شوند -->
-        </div>
+        <div class="flex-row" style="gap: 6px; flex-direction: column;" id="txActionButtonsContainer"></div>
       </div>
     </div>
 
@@ -295,7 +293,7 @@
     </div>
   </div>
 
-  <!-- مودال تراکنش -->
+  <!-- مودال تراکنش (اصلاح‌شده: تک‌فیلدی شدن توضیحات) -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
       <h3 id="txModalTitle">ثبت تراکنش جدید</h3>
@@ -326,7 +324,7 @@
 
       <div class="form-group">
         <label>نوع عملیات:</label>
-        <select id="txOpType" onchange="toggleTransferDescField()">
+        <select id="txOpType">
           <option value="امانت">امانت</option>
           <option value="حواله">حواله</option>
           <option value="دریافت">دریافت</option>
@@ -335,14 +333,10 @@
         </select>
       </div>
 
-      <div class="form-group" id="transferDescGroup" style="display:none;">
-        <label style="color:var(--info);">بخش رسید انتقال (حواله):</label>
-        <textarea id="txTransferDesc" placeholder="توضیحات و مشخصات انتقال حواله..."></textarea>
-      </div>
-
+      <!-- تک فیلد توضیحات (شرح تراکنش) برای تمامی تراکنش‌ها -->
       <div class="form-group">
-        <label>شرح عمومی:</label>
-        <textarea id="txDesc" placeholder="توضیحات تراکنش..."></textarea>
+        <label>توضیحات / شرح تراکنش (رسید انتقال):</label>
+        <textarea id="txDesc" placeholder="توضیحات و مشخصات تراکنش را وارد کنید..."></textarea>
       </div>
 
       <div class="flex-row" style="justify-content: flex-end;">
@@ -931,22 +925,18 @@
       let desc = String(getVal(tx, ['Description', 'description']) || '');
       let date = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
 
-      let transferSection = opType === "حواله" ? `<div style="background:#f1f5f9; padding:8px; border-radius:8px; margin-top:6px;"><b>رسید انتقال (حواله):</b> ${desc}</div>` : `<div style="margin-top:6px;"><b>شرح:</b> ${desc}</div>`;
-
       document.getElementById("txDetailCard").innerHTML = `
         <h3>جزئیات کامل تراکنش</h3>
         <div class="stat-row"><span>تاریخ:</span><b>${date}</b></div>
         <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
         <div class="stat-row"><span>مبلغ:</span><b>${amt} ${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
-        ${transferSection}
+        <div style="margin-top:6px; background:#f1f5f9; padding:8px; border-radius:8px;"><b>توضیحات (رسید):</b> ${desc || 'بدون شرح'}</div>
         <div style="margin-top:10px; font-size:0.75rem; color:#64748b; text-align:center;">⚠️ داشتن اسناد برای گرفتن پول الزامی هست</div>
       `;
 
-      // مدیریت هوشمند دکمه‌های آکشن بر اساس نوع تراکنش
       let btnContainer = document.getElementById("txActionButtonsContainer");
       if (opType === "حواله") {
-        // برای تراکنش‌های حواله: ۲ دکمه مجزا (گزارش عمومی + رسید اختصاصی حواله)
         btnContainer.innerHTML = `
           <div class="flex-row" style="gap: 6px;">
             <button class="btn btn-warning btn-sm" onclick="openEditTransactionModal()">✏️ ویرایش</button>
@@ -956,7 +946,6 @@
           <button class="btn btn-whatsapp" style="background:#128c7e;" onclick="sendTransferReceiptWhatsApp()">📄 ارسال رسید اختصاصی حواله در واتساپ</button>
         `;
       } else {
-        // برای تراکنش‌های معمولی: ۱ دکمه ارسال به واتساپ (گزارش عمومی)
         btnContainer.innerHTML = `
           <div class="flex-row" style="gap: 6px;">
             <button class="btn btn-warning btn-sm" onclick="openEditTransactionModal()">✏️ ویرایش</button>
@@ -969,22 +958,14 @@
       switchView('viewTransactionDetail');
     }
 
-    function toggleTransferDescField() {
-      let opType = document.getElementById("txOpType").value;
-      let group = document.getElementById("transferDescGroup");
-      group.style.display = opType === "حواله" ? "block" : "none";
-    }
-
     function openAddTransactionModal() {
       document.getElementById("editTransId").value = "";
       document.getElementById("txModalTitle").innerText = "ثبت تراکنش جدید";
       document.getElementById("txAmount").value = "";
       document.getElementById("txDesc").value = "";
-      document.getElementById("txTransferDesc").value = "";
       document.getElementById("txOpType").value = "امانت";
       document.querySelector('input[name="txDir"][value="بستانکار"]').checked = true;
       document.querySelector('input[name="txCurr"][value="AFN"]').checked = true;
-      toggleTransferDescField();
       document.getElementById("transactionModal").style.display = "flex";
     }
 
@@ -1005,12 +986,7 @@
 
       document.getElementById("txAmount").value = getVal(tx, ['Amount', 'amount']) || "";
       document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
-      toggleTransferDescField();
-      if(getVal(tx, ['OperationType', 'operationtype']) === "حواله") {
-        document.getElementById("txTransferDesc").value = getVal(tx, ['Description', 'description']) || "";
-      } else {
-        document.getElementById("txDesc").value = getVal(tx, ['Description', 'description']) || "";
-      }
+      document.getElementById("txDesc").value = getVal(tx, ['Description', 'description']) || "";
       document.getElementById("transactionModal").style.display = "flex";
     }
 
@@ -1022,7 +998,7 @@
       let amt = document.getElementById("txAmount").value;
       if (!amt) { alert("مبلغ را وارد کنید"); return; }
       let opType = document.getElementById("txOpType").value;
-      let desc = opType === "حواله" ? document.getElementById("txTransferDesc").value : document.getElementById("txDesc").value;
+      let desc = document.getElementById("txDesc").value;
       let editTransId = document.getElementById("editTransId").value;
 
       let selectedDir = document.querySelector('input[name="txDir"]:checked').value;
@@ -1052,7 +1028,7 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    // ۱. ارسال گزارش عمومی واتساپ (برای همه تراکنش‌ها شامل حواله و غیره با فرمت زیبا و شیک)
+    // ارسال گزارش عمومی واتساپ با فرمت کاملاً تمیز
     function sendGeneralWhatsAppReport() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
@@ -1070,22 +1046,12 @@
       let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
       let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
 
-      // فرمت گزارش عمومی زیبا با برجسته‌سازی اسم صاحب حساب
-      let msg = `سلام و احترام خدمت *آقای ${currentAccountName}*
+      let textMsg = `سلام و احترام خدمت آقای ${currentAccountName}\n\nتراکنش شماره #${txIndex} در حساب شما ثبت گردید.\n\nنوع تراکنش: ${opType} (${dirVal})\nمبلغ: ${amtVal} ${currVal}\nتوضیحات: ${desc || 'ثبت شده در سیستم'}\n\nجهت مشاهده بیلان کامل و جزئیات تراکنش از لینک زیر استفاده نمایید:\n${siteLink}`;
 
-تراکنش شماره #${txIndex} در حساب شما ثبت گردید.
-
-📌 **نوع تراکنش:** ${opType} (${dirVal})
-💰 **مبلغ:** ${amtVal} ${currVal}
-📝 **توضیحات:** ${desc || 'ثبت شده در سیستم'}
-
-جهت مشاهده بیلان کامل و جزئیات تراکنش از لینک زیر استفاده نمایید:
-🔗 ${siteLink}`;
-
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(textMsg)}`, '_blank');
     }
 
-    // ۲. ارسال رسید اختصاصی حواله (دقیقاً مخصوص گیرنده حواله، بدون لینک و متن اضافی)
+    // ارسال رسید اختصاصی حواله بدون هیچ علامت مثبت اضافه
     function sendTransferReceiptWhatsApp() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
@@ -1095,13 +1061,9 @@
 
       let desc = String(getVal(tx, ['Description', 'description']) || '');
 
-      let msg = `رسید انتقال
-------------------------
-${desc}
-------------------------
-داشتن اسناد برای موقع گرفتن پول الزامی هست`;
+      let textMsg = `رسید انتقال\n------------------------\n${desc}\n------------------------\nداشتن اسناد برای موقع گرفتن پول الزامی هست`;
 
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(textMsg)}`, '_blank');
     }
   </script>
 </body>
