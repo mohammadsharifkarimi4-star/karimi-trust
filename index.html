@@ -8,25 +8,26 @@
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
     :root {
-      --card-bg: #f8fafc;
-      --accent-gradient: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+      --bg-gradient: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --accent-gradient: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
       --text-dark: #0f172a;
-      --text-muted: #475569;
-      --shadow-soft: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
-      --shadow-hover: 0 15px 25px -5px rgba(5, 150, 105, 0.25);
+      --text-muted: #64748b;
+      --shadow-3d: 0 12px 30px -5px rgba(0, 0, 0, 0.25);
+      --shadow-hover: 0 20px 35px -5px rgba(16, 185, 129, 0.4);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Vazirmatn', -apple-system, sans-serif;
       direction: rtl;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: #e2e8f0;
+      background: #090d16;
       color: var(--text-dark);
       min-height: 100vh;
       display: flex;
@@ -39,35 +40,43 @@
       max-width: 440px;
       min-height: 100vh;
       background: #f1f5f9;
-      padding: 16px 16px 32px 16px;
+      padding: 20px 16px 32px 16px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
+    /* هدر اصلی */
     .top-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 4px;
+      padding: 4px 6px;
     }
 
     .welcome-box {
       display: flex;
       flex-direction: column;
+      cursor: pointer;
+      user-select: none;
     }
 
     .welcome-title {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 900;
       color: var(--text-dark);
       line-height: 1.2;
+      transition: transform 0.2s;
+    }
+
+    .welcome-title:active {
+      transform: scale(0.95);
     }
 
     .welcome-subtitle {
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--text-muted);
-      font-weight: 600;
+      font-weight: 700;
       margin-top: 2px;
     }
 
@@ -76,18 +85,18 @@
       align-items: center;
       gap: 6px;
       background: #ffffff;
-      padding: 6px 14px;
+      padding: 7px 16px;
       border-radius: 30px;
-      border: 1px solid #cbd5e1;
-      font-size: 11.5px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 12px;
       font-weight: 800;
       color: #059669;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     .dot-pulse {
-      width: 8px;
-      height: 8px;
+      width: 9px;
+      height: 9px;
       background-color: #10b981;
       border-radius: 50%;
       animation: pulse 1.6s infinite;
@@ -95,21 +104,28 @@
 
     @keyframes pulse {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
+    /* بنر تقویم و ساعت 3D */
     .hero-card {
       background: var(--accent-gradient);
-      border-radius: 24px;
-      padding: 18px;
+      border-radius: 28px;
+      padding: 20px;
       color: #ffffff;
-      box-shadow: 0 15px 30px -8px rgba(5, 150, 105, 0.35);
+      box-shadow: 0 18px 35px -8px rgba(5, 150, 105, 0.4);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      animation: floatIn 0.8s ease-out;
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .hero-top-info {
@@ -119,15 +135,17 @@
     }
 
     .hero-main-title {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 900;
+      letter-spacing: -0.3px;
     }
 
     .day-badge {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 4px 12px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 4px 14px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 800;
     }
 
@@ -138,132 +156,152 @@
     }
 
     .date-box-item {
-      background: rgba(0, 0, 0, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 18px;
       padding: 10px 6px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
+      transition: transform 0.2s;
+    }
+
+    .date-box-item:hover {
+      transform: scale(1.03);
     }
 
     .date-box-title {
       font-size: 10.5px;
       color: #a7f3d0;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .date-box-val {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 900;
       color: #ffffff;
     }
 
     .date-box-sub {
       font-size: 9.5px;
-      color: #d1fae5;
-      font-weight: 600;
+      color: #e6fffa;
+      font-weight: 700;
     }
 
     .live-clock-box {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 12px;
-      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.22);
+      border-radius: 14px;
+      padding: 10px 14px;
       text-align: center;
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 13.5px;
+      font-weight: 800;
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      letter-spacing: 0.5px;
     }
 
     .section-label {
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 900;
       color: var(--text-dark);
-      margin-top: 2px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
+    /* کارت‌های منوی برجسته و متحرک */
     .menu-container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .menu-card-large {
       background: var(--card-bg);
-      border-radius: 22px;
-      padding: 18px 16px;
+      border-radius: 24px;
+      padding: 20px 18px;
       text-decoration: none;
       color: var(--text-dark);
       display: flex;
       align-items: center;
-      gap: 14px;
-      border: 1px solid #cbd5e1;
-      box-shadow: var(--shadow-soft);
-      transition: all 0.25s ease;
+      gap: 16px;
+      border: 2px solid #ffffff;
+      box-shadow: var(--shadow-3d);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
     }
 
-    .menu-card-large:hover {
-      transform: translateY(-3px);
+    .menu-card-large:hover, .menu-card-large:active {
+      transform: translateY(-5px) scale(1.01);
       box-shadow: var(--shadow-hover);
+      border-color: #10b981;
     }
 
     .menu-row-small {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 14px;
     }
 
     .menu-card-small {
       background: var(--card-bg);
-      border-radius: 22px;
-      padding: 16px 12px;
+      border-radius: 24px;
+      padding: 20px 14px;
       text-decoration: none;
       color: var(--text-dark);
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 10px;
-      border: 1px solid #cbd5e1;
-      box-shadow: var(--shadow-soft);
-      transition: all 0.25s ease;
+      gap: 12px;
+      border: 2px solid #ffffff;
+      box-shadow: var(--shadow-3d);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .menu-card-small:hover {
-      transform: translateY(-3px);
+    .menu-card-small:hover, .menu-card-small:active {
+      transform: translateY(-5px) scale(1.02);
       box-shadow: var(--shadow-hover);
+      border-color: #10b981;
     }
 
+    /* آیکون‌های درشت و سه بعدی */
     .icon-wrapper {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
+      width: 60px;
+      height: 60px;
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
+      font-size: 30px;
       flex-shrink: 0;
-      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 6px 15px rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.9), 0 8px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease;
     }
 
-    .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0284c7; }
-    .icon-exchange { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #16a34a; }
-    .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
-    .icon-contacts { background: linear-gradient(135deg, #fae8ff 0%, #f5d0fe 100%); color: #c026d3; }
-    .icon-admin { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); color: #0f172a; }
+    .menu-card-large:hover .icon-wrapper, .menu-card-small:hover .icon-wrapper {
+      transform: rotate(-8deg) scale(1.1);
+    }
+
+    .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%); color: #0284c7; }
+    .icon-exchange { background: linear-gradient(135deg, #dcfce7 0%, #4ade80 100%); color: #16a34a; }
+    .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #facc15 100%); color: #d97706; }
 
     .card-title {
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 15.5px;
+      font-weight: 900;
       color: var(--text-dark);
     }
 
     .card-desc {
-      font-size: 11.5px;
+      font-size: 12px;
       color: var(--text-muted);
-      font-weight: 500;
+      font-weight: 600;
+      margin-top: 3px;
       line-height: 1.4;
     }
 
@@ -278,8 +316,10 @@
 
   <div class="app-viewport">
     
+    <!-- هدر بالای صفحه -->
     <div class="top-header">
-      <div class="welcome-box">
+      <!-- با ۳ بار کلیک روی این عنوان وارد بخش ادمین شوید -->
+      <div class="welcome-box" onclick="handleSecretAdminClick()">
         <span class="welcome-title">خوش آمدید 👋</span>
         <span class="welcome-subtitle">سامانه حساب‌کتاب من</span>
       </div>
@@ -289,6 +329,7 @@
       </div>
     </div>
 
+    <!-- بنر اصلی تقویم و ساعت -->
     <div class="hero-card">
       <div class="hero-top-info">
         <span class="hero-main-title">حساب‌کتاب من</span>
@@ -315,64 +356,69 @@
         </div>
       </div>
 
-      <!-- ساعت زنده و تمیز (بدون به هم ریختگی) -->
+      <!-- ساعت زنده -->
       <div class="live-clock-box">
         ساعت کنونی: <span id="liveClock" class="eng-num">00:00:00</span>
       </div>
     </div>
 
     <div class="section-label">
-      <span>خدمات</span>
+      <span>✨ خدمات اصلی</span>
     </div>
 
+    <!-- دکمه‌های منوی اصلی -->
     <div class="menu-container">
+      
+      <!-- ۱. مدیریت حساب‌ها -->
       <a href="finance.html" class="menu-card-large">
-        <div class="icon-wrapper icon-finance">📁</div>
+        <div class="icon-wrapper icon-finance">📊</div>
         <div>
           <div class="card-title">مدیریت حساب‌ها</div>
-          <div class="card-desc">ثبت و مدیریت طلب‌ها و بدهی‌ها</div>
+          <div class="card-desc">برای حساب کتاب های شخصی شما</div>
         </div>
       </a>
 
-      <a href="contacts.html" class="menu-card-large">
-        <div class="icon-wrapper icon-contacts">📇</div>
+      <!-- ۲. امانت‌داری کریمی -->
+      <a href="index.html" class="menu-card-large">
+        <div class="icon-wrapper icon-exchange">🛡️</div>
         <div>
-          <div class="card-title">پخش مخاطبین</div>
-          <div class="card-desc">مدیریت شماره‌ها و ارتباطات</div>
+          <div class="card-title">امانت‌داری کریمی</div>
+          <div class="card-desc">مخصوص کسانیکه با امانتداری کریمی حساب دارند</div>
         </div>
       </a>
 
-      <div class="menu-row-small">
-        <a href="exchange.html" class="menu-card-small">
-          <div class="icon-wrapper icon-exchange">🤝</div>
-          <div>
-            <div class="card-title">امانت‌داری کریمی</div>
-            <div class="card-desc">اشراف به موجودی</div>
-          </div>
-        </a>
-
-        <a href="calc.html" class="menu-card-small">
-          <div class="icon-wrapper icon-calc">🧮</div>
-          <div>
-            <div class="card-title">محاسبه‌گر ارز</div>
-            <div class="card-desc">تبدیل دقیق ارزها</div>
-          </div>
-        </a>
-      </div>
-
-      <!-- گزینه مدیریت سیستم (ادمین) -->
-      <a href="admin.html" class="menu-card-large" style="background: #ffffff; border-color: #cbd5e1;">
-        <div class="icon-wrapper icon-admin">⚙️</div>
+      <!-- ۳. ماشین حساب عادی و پیشرفته -->
+      <a href="calc.html" class="menu-card-large">
+        <div class="icon-wrapper icon-calc">🧮</div>
         <div>
-          <div class="card-title">مدیریت سیستم (ادمین)</div>
-          <div class="card-desc">ورود به پنل امنیتی ثبت تراکنش‌ها</div>
+          <div class="card-title">ماشین حساب عادی و پیشرفته</div>
+          <div class="card-desc">تبدیل دقیق ارزها و محاسبات مالی پیشرفته</div>
         </div>
       </a>
+
     </div>
 
   </div>
 
   <script>
+    // کلیک مخفی ۳ باره روی «خوش آمدید» برای ورود به بخش مدیریت (ادمین)
+    let secretClickCount = 0;
+    let secretClickTimer = null;
+
+    function handleSecretAdminClick() {
+      secretClickCount++;
+      clearTimeout(secretClickTimer);
+
+      if (secretClickCount >= 3) {
+        secretClickCount = 0;
+        window.location.href = "admin.html";
+      } else {
+        secretClickTimer = setTimeout(() => {
+          secretClickCount = 0;
+        }, 1200);
+      }
+    }
+
     function updateCalendarAndClock() {
       const now = new Date();
       const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
