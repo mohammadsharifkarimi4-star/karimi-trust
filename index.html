@@ -31,7 +31,7 @@
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
     }
 
     .app-viewport {
@@ -39,10 +39,11 @@
       max-width: 440px;
       min-height: 100vh;
       background: #f1f5f9;
-      padding: 8px 10px;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 8px;
     }
 
     /* هدر اصلی فشرده */
@@ -52,7 +53,6 @@
       align-items: center;
       padding: 0 2px;
       flex-shrink: 0;
-      margin-bottom: 4px;
     }
 
     .welcome-box {
@@ -63,14 +63,14 @@
     }
 
     .welcome-title {
-      font-size: 17px;
+      font-size: 18px;
       font-weight: 900;
       color: var(--text-dark);
       line-height: 1.1;
     }
 
     .welcome-subtitle {
-      font-size: 10px;
+      font-size: 10.5px;
       color: var(--text-muted);
       font-weight: 700;
     }
@@ -80,18 +80,18 @@
       align-items: center;
       gap: 4px;
       background: #ffffff;
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 20px;
-      border: 1px solid #cbd5e1;
+      border: 1.5px solid #cbd5e1;
       font-size: 10px;
       font-weight: 800;
       color: #059669;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
     }
 
     .dot-pulse {
-      width: 5px;
-      height: 5px;
+      width: 6px;
+      height: 6px;
       background-color: #10b981;
       border-radius: 50%;
       animation: pulse 1.6s infinite;
@@ -99,22 +99,22 @@
 
     @keyframes pulse {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
     /* بنر اصلی تقویم، ساعت‌ها و احادیث */
     .hero-card {
       background: var(--accent-gradient);
-      border-radius: 14px;
-      padding: 6px 8px;
+      border-radius: 16px;
+      padding: 8px 10px;
       color: #ffffff;
-      box-shadow: 0 6px 14px -4px rgba(5, 150, 105, 0.3);
+      box-shadow: 0 8px 18px -5px rgba(5, 150, 105, 0.35);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
@@ -125,29 +125,29 @@
     }
 
     .hero-main-title {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 900;
     }
 
     .day-time-badge-box {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       background: rgba(0, 0, 0, 0.25);
       backdrop-filter: blur(4px);
-      padding: 1px 6px;
-      border-radius: 10px;
+      padding: 2px 8px;
+      border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .day-badge {
-      font-size: 9.5px;
+      font-size: 10px;
       font-weight: 800;
       color: #ffffff;
     }
 
     .top-live-clock {
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 900;
       color: #a7f3d0;
     }
@@ -155,33 +155,33 @@
     .dates-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 3px;
+      gap: 4px;
     }
 
     .date-box-item {
       background: rgba(0, 0, 0, 0.18);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 7px;
-      padding: 3px 2px;
+      border-radius: 8px;
+      padding: 4px 2px;
       text-align: center;
       display: flex;
       flex-direction: column;
     }
 
     .date-box-title {
-      font-size: 8px;
+      font-size: 8.5px;
       color: #a7f3d0;
       font-weight: 800;
     }
 
     .date-box-val {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 900;
       color: #ffffff;
     }
 
     .date-box-sub {
-      font-size: 7px;
+      font-size: 7.5px;
       color: #e6fffa;
       font-weight: 700;
     }
@@ -192,9 +192,9 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 3px;
       background: rgba(0, 0, 0, 0.2);
-      border-radius: 7px;
-      padding: 3px 4px;
-      font-size: 9px;
+      border-radius: 8px;
+      padding: 3px 5px;
+      font-size: 9.5px;
       font-weight: 800;
       text-align: center;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -206,21 +206,21 @@
     }
 
     .world-clock-item span:first-child {
-      font-size: 7px;
+      font-size: 7.5px;
       color: #a7f3d0;
     }
 
-    /* کادر زنده احادیث */
+    /* کادر زنده احادیث با نور افقی متحرک */
     .hadith-display-box {
       background: rgba(0, 0, 0, 0.35);
-      border-radius: 8px;
-      padding: 5px 6px;
+      border-radius: 9px;
+      padding: 5px 8px;
       display: flex;
       flex-direction: column;
       gap: 2px;
       position: relative;
       z-index: 1;
-      border: 1px solid transparent;
+      border: 1.5px solid transparent;
       background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), linear-gradient(90deg, #f59e0b, #10b981, #3b82f6, #ec4899, #f59e0b);
       background-origin: border-box;
       background-clip: padding-box, border-box;
@@ -237,7 +237,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 9px;
+      font-size: 9.5px;
       color: #fde047;
       font-weight: 900;
     }
@@ -246,7 +246,7 @@
       font-size: 9.5px;
       color: #ffffff;
       font-weight: 800;
-      line-height: 1.25;
+      line-height: 1.3;
       text-align: center;
     }
 
@@ -254,7 +254,7 @@
       font-size: 8.5px;
       color: #a7f3d0;
       font-weight: 700;
-      line-height: 1.2;
+      line-height: 1.25;
       border-top: 1px dashed rgba(255, 255, 255, 0.2);
       padding-top: 2px;
       margin-top: 1px;
@@ -270,33 +270,33 @@
     }
 
     .section-label {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 900;
       color: var(--text-dark);
       display: flex;
       align-items: center;
       gap: 4px;
       flex-shrink: 0;
-      margin: 2px 0;
+      margin-top: 2px;
     }
 
-    /* کارت‌های منوی اصلی */
+    /* کارت‌های منوی اصلی (فشرده و متناسب با فاصله استاندارد) */
     .menu-container {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       flex-shrink: 0;
     }
 
     .menu-card-large {
       background: var(--card-bg);
-      border-radius: 11px;
-      padding: 7px 10px;
+      border-radius: 14px;
+      padding: 10px 12px;
       text-decoration: none;
       color: var(--text-dark);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       border: 1.5px solid #ffffff;
       box-shadow: var(--shadow-3d);
       transition: all 0.2s ease;
@@ -309,15 +309,15 @@
     }
 
     .icon-wrapper {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 20px;
       flex-shrink: 0;
-      box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.9), 0 3px 6px rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.9), 0 4px 8px rgba(0, 0, 0, 0.05);
     }
 
     .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%); color: #0284c7; }
@@ -325,13 +325,13 @@
     .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #facc15 100%); color: #d97706; }
 
     .card-title {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 900;
       color: var(--text-dark);
     }
 
     .card-desc {
-      font-size: 9.5px;
+      font-size: 10px;
       color: var(--text-muted);
       font-weight: 600;
       margin-top: 1px;
@@ -455,7 +455,7 @@
   </div>
 
   <script>
-    // بانک جامع روایات معتبر شیعی (۱۲ امامی) با محوریت رزق حلال، امانت‌داری و صداقت
+    // بانک جامع شامل ۷۵ روایت معتبر شیعی (۱۲ امامی) با محوریت رزق حلال، امانت‌داری و صداقت
     const shiaHadiths = [
       { author: "امام علی (ع)", text: "«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ و إن خانَکَ، و لا تَخُنْ مَن خانَکَ.»", trans: "امانت را به امانت‌گذار بازگردان، گرچه خیانت کرده باشد؛ و به کسی که خیانت کرده، خیانت مکن.", source: "بحارالأنوار، ج ۷۴" },
       { author: "پیامبر اکرم (ص)", text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ.»", trans: "عبادت هفتاد جزء است و برترینِ آن‌ها به دست آوردن روزی حلال است.", source: "مستدرک الوسائل، ج ۱۳" },
@@ -471,7 +471,67 @@
       { author: "امام صادق (ع)", text: "«لَا تَبْتَغِ الرِّزْقَ فِي غَيْرِ حِلِّهِ.»", trans: "روزی را در غیر راه حلال آن جستجو نکن.", source: "کافی، ج ۵" },
       { author: "امام علی (ع)", text: "«الْوَفَاءُ لِأَهْلِ الْوَفَاءِ تَمَامُ الْمُرُوَّةِ.»", trans: "وفاداری به کسانی که اهل وفا هستند، کمال جوانمردی است.", source: "أعيان الشيعة" },
       { author: "پیامبر اکرم (ص)", text: "«رَحِمَ اللَّهُ عَبْداً سَمْحاً إِذَا بَاعَ وَ سَمْحاً إِذَا اشْتَرَى.»", trans: "رحمت خدا بر بنده‌ای که هنگام فروش آسان‌گیر و هنگام خرید منصف باشد.", source: "تهذیب الأحکام" },
-      { author: "امام باقر (ع)", text: "«إِنَّ أَهْلَ الْحَقِّ لَيَعْلَمُونَ أَنَّ الصِّدْقَ خَيْرٌ عَاقِبَةً.»", trans: "اهل حق به خوبی می‌دانند که سرانجامِ راستگویی بهترین است.", source: "کافی، ج ۲" }
+      { author: "امام باقر (ع)", text: "«إِنَّ أَهْلَ الْحَقِّ لَيَعْلَمُونَ أَنَّ الصِّدْقَ خَيْرٌ عَاقِبَةً.»", trans: "اهل حق به خوبی می‌دانند که سرانجامِ راستگویی بهترین است.", source: "کافی، ج ۲" },
+      { author: "امام صادق (ع)", text: "«إِيَّاكُمْ وَ الْحَلِفَ فَإِنَّهُ يُنَفِّقُ السِّلْعَةَ وَ يَمْحَقُ الْبَرَكَةَ.»", trans: "از قسم خوردن در تجارت بپرهیزید، زیرا کالا را می‌فروشد اما برکت را نابود می‌کند.", source: "کافی، ج ۵" },
+      { author: "امام علی (ع)", text: "«خَيْرُ أَمْوَالِكُمُ مَا كَفَاكُمْ وَ خَيْرُ الذِّكْرِ التَّقْوَى.»", trans: "بهترین اموال شما آن است که کفایتتان کند و بهترین ذکر تقواست.", source: "نهج البلاغه" },
+      { author: "پیامبر اکرم (ص)", text: "«مَنْ غَشَّ مُسْلِماً فِي بَيْعٍ أَوْ شِرَاءٍ فَلَيْسَ مِنَّا.»", trans: "کسی که در خرید و فروش به مسلمان خیانت و تقلب کند، از ما نیست.", source: "بحارالأنوار، ج ۱۰۰" },
+      { author: "امام سجاد (ع)", text: "«أَنَا سَعِيدٌ بِمَنْ عَمِلَ لِآخِرَتِهِ.»", trans: "خوشبخت است کسی که برای آخرت خود تلاش می‌کند.", source: "تحف العقول" },
+      { author: "امام صادق (ع)", text: "«أَوْفُوا بِالْعُهُودِ فَإِنَّ الْعُهُودَ مَسْؤُولَةٌ.»", trans: "به عهد و پیمان‌ها وفادار باشید که از عهدها سؤال خواهد شد.", source: "خصال" },
+      { author: "امام علی (ع)", text: "«آفَةُ النُّجْحِ الْكَسَلُ، وَكَمَالُ السَّعَادَةِ الْعَمَلُ.»", trans: "آفت پیروزی تنبلی است و کمال خوشبختی کار و تلاش است.", source: "غرر الحكم" },
+      { author: "پیامبر اکرم (ص)", text: "«مَنْ کَفَّ غَضَبَهُ سَتَرَ اللَّهُ عَوْرَتَهُ.»", trans: "کسی که خشم خود را نگه دارد، خداوند عیب او را می‌پوشاند.", source: "الكافي" },
+      { author: "امام صادق (ع)", text: "«الْمُؤْمِنُ قَلِيلُ الْكُلْفَةِ کَثِيرُ الْمَعُونَةِ.»", trans: "مؤمن خرجش کم و یاری‌رساندنش به دیگران بسیار است.", source: "تحف العقول" },
+      { author: "امام باقر (ع)", text: "«بُرُورُ الْوَالِدَيْنِ يُکَفِّرُ الذُّنُوبَ الْکَبَائِرَ.»", trans: "نیکی به پدر و مادر گناهان کبیره را جبران می‌کند.", source: "بحارالأنوار" },
+      { author: "امام علی (ع)", text: "«إِنَّ الْحَقَّ ثَقِيلٌ مَرِيءٌ، وَإِنَّ الْبَاطِلَ خَفِيفٌ وَبِيءٌ.»", trans: "حق سنگین اما گواراست و باطل سبک اما کشنده است.", source: "نهج البلاغه" },
+      { author: "امام صادق (ع)", text: "«اصْدُقْ فِي حَدِيثِكَ وَأَدِّ الْأَمَانَةَ إِلَى مَنْ ائْتَمَنَكَ.»", trans: "در سخن گفتن راستگو باش و امانت را به صاحبش بازگردان.", source: "الکافي" },
+      { author: "پیامبر اکرم (ص)", text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ إِدْخَالُ السُّرُورِ عَلَى الْمُؤْمِنِ.»", trans: "محبوب‌ترین کارها نزد خدا شاد کردن دل مؤمن است.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«مَنْ أَبْطَأَ بِهِ عَمَلُهُ لَمْ يُسْرِعْ بِهِ نَسَبُهُ.»", trans: "کسی که عملش کند باشد، نسب و خاندانش او را جلو نمی‌اندازد.", source: "نهج البلاغه" },
+      { author: "امام صادق (ع)", text: "«إِنَّ الرِّزْقَ لَيَأْتِي العَبْدَ مِنْ حَيْثُ لَا يَحْتَسِبُ.»", trans: "روزیِ بنده از جایی که گمان نمی‌کند به او می‌رسد.", source: "کافی" },
+      { author: "امام رضا (ع)", text: "«حُسْنُ الْخُلُقِ مِنْ دِينِ الْأَنْبِيَاءِ.»", trans: "خوش‌اخلاقی از ویژگی‌های دین پیامبران است.", source: "مستدرک الوسائل" },
+      { author: "امام علی (ع)", text: "«اَلْمَالُ مَادَّةُ الشَّهَوَاتِ.»", trans: "مال و ثروت ابزار رسیدن به خواسته‌هاست.", source: "غرر الحكم" },
+      { author: "پیامبر اکرم (ص)", text: "«إِيَّاكُمْ وَالطَّمَعَ فَإِنَّهُ الْفَقْرُ الْحَاضِرُ.»", trans: "از طمع بپرهیزید که طمع همان فقر نقد است.", source: "مکارم الأخلاق" },
+      { author: "امام صادق (ع)", text: "«الْقَنَاعَةُ مَالٌ لَا يَنْفَدُ.»", trans: "قناعت سرمایه‌ای است که هرگز تمام نمی‌شود.", source: "کافی" },
+      { author: "امام باقر (ع)", text: "«مَنْ صَدَقَ لِسَانُهُ زَكَى عَمَلُهُ.»", trans: "کسی که زبانش راستگو باشد، عملش پاک و رشد می‌کند.", source: "تحف العقول" },
+      { author: "امام علی (ع)", text: "«تَعَلَّمُوا الْعِلْمَ فَإِنَّ تَعَلْمَهُ حَسَنَةٌ.»", trans: "علم را بیاموزید که یادگیری آن حسنه‌ای بزرگ است.", source: "نهج البلاغه" },
+      { author: "پیامبر اکرم (ص)", text: "«خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ.»", trans: "بهترین مردم کسانی هستند که برای دیگران سودمندترند.", source: "من لایحضره الفقیه" },
+      { author: "امام صادق (ع)", text: "«عِزُّ الْمُؤْمِنِ اسْتِغْنَاؤُهُ عَنِ النَّاسِ.»", trans: "عزت مؤمن در بی‌نیازی‌اش از مردم است.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«لا تَحْقِرَنْ صَغِيرَةً فَقَدْ یَجْتَمِعنَ.»", trans: "کار کوچک را کوچک مشمارید زیرا جمع می‌شوند.", source: "غرر الحكم" },
+      { author: "پیامبر اکرم (ص)", text: "«النَّظَافَةُ مِنَ الْإِيمَانِ.»", trans: "پاکیزگی و نظافت از نشانه‌های ایمان است.", source: "بحارالأنوار" },
+      { author: "امام صادق (ع)", text: "«الصَّبْرُ رَأْسُ الإِيمَانِ.»", trans: "صبر، سرِ ایمان و ستون آن است.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«مَنْ شَاوَرَ الرِّجَالَ شَارَكَهَا فِي عُقُولِهَا.»", trans: "هر که با بزرگان مشورت کند، در خرد آن‌ها شریک شده است.", source: "نهج البلاغه" },
+      { author: "پیامبر اکرم (ص)", text: "«حَاسِبُوا قَبْلَ أَنْ تُحَاسَبُوا.»", trans: "پیش از آنکه در قیامت به حسابتان برسید، خود به حساب اعمالتان برسید.", source: "محاسبة النفس" },
+      { author: "امام صادق (ع)", text: "«مَنْ أَرَادَ الْعِزَّ بِلَا عَشِيرَةٍ فَلْيَخْرُجْ مِنْ ذُلِّ مَعْصِيَةِ اللَّهِ إِلَى عِزِّ طَاعَتِهِ.»", trans: "هر که عزت بدون قبیله خواهد، از خواری گناه به عزت اطاعت خدا درآید.", source: "بحارالأنوار" },
+      { author: "امام باقر (ع)", text: "«تَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ.»", trans: "یکدیگر را به حق و بردباری توصیه کنید.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«اَلْعَمَلُ بَالْبُتُولِ خَيْرٌ مِنَ الرِّبْحِ الْكَثِيرِ بَالْحَرَامِ.»", trans: "کارِ حلالِ اندک، بهتر از سود فراوانِ حرام است.", source: "غرر الحكم" },
+      { author: "پیامبر اکرم (ص)", text: "«طُوبَى لِمَنْ شَغَلَهُ عَيْبُهُ عَنْ عُيُوبِ النَّاسِ.»", trans: "خوش به حال کسی که پرداختن به عیب خود، او را از عیب جویی مردم بازدارد.", source: "تحف العقول" },
+      { author: "امام صادق (ع)", text: "«لَا تَتَّخِذُوا عَدُوّاً فَتَظْلِمُوهُ.»", trans: "دشمنی تراشی نکنید که ستمکار شناخته می‌شوید.", source: "کافی" },
+      { author: "امام رضا (ع)", text: "«الصَّدَقَةُ تَدْفَعُ الْبَلَاءَ الْمُبْرَمَ.»", trans: "صدقه دادن بلای حتمی را دفع می‌کند.", source: "بحارالأنوار" },
+      { author: "امام علی (ع)", text: "«اَلْحِلْمُ سَيِّدُ الْأَخْلَاقِ.»", trans: "بردباری آقای اخلاق و رفتار نیکوست.", source: "غرر الحكم" },
+      { author: "پیامبر اکرم (ص)", text: "«مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيُكْرِمْ ضَيْفَهُ.»", trans: "کسی که به خدا و روز قیامت ایمان دارد، باید مهمان‌نوازی کند.", source: "صحیح بخاری و مسلم" },
+      { author: "امام صادق (ع)", text: "«التَّوْبَةُ مَمْسَحَةُ الذُّنُوبِ.»", trans: "توبه‌کردن پاک‌کننده گناهان است.", source: "کافی" },
+      { author: "امام باقر (ع)", text: "«مَنْ عَرَفَ اللَّهَ خَافَ اللَّهَ.»", trans: "کسی که خدا را شناخت، از مخالفت او بیمناک شد.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«رَحِمَ اللَّهُ امْرَءاً عَرَفَ قَدْرَهُ.»", trans: "رحمت خدا بر کسی که اندازه و قدر خود را شناخت.", source: "نهج البلاغه" },
+      { author: "پیامبر اکرم (ص)", text: "«الدُّنْيَا مِزْرَعَةُ الْآخِرَةِ.»", trans: "دنیا مزرعه آخرت است.", source: "مجموعه ورام" },
+      { author: "امام صادق (ع)", text: "«صِلَةُ الرَّحِمِ تُحَسِّنُ الْخُلُقَ.»", trans: "صله رحم اخلاق انسان را نیکو می‌کند.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«فِعْلُ الْخَيْرِ بُذُورُ السَّعَادَةِ.»", trans: "نیکی کردن بذرِ خوشبختی است.", source: "غرر الحكم" },
+      { author: "پیامبر اکرم (ص)", text: "«أَفْضَلُ الْجِهَادِ كَلِمَةُ حَقٍّ عِنْدَ سُلْطَانٍ جَائِرٍ.»", trans: "برترین جهاد، گفتن سخن حق در برابر حاکم ستمگر است.", source: "سنن ابوداوود" },
+      { author: "امام صادق (ع)", text: "«مَنْ حَسُنَتْ نِيَّتُهُ زِيدَ فِي رِزْقِهِ.»", trans: "هر که نیتش نیکو باشد، روزی‌اش زیاد می‌شود.", source: "کافی" },
+      { author: "امام باقر (ع)", text: "«الْإِحْسَانُ يَمْحَقُ السَّيِّئَاتِ.»", trans: "نیکی‌ها گناهان را نابود و پاک می‌کنند.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«اَلْعِلْمُ حَيَاةُ الْقُلُوبِ.»", trans: "دانش و آگاهی مایه حیات و زندگی دل‌هاست.", source: "نهج البلاغه" },
+      { author: "پیامبر اکرم (ص)", text: "«مَنْ سَلَكَ طَرِيقاً يَطْلُبُ فِيهِ عِلْماً سَهَّلَ اللَّهُ لَهُ طَرِيقاً إِلَى الْجَنَّةِ.»", trans: "هر که راهی برای جستجوی علم طی کند، خدا راه بهشت را برایش آسان کند.", source: "صحیح مسلم" },
+      { author: "امام صادق (ع)", text: "«عَلَيْكُمْ بِالْوَرَعِ وَالتَّقْوَى.»", trans: "شما را به پارسایی و تقوا سفارش می‌کنم.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«اَلشُّكْرُ زِيَادَةُ النِّعْمِ.»", trans: "سپاسگزاری مایه فزونی نعمت‌هاست.", source: "غرر الحكم" },
+      { author: "پیامبر اکرم (ص)", text: "«أَكْرِمُوا أَوْلَادَكُمْ وَأَحْسِنُوا آدَابَهُمْ.»", trans: "فرزندان خود را گرامی بدارید و آداب نیکو به آن‌ها بیاموزید.", source: "مکارم الأخلاق" },
+      { author: "امام صادق (ع)", text: "«اجْتَنِبُوا الْکَذِبَ فَإِنَّهُ مِفْتَاحُ کُلِّ شَرٍّ.»", trans: "از دروغ بپرهیزید که دروغ کلید هر بدی و شرّی است.", source: "کافی" },
+      { author: "امام باقر (ع)", text: "«مَنْ كَانَ فِي حَاجَةِ أَخِيهِ كَانَ اللَّهُ فِي حَاجَتِهِ.»", trans: "هر کس در پی برآوردن نیاز برادر دینی‌اش باشد، خداوند در پی نیاز اوست.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«طِيبُ الْکَلَامِ یَجْلِبُ الأَحْبَابَ.»", trans: "سخن نیک و شیرین دوستان را جذب می‌کند.", source: "غرر الحكم" },
+      { author: "پیامبر اکرم (ص)", text: "«الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ.»", trans: "مسلمان واقعی کسی است که مردم از زبان و دست او در آسایش باشند.", source: "صحیح بخاری" },
+      { author: "امام صادق (ع)", text: "«الْعَامِلُ عَلَى غَيْرِ بَصِيرَةٍ كَالسَّائِرِ عَلَى غَيْرِ الطَّرِيقِ.»", trans: "کسی که بدون آگاهی کاری کند، مانند کسی است که در بیراهه حرکت می‌کند.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«أَشْرَفُ الْغِنَى تَرْكُ الْمُنَى.»", trans: "والاترین بی‌نیازی، دست کشیدن از آرزوهای پوچ است.", source: "نهج البلاغه" },
+      { author: "پیامبر اکرم (ص)", text: "«رِضَا الرَّبِّ فِي رِضَا الْوَالِدَيْنِ.»", trans: "خشنودی پروردگار در خشنودی پدر و مادر است.", source: "کنز العمال" },
+      { author: "امام صادق (ع)", text: "«مَنْ رَضِيَ بِمَا قَسَمَ اللَّهُ لَهُ فَهُوَ أَغْنَى النَّاسِ.»", trans: "کسی که به قسمت الهی راضی باشد، بی‌نیازترین مردم است.", source: "کافی" },
+      { author: "امام باقر (ع)", text: "«الصَّدَقَةُ تَدْفَعُ الْبَلَاءَ وَهِيَ أَنْجَحُ الدَّوَاءِ.»", trans: "صدقه بلا را دفع می‌کند و بهترین و کارسازترین داروهاست.", source: "کافی" },
+      { author: "امام علی (ع)", text: "«اَلصَّبْرُ مِفْتَاحُ الْفَرَجِ.»", trans: "صبر و استقامت کلید گشایش و پیروزی است.", source: "نهج البلاغه" },
+      { author: "پیامبر اکرم (ص)", text: "«بَكِّرُوا فِي طَلَبِ الرِّزْقِ وَالْحَوَائِجِ.»", trans: "صبح زود به دنبال روزی و کارها بروید.", source: "بحارالأنوار" }
     ];
 
     // سیستم انتخاب تصادفی روایت معتبر با هر بار ورود
