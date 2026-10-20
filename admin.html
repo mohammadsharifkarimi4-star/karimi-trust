@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -263,7 +262,7 @@
       </div>
     </div>
 
-    <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
+    <a href="index.html" class="back-home">← بازگشت به منوی اصلی</a>
   </div>
 
   <!-- مودال حساب -->
@@ -390,7 +389,6 @@
       document.getElementById(viewId).classList.add('active');
     }
 
-    // تابع اصلی ارسال تضمینی برای ثبت، ویرایش و حذف به صورت آنی
     function saveAndSync(data, statusText) {
       data.adminEmail = ADMIN_EMAIL;
       data.adminPin = ADMIN_PIN;
@@ -467,12 +465,15 @@
       return result;
     }
 
+    // تابع کاملاً ایمن برای خواندن مقدار از شیء داده‌ها بدون خطای NaN
     function getVal(obj, keys) {
       for (let k of keys) {
-        if (obj[k] !== undefined) return obj[k];
+        if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
         let lower = k.toLowerCase();
         for (let prop in obj) {
-          if (prop.toLowerCase() === lower) return obj[prop];
+          if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") {
+            return obj[prop];
+          }
         }
       }
       return '';
@@ -491,7 +492,9 @@
         accTxs.forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+          let rawAmt = getVal(tx, ['Amount', 'amount']);
+          let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
+
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
@@ -566,7 +569,8 @@
       let currencyTotals = {};
       filteredTxs.forEach(tx => {
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-        let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+        let rawAmt = getVal(tx, ['Amount', 'amount']);
+        let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
         if (!currencyTotals[curr]) currencyTotals[curr] = 0;
         currencyTotals[curr] += amt;
       });
@@ -588,7 +592,8 @@
         let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
         let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
-        let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
+        let rawAmt = getVal(tx, ['Amount', 'amount']);
+        let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt).toLocaleString();
         let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
         let date = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
@@ -631,7 +636,8 @@
         accTxs.forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+          let rawAmt = getVal(tx, ['Amount', 'amount']);
+          let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
@@ -690,7 +696,8 @@
         accTxs.forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+          let rawAmt = getVal(tx, ['Amount', 'amount']);
+          let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
@@ -750,7 +757,8 @@
         accTxs.forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+          let rawAmt = getVal(tx, ['Amount', 'amount']);
+          let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
@@ -879,7 +887,8 @@
       allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).forEach(tx => {
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-        let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+        let rawAmt = getVal(tx, ['Amount', 'amount']);
+        let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
         if(!accCurrencies[curr]) accCurrencies[curr] = { credit: 0, debit: 0 };
         if(dir.includes("بستانکار")) accCurrencies[curr].credit += amt;
         if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
@@ -891,7 +900,8 @@
         txs.forEach((tx, idx) => {
           let txId = String(getVal(tx, ['TransID', 'transid']) || '');
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
+          let rawAmt = getVal(tx, ['Amount', 'amount']);
+          let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt).toLocaleString();
           let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
           let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
           let rawDate = String(getVal(tx, ['Date', 'date']) || new Date().toISOString());
@@ -939,7 +949,8 @@
       if(!tx) return;
 
       let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-      let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
+      let rawAmt = getVal(tx, ['Amount', 'amount']);
+      let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt).toLocaleString();
       let curr = String(getVal(tx, ['Currency', 'currency']) || '');
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
@@ -1016,7 +1027,7 @@
 
     function submitTransaction() {
       let amt = document.getElementById("txAmount").value;
-      if (!amt) { alert("مبلغ را وارد کنید"); return; }
+      if (!amt || isNaN(parseFloat(amt))) { alert("لطفاً یک مبلغ معتبر وارد کنید"); return; }
       let opType = document.getElementById("txOpType").value;
       let desc = document.getElementById("txDesc").value;
       let editTransId = document.getElementById("editTransId").value;
@@ -1033,7 +1044,7 @@
         let index = allTransactions.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
         if (index !== -1) {
           allTransactions[index].Direction = selectedDir;
-          allTransactions[index].Amount = amt;
+          allTransactions[index].Amount = parseFloat(amt);
           allTransactions[index].Currency = selectedCurr;
           allTransactions[index].OperationType = opType;
           allTransactions[index].Description = desc;
@@ -1043,7 +1054,7 @@
           TransID: transIdToSave,
           AccountID: currentAccountId,
           Direction: selectedDir,
-          Amount: amt,
+          Amount: parseFloat(amt),
           Currency: selectedCurr,
           OperationType: opType,
           Description: desc,
@@ -1061,7 +1072,7 @@
         transId: editTransId || undefined,
         accountId: currentAccountId,
         direction: selectedDir,
-        amount: amt,
+        amount: parseFloat(amt),
         currency: selectedCurr,
         operationType: opType,
         description: desc
@@ -1091,7 +1102,8 @@
 
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let rawDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ').trim();
-      let amtVal = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
+      let rawAmt = getVal(tx, ['Amount', 'amount']);
+      let amtVal = isNaN(parseFloat(rawAmt)) ? "0" : parseFloat(rawAmt).toLocaleString();
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
       let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
       let siteLink = "https://karimi-trust-app.vercel.app/";
@@ -1149,7 +1161,8 @@
       accTxs.forEach(tx => {
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-        let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+        let rawAmt = getVal(tx, ['Amount', 'amount']);
+        let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
         if(!accCurrencies[curr]) accCurrencies[curr] = { credit: 0, debit: 0 };
         if(dir.includes("بستانکار")) accCurrencies[curr].credit += amt;
         if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
