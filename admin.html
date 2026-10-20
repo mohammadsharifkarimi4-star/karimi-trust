@@ -1040,6 +1040,7 @@
       let rawDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ').trim();
       let amtVal = parseFloat(getVal(tx, ['Amount', 'amount']) || 0).toLocaleString();
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
+      let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
@@ -1052,7 +1053,6 @@
         ``,
         `نوع تراکنش: ${opType} (${dirVal})`,
         `مبلغ: ${amtVal}${currVal}`,
-        `توضیحات: ${rawDesc || 'ثبت شده در سیستم'}`,
         ``,
         `جهت مشاهده بیلان کامل و جزئیات تراکنش از لینک زیر استفاده نمایید:`,
         siteLink
