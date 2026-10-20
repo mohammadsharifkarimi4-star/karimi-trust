@@ -8,13 +8,12 @@
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
     :root {
-      --bg-gradient: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
       --card-bg: rgba(255, 255, 255, 0.95);
       --accent-gradient: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
       --text-dark: #0f172a;
       --text-muted: #64748b;
-      --shadow-3d: 0 12px 30px -5px rgba(0, 0, 0, 0.25);
-      --shadow-hover: 0 20px 35px -5px rgba(16, 185, 129, 0.4);
+      --shadow-3d: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+      --shadow-hover: 0 15px 30px -5px rgba(16, 185, 129, 0.35);
     }
 
     * {
@@ -42,7 +41,7 @@
       max-width: 440px;
       height: 100vh;
       background: #f1f5f9;
-      padding: 16px 16px 20px 16px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -66,14 +65,14 @@
     }
 
     .welcome-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       color: var(--text-dark);
       line-height: 1.2;
     }
 
     .welcome-subtitle {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
       font-weight: 700;
       margin-top: 1px;
@@ -82,20 +81,20 @@
     .status-badge {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: #ffffff;
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 30px;
       border: 1.5px solid #cbd5e1;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 800;
       color: #059669;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
     }
 
     .dot-pulse {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       background-color: #10b981;
       border-radius: 50%;
       animation: pulse 1.6s infinite;
@@ -103,22 +102,22 @@
 
     @keyframes pulse {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      70% { transform: scale(1); box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* بنر تقویم و ساعت 3D */
+    /* بنر تقویم و ساعت فشرده و متناسب */
     .hero-card {
       background: var(--accent-gradient);
-      border-radius: 24px;
-      padding: 16px;
+      border-radius: 22px;
+      padding: 12px 14px;
       color: #ffffff;
-      box-shadow: 0 14px 30px -8px rgba(5, 150, 105, 0.4);
+      box-shadow: 0 12px 25px -8px rgba(5, 150, 105, 0.35);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       flex-shrink: 0;
     }
 
@@ -129,138 +128,141 @@
     }
 
     .hero-main-title {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 900;
     }
 
     .day-badge {
       background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(8px);
-      padding: 3px 12px;
+      backdrop-filter: blur(6px);
+      padding: 2px 10px;
       border-radius: 20px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 800;
     }
 
     .dates-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      gap: 5px;
     }
 
     .date-box-item {
       background: rgba(0, 0, 0, 0.18);
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(4px);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 14px;
-      padding: 8px 4px;
+      border-radius: 12px;
+      padding: 6px 3px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 1px;
     }
 
     .date-box-title {
-      font-size: 10px;
+      font-size: 9.5px;
       color: #a7f3d0;
       font-weight: 800;
     }
 
     .date-box-val {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 900;
       color: #ffffff;
     }
 
     .date-box-sub {
-      font-size: 9px;
+      font-size: 8.5px;
       color: #e6fffa;
       font-weight: 700;
     }
 
     .live-clock-box {
       background: rgba(0, 0, 0, 0.22);
-      border-radius: 12px;
-      padding: 7px;
+      border-radius: 10px;
+      padding: 5px;
       text-align: center;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 800;
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    /* کادر زنده و متحرک روایات و احادیث معتبر درون کارت سبز */
+    /* کادر زنده و متحرک احادیث با نوردهی رنگارنگ خفیف (Glow) */
     .hadith-display-box {
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 14px;
-      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+      border-radius: 12px;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      animation: fadeIn 0.6s ease-in-out;
+      gap: 3px;
+      animation: fadeIn 0.5s ease-in-out;
+      box-shadow: 0 0 15px rgba(52, 211, 153, 0.35), inset 0 0 10px rgba(251, 191, 36, 0.2);
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .hadith-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 11px;
+      font-size: 10.5px;
       color: #6ee7b7;
       font-weight: 900;
     }
 
     .hadith-text {
-      font-size: 11.5px;
+      font-size: 11px;
       color: #ffffff;
       font-weight: 700;
-      line-height: 1.5;
+      line-height: 1.4;
       text-align: justify;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
     }
 
     .hadith-source {
-      font-size: 9.5px;
-      color: #a7f3d0;
-      font-weight: 600;
+      font-size: 9px;
+      color: #fde047;
+      font-weight: 700;
       text-align: left;
       direction: ltr;
     }
 
     .section-label {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       color: var(--text-dark);
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      margin-top: 2px;
     }
 
-    /* کارت‌های منوی برجسته و متحرک */
+    /* کارت‌های منوی اصلی (فشرده و استاندارد برای عدم خروج از صفحه) */
     .menu-container {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       flex-shrink: 0;
     }
 
     .menu-card-large {
       background: var(--card-bg);
-      border-radius: 20px;
-      padding: 14px 16px;
+      border-radius: 16px;
+      padding: 10px 14px;
       text-decoration: none;
       color: var(--text-dark);
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       border: 2px solid #ffffff;
       box-shadow: var(--shadow-3d);
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
     }
 
     .menu-card-large:hover, .menu-card-large:active {
@@ -270,15 +272,15 @@
     }
 
     .icon-wrapper {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
+      font-size: 22px;
       flex-shrink: 0;
-      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 6px 15px rgba(0, 0, 0, 0.06);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 5px 12px rgba(0, 0, 0, 0.05);
     }
 
     .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%); color: #0284c7; }
@@ -286,17 +288,16 @@
     .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #facc15 100%); color: #d97706; }
 
     .card-title {
-      font-size: 14.5px;
+      font-size: 14px;
       font-weight: 900;
       color: var(--text-dark);
     }
 
     .card-desc {
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--text-muted);
       font-weight: 600;
-      margin-top: 2px;
-      line-height: 1.3;
+      margin-top: 1px;
     }
 
     .eng-num {
@@ -354,14 +355,14 @@
         ساعت کنونی: <span id="liveClock" class="eng-num">00:00:00</span>
       </div>
 
-      <!-- کادر زنده و خودکار احادیث و معارف اهل بیت (ع) -->
+      <!-- کادر زنده و خودکار احادیث با نوردهی رنگارنگ خفیف -->
       <div class="hadith-display-box" id="hadithBox">
         <div class="hadith-header-row">
           <span id="hadithAuthor">✨ کلام معصوم (ع)</span>
-          <span>📜 پند اخلاقی و رزق حلال</span>
+          <span>📜 رزق حلال و امانت‌داری</span>
         </div>
-        <div class="hadith-text" id="hadithText">«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ و إن خانَکَ...»</div>
-        <div class="hadith-source" id="hadithSource">[ بحارالأنوار، ج ۷۴ ]</div>
+        <div class="hadith-text" id="hadithText">«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ...»</div>
+        <div class="hadith-source" id="hadithSource">[ بحارالأنوار ]</div>
       </div>
     </div>
 
@@ -408,64 +409,55 @@
     const shiaHadiths = [
       {
         author: "امام علی (ع)",
-        text: "«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ و إن خانَکَ، و لا تَخُنْ مَن خانَکَ.» (امانت را به امانت‌گذار بازگردان، گرچه خیانت کرده باشد).",
+        text: "«أدِّ الأَمانَةَ إلَى مَن ائتَمَنکَ و إن خانَکَ، و لا تَخُنْ مَن خانَکَ.»",
         source: "بحارالأنوار، ج ۷۴"
       },
       {
         author: "پیامبر اکرم (ص)",
-        text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ.» (عبادت هفتاد جزء است که برترین آن طلب روزی حلال است).",
+        text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ.»",
         source: "مستدرک الوسائل، ج ۱۳"
       },
       {
         author: "امام صادق (ع)",
-        text: "«إِنَّ اللَّهَ عَزَّ وَ جَلَّ يُحِبُّ إِعْثَارَ الرَّجُلِ فِي طَلَبِ الْحَلَالِ.» (خوند دوست دارد انسان در راه کسب روزی حلال به زحمت بیفتد).",
+        text: "«إِنَّ اللَّهَ عَزَّ وَ جَلَّ يُحِبُّ إِعْثَارَ الرَّجُلِ فِي طَلَبِ الْحَلَالِ.»",
         source: "کافی، ج ۵"
       },
       {
         author: "امام باقر (ع)",
-        text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ دَوَامُهَا وَ إِنْ قَلَّ.» (محبوب‌ترین کارها نزد خدا کار مداوم است، هرچند اندک باشد).",
+        text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ دَوَامُهَا وَ إِنْ قَلَّ.»",
         source: "کافی، ج ۲"
       },
       {
         author: "امام علی (ع)",
-        text: "«رِزْقُكَ يَطْلُبُكَ كَمَا تَطْلُبُهُ.» (روزیِ تو به دنبال توست، همان‌گونه که تو به دنبال آنی).",
+        text: "«رِزْقُكَ يَطْلُبُكَ كَمَا تَطْلُبُهُ.»",
         source: "غررالحکم"
       },
       {
         author: "امام صادق (ع)",
-        text: "«الصِّدْقُ مَمْسَحَةٌ وَ الْكَذِبُ مَنْقَصَةٌ.» (راستگویی مایه پاکی و دروغ‌گویی مایه کاستی است).",
+        text: "«الصِّدْقُ مَمْسَحَةٌ وَ الْكَذِبُ مَنْقَصَةٌ.»",
         source: "تحف العقول"
       },
       {
         author: "پیامبر اکرم (ص)",
-        text: "«التَّاجِرُ الصَّدُوقُ الأَمِينُ مَعَ النَّبِيِّينَ وَ الصِّدِّيقِينَ.» (تاجر راستگو و امانت‌دار در قیامت با انبیاء و صدیقین خواهد بود).",
+        text: "«التَّاجِرُ الصَّدُوقُ الأَمِينُ مَعَ النَّبِيِّينَ وَ الصِّدِّيقِينَ.»",
         source: "من لایحضره الفقیه، ج ۳"
       },
       {
         author: "امام رضا (ع)",
-        text: "«اَلْبَحْثُ عَنِ الْحَلَالِ يُعَزِّزُ الإِنْسَانَ.» (تلاش و جستجو برای کسب حلال، انسان را عزیز می‌گرداند).",
+        text: "«اَلْبَحْثُ عَنِ الْحَلَالِ يُعَزِّزُ الإِنْسَانَ.»",
         source: "مستدرک الوسائل"
       },
       {
-        author: "امام علی (ع)",
-        text: "«مَنْ تَجَرَ بِلَا فِقْهٍ فَقَدِ ارْتَمَى فِي الرِّبَا.» (کسی که بدون آگاهی و احکام دینی تجارت کند، در ورطه ربا می‌افتد).",
-        source: "وسائل الشيعة"
-      },
-      {
         author: "امام صادق (ع)",
-        text: "«الْبَرَكَةُ فِي‌ التِّجَارَةِ مَعَ الصِّدْقِ وَ الْأَمَانَةِ.» (برکت در تجارت همراه با راستگویی و امانت‌داری است).",
+        text: "«الْبَرَكَةُ فِي‌ التِّجَارَةِ مَعَ الصِّدْقِ وَ الْأَمَانَةِ.»",
         source: "کافی، ج ۵"
       }
     ];
 
-    // سیستم چرخش خودکار احادیث (هر ۱۲ ساعت یک‌بار یا تغییر روز)
-    function loadDailyHadith() {
-      const now = new Date();
-      // محاسبه کلید زمان (هر ۱۲ ساعت یک تغییر)
-      const timeBlock = Math.floor(now.getTime() / (12 * 60 * 60 * 1000));
-      const index = timeBlock % shiaHadiths.length;
-      
-      const item = shiaHadiths[index];
+    // نمایش تصادفی حدیث جدید با هر بار ورود و باز شدن صفحه
+    function loadRandomHadith() {
+      const randomIndex = Math.floor(Math.random() * shiaHadiths.length);
+      const item = shiaHadiths[randomIndex];
       document.getElementById('hadithAuthor').innerText = `✨ ${item.author}`;
       document.getElementById('hadithText').innerText = item.text;
       document.getElementById('hadithSource').innerText = `[ ${item.source} ]`;
@@ -517,7 +509,7 @@
     }
 
     updateCalendarAndClock();
-    loadDailyHadith();
+    loadRandomHadith();
     setInterval(updateCalendarAndClock, 1000);
   </script>
 
