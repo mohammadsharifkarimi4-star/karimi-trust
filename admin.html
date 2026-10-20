@@ -237,7 +237,7 @@
       </div>
     </div>
 
-    <!-- صفحه جزئیات حساب و تراکنش‌ها -->
+    <!-- صفحه جزئیات حساب و تراکنش‌ها (شامل دکمه جدید ارسال صورت‌حساب) -->
     <div id="viewAccountDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
         <h3 id="detailAccountTitle">جزئیات حساب</h3>
@@ -249,6 +249,7 @@
       <div class="card" style="margin-top: 8px;">
         <div class="flex-row" style="gap: 4px; flex-wrap: wrap; margin-bottom: 8px;">
           <button class="btn btn-sm" onclick="openAddTransactionModal()">➕ ثبت تراکنش جدید</button>
+          <button class="btn btn-whatsapp btn-sm" onclick="sendAccountBalanceWhatsApp()" style="background:#128c7e;">📲 ارسال صورت‌حساب (بیلان) در واتساپ</button>
           <button class="btn btn-warning btn-sm" onclick="openEditAccountModal()">✏️ ویرایش نام/تلفن</button>
           <button class="btn btn-danger btn-sm" onclick="deleteCurrentAccount()">🗑️ حذف حساب</button>
         </div>
@@ -525,7 +526,7 @@
         gridHtml += `
           <div class="stat-card">
             <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده خالص: <b>${finalNet.toLocaleString()}</b></span></div>
-            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکاران: ${cred.toLocaleString()} | کل بدهکاران: ${deb.toLocaleString()}</div>
+            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکاران: ${cred.toLocaleString()} \vert{} کل بدهکاران: ${deb.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -575,7 +576,7 @@
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل حواله‌ها:</b></span><b>${filteredTxs.length} عدد</b></div>`;
       for (let curr in currencyTotals) {
-        summaryHtml += `<div class="stat-row"><span>مجموع حواله (${curr}):</span><b style="color:var(--accent);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+        summaryHtml += `<div class="stat-row"><span>مجموع حواله (${curr}):</span><b style="color:var(--accent);">${currencyTotals[curr].toLocaleString()}${curr}</b></div>`;
       }
       headerContainer.innerHTML = summaryHtml;
 
@@ -603,7 +604,7 @@
             </div>
             <div class="stat-row">
               <span>مبلغ حواله:</span>
-              <b style="color:var(--primary); font-size:1rem;">${amt} ${curr}</b>
+              <b style="color:var(--primary); font-size:1rem;">${amt}${curr}</b>
             </div>
             <div style="font-size:0.82rem; color:#475569; margin-top:4px; background:#f1f5f9; padding:6px; border-radius:6px;">
               <b>رسید انتقال:</b> ${desc}
@@ -651,7 +652,7 @@
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بدهکاران:</b></span><b>${debtors.length} مورد</b></div>`;
       for (let curr in currencyTotals) {
-        summaryHtml += `<div class="stat-row"><span>مجموع طلب ما (${curr}):</span><b style="color:var(--danger);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+        summaryHtml += `<div class="stat-row"><span>مجموع طلب ما (${curr}):</span><b style="color:var(--danger);">${currencyTotals[curr].toLocaleString()}${curr}</b></div>`;
       }
       headerContainer.innerHTML = summaryHtml;
 
@@ -665,7 +666,7 @@
           <div class="tx-item-card" onclick="selectAccount('${d.id}', '${d.name}')">
             <div class="stat-row">
               <span style="font-weight:bold; font-size:1.05rem; color:var(--primary);">${d.name}</span>
-              <span style="color:var(--danger); font-weight:bold; font-size:1rem;">${d.amount.toLocaleString()} ${d.currency}</span>
+              <span style="color:var(--danger); font-weight:bold; font-size:1rem;">${d.amount.toLocaleString()}${d.currency}</span>
             </div>
           </div>
         `;
@@ -711,7 +712,7 @@
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بستانکاران:</b></span><b>${creditors.length} مورد</b></div>`;
       for (let curr in currencyTotals) {
-        summaryHtml += `<div class="stat-row"><span>مجموع بدهی ما (${curr}):</span><b style="color:var(--accent);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+        summaryHtml += `<div class="stat-row"><span>مجموع بدهی ما (${curr}):</span><b style="color:var(--accent);">${currencyTotals[curr].toLocaleString()}${curr}</b></div>`;
       }
       headerContainer.innerHTML = summaryHtml;
 
@@ -725,7 +726,7 @@
           <div class="tx-item-card" onclick="selectAccount('${c.id}', '${c.name}')">
             <div class="stat-row">
               <span style="font-weight:bold; font-size:1.05rem; color:var(--primary);">${c.name}</span>
-              <span style="color:var(--accent); font-weight:bold; font-size:1rem;">${c.amount.toLocaleString()} ${c.currency}</span>
+              <span style="color:var(--accent); font-weight:bold; font-size:1rem;">${c.amount.toLocaleString()}${c.currency}</span>
             </div>
           </div>
         `;
@@ -887,7 +888,7 @@
               </div>
               <div class="stat-row">
                 <span>نوع: <b>${opType}</b></span>
-                <span>مبلغ: <b>${amt} ${curr}</b></span>
+                <span>مبلغ: <b>${amt}${curr}</b></span>
               </div>
             </div>
           `;
@@ -904,7 +905,7 @@
         statsHtml += `
           <div class="stat-card">
             <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده: <b>${net.toLocaleString()}</b></span></div>
-            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکار: ${accCurrencies[curr].credit.toLocaleString()} | کل بدهکار: ${accCurrencies[curr].debit.toLocaleString()}</div>
+            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکار: ${accCurrencies[curr].credit.toLocaleString()} \vert{} کل بدهکار: ${accCurrencies[curr].debit.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -928,7 +929,7 @@
         <h3>جزئیات کامل تراکنش</h3>
         <div class="stat-row"><span>تاریخ:</span><b>${date}</b></div>
         <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
-        <div class="stat-row"><span>مبلغ:</span><b>${amt} ${curr}</b></div>
+        <div class="stat-row"><span>مبلغ:</span><b>${amt}${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
         <div style="margin-top:6px; background:#f1f5f9; padding:8px; border-radius:8px;"><b>توضیحات:</b> ${desc || 'بدون شرح'}</div>
         <div style="margin-top:10px; font-size:0.75rem; color:#64748b; text-align:center;">⚠️ داشتن اسناد برای موقع گرفتن پول الزامی هست</div>
@@ -1027,7 +1028,7 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    // ارسال گزارش عمومی واتساپ پاک‌سازی شده
+    // ۱. ارسال گزارش عمومی واتساپ
     function sendGeneralWhatsAppReport() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
@@ -1045,12 +1046,24 @@
       let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
       let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
 
-      let messageText = `سلام و احترام خدمت آقای ${currentAccountName}\n\nتراکنش شماره #${txIndex} در حساب شما ثبت گردید.\n\nنوع تراکنش: ${opType} (${dirVal})\nمبلغ: ${amtVal} ${currVal}\nتوضیحات: ${rawDesc || 'ثبت شده در سیستم'}\n\nجهت مشاهده بیلان کامل و جزئیات تراکنش از لینک زیر استفاده نمایید:\n${siteLink}`;
+      let lines = [
+        `سلام و احترام خدمت آقای ${currentAccountName}`,
+        ``,
+        `تراکنش شماره #${txIndex} در حساب شما ثبت گردید.`,
+        ``,
+        `نوع تراکنش: ${opType} (${dirVal})`,
+        `مبلغ: ${amtVal}${currVal}`,
+        `توضیحات: ${rawDesc || 'ثبت شده در سیستم'}`,
+        ``,
+        `جهت مشاهده بیلان کامل و جزئیات تراکنش از لینک زیر استفاده نمایید:`,
+        siteLink
+      ];
 
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(messageText)}`, '_blank');
+      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
+      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
     }
 
-    // ارسال رسید اختصاصی حواله از ریشه حل‌شده (پاک‌سازی ۱۰۰٪ علامت‌های +)
+    // ۲. ارسال رسید اختصاصی حواله
     function sendTransferReceiptWhatsApp() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
@@ -1058,12 +1071,78 @@
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
       if(!tx) return;
 
-      // ریشه‌یابی و پاک‌سازی کامل تمام علامت‌های + یا کدهای مزاحم
       let rawDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ').trim();
 
-      let receiptText = `📄 *رسید انتقال:*\n────────────────────\n${rawDesc}\n────────────────────\n⚠️ *داشتن اسناد الزامی است.*`;
+      let lines = [
+        `📄 *رسید انتقال:*`,
+        `────────────────────`,
+        rawDesc,
+        `────────────────────`,
+        `⚠️ *داشتن اسناد الزامی است.*`
+      ];
 
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(receiptText)}`, '_blank');
+      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
+      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+    }
+
+    // ۳. ارسال گزارش متنی موجودی و بیلان کامل حساب شخص در واتساپ
+    function sendAccountBalanceWhatsApp() {
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      if (!acc) return;
+      let phone = String(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
+      let siteLink = "https://karimi-trust-app.vercel.app/";
+
+      let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId));
+      let accCurrencies = {};
+
+      accTxs.forEach(tx => {
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+        let amt = parseFloat(getVal(tx, ['Amount', 'amount']) || 0);
+        if(!accCurrencies[curr]) accCurrencies[curr] = { credit: 0, debit: 0 };
+        if(dir.includes("بستانکار")) accCurrencies[curr].credit += amt;
+        if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
+      });
+
+      let lines = [
+        `سلام و احترام خدمت آقای ${currentAccountName}`,
+        ``,
+        `📊 صورت‌حساب و بیلان فعلی شما در صرافی کریمی:`
+      ];
+
+      let hasBalance = false;
+      for (let curr in accCurrencies) {
+        hasBalance = true;
+        let cred = accCurrencies[curr].credit;
+        let deb = accCurrencies[curr].debit;
+        let net = cred - deb;
+        
+        let statusStr = "";
+        if (net > 0) {
+          statusStr = `بدهکاریم: ${Math.abs(net).toLocaleString()}${curr}`;
+        } else if (net < 0) {
+          statusStr = `طلبکاریم: ${Math.abs(net).toLocaleString()}${curr}`;
+        } else {
+          statusStr = `تسویه حساب کامل`;
+        }
+
+        lines.push(``);
+        lines.push(`🔹 ارز: ${curr}`);
+        lines.push(`کل بستانکار: ${cred.toLocaleString()} \vert{} کل بدهکار: ${deb.toLocaleString()}`);
+        lines.push(`وضعیت: ${statusStr}`);
+      }
+
+      if (!hasBalance) {
+        lines.push(`هیچ تراکنش یا مانده حسابی برای شما ثبت نشده است.`);
+      }
+
+      lines.push(``);
+      lines.push(`----------------------------------------`);
+      lines.push(`جهت مشاهده جزئیات بیشتر تراکنش‌ها:`);
+      lines.push(siteLink);
+
+      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
+      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
     }
   </script>
 </body>
