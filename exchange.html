@@ -327,8 +327,7 @@
     </header>
 
     <main class="app-body">
-      <!-- لودینگ کاملاً حذف شد تا صفحه معطل نشود -->
-
+      <!-- بخش ورود شماره بدون لودینگ -->
       <div id="phoneSection" class="hidden">
         <div class="info-card">
           <div class="info-title">📌 درباره امانت‌داری کریمی</div>
@@ -397,6 +396,7 @@
         </div>
       </div>
 
+      <!-- داشبورد اصلی -->
       <div id="dashboardSection" class="hidden" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 100%;">
         <div>
           <div class="user-profile-header">
@@ -405,17 +405,23 @@
               <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;"><span id="dashPhone" class="eng-num">---</span></div>
             </div>
             <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-              <button onclick="toggleBiometricSetting()" id="bioToggleBtn" style="width: auto; padding: 5px 8px; font-size: 10.5px; background: #059669; margin-top: 0; box-shadow: none;">🔑 فعالسازی اثرانگشت</button>
+              <button onclick="toggleBiometricSetting()" id="bioToggleBtn" style="width: auto; padding: 5px 8px; font-size: 10.5px; background: #059669; margin-top: 0; box-shadow: none;">🔑 اثرانگشت</button>
               <button onclick="shareProfileImage()" style="width: auto; padding: 5px 8px; font-size: 10.5px; background: #3b82f6; margin-top: 0; box-shadow: none;" title="گرفتن عکس">📸 عکس</button>
               <button onclick="logout()" style="width: auto; padding: 5px 8px; font-size: 10.5px; background: var(--danger); margin-top: 0; box-shadow: none;">خروج</button>
             </div>
           </div>
 
           <div id="profileCaptureArea" class="capture-container">
-            <div style="display: flex; justify-content: space-between; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 10px;">
               <span id="captureTitle" style="font-size: 12.5px; font-weight: 800; color: #0284c7;">صورت‌حساب موجودی</span>
-              <span style="font-size: 10.5px; color: #64748b;" class="eng-num" id="captureDate">---</span>
+              <!-- دکمه تازه سازی حساب واقعی با افکت پر شدن شارژ -->
+              <button id="refreshAccountBtn" onclick="refreshAccountData()" style="width: auto; padding: 4px 8px; font-size: 10.5px; background: #0284c7; margin-top: 0; box-shadow: none; position: relative; overflow: hidden;">
+                <span id="refreshBtnText">🔄 تازه سازی حساب</span>
+                <div id="refreshProgressBar" style="position: absolute; bottom: 0; right: 0; width: 0%; height: 3px; background: #fde047; transition: width 0.05s linear;"></div>
+              </button>
             </div>
+
+            <div style="font-size: 10.5px; color: #64748b; text-align: left; margin-bottom: 6px;" class="eng-num" id="captureDate">---</div>
 
             <div id="newTxNotificationWrapper" class="hidden">
               <button class="big-notification-btn" onclick="confirmNewTransaction()">
@@ -541,6 +547,7 @@
       return cleaned.slice(-9);
     }
 
+    // لود آنی و بدون معطلی با استفاده از کش مرورگر
     window.addEventListener('DOMContentLoaded', () => {
       let cachedAcc = localStorage.getItem("cached_accounts");
       let cachedTx = localStorage.getItem("cached_transactions");
@@ -548,10 +555,9 @@
       if (cachedAcc) accountsList = JSON.parse(cachedAcc);
       if (cachedTx) transactionsList = JSON.parse(cachedTx);
 
-      // ورود آنی بدون معطلیِ صفحه لودینگ
       initUserSession();
 
-      // بروزرسانی اطلاعات از گوگل‌شیت در پشت صحنه (بدون اینکه کاربر معطل شود)
+      // بروزرسانی صامت در پشت صحنه
       fetchDataFromSheetBackground();
     });
 
@@ -589,12 +595,79 @@
           }
           localStorage.setItem("cached_transactions", JSON.stringify(transactionsList));
         }
-
-        // اگر کاربر در صفحه ورود بود و اطلاعات جدید رسید، بررسی مجدد جلسات در پشت صحنه
-        if (!document.getElementById('phoneSection').classList.contains('hidden') && localStorage.getItem('karimi_phone')) {
-          initUserSession();
-        }
       } catch (err) {}
+    }
+
+    // دکمه واقعی تازه سازی حساب با افکت پر شدن شارژ
+    async function refreshAccountData() {
+      playSound('click');
+      const btn = document.getElementById('refreshAccountBtn');
+      const progressBar = document.getElementById('refreshProgressBar');
+      const btnText = document.getElementById('refreshBtnText');
+      btn.disabled = true;
+      btnText.innerText = 'در حال دریافت...';
+      progressBar.style.width = '0%';
+
+      // شبیه‌سازی پر شدن نوار شارژ
+      let progress = 0;
+      let interval = setInterval(() => {
+        progress += 5;
+        if (progress <= 90) {
+          progressBar.style.width = progress + '%';
+        }
+      }, 35);
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL + "?action=getData");
+        const data = await res.json();
+
+        if (data.accounts && data.accounts.length > 0) {
+          let accRows = data.accounts;
+          if (Array.isArray(accRows[0])) {
+            let accHeaders = accRows[0].map(h => String(h).trim());
+            accountsList = accRows.slice(1).map(row => {
+              let obj = {};
+              accHeaders.forEach((h, i) => obj[h] = row[i]);
+              return obj;
+            });
+          } else {
+            accountsList = accRows;
+          }
+          localStorage.setItem("cached_accounts", JSON.stringify(accountsList));
+        }
+
+        if (data.transactions && data.transactions.length > 0) {
+          let txRows = data.transactions;
+          if (Array.isArray(txRows[0])) {
+            let txHeaders = txRows[0].map(h => String(h).trim());
+            transactionsList = txRows.slice(1).map(row => {
+              let obj = {};
+              txHeaders.forEach((h, i) => obj[h] = row[i]);
+              return obj;
+            });
+          } else {
+            transactionsList = txRows;
+          }
+          localStorage.setItem("cached_transactions", JSON.stringify(transactionsList));
+        }
+      } catch (e) {}
+
+      // تکمیل نوار شارژ تا 100 درصد و رفرش اطلاعات حساب کاربر
+      clearInterval(interval);
+      progressBar.style.width = '100%';
+      playSound('success');
+
+      setTimeout(() => {
+        const savedAccId = localStorage.getItem('karimi_accId');
+        if (savedAccId) {
+          let found = accountsList.find(u => String(getVal(u, ['AccountID', 'accountid', 'ID'])).trim() === savedAccId);
+          if (found) currentFoundUser = found;
+          processDashboard(savedAccId);
+        }
+        btnText.innerText = '🔄 تازه سازی حساب';
+        progressBar.style.width = '0%';
+        btn.disabled = false;
+      }, 400);
     }
 
     function initUserSession() {
@@ -707,7 +780,7 @@
       let isEnabled = localStorage.getItem('karimi_biometric_enabled') === 'true';
       const btn = document.getElementById('bioToggleBtn');
       if (btn) {
-        btn.innerText = isEnabled ? "🔴 غیرفعال‌سازی اثرانگشت" : "🔑 فعالسازی اثرانگشت";
+        btn.innerText = isEnabled ? "🔴 غیرفعال" : "🔑 اثرانگشت";
         btn.style.background = isEnabled ? "#dc2626" : "#059669";
       }
     }
