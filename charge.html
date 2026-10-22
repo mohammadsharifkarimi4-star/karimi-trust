@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>سامانه شارژ و خدمات صرافی کریمی</title>
+  <title>سامانه شارژ و خدمات امانت‌داری کریمی</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
@@ -68,6 +68,11 @@
       border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; text-align: center; text-decoration: none; display: block;
     }
 
+    .btn-copy {
+      background: #f59e0b; color: #fff; border: none; padding: 10px; border-radius: 10px;
+      font-size: 13px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
     .btn-refresh {
       background: #3b82f6; color: #fff; border: none; padding: 8px 12px; border-radius: 10px;
       font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -115,6 +120,15 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* لودینگ نواری شبیه پر شدن شارژ باتری */
+    .battery-loading-bar {
+      width: 100%; height: 10px; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative; margin-top: 6px;
+    }
+    .battery-loading-fill {
+      height: 100%; background: linear-gradient(90deg, #10b981, #059669); width: 0%; animation: batteryFill 2s infinite ease-in-out;
+    }
+    @keyframes batteryFill { 0% { width: 0%; } 100% { width: 100%; } }
+
     .slide-in-success {
       animation: slideInGreen 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -132,40 +146,43 @@
     }
 
     #loadingOverlay {
-      position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(9, 13, 22, 0.85);
-      display:none; justify-content:center; align-items:center; z-index:9999; color:#fff; font-weight:900; font-size:15px; flex-direction:column; gap:10px;
+      position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(9, 13, 22, 0.88);
+      display:none; justify-content:center; align-items:center; z-index:9999; color:#fff; font-weight:900; font-size:15px; flex-direction:column; gap:12px;
     }
   </style>
 </head>
 <body>
 
   <div id="loadingOverlay">
-    <div>🔄 در حال پردازش و استعلام...</div>
-    <div style="font-size:12px; color:#10b981;">لطفاً چند لحظه صبر کنید</div>
+    <div>⚡ در حال پردازش و برقراری ارتباط...</div>
+    <div style="width: 220px;">
+      <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
+    </div>
+    <div style="font-size:11.5px; color:#10b981;">لطفاً چند لحظه شکیبا باشید</div>
   </div>
 
   <div class="app-viewport">
     
     <div class="top-header">
-      <span class="header-title">📲 سامانه شارژ و خدمات صرافی کریمی</span>
+      <span class="header-title">📲 سامانه شارژ و خدمات امانت‌داری کریمی</span>
       <a href="index.html" class="back-btn">بازگشت ➔</a>
     </div>
 
     <!-- ================= گام ۱: ورود ================= -->
     <div id="stepLogin" class="card-box">
-      <div style="text-align:center; padding:6px 0;">
+      <div style="text-align:center; padding:4px 0;">
         <h3 style="font-size:16px; font-weight:900;">ورود به حساب کاربری</h3>
-        <p style="font-size:11.5px; color:var(--text-muted); font-weight:700; margin-top:4px;">لطفاً جهت استفاده از خدمات، شناسه (آیدی) حساب خود را وارد کنید</p>
+        <p style="font-size:11.5px; color:var(--text-muted); font-weight:700; margin-top:4px;">جهت ارسال شارژ، شناسه (آیدی) حساب خود را وارد کنید</p>
       </div>
 
       <div class="form-group">
         <label class="form-label">شناسه حساب (Account ID):</label>
-        <input type="text" id="loginAccId" class="form-input eng-num" placeholder="">
+        <input type="text" id="loginAccId" class="form-input eng-num" placeholder="مثال: TLB-1234">
       </div>
 
-      <button class="btn-main" onclick="processLogin()">ورود و بررسی حساب</button>
+      <button class="btn-main" onclick="processLogin()">ورود و بررسی سریع حساب</button>
 
-      <hr style="border:none; border-top:1px dashed #cbd5e1; margin:4px 0;">
+      <hr style="border:none; border-top:1px dashed #cbd5e1; margin:2px 0;">
 
       <button class="btn-secondary" onclick="showStep('stepAccountType')">حساب ندارم / ایجاد حساب جدید ➕</button>
     </div>
@@ -173,18 +190,18 @@
     <!-- ================= گام ۲: انتخاب نوع حساب ================= -->
     <div id="stepAccountType" class="card-box hidden">
       <div class="info-box">
-        💡 <b>راهنمای افتتاح حساب و شرایط اعتباری:</b><br>
-        با ایجاد حساب کاربری می‌توانید به‌صورت سریع و خودکار درخواست‌های شارژ خود را ارسال نمایید.<br><br>
-        • <b>ویژه طلاب و فضلاء محترم حوزه علمیه نجف اشرف:</b> بر پایه اعتماد متقابل و جهت تسهیل امور شما عزیزان، <b>سقف اعتبار ۳۰,۰۰۰ دینار</b> در نظر گرفته شده است؛ بدین معنا که می‌توانید پیش از تسویه مالی، تا سقف ۳۰ هزار دینار شارژ ارسال نموده و سپس اقدام به تسویه فرمایید.<br><br>
-        • <b>سایر کاربران گرامی:</b> امکان ایجاد حساب عادی (نقدی) فراهم بوده و پس از شارژ حساب می‌توانید از تمام خدمات سامانه بهره‌مند شوید.
+        💡 <b>راهنمای حساب و شرایط اعتباری:</b><br><br>
+        • <b>دوستان حوزوی:</b> بر پایه اعتماد متقابل، <b>سقف اعتبار ۳۰,۰۰۰ دینار</b> در نظر گرفته شده است تا بتوانید پیش از تسویه مالی شارژ ارسال کنید.<br><br>
+        📌 <b>توجه مهم:</b> کسانی که در <b>امانت‌داری کریمی</b> حساب دارند، نیاز به ایجاد حساب جدید ندارند و می‌توانند با همان آیدی حساب خود وارد شوند.<br><br>
+        • <b>کاربران عادی:</b> پس از ایجاد حساب نقدی و شارژ آن، می‌توانید از خدمات سامانه استفاده کنید.
       </div>
 
       <button class="btn-main" style="background: linear-gradient(135deg, #1e40af, #3b82f6);" onclick="openRegistrationForm(true)">
-        🎓 افتتاح حساب طلاب (اعتباری تا ۳۰,۰۰۰ دینار)
+        🎓 ایجاد حساب اعتباری حوزوی (سقف ۳۰,۰۰۰ دینار)
       </button>
 
       <button class="btn-secondary" style="background:#f1f5f9; border:1.5px solid #cbd5e1;" onclick="openRegistrationForm(false)">
-        👤 افتتاح حساب کاربر عادی (نقدی)
+        👤 ایجاد حساب کاربر عادی (نقدی)
       </button>
 
       <button class="btn-secondary" onclick="showStep('stepLogin')" style="margin-top:4px;">➔ بازگشت به صفحه ورود</button>
@@ -194,9 +211,17 @@
     <div id="stepRegister" class="card-box hidden">
       <h3 id="regTitle" style="font-size:15px; font-weight:900; color:#059669;">فرم درخواست ایجاد حساب</h3>
 
-      <div class="form-group">
-        <label class="form-label">شناسه حساب اختصاص‌یافته:</label>
-        <input type="text" id="autoAccId" class="form-input eng-num" readonly style="background:#e2e8f0; color:#0f172a; font-weight:900;">
+      <div class="form-group" style="background:#fffbebf8; border:1.5px dashed #f59e0b; padding:10px; border-radius:12px;">
+        <label class="form-label" style="color:#b45309;">⚠️ شناسه اختصاصی شما (منحصر به‌فرد):</label>
+        <input type="text" id="autoAccId" class="form-input eng-num" readonly style="background:#ffffff; color:#0f172a; font-weight:900; text-align:center; font-size:16px;">
+        
+        <p style="font-size:11px; color:#b45309; font-weight:800; text-align:center; margin-top:4px;">
+          این آیدی منحصر به فرد شماست که برای ورودهای بعدی به آن نیاز دارید. حتماً آن را کپی کنید.
+        </p>
+
+        <button type="button" class="btn-copy" id="copyAccIdBtn" onclick="copyAccountIdToClipboard()" style="margin-top:6px;">
+          📋 کپی شناسه حساب
+        </button>
       </div>
 
       <div class="form-group">
@@ -214,9 +239,10 @@
 
       <div id="studentFields" class="hidden">
         <div class="form-group">
-          <label class="form-label">📸 عکس سلفی زنده:</label>
+          <label class="form-label">📸 عکس سلفی زنده (دوربین جلو):</label>
           <div class="camera-btn-box">
-            <span style="font-size:12px; font-weight:900; color:#0284c7;">📷 بارگذاری عکس سلفی</span>
+            <span style="font-size:12px; font-weight:900; color:#0284c7;">📷 ثبت عکس سلفی</span>
+            <!-- دوربین سلفی جادویی با capture="user" -->
             <input type="file" id="selfieCam" accept="image/*" capture="user" onchange="handleImageCapture(this, 'selfiePreview', 'selfieBase64')">
             <img id="selfiePreview" class="preview-img">
             <input type="hidden" id="selfieBase64">
@@ -224,9 +250,10 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">💳 عکس کارت شهریه یا پاسپورت:</label>
+          <label class="form-label">💳 عکس پاسپورت (دوربین پشت):</label>
           <div class="camera-btn-box">
-            <span style="font-size:12px; font-weight:900; color:#0284c7;">📸 بارگذاری کارت/مدرک</span>
+            <span style="font-size:12px; font-weight:900; color:#0284c7;">📸 ثبت عکس پاسپورت</span>
+            <!-- دوربین پشت با capture="environment" -->
             <input type="file" id="docCam" accept="image/*" capture="environment" onchange="handleImageCapture(this, 'docPreview', 'docBase64')">
             <img id="docPreview" class="preview-img">
             <input type="hidden" id="docBase64">
@@ -234,7 +261,7 @@
         </div>
       </div>
 
-      <button class="btn-main" onclick="submitAccountRequest()">ثبت و ارسال درخواست</button>
+      <button class="btn-main" id="btnSubmitAccountReg" disabled onclick="submitAccountRequest()">ثبت و ارسال درخواست</button>
       <button class="btn-secondary" onclick="showStep('stepAccountType')">انصراف</button>
     </div>
 
@@ -312,7 +339,7 @@
       <div id="chargeBlockedWarning" class="warning-box hidden">
         <div id="blockedWarningText">حساب شما موجودی یا اعتبار کافی ندارد.</div>
         <a id="whatsappSupportBtn" href="https://wa.me/+9647721878997" target="_blank" class="btn-main" style="background:#25d366; margin-top:10px; font-size:13px; text-decoration:none;">
-          💬 ارتباط با صرافی جهت شارژ حساب
+          💬 ارتباط جهت شارژ حساب
         </a>
       </div>
 
@@ -342,6 +369,47 @@
     let isAccountPendingApproval = false;
     let timerInterval = null;
     let isTimerRunning = false;
+    let isIdCopied = false;
+    let globalCachedData = null;
+
+    // پیش‌بارگذاری سریع داده‌ها از سرور به محض باز شدن صفحه
+    window.addEventListener('DOMContentLoaded', () => {
+      preloadDataInBackground();
+    });
+
+    async function preloadDataInBackground() {
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=getData`);
+        globalCachedData = await response.json();
+      } catch(e) {}
+    }
+
+    // تولید افکت صوتی زنده (موفقیت / کلیک)
+    function playBeepSound(type = 'success') {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'success') {
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime); 
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); 
+          osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); 
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 0.4);
+        } else {
+          osc.frequency.setValueAtTime(400, ctx.currentTime);
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 0.15);
+        }
+      } catch(e) {}
+    }
 
     function showStep(stepId) {
       document.getElementById('stepLogin').classList.add('hidden');
@@ -357,6 +425,7 @@
     }
 
     function switchServiceTab(tab) {
+      playBeepSound('click');
       activeServiceTab = tab;
       document.getElementById('tabBtnAfn').classList.toggle('active', tab === 'afn');
       document.getElementById('tabBtnIq').classList.toggle('active', tab === 'iq');
@@ -369,7 +438,13 @@
     }
 
     function openRegistrationForm(isStudent) {
+      playBeepSound('click');
       isStudentMode = isStudent;
+      isIdCopied = false;
+      
+      const btnSubmit = document.getElementById('btnSubmitAccountReg');
+      btnSubmit.disabled = true;
+
       showStep('stepRegister');
 
       const randomId = (isStudent ? "TLB-" : "ACC-") + Math.floor(1000 + Math.random() * 9000);
@@ -380,7 +455,7 @@
       const countryCodeInput = document.getElementById('regCountryCode');
 
       if (isStudent) {
-        title.innerText = "افتتاح حساب اعتباری طلاب (سقف ۳۰,۰۰۰ دینار)";
+        title.innerText = "افتتاح حساب اعتباری حوزوی (سقف ۳۰,۰۰۰ دینار)";
         studentFields.classList.remove('hidden');
         countryCodeInput.value = "+964";
         countryCodeInput.readOnly = true;
@@ -390,6 +465,22 @@
         countryCodeInput.value = "+964";
         countryCodeInput.readOnly = false;
       }
+    }
+
+    function copyAccountIdToClipboard() {
+      const accIdInput = document.getElementById('autoAccId');
+      accIdInput.select();
+      accIdInput.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(accIdInput.value);
+
+      isIdCopied = true;
+      playBeepSound('success');
+
+      const btnCopy = document.getElementById('copyAccIdBtn');
+      btnCopy.style.background = "#10b981";
+      btnCopy.innerHTML = "✅ شناسه با موفقیت کپی شد";
+
+      document.getElementById('btnSubmitAccountReg').disabled = false;
     }
 
     function handleImageCapture(input, previewId, hiddenBase64Id) {
@@ -548,8 +639,12 @@
 
     async function fetchAndRenderData(accId) {
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=getData`);
-        const res = await response.json();
+        let res = globalCachedData;
+        if (!res) {
+          const response = await fetch(`${SCRIPT_URL}?action=getData`);
+          res = await response.json();
+          globalCachedData = res;
+        }
 
         if (res.accounts) {
           let accounts = parseRowsToObjects(res.accounts);
@@ -565,7 +660,7 @@
             let realId = getVal(foundAcc, ['AccountID', 'accountid']);
             
             isAccountPendingApproval = (!rawName || rawName.trim() === "");
-            let displayName = isAccountPendingApproval ? "در انتظار تأیید ادمین" : rawName;
+            let displayName = isAccountPendingApproval ? "در انتظار تأیید مدیریت" : rawName;
 
             document.getElementById('welcomeUserTitle').innerText = `👤 ${displayName}`;
             document.getElementById('userAccountDetails').innerText = `شناسه حساب: ${realId}`;
@@ -589,7 +684,7 @@
       loggedInAccount = { AccountID: accId, Name: "" };
       isAccountPendingApproval = true;
       document.getElementById('welcomeUserTitle').innerText = `👤 حساب: ${accId}`;
-      document.getElementById('userAccountDetails').innerText = `در انتظار تأیید ادمین`;
+      document.getElementById('userAccountDetails').innerText = `در انتظار تأیید مدیریت`;
       
       evaluateAccountAccess(accId, [], accId.toUpperCase().startsWith("TLB"), true);
       renderRecentRequests(accId, []);
@@ -604,7 +699,7 @@
       if (isPendingAccount) {
         chargeActive.classList.add('hidden');
         blockedWarning.classList.remove('hidden');
-        warningText.innerHTML = "⏳ <b>حساب شما در انتظار تأیید ادمین است.</b><br>لطفاً پس از تأیید توسط ادمین، اقدام به استفاده از خدمات فرمایید.";
+        warningText.innerHTML = "⏳ <b>حساب شما در انتظار تأیید مدیریت است.</b><br>لطفاً پس از تأیید، اقدام به استفاده از خدمات فرمایید.";
         return;
       }
 
@@ -631,7 +726,7 @@
         if (maxUsableIqdLimit <= 0) {
           chargeActive.classList.add('hidden');
           blockedWarning.classList.remove('hidden');
-          warningText.innerHTML = "⚠️ <b>سقف اعتبار ۳۰,۰۰۰ دینار شما به پایان رسیده است.</b><br>لطفاً جهت تسویه حساب با صرافی تماس بگیرید.";
+          warningText.innerHTML = "⚠️ <b>سقف اعتبار ۳۰,۰۰۰ دینار شما به پایان رسیده است.</b><br>لطفاً جهت تسویه حساب تماس بگیرید.";
         } else {
           chargeActive.classList.remove('hidden');
           blockedWarning.classList.add('hidden');
@@ -642,7 +737,7 @@
         if (maxUsableIqdLimit <= 0) {
           chargeActive.classList.add('hidden');
           blockedWarning.classList.remove('hidden');
-          warningText.innerHTML = "❌ <b>حساب شما خالی است یا موجودی کافی ندارید.</b><br>لطفاً جهت شارژ حساب با صرافی تماس بگیرید.";
+          warningText.innerHTML = "❌ <b>حساب شما خالی است یا موجودی کافی ندارید.</b><br>لطفاً جهت شارژ حساب تماس بگیرید.";
         } else {
           chargeActive.classList.remove('hidden');
           blockedWarning.classList.add('hidden');
@@ -681,7 +776,8 @@
             pendingBox.classList.add('fade-out-shrink');
             setTimeout(() => {
               localStorage.removeItem(`pending_charge_${accId}`);
-              fetchAndRenderData(accId);
+              globalCachedData = null; // اجبار به دریافت اطلاعات تازه از سرور
+              refreshUserData();
             }, 600);
           }
         }
@@ -728,7 +824,7 @@
               <span style="font-size:13px; font-weight:900;">${p.iqdAmount.toLocaleString()} IQD</span>
             </div>
             <div style="margin-top:6px; color:#9a3412; font-weight:700;">📌 ${detailsStr}</div>
-            <div style="font-size:11px; color:#ea580c; margin-top:4px;">لطفاً چند لحظه شکیبا باشید تا پس از بررسی صرافی، رسید و پین شارژ صادر شود.</div>
+            <div style="font-size:11px; color:#ea580c; margin-top:4px;">لطفاً چند لحظه شکیبا باشید تا پس از بررسی، رسید و پین شارژ صادر شود.</div>
           </div>
         `;
 
@@ -766,7 +862,6 @@
         });
       }
 
-      // افزودن متن راهنما و لینک دکمه واتساپ مستقیم بدون متن پیش‌فرض
       container.innerHTML += `
         <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:12px; margin-top:10px; font-size:11.5px; color:#1e40af; font-weight:700; text-align:center; line-height:1.6;">
           اگر پیام گزارش ارسال موفق ثبت نشده، از بالای صفحه حساب را بروزرسانی کنید. اگر بازم نشد به کریمی پیام بدهید.<br>
@@ -790,14 +885,12 @@
             parse_mode: "Markdown"
           })
         });
-      } catch (e) {
-        console.log("Telegram Error:", e);
-      }
+      } catch (e) {}
     }
 
     async function submitActiveServiceTransaction() {
       if (isAccountPendingApproval) {
-        alert("حساب شما در انتظار تأیید ادمین است.");
+        alert("حساب شما در انتظار تأیید مدیریت است.");
         return;
       }
 
@@ -875,7 +968,8 @@
 
       showLoading(false);
 
-      alert("✅ درخواست شما ثبت شد. تایمر ۳ دقیقه‌ای فعال گردید و پس از ثبت صرافی، رسید صادر می‌شود.");
+      playBeepSound('success');
+      alert("✅ درخواست شما ثبت شد. تایمر ۳ دقیقه‌ای فعال گردید و پس از ثبت، رسید صادر می‌شود.");
 
       document.getElementById('targetPhoneAfn').value = "";
       document.getElementById('chargeAmountAfn').value = "";
@@ -886,6 +980,11 @@
     }
 
     async function submitAccountRequest() {
+      if (!isIdCopied) {
+        alert("لطفاً ابتدا دکمه «کپی شناسه حساب» را بزنید و آیدی خود را ذخیره کنید.");
+        return;
+      }
+
       const accId = document.getElementById('autoAccId').value;
       const name = document.getElementById('regName').value.trim();
       const code = document.getElementById('regCountryCode').value.trim();
@@ -899,12 +998,12 @@
       }
 
       if (isStudentMode && (!selfieBase64 || !docBase64)) {
-        alert("بارگذاری عکس سلفی و عکس کارت شهریه/پاسپورت الزامی است.");
+        alert("بارگذاری عکس سلفی و عکس پاسپورت الزامی است.");
         return;
       }
 
       const fullPhone = code + phone;
-      const accountTypeStr = isStudentMode ? "اعتباری طلاب (سقف ۳۰,۰۰۰ دینار)" : "عادی / نقدی";
+      const accountTypeStr = isStudentMode ? "اعتباری حوزوی (سقف ۳۰,۰۰۰ دینار)" : "عادی / نقدی";
 
       showLoading(true);
 
@@ -931,7 +1030,8 @@
       await sendTelegramNotification(tgText);
 
       showLoading(false);
-      alert("✅ درخواست افتتاح حساب شما ثبت شد و برای ادمین ارسال گردید.");
+      playBeepSound('success');
+      alert("✅ درخواست افتتاح حساب شما ثبت شد و برای مدیریت ارسال گردید.");
       showStep('stepLogin');
     }
   </script>
