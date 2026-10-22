@@ -120,7 +120,6 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* لودینگ نواری سراسری از این طرف به آن طرف صفحه (شبیه پر شدن شارژ) */
     .battery-loading-bar {
       width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; position: relative;
     }
@@ -272,8 +271,8 @@
       <div style="background:#ecfdf5; border:1.5px solid #10b981; padding:12px; border-radius:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h4 style="font-size:14px; color:#047857; font-weight:900;" id="welcomeUserTitle">خوش آمدید</h4>
-          <!-- دکمه «تازه کرده صفحه» با اتصال مستقیم به تابع سریع و لودینگ نواری -->
-          <button class="btn-refresh" onclick="refreshUserData()">🔄 تازه کرده صفحه</button>
+          <!-- دکمه «تازه کردن حساب» با نام اصلاح‌شده -->
+          <button class="btn-refresh" onclick="refreshUserData()">🔄 تازه کردن حساب</button>
         </div>
         <div style="font-size:11.5px; color:#065f46; margin-top:4px;" id="userAccountDetails">در حال استعلام مانده حساب...</div>
         <div id="userBalancesContainer" style="margin-top:6px;"></div>
@@ -348,7 +347,8 @@
 
       <div id="recentRequestsContainer"></div>
 
-      <button class="btn-secondary" onclick="showStep('stepLogin')" style="margin-top:6px;">خروج از حساب</button>
+      <!-- دکمه خروج از حساب با هشدار واضح -->
+      <button class="btn-secondary" onclick="logoutAccount()" style="margin-top:6px; background:#fee2e2; color:#b91c1c;">خروج از حساب (نیاز به ورود مجدد با آیدی)</button>
     </div>
 
   </div>
@@ -374,12 +374,15 @@
     let isIdCopied = false;
     let globalCachedData = null;
 
-    // بارگذاری اولیه فوری و خودکار به محض ورود کاربر
-    window.addEventListener('DOMContentLoaded', () => {
+    // بررسی حافظه مرورگر برای ورود خودکار بدون نیاز مجدد به وارد کردن آیدی (تا زمان خروج یا پاکسازی تاریخچه)
+    window.addEventListener('DOMContentLoaded', async () => {
       preloadDataInBackground();
-      let savedAcc = localStorage.getItem('current_account_id');
+      let savedAcc = sessionStorage.getItem('current_active_account_id') || localStorage.getItem('persistent_account_id');
+      
       if (savedAcc) {
-        document.getElementById('loginAccId').value = savedAcc;
+        showLoading(true);
+        await fetchAndRenderData(savedAcc);
+        showLoading(false);
       }
     });
 
@@ -629,19 +632,33 @@
         return;
       }
 
-      localStorage.setItem('current_account_id', accId);
+      // ذخیره‌سازی در حافظه مرورگر تا زمان خروج دستی
+      sessionStorage.setItem('current_active_account_id', accId);
+      localStorage.setItem('persistent_account_id', accId);
+
       showLoading(true);
       await fetchAndRenderData(accId);
       showLoading(false);
     }
 
-    // تابع «تازه کرده صفحه» با لودینگ نواری روان و واقعی
+    // تابع خروج از حساب با هشدار برای ورود مجدد با آیدی
+    function logoutAccount() {
+      if (confirm("⚠️ آیا مطمئن هستید که می‌خواهید از حساب خارج شوید؟\n\nبا خروج از حساب، برای ورود بعدی باید مجدداً شناسه (آیدی) خود را وارد کنید.")) {
+        sessionStorage.removeItem('current_active_account_id');
+        localStorage.removeItem('persistent_account_id');
+        loggedInAccount = null;
+        document.getElementById('loginAccId').value = "";
+        showStep('stepLogin');
+      }
+    }
+
+    // تابع «تازه کردن حساب» با لودینگ نواری روان و واقعی
     async function refreshUserData() {
       if (!loggedInAccount) {
-        let savedAcc = document.getElementById('loginAccId').value.trim() || localStorage.getItem('current_account_id');
+        let savedAcc = document.getElementById('loginAccId').value.trim() || sessionStorage.getItem('current_active_account_id') || localStorage.getItem('persistent_account_id');
         if (savedAcc) {
           showLoading(true);
-          globalCachedData = null; // اجبار به فراکشی داده تازه از سرور
+          globalCachedData = null; 
           await fetchAndRenderData(savedAcc);
           showLoading(false);
         }
@@ -650,7 +667,7 @@
       
       let realId = getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID;
       showLoading(true);
-      globalCachedData = null; // پاک کردن کش برای گرفتن اطلاعات تازه
+      globalCachedData = null; 
       await fetchAndRenderData(realId);
       showLoading(false);
     }
