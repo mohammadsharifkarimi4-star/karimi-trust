@@ -120,14 +120,18 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* لودینگ نواری شبیه پر شدن شارژ باتری */
+    /* لودینگ نواری سراسری از این طرف به آن طرف صفحه (شبیه پر شدن شارژ) */
     .battery-loading-bar {
-      width: 100%; height: 10px; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative; margin-top: 6px;
+      width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; position: relative;
     }
     .battery-loading-fill {
-      height: 100%; background: linear-gradient(90deg, #10b981, #059669); width: 0%; animation: batteryFill 2s infinite ease-in-out;
+      height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6, #10b981); width: 0%; animation: batteryFillAnim 1.2s infinite linear;
     }
-    @keyframes batteryFill { 0% { width: 0%; } 100% { width: 100%; } }
+    @keyframes batteryFillAnim {
+      0% { width: 0%; margin-left: 0%; }
+      50% { width: 70%; margin-left: 15%; }
+      100% { width: 100%; margin-left: 0%; }
+    }
 
     .slide-in-success {
       animation: slideInGreen 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -146,19 +150,19 @@
     }
 
     #loadingOverlay {
-      position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(9, 13, 22, 0.88);
-      display:none; justify-content:center; align-items:center; z-index:9999; color:#fff; font-weight:900; font-size:15px; flex-direction:column; gap:12px;
+      position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(9, 13, 22, 0.9);
+      display:none; justify-content:center; align-items:center; z-index:9999; color:#fff; font-weight:900; font-size:15px; flex-direction:column; gap:16px; padding: 0 20px;
     }
   </style>
 </head>
 <body>
 
   <div id="loadingOverlay">
-    <div>⚡ در حال پردازش و برقراری ارتباط...</div>
-    <div style="width: 220px;">
+    <div style="font-size: 16px; color: #10b981;">⚡ در حال تازه‌سازی صفحه و دریافت اطلاعات...</div>
+    <div style="width: 100%; max-width: 320px;">
       <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
     </div>
-    <div style="font-size:11.5px; color:#10b981;">لطفاً چند لحظه شکیبا باشید</div>
+    <div style="font-size:11.5px; color:#94a3b8;">لطفاً چند لحظه شکیبا باشید</div>
   </div>
 
   <div class="app-viewport">
@@ -242,7 +246,6 @@
           <label class="form-label">📸 عکس سلفی زنده (دوربین جلو):</label>
           <div class="camera-btn-box">
             <span style="font-size:12px; font-weight:900; color:#0284c7;">📷 ثبت عکس سلفی</span>
-            <!-- دوربین سلفی جادویی با capture="user" -->
             <input type="file" id="selfieCam" accept="image/*" capture="user" onchange="handleImageCapture(this, 'selfiePreview', 'selfieBase64')">
             <img id="selfiePreview" class="preview-img">
             <input type="hidden" id="selfieBase64">
@@ -253,7 +256,6 @@
           <label class="form-label">💳 عکس پاسپورت (دوربین پشت):</label>
           <div class="camera-btn-box">
             <span style="font-size:12px; font-weight:900; color:#0284c7;">📸 ثبت عکس پاسپورت</span>
-            <!-- دوربین پشت با capture="environment" -->
             <input type="file" id="docCam" accept="image/*" capture="environment" onchange="handleImageCapture(this, 'docPreview', 'docBase64')">
             <img id="docPreview" class="preview-img">
             <input type="hidden" id="docBase64">
@@ -270,7 +272,8 @@
       <div style="background:#ecfdf5; border:1.5px solid #10b981; padding:12px; border-radius:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h4 style="font-size:14px; color:#047857; font-weight:900;" id="welcomeUserTitle">خوش آمدید</h4>
-          <button class="btn-refresh" onclick="refreshUserData()">🔄 به‌روزرسانی حساب</button>
+          <!-- دکمه «تازه کرده صفحه» با اتصال مستقیم به تابع سریع و لودینگ نواری -->
+          <button class="btn-refresh" onclick="refreshUserData()">🔄 تازه کرده صفحه</button>
         </div>
         <div style="font-size:11.5px; color:#065f46; margin-top:4px;" id="userAccountDetails">در حال استعلام مانده حساب...</div>
         <div id="userBalancesContainer" style="margin-top:6px;"></div>
@@ -349,7 +352,6 @@
     </div>
 
   </div>
-
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaCdwpY7tcQj-_sDC47fUO8PBoL2ncDtIFeHgbk3HhpxuQr4biosiaK_jOFCq0Xu7v/exec"; 
     
@@ -372,9 +374,13 @@
     let isIdCopied = false;
     let globalCachedData = null;
 
-    // پیش‌بارگذاری سریع داده‌ها از سرور به محض باز شدن صفحه
+    // بارگذاری اولیه فوری و خودکار به محض ورود کاربر
     window.addEventListener('DOMContentLoaded', () => {
       preloadDataInBackground();
+      let savedAcc = localStorage.getItem('current_account_id');
+      if (savedAcc) {
+        document.getElementById('loginAccId').value = savedAcc;
+      }
     });
 
     async function preloadDataInBackground() {
@@ -384,7 +390,6 @@
       } catch(e) {}
     }
 
-    // تولید افکت صوتی زنده (موفقیت / کلیک)
     function playBeepSound(type = 'success') {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -624,15 +629,28 @@
         return;
       }
 
+      localStorage.setItem('current_account_id', accId);
       showLoading(true);
       await fetchAndRenderData(accId);
       showLoading(false);
     }
 
+    // تابع «تازه کرده صفحه» با لودینگ نواری روان و واقعی
     async function refreshUserData() {
-      if (!loggedInAccount) return;
+      if (!loggedInAccount) {
+        let savedAcc = document.getElementById('loginAccId').value.trim() || localStorage.getItem('current_account_id');
+        if (savedAcc) {
+          showLoading(true);
+          globalCachedData = null; // اجبار به فراکشی داده تازه از سرور
+          await fetchAndRenderData(savedAcc);
+          showLoading(false);
+        }
+        return;
+      }
+      
       let realId = getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID;
       showLoading(true);
+      globalCachedData = null; // پاک کردن کش برای گرفتن اطلاعات تازه
       await fetchAndRenderData(realId);
       showLoading(false);
     }
@@ -774,10 +792,12 @@
           let pendingBox = document.getElementById(`pendingCard_${accId}`);
           if (pendingBox) {
             pendingBox.classList.add('fade-out-shrink');
-            setTimeout(() => {
+            setTimeout(async () => {
               localStorage.removeItem(`pending_charge_${accId}`);
-              globalCachedData = null; // اجبار به دریافت اطلاعات تازه از سرور
-              refreshUserData();
+              showLoading(true);
+              globalCachedData = null;
+              await fetchAndRenderData(accId);
+              showLoading(false);
             }, 600);
           }
         }
