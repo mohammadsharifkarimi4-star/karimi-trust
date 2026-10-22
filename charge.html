@@ -157,7 +157,7 @@
 <body>
 
   <div id="loadingOverlay">
-    <div style="font-size: 16px; color: #10b981;">⚡ در حال تازه‌سازی صفحه و دریافت اطلاعات...</div>
+    <div style="font-size: 16px; color: #10b981;">⚡ در حال بررسی شناسه و دریافت اطلاعات...</div>
     <div style="width: 100%; max-width: 320px;">
       <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
     </div>
@@ -183,11 +183,13 @@
         <input type="text" id="loginAccId" class="form-input eng-num" placeholder="مثال: TLB-1234">
       </div>
 
-      <button class="btn-main" onclick="processLogin()">ورود و بررسی سریع حساب</button>
+      <button class="btn-main" onclick="processLogin()">ورود به حساب</button>
 
-      <hr style="border:none; border-top:1px dashed #cbd5e1; margin:2px 0;">
-
-      <button class="btn-secondary" onclick="showStep('stepAccountType')">حساب ندارم / ایجاد حساب جدید ➕</button>
+      <!-- دکمه‌های کمکی برای آیدی فراموش شده یا نداشتن حساب -->
+      <div style="display: flex; gap: 6px; margin-top: 4px;">
+        <button class="btn-secondary" style="font-size:11.5px;" onclick="showStep('stepAccountType')">حساب ندارم ➕</button>
+        <button class="btn-secondary" style="font-size:11.5px; background:#fef3c7; color:#b45309;" onclick="forgotMyId()">آیدی‌ام را فراموش کرده‌ام؟ ❓</button>
+      </div>
     </div>
 
     <!-- ================= گام ۲: انتخاب نوع حساب ================= -->
@@ -271,10 +273,9 @@
       <div style="background:#ecfdf5; border:1.5px solid #10b981; padding:12px; border-radius:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h4 style="font-size:14px; color:#047857; font-weight:900;" id="welcomeUserTitle">خوش آمدید</h4>
-          <!-- دکمه «تازه کردن حساب» با نام اصلاح‌شده -->
           <button class="btn-refresh" onclick="refreshUserData()">🔄 تازه کردن حساب</button>
         </div>
-        <div style="font-size:11.5px; color:#065f46; margin-top:4px;" id="userAccountDetails">در حال استعلام مانده حساب...</div>
+        <div style="font-size:11.5px; color:#065f46; margin-top:4px;" id="userAccountDetails">آماده ارسال شارژ</div>
         <div id="userBalancesContainer" style="margin-top:6px;"></div>
       </div>
 
@@ -347,7 +348,6 @@
 
       <div id="recentRequestsContainer"></div>
 
-      <!-- دکمه خروج از حساب با هشدار واضح -->
       <button class="btn-secondary" onclick="logoutAccount()" style="margin-top:6px; background:#fee2e2; color:#b91c1c;">خروج از حساب (نیاز به ورود مجدد با آیدی)</button>
     </div>
 
@@ -355,11 +355,8 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaCdwpY7tcQj-_sDC47fUO8PBoL2ncDtIFeHgbk3HhpxuQr4biosiaK_jOFCq0Xu7v/exec"; 
     
-    const TELEGRAM_BOT_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
-    const TELEGRAM_CHAT_ID = "802655440";
     const ADMIN_WHATSAPP = "+9647721878997"; 
 
-    // نرخ دقیق: هر 1 افغانی = 26.5 دینار (100 AFN = 2650 IQD)
     const AFN_TO_IQD_RATE = 26.5;
 
     let activeServiceTab = 'afn';
@@ -372,26 +369,22 @@
     let timerInterval = null;
     let isTimerRunning = false;
     let isIdCopied = false;
-    let globalCachedData = null;
 
-    // بررسی حافظه مرورگر برای ورود خودکار بدون نیاز مجدد به وارد کردن آیدی (تا زمان خروج یا پاکسازی تاریخچه)
-    window.addEventListener('DOMContentLoaded', async () => {
-      preloadDataInBackground();
+    // ورود آنی با حافظه مرورگر
+    window.addEventListener('DOMContentLoaded', () => {
       let savedAcc = sessionStorage.getItem('current_active_account_id') || localStorage.getItem('persistent_account_id');
       
       if (savedAcc) {
-        showLoading(true);
-        await fetchAndRenderData(savedAcc);
-        showLoading(false);
+        loggedInAccount = { AccountID: savedAcc, Name: "کاربر گرامی" };
+        document.getElementById('welcomeUserTitle').innerText = `👤 ${savedAcc}`;
+        document.getElementById('userAccountDetails').innerText = `شناسه حساب: ${savedAcc}`;
+        showStep('stepChargePanel');
+
+        fetchAndRenderDataInBackground(savedAcc);
+      } else {
+        showStep('stepLogin');
       }
     });
-
-    async function preloadDataInBackground() {
-      try {
-        const response = await fetch(`${SCRIPT_URL}?action=getData`);
-        globalCachedData = await response.json();
-      } catch(e) {}
-    }
 
     function playBeepSound(type = 'success') {
       try {
@@ -625,6 +618,7 @@
       return '';
     }
 
+    // بررسی دقیق آیدی در گوگل شیت و جلوگیری از ورود در صورت نامعتبر بودن
     async function processLogin() {
       const accId = document.getElementById('loginAccId').value.trim();
       if (!accId) {
@@ -632,16 +626,46 @@
         return;
       }
 
-      // ذخیره‌سازی در حافظه مرورگر تا زمان خروج دستی
-      sessionStorage.setItem('current_active_account_id', accId);
-      localStorage.setItem('persistent_account_id', accId);
-
       showLoading(true);
-      await fetchAndRenderData(accId);
-      showLoading(false);
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=getData`);
+        const res = await response.json();
+
+        if (res.accounts) {
+          let accounts = parseRowsToObjects(res.accounts);
+          let foundAcc = accounts.find(acc => String(getVal(acc, ['AccountID', 'accountid'])).trim().toLowerCase() === accId.toLowerCase());
+
+          if (foundAcc) {
+            // آیدی معتبر است و در گوگل شیت وجود دارد
+            sessionStorage.setItem('current_active_account_id', accId);
+            localStorage.setItem('persistent_account_id', accId);
+            processServerData(res, accId);
+            showLoading(false);
+          } else {
+            // آیدی در گوگل شیت وجود ندارد یا اشتباه است
+            showLoading(false);
+            playBeepSound('error');
+            if (confirm("❌ این آیدی در سیستم وجود ندارد یا اشتباه است!\n\nآیا می‌خواهید یک حساب جدید ایجاد کنید؟")) {
+              showStep('stepAccountType');
+            }
+          }
+        } else {
+          showLoading(false);
+          alert("خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.");
+        }
+      } catch (e) {
+        showLoading(false);
+        alert("خطا در بررسی آیدی. لطفاً اتصال اینترنت خود را بررسی کنید.");
+      }
     }
 
-    // تابع خروج از حساب با هشدار برای ورود مجدد با آیدی
+    // اگر کاربر آیدی خود را فراموش کرده باشد
+    function forgotMyId() {
+      playBeepSound('click');
+      const msg = encodeURIComponent("سلام جناب کریمی، من آیدی حساب خود را فراموش کرده‌ام. لطفاً راهنمایی فرمایید.");
+      window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${msg}`, '_blank');
+    }
+
     function logoutAccount() {
       if (confirm("⚠️ آیا مطمئن هستید که می‌خواهید از حساب خارج شوید؟\n\nبا خروج از حساب، برای ورود بعدی باید مجدداً شناسه (آیدی) خود را وارد کنید.")) {
         sessionStorage.removeItem('current_active_account_id');
@@ -652,78 +676,56 @@
       }
     }
 
-    // تابع «تازه کردن حساب» با لودینگ نواری روان و واقعی
     async function refreshUserData() {
-      if (!loggedInAccount) {
-        let savedAcc = document.getElementById('loginAccId').value.trim() || sessionStorage.getItem('current_active_account_id') || localStorage.getItem('persistent_account_id');
-        if (savedAcc) {
-          showLoading(true);
-          globalCachedData = null; 
-          await fetchAndRenderData(savedAcc);
-          showLoading(false);
-        }
-        return;
-      }
-      
+      if (!loggedInAccount) return;
       let realId = getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID;
       showLoading(true);
-      globalCachedData = null; 
       await fetchAndRenderData(realId);
       showLoading(false);
     }
 
-    async function fetchAndRenderData(accId) {
+    async function fetchAndRenderDataInBackground(accId) {
       try {
-        let res = globalCachedData;
-        if (!res) {
-          const response = await fetch(`${SCRIPT_URL}?action=getData`);
-          res = await response.json();
-          globalCachedData = res;
-        }
-
-        if (res.accounts) {
-          let accounts = parseRowsToObjects(res.accounts);
-          let transactions = parseRowsToObjects(res.transactions);
-
-          let foundAcc = accounts.find(acc => String(getVal(acc, ['AccountID', 'accountid'])).trim().toLowerCase() === accId.toLowerCase());
-
-          if (foundAcc) {
-            loggedInAccount = foundAcc;
-            allTransactions = transactions;
-            
-            let rawName = getVal(foundAcc, ['Name', 'name']);
-            let realId = getVal(foundAcc, ['AccountID', 'accountid']);
-            
-            isAccountPendingApproval = (!rawName || rawName.trim() === "");
-            let displayName = isAccountPendingApproval ? "در انتظار تأیید مدیریت" : rawName;
-
-            document.getElementById('welcomeUserTitle').innerText = `👤 ${displayName}`;
-            document.getElementById('userAccountDetails').innerText = `شناسه حساب: ${realId}`;
-            
-            evaluateAccountAccess(realId, transactions, realId.toUpperCase().startsWith("TLB"), isAccountPendingApproval);
-            renderRecentRequests(realId, transactions);
-
-            showStep('stepChargePanel');
-          } else {
-            fallbackLogin(accId);
-          }
-        } else {
-          fallbackLogin(accId);
-        }
-      } catch (e) {
-        fallbackLogin(accId);
-      }
+        const response = await fetch(`${SCRIPT_URL}?action=getData`);
+        const res = await response.json();
+        processServerData(res, accId);
+      } catch (e) {}
     }
 
-    function fallbackLogin(accId) {
-      loggedInAccount = { AccountID: accId, Name: "" };
-      isAccountPendingApproval = true;
-      document.getElementById('welcomeUserTitle').innerText = `👤 حساب: ${accId}`;
-      document.getElementById('userAccountDetails').innerText = `در انتظار تأیید مدیریت`;
-      
-      evaluateAccountAccess(accId, [], accId.toUpperCase().startsWith("TLB"), true);
-      renderRecentRequests(accId, []);
-      showStep('stepChargePanel');
+    async function fetchAndRenderData(accId) {
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=getData`);
+        const res = await response.json();
+        processServerData(res, accId);
+      } catch (e) {}
+    }
+
+    function processServerData(res, accId) {
+      if (res.accounts) {
+        let accounts = parseRowsToObjects(res.accounts);
+        let transactions = parseRowsToObjects(res.transactions);
+
+        let foundAcc = accounts.find(acc => String(getVal(acc, ['AccountID', 'accountid'])).trim().toLowerCase() === accId.toLowerCase());
+
+        if (foundAcc) {
+          loggedInAccount = foundAcc;
+          allTransactions = transactions;
+          
+          let rawName = getVal(foundAcc, ['Name', 'name']);
+          let realId = getVal(foundAcc, ['AccountID', 'accountid']);
+          
+          isAccountPendingApproval = (!rawName || rawName.trim() === "");
+          let displayName = isAccountPendingApproval ? "در انتظار تأیید مدیریت" : rawName;
+
+          document.getElementById('welcomeUserTitle').innerText = `👤 ${displayName}`;
+          document.getElementById('userAccountDetails').innerText = `شناسه حساب: ${realId}`;
+          
+          evaluateAccountAccess(realId, transactions, realId.toUpperCase().startsWith("TLB"), isAccountPendingApproval);
+          renderRecentRequests(realId, transactions);
+
+          showStep('stepChargePanel');
+        }
+      }
     }
 
     function evaluateAccountAccess(accId, txs, isStudentAccount, isPendingAccount) {
@@ -812,7 +814,6 @@
             setTimeout(async () => {
               localStorage.removeItem(`pending_charge_${accId}`);
               showLoading(true);
-              globalCachedData = null;
               await fetchAndRenderData(accId);
               showLoading(false);
             }, 600);
@@ -910,19 +911,10 @@
       if (activeServiceTab === 'iq') calculateIqCardAndValidate();
     }
 
-    async function sendTelegramNotification(message) {
-      const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-      try {
-        await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: message,
-            parse_mode: "Markdown"
-          })
-        });
-      } catch (e) {}
+    function sendWhatsAppNotification(message) {
+      const encodedMsg = encodeURIComponent(message);
+      const waUrl = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodedMsg}`;
+      window.open(waUrl, '_blank');
     }
 
     async function submitActiveServiceTransaction() {
@@ -942,7 +934,7 @@
       }
 
       let iqdAmount = 0;
-      let tgText = "";
+      let waText = "";
       let pendingObj = {};
 
       if (activeServiceTab === 'afn') {
@@ -967,12 +959,12 @@
         }
 
         pendingObj = { type: 'afn', targetPhone, afnAmount, iqdAmount, date: new Date().toISOString() };
-        tgText = `🚨 *درخواست شارژ افغانستان*\n\n` +
-                 `👤 نام حساب: *${accName}*\n` +
-                 `🔑 شناسه: \`${accId}\`\n` +
-                 `📞 شماره مقصد: \`${targetPhone}\`\n` +
-                 `💵 مبلغ افغانی: *${afnAmount} AFN*\n` +
-                 `💰 معادل دینار (نرخ 26.5): *${iqdAmount.toLocaleString()} IQD*`;
+        waText = `🚨 درخواست شارژ افغانستان\n\n` +
+                 `👤 نام حساب: ${accName}\n` +
+                 `🔑 شناسه: ${accId}\n` +
+                 `📞 شماره مقصد: ${targetPhone}\n` +
+                 `💵 مبلغ افغانی: ${afnAmount} AFN\n` +
+                 `💰 معادل دینار: ${iqdAmount.toLocaleString()} IQD`;
 
       } else if (activeServiceTab === 'iq') {
         const network = document.getElementById('iqNetworkSelect').value;
@@ -986,12 +978,12 @@
         }
 
         pendingObj = { type: 'iq', network, baseCardAmt, iqdAmount, date: new Date().toISOString() };
-        tgText = `💳 *درخواست کارت شارژ (رصید) عراق*\n\n` +
-                 `👤 نام حساب: *${accName}*\n` +
-                 `🔑 شناسه: \`${accId}\`\n` +
-                 `📡 شبکه: *${network}*\n` +
-                 `💵 کارت درخواستی: *${baseCardAmt.toLocaleString()} IQD*\n` +
-                 `💰 مبلغ کل کسر از حساب: *${iqdAmount.toLocaleString()} IQD*`;
+        waText = `💳 درخواست کارت شارژ (رصید) عراق\n\n` +
+                 `👤 نام حساب: ${accName}\n` +
+                 `🔑 شناسه: ${accId}\n` +
+                 `📡 شبکه: ${network}\n` +
+                 `💵 کارت درخواستی: ${baseCardAmt.toLocaleString()} IQD\n` +
+                 `💰 مبلغ کل کسر از حساب: ${iqdAmount.toLocaleString()} IQD`;
       }
 
       showLoading(true);
@@ -1001,12 +993,12 @@
 
       renderRecentRequests(accId, allTransactions);
 
-      await sendTelegramNotification(tgText);
+      sendWhatsAppNotification(waText);
 
       showLoading(false);
 
       playBeepSound('success');
-      alert("✅ درخواست شما ثبت شد. تایمر ۳ دقیقه‌ای فعال گردید و پس از ثبت، رسید صادر می‌شود.");
+      alert("✅ درخواست شما ثبت شد. لطفا پیام واتساپ باز شده را ارسال کنید تا بررسی شود.");
 
       document.getElementById('targetPhoneAfn').value = "";
       document.getElementById('chargeAmountAfn').value = "";
@@ -1026,16 +1018,9 @@
       const name = document.getElementById('regName').value.trim();
       const code = document.getElementById('regCountryCode').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
-      const selfieBase64 = document.getElementById('selfieBase64').value;
-      const docBase64 = document.getElementById('docBase64').value;
 
       if (!name || !phone) {
         alert("لطفاً نام و شماره همراه را تکمیل کنید.");
-        return;
-      }
-
-      if (isStudentMode && (!selfieBase64 || !docBase64)) {
-        alert("بارگذاری عکس سلفی و عکس پاسپورت الزامی است.");
         return;
       }
 
@@ -1051,24 +1036,23 @@
       let sheetNameValue = isStudentMode ? "" : `${name} (عادی)`;
       formData.append("accountName", sheetNameValue);
       formData.append("phone", fullPhone);
-      formData.append("selfiePhoto", selfieBase64);
-      formData.append("docPhoto", docBase64);
 
       try {
         await fetch(SCRIPT_URL, { method: "POST", body: formData, mode: "no-cors" });
       } catch (e) {}
 
-      const tgText = `📋 *درخواست افتتاح حساب جدید*\n\n` +
-                     `📌 نوع: *${accountTypeStr}*\n` +
-                     `🔑 شناسه: \`${accId}\`\n` +
-                     `👤 نام درخواست‌دهنده: *${name}*\n` +
-                     `📱 تلفن: \`${fullPhone}\``;
+      const waText = `📋 درخواست افتتاح حساب جدید\n\n` +
+                     `📌 نوع: ${accountTypeStr}\n` +
+                     `🔑 شناسه: ${accId}\n` +
+                     `👤 نام: ${name}\n` +
+                     `📱 تلفن: ${fullPhone}\n` +
+                     (isStudentMode ? `*(کاربر گرامی لطفاً عکس سلفی و پاسپورت خود را در ادامه همین پیام واتساپ برای بررسی و تایید هویت ارسال نمایید)*` : ``);
 
-      await sendTelegramNotification(tgText);
+      sendWhatsAppNotification(waText);
 
       showLoading(false);
       playBeepSound('success');
-      alert("✅ درخواست افتتاح حساب شما ثبت شد و برای مدیریت ارسال گردید.");
+      alert("✅ درخواست ثبت شد. لطفا پیام واتساپ باز شده را برای مدیریت ارسال کنید.");
       showStep('stepLogin');
     }
   </script>
