@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>حساب‌کتاب من</title>
+  <title>حساب‌کتاب من - سامانه شارژ و خدمات</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap');
 
@@ -303,6 +303,7 @@
       border: 1.5px solid rgba(255, 255, 255, 0.8);
       box-shadow: var(--shadow-3d);
       transition: all 0.2s ease;
+      cursor: pointer;
     }
 
     .menu-card-large:hover, .menu-card-large:active {
@@ -327,6 +328,7 @@
     .icon-finance { background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%); color: #0284c7; }
     .icon-exchange { background: linear-gradient(135deg, #dcfce7 0%, #4ade80 100%); color: #16a34a; }
     .icon-calc { background: linear-gradient(135deg, #fef3c7 0%, #facc15 100%); color: #d97706; }
+    .icon-charge { background: linear-gradient(135deg, #fce7f3 0%, #f472b6 100%); color: #db2777; }
 
     .card-title {
       font-size: 14px;
@@ -339,6 +341,147 @@
       color: var(--text-muted);
       font-weight: 600;
       margin-top: 2px;
+    }
+
+    /* استایل‌های اختصاصی بخش شارژ و خدمات */
+    .card-box {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow-3d);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .tab-container {
+      display: flex;
+      gap: 6px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 12px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      background: transparent;
+      color: #475569;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #047857;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      outline: none;
+      background: #f8fafc;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: #10b981;
+      background: #fff;
+    }
+
+    .btn-main {
+      width: 100%;
+      background: var(--accent-gradient);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    .btn-main:disabled {
+      background: #94a3b8 !important;
+      box-shadow: none !important;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .calc-box {
+      background: #f8fafc;
+      border: 1.5px dashed #cbd5e1;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #047857;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .calc-box-error {
+      background: #fef2f2 !important;
+      border-color: #fca5a5 !important;
+      color: #b91c1c !important;
+    }
+
+    .spinner-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2.5px solid #ea580c;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .slide-in-success {
+      animation: slideInGreen 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideInGreen {
+      0% { opacity: 0; transform: translateY(-15px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .fade-out-shrink {
+      animation: fadeShrink 0.6s ease forwards;
+    }
+
+    @keyframes fadeShrink {
+      0% { opacity: 1; transform: scale(1); max-height: 150px; margin-top: 8px; }
+      100% { opacity: 0; transform: scale(0.9); max-height: 0; margin-top: 0; padding: 0; overflow: hidden; display: none; }
     }
 
     .eng-num {
@@ -446,7 +589,84 @@
         </div>
       </a>
 
-      <!-- ۳. ماشین حساب عادی و پیشرفته -->
+      <!-- ۳. بخش ارسال شارژ و خدمات (اضافه شده به منو) -->
+      <div class="card-box" id="chargeSectionBox" style="margin-top: 2px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="icon-wrapper icon-charge" style="width:38px; height:38px; font-size:18px;">📲</div>
+            <div>
+              <div class="card-title" style="font-size:13.5px;" id="welcomeUserTitle">سامانه شارژ و رصید</div>
+              <div class="card-desc" id="userAccountDetails">جهت خرید، حساب خود را متصل کنید</div>
+            </div>
+          </div>
+          <button class="btn-refresh" id="refreshAccBtn" onclick="refreshUserData()" style="background:#3b82f6; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">🔄 به‌روزرسانی</button>
+        </div>
+
+        <div id="userBalancesContainer" style="margin-top:4px;"></div>
+
+        <!-- تب‌های انتخاب سرویس -->
+        <div class="tab-container" style="margin-top: 6px;">
+          <button class="tab-btn active" id="tabBtnAfn" onclick="switchServiceTab('afn')">📲 شارژ افغانستان</button>
+          <button class="tab-btn" id="tabBtnIq" onclick="switchServiceTab('iq')">💳 رصید شبکه‌های عراق</button>
+        </div>
+
+        <!-- محتوای فعال خدمات -->
+        <div id="chargeActiveContent">
+          
+          <!-- ۱. سرویس شارژ افغانستان -->
+          <div id="serviceAfnBox">
+            <div class="form-group" style="margin-top:8px;">
+              <label class="form-label">شماره تلفن مقصد در افغانستان (موبایل - ۱۰ رقم با صفر اول):</label>
+              <input type="text" id="targetPhoneAfn" class="form-input eng-num" maxlength="10" placeholder="07xxxxxxxx" oninput="validatePhoneLength(this)">
+            </div>
+
+            <div class="form-group" style="margin-top:8px;">
+              <label class="form-label">مبلغ شارژ (به افغانی / AFN):</label>
+              <input type="number" id="chargeAmountAfn" class="form-input eng-num" placeholder="" oninput="calculateAfnAndValidate()">
+            </div>
+
+            <div class="calc-box" id="calcResultBoxAfn" style="margin-top:8px;">
+              💱 معادل قابل پرداخت در حساب (دینار / IQD): <span id="calculatedDinarValAfn" style="font-size:13px; font-weight:900;">0</span> دینار
+            </div>
+          </div>
+
+          <!-- ۲. سرویس شارژ (رصید) عراق (بدون نمایش کارمزد) -->
+          <div id="serviceIqBox" class="hidden">
+            <div class="form-group" style="margin-top:8px;">
+              <label class="form-label">انتخاب شبکه همراه:</label>
+              <select id="iqNetworkSelect" class="form-select">
+                <option value="Zain (زین)">Zain (زین عراق)</option>
+                <option value="AsiaCell (آسیاسل)">AsiaCell (آسیاسل)</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-top:8px;">
+              <label class="form-label">مبلغ کارت شارژ انتخابی:</label>
+              <select id="iqCardAmountSelect" class="form-select" onchange="calculateIqCardAndValidate()">
+                <option value="1000">1,000 دینار</option>
+                <option value="2000">2,000 دینار</option>
+                <option value="3000">3,000 دینار</option>
+                <option value="5000">5,000 دینار</option>
+                <option value="6000">6,000 دینار</option>
+                <option value="15000">15,000 دینار</option>
+                <option value="25000">25,000 دینار</option>
+              </select>
+            </div>
+
+            <div class="calc-box" id="calcResultBoxIq" style="margin-top:8px;">
+              💱 مبلغ قابل پرداخت: <span id="calculatedDinarValIq" style="font-size:13px; font-weight:900;">2,000</span> دینار
+            </div>
+          </div>
+
+          <div id="amountLimitWarning" style="font-size:11px; color:#b91c1c; font-weight:800; text-align:center; display:none; margin-top:6px;"></div>
+
+          <button class="btn-main" id="btnSubmitCharge" style="margin-top:10px;" onclick="submitActiveServiceTransaction()">ثبت درخواست و ارسال</button>
+        </div>
+
+        <div id="recentRequestsContainer" style="margin-top:4px;"></div>
+      </div>
+
+      <!-- ۴. ماشین حساب عادی و پیشرفته -->
       <a href="calc.html" class="menu-card-large">
         <div class="icon-wrapper icon-calc">🧮</div>
         <div>
@@ -457,77 +677,18 @@
     </div>
 
   </div>
+
   <script>
-    // بانک جامع ۶۵ مورد پند، حکمت، کلمات قصار بزرگان و تجربیات تاریخی
+    // بانک جامع پندها و حکمت‌ها
     const wisdomQuotes = [
-      { author: "کوروش کبیر", text: "«باران باش و ببار و نپرس که پیاله‌های خالی از آن کیست.»", trans: "نیکی کردن بدون چشم‌داشت و به صورت همگانی، بزرگ‌ترین نشانه بزرگی روح است.", source: "منشور و تاریخ باستان" },
-      { author: "آبراهام لینکلن", text: "«بهترین راه پیش‌بینی آینده خود، ساختن آن است.»", trans: "منتظر تقدیر نمانید؛ با اراده و تلاش خود، آینده‌ای که می‌خواهید را خلق کنید.", source: "کلمات ماندگار سیاسی" },
-      { author: "نيلسون ماندلا", text: "«همیشه قبل از انجام کار، غیرممکن به نظر می‌رسد تا زمانی که آن را انجام دهی.»", trans: "بزرگ‌ترین مانع در مسیر موفقیت، ترس از شروع و باور نداشتن به توانایی‌های خود است.", source: "زندگینامه و سخنرانی‌ها" },
-      { author: "آلبرت اینشتین", text: "«تلاش نکنید آدم موفقیت باشید، بلکه سعی کنید آدم باارزشی باشید.»", trans: "ارزش واقعی انسان به دستاوردهای مادی او نیست، بلکه به خدماتی است که به جامعه ارائه می‌دهد.", source: "مقالات فلسفی" },
-      { author: "کنفوسیوس", text: "«اگر راهی پیدا نکردی، آن را بساز.»", trans: "در مواجهه با بن‌بست‌های زندگی، به جای ناامیدی، به دنبال نوآوری و راه‌حل‌های جدید باشید.", source: "حکمت کهن شرق" },
-      { author: "ارسطو", text: "«ما همان چیزی هستیم که مرتباً تکرار می‌کنیم؛ بنابراین فضیلت یک عمل نیست، بلکه یک عادت است.»", trans: "رفتارهای خوب و موفقیت‌آمیز در اثر استمرار و تکرار در وجود انسان ریشه‌دار می‌شوند.", source: "فلسفه اخلاق" },
-      { author: "سقراط", text: "«زندگی بررسی نشده، ارزش زیستن ندارد.»", trans: "تفکر انتقادی و خودشناسی کلید داشتن یک زندگی آگاهانه و ارزشمند است.", source: "فلسفه یونان باستان" },
-      { author: "پروفسور سمیعی", text: "«شکست به معنای پایان راه نیست، بلکه پلکان اول برای رسیدن به پیروزی است.»", trans: "از اشتباهات و شکست‌ها نهراسید؛ آن‌ها بهترین معلمان مسیر پیشرفت هستند.", source: "تجارب و سخنرانی‌ها" },
-      { author: "ویلیام شکسپیر", text: "«تجربه، عیان‌گر خرد است و راهنمای مطمئن در گذر زمان.»", trans: "تجارب تلخ و شیرین گذشته، چراغ راه آینده و مایه پختگی انسان می‌شوند.", source: "ادبیات کلاسیک" },
-      { author: "پائولو کوئیلو", text: "«وقتی واقعاً چیزی را بخواهید، تمام کائنات دست به دست هم می‌دهند تا به آن برسید.»", trans: "تمرکز و اراده پولادین برای رسیدن به هدف، انرژی‌های مثبت پیرامون را هم‌راستا می‌کند.", source: "حکمت زندگی" },
-      { author: "وینستون چرچیل", text: "«موفقیت یعنی رفتن از شکستی به شکست دیگر بدون از دست دادن شور و اشتیاق.»", trans: "پایداری و استقامت در برابر سختی‌ها، کلید اصلی رسیدن به مقصود است.", source: "تاریخ معاصر" },
-      { author: "مارک تواین", text: "«بیست سال بعد به خاطر کارهایی که نکرده‌ای بیشتر افسوس می‌خوری تا کارهایی که کرده‌ای.»", trans: "از ریسک کردن در مسیرهای تازه و مفید نترسید و فرصت‌ها را از دست ندهید.", source: "یادداشت‌های سفر" },
-      { author: "سعدی شیرازی", text: "«بنی‌آ آدم اعضای یک پیکرند که در آفرینش ز یک گوهرند.»", trans: "همبستگی، همدلی و درک متقابل انسان‌ها پایه و اساس یک جامعه پویا و آرام است.", source: "گلستان سعدی" },
-      { author: "فردوسی بزرگ", text: "«توانا بود هر که دانا بود، ز دانش دل پیر برنا بود.»", trans: "دانش و آگاهی سرچشمه قدرت، توانمندی و جاودستگی انسان است.", source: "شاهنامه فردوسی" },
-      { author: "پند تجاری", text: "«صداقت و امانت‌داری سرمایه‌ای است که هرگز ارزش خود را از دست نمی‌دهد.»", trans: "در تجارت و زندگی شخصی، اعتبار و خوش‌نامی بالاترین سود و سرمایه محسوب می‌شود.", source: "تجارب تجارت جهانی" },
-      { author: "حکمت باستان", text: "«کسی که پل‌ها پشت سر خود را خراب می‌کند، راه پیشرفت خود را هموارتر می‌سازد.»", trans: "قطع وابستگی به گذشته و گام گذاشتن محکم به جلو، پیش‌شرط موفقیت بزرگ است.", source: "امثال و حکم" },
-      { author: "استیو جابز", text: "«تنها راه انجام کارهای بزرگ، عشق ورزیدن به کاری است که انجام می‌دهید.»", trans: "اشتیاق قلبی به شغل و حرفه، خستگی را معنایی نمی‌دهد و کیفیت را به اوج می‌رساند.", source: "سخنرانی دانشگاه استنفورد" },
-      { author: "پویاک باستان", text: "«زمان گران‌بها‌ترین دارایی شماست؛ آن را صرف کارهای بی‌ارزش نکنید.»", trans: "مدیریت صحیح زمان، کلید اصلی بهره‌وری و ثروت‌آفرینی در زندگی است.", source: "پندهای کهن" },
-      { author: "توماس ادیسون", text: "«من شکست نخوردم، بلکه هزار راه پیدا کردم که کار نکردند.»", trans: "دیدگاه مثبت به مشکلات، انسان را به سوی کشف راه‌حل‌های نو هدایت می‌کند.", source: "خاطرات مخترع" },
-      { author: "ژول ورن", text: "«هر آنچه یک انسان می‌تواند تصور کند، دیگران می‌توانند آن را به واقعیت تبدیل کنند.»", trans: "قدرت تخم و هدف‌گذاری بزرگ، پیش‌نیاز هر اختراع و پیشرفت بزرگی است.", source: "رمان‌های علمی" },
-      { author: "آرتور شوپنهاور", text: "«سلامتی آن‌قدر مهم است که نود درصد سعادت انسان را تشکیل می‌دهد.»", trans: "هیچ ثروتی جایگزین تن سالم و آرامش درون نخواهد شد؛ مراقب سلامتی خود باشید.", source: "فلسفه زندگی" },
-      { author: "دالای لاما", text: "«اگر می‌خواهید دیگران شاد باشند، تمرین شفقت کنید؛ اگر خودتان می‌خواهید شاد باشید، باز هم شفقت کنید.»", trans: "مهربانی و کمک به دیگران، بیش از هر کس دیگری به روح خود انسان آرامش می‌بخشد.", source: "اندیشه‌های شرق" },
-      { author: "پند تاریخی", text: "«اعتماد به نفس، نخستین شرط پیروزی در هر نبرد بزرگی است.»", trans: "باور داشتن به توانمندی‌های درونی، نیمی از مسیر موفقیت را هموار می‌کند.", source: "تاریخ و سیاست" },
-      { author: "سهراب سپهری", text: "«چشم‌ها را باید شست، جور دیگر باید دید.»", trans: "تغییر زاویه دید به مشکلات، راه‌حل‌های جدیدی را در برابر ما نمایان می‌کند.", source: "هشت کتاب" },
-      { author: "پند اقتصادی", text: "«پس‌انداز کردن، هنرِ به دست آوردن آسایش در روزهای آینده است.»", trans: "مدیریت مالی صحیح و آینده‌نگری، انسان را از روزهای سخت مصون می‌دارد.", source: "مدیریت مالی" },
-      { author: "بنجامین فرانکلین", text: "«سرمایه‌گذاری در دانش، بیشترین سود را به همراه دارد.»", trans: "یادگیری مداوم و ارتقای مهارت‌ها، ارزشمندترین دارایی هر انسان است.", source: "پندهای اقتصادی" },
-      { author: "پند مدیریت", text: "«برنامه‌ریزی یعنی آوردن آینده به زمان حال، تا بتوانید همین امروز کاری برای آن انجام دهید.»", trans: "هدف‌گذاری مکتوب و دقیق، جلوی هدر رفتن انرژی و سرمایه را می‌گیرد.", source: "مدیریت مدرن" },
-      { author: "کایخو", text: "«کسی که مشورت می‌کند، هیچ‌گاه پشیمان نمی‌شود.»", trans: "استفاده از خرد جمعی و نظرات متخصصان، خطاهای تصمیم‌گیری را به حداقل می‌رساند.", source: "حکمت کهن" },
-      { author: "پند روزگار", text: "«خشم طوفانی است که چراغ عقل را خاموش می‌کند.»", trans: "تصمیم‌گیری در لحظات عصبانیت همواره با پشیمانی همراه است؛ در اوج خشم سکوت کنید.", source: "تجارب انسانی" },
-      { author: "پند اخلاقی", text: "«بزرگ‌ترین خطای انسان، ترس از مرتکب شدن اشتباه است.»", trans: "تا زمانی که خطایی نکنیم، تجربه جدیدی کسب نخواهیم کرد؛ خطا پل آموختن است.", source: "روانشناسی رشد" },
-      { author: "حافظ شیرازی", text: "«در پس آینه طوطی‌صفتم داشته‌اند، آن‌چه استاد عزل گفت بگو من ندانم.»", trans: "تسلیم در برابر حقیقت و زیبایی‌های آفرینش، مایه آرامش درونی است.", source: "دیوان حافظ" },
-      { author: "مولانا", text: "«بیرون ز تو نیست هرچه در عالم هست، از خود بطلب هر آنچه خواهی که تویی.»", trans: "کلید اصلی موفقیت و خوشبختی در درون اراده و ظرفیت‌های خود انسان قرار دارد.", source: "مثنوی معنوی" },
-      { author: "پند تاریخی", text: "«اتحاد و همدلی، هر سد بلندی را در هم می‌شکند.»", trans: "همکاری گروهی و انسجام اجتماعی، کلید اصلی غلبه بر بحران‌هاست.", source: "تاریخ ملت‌ها" },
-      { author: "پند مالی", text: "«تمام تخم‌مرغ‌های خود را در یک سبد نگذارید.»", trans: "تنویع سرمایه‌گذاری و ریسک‌پذیری هوشمندانه، ضامن امنیت مالی است.", source: "اقتصاد نوین" },
-      { author: "پند تجربی", text: "«شنیدن دو برابر گفتن زمان می‌برد؛ پس بیشتر گوش دهید و کمتر سخن بگویید.»", trans: "گوش دادن فعال، بهترین ابزار برای یادگیری و درک دیگران است.", source: "ارتباطات انسانی" },
-      { author: "پند باستان", text: "«درخت هر چه پربارتر شود، سر به زیرتر می‌شود.»", trans: "دانش و ثروت واقعی، انسان را فروتن‌تر و افتاده‌تر می‌سازد.", source: "ضرب‌المثل‌های کهن" },
-      { author: "پند روزگار", text: "«امروز را به فردا میافکن؛ کارهای امروز را به موقع به سرانجام برسان.»", trans: "امروز بهترین زمان برای اقدام و عمل است و پشت‌گوش‌اندازی آفت موفقیت است.", source: "مدیریت زمان" },
-      { author: "پند حکیمانه", text: "«دروغ چون برف است، هر چه بیشتر غلتانده شود بزرگ‌تر می‌شود.»", trans: "پیامدهای پنهان‌کاری و دروغ همواره سنگین‌تر از پذیرش حقیقت است.", source: "حکمت عامه" },
-      { author: "پند تاریخی", text: "«مردان بزرگ تاریخ در دل سختی‌ها و طوفان‌ها ساخته شده‌اند نه در آسایش.»", trans: "محدودیت‌ها و چالش‌های سخت، عیار واقعی اراده انسان را مشخص می‌کنند.", source: "تاریخ جهان" },
-      { author: "پند زندگی", text: "«لبخند، کوتاه‌ترین فاصله بین دو انسان است.»", trans: "خوش‌رویی و رفتار دوستانه، کلید اصلی تسخیر قلب‌ها و آرامش ارتباطات است.", source: "روانشناسی اجتماعی" },
-      { author: "پند تجربی", text: "«هیچ‌گاه کیفیت را فدای سرعت و ارزانی نکنید.»", trans: "کار باکیفیت و اصولی، ماندگاری و اعتبار طولانی‌مدت به همراه می‌آورد.", source: "مدیریت کیفیت" },
-      { author: "پند باستان", text: "«دوست آن باشد که گیرد دست دوست در پریشان‌حالی و درماندگی.»", trans: "معیار سنجش وفاداری دوستان واقعی، روزهای سختی و بحران است.", source: "ادبیات کهن" },
-      { author: "پند اقتصادی", text: "«پیشگیری همیشه بسیار ارزان‌تر از درمان است.»", trans: "رسیدگی به امور پیش از وقوع بحران، هزینه‌ها و خسارت‌ها را به شدت کاهش می‌دهد.", source: "مدیریت ریسک" },
-      { author: "پند حکیمانه", text: "«اندیشه مثبت، زندگی مثبت می‌آسازد.»", trans: "نگرش ما به جهان پیرامون، کیفیت تجربیات و اتفاقات زندگی‌مان را شکل می‌دهد.", source: "روانشناسی موفقیت" },
-      { author: "پند تاریخی", text: "«هیچ امپراتوری بدون انضباط و قانون پابرجا نمانده است.»", trans: "نظم و انضباط فردی و اجتماعی، پایه و اساس هر پیروزی پایدار است.", source: "تاریخ باستان" },
-      { author: "پند روزگار", text: "«کوه با تمام عظمتش به پای صعودکنندگان می‌پیوندد؛ قدم اول را بردارید.»", trans: "بزرگ‌ترین کارها با برداشتن قدم‌های کوچک اما مستمر به سرانجام می‌رسند.", source: "فلسفه عمل" },
-      { author: "پند تجربی", text: "«همیشه مدارک و حساب‌کتاب‌های خود را مکتوب کنید تا سوءتفاهمی پیش نیاید.»", trans: "دقت در ثبت اطلاعات مالی و تعهدات، امنیت خاطر دوطرفه ایجاد می‌کند.", source: "مدیریت حساب‌کتاب" },
-      { author: "پند حکیمانه", text: "«بزرگ‌ترین خطر در زندگی، ریسک نکردن است.»", trans: "برای کسب دستاوردهای تازه، باید شجاعت قدم گذاشتن در مسیرهای ناشناخته را داشت.", source: "تجربیات کارآفرینی" },
-      { author: "پند باستان", text: "«آب ایستاده می‌گندد؛ پویایی راز حیات است.»", trans: "یادگیری مداوم، حرکت و تغییر مثبت، مایه طراوت و پیشرفت زندگی است.", source: "حکمت طبیعت" },
-      { author: "پند اقتصادی", text: "«سود واقعی در خرید خوب و هوشمندانه نهفته است نه فقط در فروش.»", trans: "محاسبه دقیق هزینه‌های اولیه، سودآوری نهایی را تضمین می‌کند.", source: "اصول بازرگانی" },
-      { author: "پند روزگار", text: "«هیچ‌گاه از آموختن خجالت نکشید؛ نادانی موقت بهتر از نادانی دائمی است.»", trans: "پرسشگری و میل به یادگیری، نشانه خرد و رشد فکری انسان است.", source: "تجارب انسانی" },
-      { author: "پند تاریخی", text: "«آزادی و استقلال واقعی هر انسان در گرو خودکفایی و تلاش خودش است.»", trans: "اتکا به ظرفیت‌های درون‌زا، عزت نفس و آرامش پایداری به همراه می‌آورد.", source: "تاریخ اندیشه" },
-      { author: "پند حکیمانه", text: "«مهربانی زبانی است که نابینا می‌بیند و ناشنوا می‌شنود.»", trans: "رفتار نیک و محبت‌آمیز، فراتر از کلمات با قلب انسان‌ها ارتباط برقرار می‌کند.", source: "فلسفه اخلاق" },
-      { author: "پند تجربی", text: "«زمان‌بندی درست در انجام کارها، ارزش آن را دوچندان می‌کند.»", trans: "انجام کار درست در زمان نامناسب، اثربخشی لازم را نخواهد داشت.", source: "مدیریت استراتژیک" },
-      { author: "پند روزگار", text: "«دیگران را قضاوت نکنید، پیش از آن که کفش‌های آن‌ها را بپوشید.»", trans: "درک شرایط و موقعیت دیگران، کلید اصلی همزیستی مسالمت‌آمیز است.", source: "اخلاق اجتماعی" },
-      { author: "پند اقتصادی", text: "«اعتبار و خوش‌نامی، ارزشمندترین دارایی نامشهود یک کسب‌وکار است.»", trans: "حفظ تعهدات مالی و اخلاقی، مشتریان را به وفاداران دائمی تبدیل می‌کند.", source: "بازاریابی نوین" },
-      { author: "پند باستان", text: "«با نادان بحث نکن، چون او ابتدا تو را به سطح خود می‌کشد و سپس با تجربه خود شکست می‌دهد.»", trans: "در برابر حاشیه‌ها و جنجال‌های بی‌ارزش، سکوت و بی‌توجهی بهترین پاسخ است.", source: "امثال و حکم" },
-      { author: "پند حکیمانه", text: "«امید، نوری در تاریک‌ترین ساعات زندگی است؛ هرگز آن را از دست ندهید.»", trans: "داشتن انگیزه و امید به آینده، نیروی محرکه گذر از سختی‌هاست.", source: "روانشناسی امید" },
-      { author: "پند تجربی", text: "«همیشه برای روزهای مبادا اندک پس‌اندازی داشته باشید.»", trans: "آینده‌نگری مالی، استرس و دغدغه‌های زندگی را به شدت کاهش می‌دهد.", source: "اقتصاد خانواده" },
-      { author: "پند روزگار", text: "«گذشته را فراموش کنید اما درس‌های آن را هرگز از یاد نبرید.»", trans: "تجارب گذشته چراغ راه آینده است؛ به شرط آنکه اسیر خاطرات تلخ نشویم.", source: "تجارب زندگی" },
-      { author: "پند تاریخی", text: "«پیشرفت‌های بزرگ بشری ثمره تخیلات و رویاهای افراد شجاع بوده است.»", trans: "رویاپردازی و فکر کردن به اهداف بزرگ، موتور محرک نوآوری است.", source: "تاریخ علم" },
-      { author: "پند حکیمانه", text: "«عظمت یک ملت به تعداد ثروتمندان آن نیست، بلکه به انسانیت و فرهنگ آن بستگی دارد.»", trans: "فرهنگ غنی، اخلاق مدنی و انسانیت، شاخص اصلی رشد یک جامعه است.", source: "جامعه‌شناسی" },
-      { author: "پند تجربی", text: "«در معاملات مالی همیشه شفافیت و دقت را سرلوحه کار خود قرار دهید.»", trans: "شفافیت در حساب‌کتاب، پایه‌گذار اعتماد متقابل و آرامش خاطر است.", source: "مدیریت حساب‌کتاب" },
-      { author: "پند روزگار", text: "«برای هر مشکلی، راه‌حلی وجود دارد؛ کافی است با آرامش به آن بیناندیشید.»", trans: "حفظ خونسردی در بحران‌ها، ذهن را برای پیدا کردن بهترین راهکار فعال می‌کند.", source: "روانشناسی حل مسئله" },
-      { author: "پند نهایی", text: "«امروز بهترین روز برای شروع یک تغییر مثبت و بزرگ در زندگی است.»", trans: "به تعویق انداختن تصمیمات مهم را متوقف کنید و همین امروز گام اول را بردارید.", source: "فلسفه موفقیت" }
+      { author: "کوروش کبیر", text: "«باران باش و ببار و نپرس که پیاله‌های خالی از آن کیست.»", trans: "نیکی کردن بدون چشم‌داشت، بزرگ‌ترین نشانه بزرگی روح است.", source: "منشور باستان" },
+      { author: "آبراهام لینکلن", text: "«بهترین راه پیش‌بینی آینده خود، ساختن آن است.»", trans: "با اراده و تلاش خود، آینده‌ای که می‌خواهید را خلق کنید.", source: "سخنرانی‌ها" },
+      { author: "نيلسون ماندلا", text: "«همیشه قبل از انجام کار، غیرممکن به نظر می‌رسد تا زمانی که آن را انجام دهی.»", trans: "بزرگ‌ترین مانع، ترس از شروع است.", source: "زندگینامه" },
+      { author: "آلبرت اینشتین", text: "«تلاش نکنید آدم موفقیت باشید، بلکه سعی کنید آدم باارزشی باشید.»", trans: "ارزش انسان به خدمت به جامعه است.", source: "مقالات" },
+      { author: "سعدی شیرازی", text: "«بنی‌آ آدم اعضای یک پیکرند که در آفرینش ز یک گوهرند.»", trans: "همبستگی و همدلی پایه آرامش جامعه است.", source: "گلستان" },
+      { author: "فردوسی بزرگ", text: "«توانا بود هر که دانا بود، ز دانش دل پیر برنا بود.»", trans: "دانش سرچشمه قدرت و توانمندی است.", source: "شاهنامه" }
     ];
 
-    // سیستم انتخاب تصادفی پندها با هر بار ورود
     function loadRandomHadith() {
       const randomIndex = Math.floor(Math.random() * wisdomQuotes.length);
       const item = wisdomQuotes[randomIndex];
@@ -537,7 +698,6 @@
       document.getElementById('hadithSource').innerText = `[ ${item.source} ]`;
     }
 
-    // کلیک مخفی ۳ باره روی «خوش آمدید» برای ورود به بخش مدیریت (ادمین)
     let secretClickCount = 0;
     let secretClickTimer = null;
 
@@ -575,11 +735,9 @@
       const engMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       document.getElementById('gregMonthVal').innerText = `${engMonths[now.getMonth()]} ${now.getFullYear()}`;
 
-      // ساعت محلی و ساعت‌های جهانی (کابل، لندن، آمریکا)
       document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
       
       const getTimeInZone = (timeZone) => now.toLocaleTimeString('en-US', { timeZone, hour12: false, hour: '2-digit', minute: '2-digit' });
-      
       document.getElementById('clockKabul').innerText = getTimeInZone('Asia/Kabul');
       document.getElementById('clockLondon').innerText = getTimeInZone('Europe/London');
       document.getElementById('clockNY').innerText = getTimeInZone('America/New_York');
@@ -588,6 +746,470 @@
     updateCalendarAndClock();
     loadRandomHadith();
     setInterval(updateCalendarAndClock, 1000);
+
+    // منطق سیستم شارژ و خدمات
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaCdwpY7tcQj-_sDC47fUO8PBoL2ncDtIFeHgbk3HhpxuQr4biosiaK_jOFCq0Xu7v/exec"; 
+    const TELEGRAM_BOT_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
+    const TELEGRAM_CHAT_ID = "802655440";
+    const ADMIN_WHATSAPP = "+9647721878997"; 
+
+    const AFN_TO_IQD_RATE = 26.5; // نرخ دقیق: هر 100 افغانی = 2650 دینار (ضریب 26.5)
+
+    let activeServiceTab = 'afn';
+    let loggedInAccount = null;
+    let allTransactions = [];
+    let currentNetIqdBalance = 0;
+    let maxUsableIqdLimit = 0; 
+    let isAccountPendingApproval = false;
+    let timerInterval = null;
+    let isTimerRunning = false;
+
+    // به طور پیش‌فرض آیدی نمونه یا ذخیره شده را بررسی می‌کنیم
+    window.addEventListener('DOMContentLoaded', () => {
+      let savedAcc = localStorage.getItem('current_account_id') || "TLB-3573";
+      fetchAndRenderData(savedAcc);
+    });
+
+    function switchServiceTab(tab) {
+      activeServiceTab = tab;
+      document.getElementById('tabBtnAfn').classList.toggle('active', tab === 'afn');
+      document.getElementById('tabBtnIq').classList.toggle('active', tab === 'iq');
+
+      document.getElementById('serviceAfnBox').classList.toggle('hidden', tab !== 'afn');
+      document.getElementById('serviceIqBox').classList.toggle('hidden', tab !== 'iq');
+
+      if (tab === 'afn') calculateAfnAndValidate();
+      if (tab === 'iq') calculateIqCardAndValidate();
+    }
+
+    function validatePhoneLength(input) {
+      input.value = input.value.replace(/[^0-9]/g, '');
+      if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+      }
+    }
+
+    function calculateAfnAndValidate() {
+      const afnInput = parseFloat(document.getElementById('chargeAmountAfn').value) || 0;
+      const iqdCalculated = Math.round(afnInput * AFN_TO_IQD_RATE);
+
+      const calcBox = document.getElementById('calcResultBoxAfn');
+      const calcSpan = document.getElementById('calculatedDinarValAfn');
+      const warnDiv = document.getElementById('amountLimitWarning');
+      const btnSubmit = document.getElementById('btnSubmitCharge');
+
+      calcSpan.innerText = iqdCalculated.toLocaleString();
+
+      if (isAccountPendingApproval || maxUsableIqdLimit <= 0) {
+        btnSubmit.disabled = true;
+        return;
+      }
+
+      let accId = loggedInAccount ? (getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID) : "";
+      let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
+      if (pendingLocal.length > 0) {
+        btnSubmit.disabled = true;
+        warnDiv.style.display = 'block';
+        warnDiv.innerHTML = `⚠️ <b>درخواست شارژ قبلی شما در حال پردازش است.</b><br>لطفاً تا تکمیل تراکنش شکیبا باشید.`;
+        return;
+      }
+
+      if (afnInput <= 0) {
+        calcBox.classList.remove('calc-box-error');
+        warnDiv.style.display = 'none';
+        btnSubmit.disabled = false;
+        return;
+      }
+
+      if (iqdCalculated > maxUsableIqdLimit) {
+        calcBox.classList.add('calc-box-error');
+        const maxAfnAllowed = Math.floor(maxUsableIqdLimit / AFN_TO_IQD_RATE);
+
+        warnDiv.style.display = 'block';
+        warnDiv.innerHTML = `⚠️ <b>مبلغ درخواستی بیشتر از موجودی/اعتبار شما است!</b><br>` +
+                            `شما حداکثر می‌توانید تا سقف <b>${maxUsableIqdLimit.toLocaleString()} دینار</b> (معادل <b>${maxAfnAllowed.toLocaleString()} افغانی</b>) شارژ ارسال کنید.`;
+
+        btnSubmit.disabled = true;
+      } else {
+        calcBox.classList.remove('calc-box-error');
+        warnDiv.style.display = 'none';
+        btnSubmit.disabled = false;
+      }
+    }
+
+    function calculateIqCardAndValidate() {
+      const baseCardAmt = parseInt(document.getElementById('iqCardAmountSelect').value) || 0;
+      const totalDinarToDeduct = baseCardAmt + 1000; // کارمزد پنهان در محاسبات
+
+      const calcBox = document.getElementById('calcResultBoxIq');
+      const calcSpan = document.getElementById('calculatedDinarValIq');
+      const warnDiv = document.getElementById('amountLimitWarning');
+      const btnSubmit = document.getElementById('btnSubmitCharge');
+
+      calcSpan.innerText = totalDinarToDeduct.toLocaleString();
+
+      if (isAccountPendingApproval || maxUsableIqdLimit <= 0) {
+        btnSubmit.disabled = true;
+        return;
+      }
+
+      let accId = loggedInAccount ? (getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID) : "";
+      let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
+      if (pendingLocal.length > 0) {
+        btnSubmit.disabled = true;
+        warnDiv.style.display = 'block';
+        warnDiv.innerHTML = `⚠️ <b>درخواست شارژ قبلی شما در حال پردازش است.</b><br>لطفاً تا تکمیل تراکنش شکیبا باشید.`;
+        return;
+      }
+
+      if (totalDinarToDeduct > maxUsableIqdLimit) {
+        calcBox.classList.add('calc-box-error');
+        warnDiv.style.display = 'block';
+        warnDiv.innerHTML = `⚠️ <b>اعتبار یا موجودی شما برای خرید این کارت شارژ کافی نیست!</b><br>` +
+                            `مبلغ کل: <b>${totalDinarToDeduct.toLocaleString()} دینار</b> | سقف مجاز شما: <b>${maxUsableIqdLimit.toLocaleString()} دینار</b>`;
+
+        btnSubmit.disabled = true;
+      } else {
+        calcBox.classList.remove('calc-box-error');
+        warnDiv.style.display = 'none';
+        btnSubmit.disabled = false;
+      }
+    }
+
+    function parseRowsToObjects(rows) {
+      if (!rows || rows.length <= 1) return [];
+      if (typeof rows[0] === 'object' && !Array.isArray(rows[0])) return rows;
+      let headers = rows[0].map(h => String(h).trim());
+      let result = [];
+      for (let i = 1; i < rows.length; i++) {
+        let obj = {};
+        for (let j = 0; j < headers.length; j++) {
+          obj[headers[j]] = rows[i][j];
+        }
+        result.push(obj);
+      }
+      return result;
+    }
+
+    function getVal(obj, keys) {
+      for (let k of keys) {
+        if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
+        let lower = k.toLowerCase();
+        for (let prop in obj) {
+          if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") {
+            return obj[prop];
+          }
+        }
+      }
+      return '';
+    }
+
+    async function refreshUserData() {
+      if (!loggedInAccount) return;
+      let realId = getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID;
+      await fetchAndRenderData(realId);
+    }
+
+    async function fetchAndRenderData(accId) {
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=getData`);
+        const res = await response.json();
+
+        if (res.accounts) {
+          let accounts = parseRowsToObjects(res.accounts);
+          let transactions = parseRowsToObjects(res.transactions);
+
+          let foundAcc = accounts.find(acc => String(getVal(acc, ['AccountID', 'accountid'])).trim().toLowerCase() === accId.toLowerCase());
+
+          if (foundAcc) {
+            loggedInAccount = foundAcc;
+            allTransactions = transactions;
+            
+            let rawName = getVal(foundAcc, ['Name', 'name']);
+            let realId = getVal(foundAcc, ['AccountID', 'accountid']);
+            
+            isAccountPendingApproval = (!rawName || rawName.trim() === "");
+            let displayName = isAccountPendingApproval ? "در انتظار تأیید ادمین" : rawName;
+
+            document.getElementById('welcomeUserTitle').innerText = `حساب: ${displayName} (${realId})`;
+            document.getElementById('userAccountDetails').innerText = `شناسه: ${realId}`;
+            
+            evaluateAccountAccess(realId, transactions, realId.toUpperCase().startsWith("TLB"), isAccountPendingApproval);
+            renderRecentRequests(realId, transactions);
+          } else {
+            fallbackLogin(accId);
+          }
+        } else {
+          fallbackLogin(accId);
+        }
+      } catch (e) {
+        fallbackLogin(accId);
+      }
+    }
+
+    function fallbackLogin(accId) {
+      loggedInAccount = { AccountID: accId, Name: "" };
+      isAccountPendingApproval = true;
+      document.getElementById('welcomeUserTitle').innerText = `حساب: ${accId}`;
+      document.getElementById('userAccountDetails').innerText = `در انتظار تأیید ادمین`;
+      
+      evaluateAccountAccess(accId, [], accId.toUpperCase().startsWith("TLB"), true);
+      renderRecentRequests(accId, []);
+    }
+
+    function evaluateAccountAccess(accId, txs, isStudentAccount, isPendingAccount) {
+      if (isPendingAccount) return;
+
+      let accTxs = txs.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId));
+      currentNetIqdBalance = 0;
+
+      accTxs.forEach(tx => {
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'IQD').toUpperCase();
+        if (curr === 'IQD') {
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let rawAmt = getVal(tx, ['Amount', 'amount']);
+          let amt = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
+          if (dir.includes("بستانکار")) currentNetIqdBalance += amt;
+          if (dir.includes("بدهکار")) currentNetIqdBalance -= amt;
+        }
+      });
+
+      let container = document.getElementById('userBalancesContainer');
+      container.innerHTML = `<span class="balance-badge ${currentNetIqdBalance >= 0 ? 'balance-positive' : 'balance-negative'}" style="display:inline-block; padding:4px 8px; border-radius:8px; font-size:11px; font-weight:800; background:#dcfce7; color:#15803d;">موجودی دینار: ${currentNetIqdBalance.toLocaleString()} IQD</span>`;
+
+      if (isStudentAccount) {
+        maxUsableIqdLimit = currentNetIqdBalance + 30000;
+      } else {
+        maxUsableIqdLimit = currentNetIqdBalance > 0 ? currentNetIqdBalance : 0;
+      }
+
+      if (activeServiceTab === 'afn') calculateAfnAndValidate();
+      if (activeServiceTab === 'iq') calculateIqCardAndValidate();
+    }
+
+    function startPendingTimer(accId) {
+      if (isTimerRunning) return;
+      isTimerRunning = true;
+
+      let secondsLeft = 180; // ۳ دقیقه تایمر معکوس
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        secondsLeft--;
+        let min = Math.floor(secondsLeft / 60);
+        let sec = secondsLeft % 60;
+        let formattedTime = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+
+        let timerSpan = document.getElementById(`timerCountdown_${accId}`);
+        if (timerSpan) {
+          timerSpan.innerText = formattedTime;
+        }
+
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          isTimerRunning = false;
+          
+          let pendingBox = document.getElementById(`pendingCard_${accId}`);
+          if (pendingBox) {
+            pendingBox.classList.add('fade-out-shrink');
+            setTimeout(() => {
+              localStorage.removeItem(`pending_charge_${accId}`);
+              refreshUserData();
+            }, 600);
+          }
+        }
+      }, 1000);
+    }
+
+    function renderRecentRequests(accId, txs) {
+      let container = document.getElementById('recentRequestsContainer');
+      container.innerHTML = "";
+
+      let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
+      let activePendingList = [];
+
+      let accTxs = txs.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).reverse();
+
+      pendingLocal.forEach(p => {
+        let isMatched = accTxs.some(tx => {
+          let opType = getVal(tx, ['OperationType', 'operationtype']) || '';
+          let dir = getVal(tx, ['Direction', 'direction']) || '';
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount']));
+
+          let isDebit = dir.includes("بدهکار") || opType.includes("پرداخت") || opType.includes("امانت");
+          return isDebit && Math.abs(amt - p.iqdAmount) < 1;
+        });
+
+        if (!isMatched) {
+          activePendingList.push(p);
+        }
+      });
+
+      localStorage.setItem(`pending_charge_${accId}`, JSON.stringify(activePendingList));
+
+      if (activePendingList.length > 0) {
+        let p = activePendingList[0];
+        let detailsStr = p.type === 'iq' ? `رصید ${p.network} (${p.baseCardAmt.toLocaleString()} دینار)` : `شماره افغانستان: ${p.targetPhone} (${p.afnAmount} AFN)`;
+        
+        container.innerHTML += `
+          <div id="pendingCard_${accId}" style="background:#fff8f1; border:1.5px dashed #f97316; padding:10px; border-radius:10px; margin-top:6px; font-size:11.5px;">
+            <div style="display:flex; justify-content:space-between; font-weight:900; color:#c2410c; align-items:center;">
+              <span style="display:flex; align-items:center; gap:5px;">
+                <span class="spinner-icon"></span>
+                در حال ارسال شارژ... (<span id="timerCountdown_${accId}">3:00</span>)
+              </span>
+              <span style="font-size:12px; font-weight:900;">${p.iqdAmount.toLocaleString()} IQD</span>
+            </div>
+            <div style="margin-top:4px; color:#9a3412; font-weight:700;">📌 ${detailsStr}</div>
+            <div style="font-size:10.5px; color:#ea580c; margin-top:2px;">لطفاً چند لحظه شکیبا باشید.</div>
+          </div>
+        `;
+
+        startPendingTimer(accId);
+      } else {
+        if (timerInterval) clearInterval(timerInterval);
+        isTimerRunning = false;
+      }
+
+      if (accTxs.length > 0) {
+        container.innerHTML += `<div style="font-size:11.5px; font-weight:800; margin-top:8px; color:#475569;">📋 صورت‌حساب و رسیدهای دریافتی شما:</div>`;
+        accTxs.forEach((tx, index) => {
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])).toLocaleString();
+          let curr = getVal(tx, ['Currency', 'currency']);
+          let dir = getVal(tx, ['Direction', 'direction']);
+          let desc = getVal(tx, ['Description', 'description']) || 'رسید/پین شارژ ثبت شده است';
+          let opType = getVal(tx, ['OperationType', 'operationtype']) || 'تراکنش';
+
+          let isPaymentCharge = opType.includes("پرداخت") || dir.includes("بدهکار");
+          let titleText = isPaymentCharge ? "ارسال شارژ با موفقیت انجام شد" : `${opType} (${dir})`;
+          let amountColor = isPaymentCharge ? "#b91c1c" : "#15803d"; 
+          let animClass = (index === 0) ? "slide-in-success" : "";
+
+          container.innerHTML += `
+            <div class="${animClass}" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:8px 10px; border-radius:10px; margin-top:4px; font-size:11px;">
+              <div style="display:flex; justify-content:space-between; font-weight:900; align-items:center;">
+                <span style="color:#15803d;">✅ ${titleText}</span>
+                <span style="color:${amountColor}; font-size:12px; font-weight:900;">${amt} ${curr}</span>
+              </div>
+              <div style="color:#166534; margin-top:4px; font-weight:700; background:#ffffff; padding:5px 6px; border-radius:6px; border:1px dashed #a7f3d0;">
+                📜 رسید / پین و سریال شارژ: <span style="color:#0f172a; font-family:monospace; font-size:11px;">${desc}</span>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // افزودن متن راهنمای درخواست شده و دکمه واتساپ مستقیم با شماره +9647721878997 بدون پیش‌فرض
+      container.innerHTML += `
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:10px; margin-top:8px; font-size:11px; color:#1e40af; font-weight:700; text-align:center; line-height:1.5;">
+          اگر پیام گزارش ارسال موفق ثبت نشده، از بالای صفحه حساب را بروزرسانی کنید. اگر بازم نشد به کریمی پیام بدهید.<br>
+          <a href="https://wa.me/+9647721878997" target="_blank" style="display:inline-block; background:#25d366; color:#fff; text-decoration:none; padding:6px 14px; border-radius:8px; font-weight:900; margin-top:6px;">💬 ارتباط با صرافی (واتساپ)</a>
+        </div>
+      `;
+
+      if (activeServiceTab === 'afn') calculateAfnAndValidate();
+      if (activeServiceTab === 'iq') calculateIqCardAndValidate();
+    }
+
+    async function sendTelegramNotification(message) {
+      const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+      try {
+        await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: "Markdown"
+          })
+        });
+      } catch (e) {}
+    }
+
+    async function submitActiveServiceTransaction() {
+      if (isAccountPendingApproval) {
+        alert("حساب شما در انتظار تأیید ادمین است.");
+        return;
+      }
+
+      let accId = loggedInAccount ? (getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID) : "TLB-3573";
+      let accName = loggedInAccount ? (getVal(loggedInAccount, ['Name', 'name']) || loggedInAccount.Name) : "کاربر سامانه";
+
+      let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
+      if (pendingLocal.length > 0) {
+        alert("شما یک درخواست در حال پردازش دارید. لطفاً تا تکمیل آن صبور باشید.");
+        return;
+      }
+
+      let iqdAmount = 0;
+      let tgText = "";
+      let pendingObj = {};
+
+      if (activeServiceTab === 'afn') {
+        const targetPhone = document.getElementById('targetPhoneAfn').value.trim();
+        const afnAmount = document.getElementById('chargeAmountAfn').value.trim();
+
+        if (!targetPhone || targetPhone.length !== 10 || !targetPhone.startsWith("0")) {
+          alert("شماره تلفن مقصد در افغانستان باید دقیقاً ۱۰ رقم بوده و با صفر شروع شود.");
+          return;
+        }
+
+        if (!afnAmount) {
+          alert("لطفاً مبلغ افغانی را وارد کنید.");
+          return;
+        }
+
+        iqdAmount = Math.round(parseFloat(afnAmount) * AFN_TO_IQD_RATE);
+
+        if (iqdAmount > maxUsableIqdLimit || maxUsableIqdLimit <= 0) {
+          alert("مبلغ درخواستی بیشتر از اعتبار یا موجودی باقی‌مانده شما است.");
+          return;
+        }
+
+        pendingObj = { type: 'afn', targetPhone, afnAmount, iqdAmount, date: new Date().toISOString() };
+        tgText = `🚨 *درخواست شارژ افغانستان*\n\n` +
+                 `👤 نام حساب: *${accName}*\n` +
+                 `🔑 شناسه: \`${accId}\`\n` +
+                 `📞 شماره مقصد: \`${targetPhone}\`\n` +
+                 `💵 مبلغ افغانی: *${afnAmount} AFN*\n` +
+                 `💰 معادل دینار (نرخ 26.5): *${iqdAmount.toLocaleString()} IQD*`;
+
+      } else if (activeServiceTab === 'iq') {
+        const network = document.getElementById('iqNetworkSelect').value;
+        const baseCardAmt = parseInt(document.getElementById('iqCardAmountSelect').value) || 0;
+
+        iqdAmount = baseCardAmt + 1000;
+
+        if (iqdAmount > maxUsableIqdLimit || maxUsableIqdLimit <= 0) {
+          alert("اعتبار یا موجودی شما برای خرید این کارت شارژ کافی نیست.");
+          return;
+        }
+
+        pendingObj = { type: 'iq', network, baseCardAmt, iqdAmount, date: new Date().toISOString() };
+        tgText = `💳 *درخواست کارت شارژ (رصید) عراق*\n\n` +
+                 `👤 نام حساب: *${accName}*\n` +
+                 `🔑 شناسه: \`${accId}\`\n` +
+                 `📡 شبکه: *${network}*\n` +
+                 `💵 کارت درخواستی: *${baseCardAmt.toLocaleString()} IQD*\n` +
+                 `💰 مبلغ کل کسر از حساب: *${iqdAmount.toLocaleString()} IQD*`;
+      }
+
+      let pendingList = [pendingObj];
+      localStorage.setItem(`pending_charge_${accId}`, JSON.stringify(pendingList));
+
+      renderRecentRequests(accId, allTransactions);
+      await sendTelegramNotification(tgText);
+
+      alert("✅ درخواست شما ثبت شد. تایمر ۳ دقیقه‌ای فعال گردید و پس از ثبت صرافی، رسید صادر می‌شود.");
+
+      document.getElementById('targetPhoneAfn').value = "";
+      document.getElementById('chargeAmountAfn').value = "";
+      document.getElementById('calculatedDinarValAfn').innerText = "0";
+      
+      if (activeServiceTab === 'afn') calculateAfnAndValidate();
+      if (activeServiceTab === 'iq') calculateIqCardAndValidate();
+    }
   </script>
 
 </body>
