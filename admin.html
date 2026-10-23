@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>پنل مدیریت صرافی کریمی</title>
+  <title> مدیریت امانتداری کریمی</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
@@ -255,7 +255,7 @@
   <!-- لاگین -->
   <div id="authOverlay">
     <div class="auth-card">
-      <div class="auth-title">🔐 ورود به پنل مدیریت صرافی</div>
+      <div class="auth-title">🔐 ورود به پنل مدیریت امانتداری</div>
       <div class="form-group"><label>ایمیل مدیریت:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور..."></div>
       <button class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
@@ -269,7 +269,7 @@
     <div id="viewDashboard" class="view-section active">
       <div class="card">
         <div class="card-header-styled">
-          <h3>🏛️ مدیریت صرافی کریمی</h3>
+          <h3>🏛️ مدیریت امانتداری کریمی</h3>
           <div class="flex-row">
             <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); loadDataFromSupabase(true)">🔄 همگام‌سازی</button>
             <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); handleLogout()">خروج</button>
@@ -1304,7 +1304,7 @@
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let lines = [
-        `✨ *صرافی معتبر کریمی* ✨`,
+        `✨ *امانتداری کریمی* ✨`,
         `────────────────────────`,
         `حضور گرامی آقای *${currentAccountName}*`,
         `با سلام و احترام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
@@ -1355,7 +1355,6 @@
         if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
       });
 
-      let lines = [`✨ *صرافی معتبر کریمی* ✨`, `────────────────────────`, `سلام و احترام خدمت آقای *${currentAccountName}*`, `📊 *صورت‌حساب و بیلان حساب شما:*`];
       let hasBalance = false;
       for (let curr in accCurrencies) {
         hasBalance = true;
