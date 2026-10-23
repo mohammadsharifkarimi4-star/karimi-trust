@@ -21,6 +21,7 @@
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --primary: #4f46e5;
@@ -477,7 +478,9 @@
     </div>
   </div>
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaCdwpY7tcQj-_sDC47fUO8PBoL2ncDtIFeHgbk3HhpxuQr4biosiaK_jOFCq0Xu7v/exec";
+    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
+    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let accountsList = [];
     let transactionsList = [];
@@ -547,58 +550,33 @@
       return cleaned.slice(-9);
     }
 
-    // لود آنی و بدون معطلی با استفاده از کش مرورگر
+    // پاکسازی کامل کش گوگل‌شیت و اتصال مستقیم به Supabase
     window.addEventListener('DOMContentLoaded', () => {
-      let cachedAcc = localStorage.getItem("cached_accounts");
-      let cachedTx = localStorage.getItem("cached_transactions");
-
-      if (cachedAcc) accountsList = JSON.parse(cachedAcc);
-      if (cachedTx) transactionsList = JSON.parse(cachedTx);
+      localStorage.removeItem("cached_accounts");
+      localStorage.removeItem("cached_transactions");
 
       initUserSession();
-
-      // بروزرسانی صامت در پشت صحنه
-      fetchDataFromSheetBackground();
+      fetchDataFromSupabaseBackground();
     });
 
-    async function fetchDataFromSheetBackground() {
+    async function fetchDataFromSupabaseBackground() {
       try {
-        const res = await fetch(APPS_SCRIPT_URL + "?action=getData");
-        const data = await res.json();
+        const [accRes, txRes] = await Promise.all([
+          _supabase.from('accounts').select('*'),
+          _supabase.from('transactions').select('*')
+        ]);
 
-        if (data.accounts && data.accounts.length > 0) {
-          let accRows = data.accounts;
-          if (Array.isArray(accRows[0])) {
-            let accHeaders = accRows[0].map(h => String(h).trim());
-            accountsList = accRows.slice(1).map(row => {
-              let obj = {};
-              accHeaders.forEach((h, i) => obj[h] = row[i]);
-              return obj;
-            });
-          } else {
-            accountsList = accRows;
-          }
+        if (accRes.data) {
+          accountsList = accRes.data;
           localStorage.setItem("cached_accounts", JSON.stringify(accountsList));
         }
-
-        if (data.transactions && data.transactions.length > 0) {
-          let txRows = data.transactions;
-          if (Array.isArray(txRows[0])) {
-            let txHeaders = txRows[0].map(h => String(h).trim());
-            transactionsList = txRows.slice(1).map(row => {
-              let obj = {};
-              txHeaders.forEach((h, i) => obj[h] = row[i]);
-              return obj;
-            });
-          } else {
-            transactionsList = txRows;
-          }
+        if (txRes.data) {
+          transactionsList = txRes.data;
           localStorage.setItem("cached_transactions", JSON.stringify(transactionsList));
         }
       } catch (err) {}
     }
 
-    // دکمه واقعی تازه سازی حساب با افکت پر شدن شارژ
     async function refreshAccountData() {
       playSound('click');
       const btn = document.getElementById('refreshAccountBtn');
@@ -608,7 +586,6 @@
       btnText.innerText = 'در حال دریافت...';
       progressBar.style.width = '0%';
 
-      // شبیه‌سازی پر شدن نوار شارژ
       let progress = 0;
       let interval = setInterval(() => {
         progress += 5;
@@ -618,41 +595,21 @@
       }, 35);
 
       try {
-        const res = await fetch(APPS_SCRIPT_URL + "?action=getData");
-        const data = await res.json();
+        const [accRes, txRes] = await Promise.all([
+          _supabase.from('accounts').select('*'),
+          _supabase.from('transactions').select('*')
+        ]);
 
-        if (data.accounts && data.accounts.length > 0) {
-          let accRows = data.accounts;
-          if (Array.isArray(accRows[0])) {
-            let accHeaders = accRows[0].map(h => String(h).trim());
-            accountsList = accRows.slice(1).map(row => {
-              let obj = {};
-              accHeaders.forEach((h, i) => obj[h] = row[i]);
-              return obj;
-            });
-          } else {
-            accountsList = accRows;
-          }
+        if (accRes.data) {
+          accountsList = accRes.data;
           localStorage.setItem("cached_accounts", JSON.stringify(accountsList));
         }
-
-        if (data.transactions && data.transactions.length > 0) {
-          let txRows = data.transactions;
-          if (Array.isArray(txRows[0])) {
-            let txHeaders = txRows[0].map(h => String(h).trim());
-            transactionsList = txRows.slice(1).map(row => {
-              let obj = {};
-              txHeaders.forEach((h, i) => obj[h] = row[i]);
-              return obj;
-            });
-          } else {
-            transactionsList = txRows;
-          }
+        if (txRes.data) {
+          transactionsList = txRes.data;
           localStorage.setItem("cached_transactions", JSON.stringify(transactionsList));
         }
       } catch (e) {}
 
-      // تکمیل نوار شارژ تا 100 درصد و رفرش اطلاعات حساب کاربر
       clearInterval(interval);
       progressBar.style.width = '100%';
       playSound('success');
@@ -1140,36 +1097,36 @@
       });
     }
 
+    // ارسال رسید حواله به صورت متن
     function shareHawalaReceipt() {
-      playSound('shutter');
-      const descText = (getVal(selectedTxItem, ['Description', 'description']) || 'بدون توضیحات').replaceAll('+', ' ');
-      const dateText = getVal(selectedTxItem, ['Date', 'date']) || '';
-      const hawalaBox = document.createElement('div');
-      hawalaBox.style.cssText = "background: #ffffff; border: 2px solid #8b5cf6; padding: 18px; border-radius: 16px; width: 360px; direction: rtl; font-family: 'Farhang', sans-serif; box-sizing: border-box;";
-      hawalaBox.innerHTML = `
-        <div style="font-weight: 800; font-size: 14px; color: #7c3aed; margin-bottom: 8px; border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 6px;">📜 رسید حواله</div>
-        <div style="font-size: 12.5px; line-height: 1.8; color: #1e293b;">
-          <b>مشخصات و توضیحات حواله:</b><br>
-          <span class="eng-num">${descText}</span>
-        </div>
-        <div style="margin-top: 10px; font-size: 10px; color: #64748b; text-align: left;" class="eng-num">تاریخ: ${dateText.split('T')[0]}</div>
-      `;
-      document.body.appendChild(hawalaBox);
+      playSound('click');
+      let tx = selectedTxItem;
+      let transId = getVal(tx, ['TransID', 'transid']) || '---';
+      let descText = (getVal(tx, ['Description', 'description']) || 'بدون توضیحات').replaceAll('+', ' ');
+      let dateText = getVal(tx, ['Date', 'date']) || '';
+      let rawAmt = getVal(tx, ['Amount', 'amount']);
+      let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
+      let currStr = getVal(tx, ['Currency', 'currency']) || '';
 
-      html2canvas(hawalaBox, { scale: 3, backgroundColor: '#ffffff', width: 360 }).then(canvas => {
-        hawalaBox.remove();
-        canvas.toBlob(blob => {
-          const file = new File([blob], 'hawala-receipt.png', { type: 'image/png' });
-          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({ files: [file], title: 'رسید حواله' }).catch(() => {});
-          } else {
-            const link = document.createElement('a');
-            link.download = 'hawala-receipt.png';
-            link.href = canvas.toDataURL();
-            link.click();
-          }
-        });
-      });
+      let message = `✨ *امانت‌داری کریمی* ✨\n` +
+                    `────────────────────────\n` +
+                    `📜 *رسید حواله*\n\n` +
+                    `📌 شماره تراکنش: ${transId}\n` +
+                    `💰 مبلغ: ${amountVal.toLocaleString()} ${currStr}\n` +
+                    `📅 تاریخ: ${dateText.split('T')[0]}\n` +
+                    `📝 شرح و جزئیات:\n${descText}\n\n` +
+                    `────────────────────────\n` +
+                    `با تشکر 🙏`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'رسید حواله',
+          text: message
+        }).catch(() => {});
+      } else {
+        const whatsappUrl = `https://wa.me/?text=` + encodeURIComponent(message);
+        window.open(whatsappUrl, '_blank');
+      }
     }
   </script>
 </body>
