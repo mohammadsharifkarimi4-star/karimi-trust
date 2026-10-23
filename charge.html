@@ -157,7 +157,7 @@
 <body>
 
   <div id="loadingOverlay">
-    <div style="font-size: 16px; color: #10b981;">⚡ در حال بررسی شناسه و دریافت اطلاعات از Supabase...</div>
+    <div style="font-size: 16px; color: #10b981;">⚡ در حال بررسی شناسه و ارسال اطلاعات...</div>
     <div style="width: 100%; max-width: 320px;">
       <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
     </div>
@@ -185,7 +185,6 @@
 
       <button class="btn-main" onclick="processLogin()">ورود به حساب</button>
 
-      <!-- دکمه‌های کمکی برای آیدی فراموش شده یا نداشتن حساب -->
       <div style="display: flex; gap: 6px; margin-top: 4px;">
         <button class="btn-secondary" style="font-size:11.5px;" onclick="showStep('stepAccountType')">حساب ندارم ➕</button>
         <button class="btn-secondary" style="font-size:11.5px; background:#fef3c7; color:#b45309;" onclick="forgotMyId()">آیدی‌ام را فراموش کرده‌ام؟ ❓</button>
@@ -244,7 +243,7 @@
 
       <div id="studentFields" class="hidden">
         <div class="form-group">
-          <label class="form-label">📸 عکس سلفی زنده (دوربین جلو):</label>
+          <label class="form-label">📸 عکس سلفی زنده (ارسال مستقیم به تلگرام کریمی):</label>
           <div class="camera-btn-box">
             <span style="font-size:12px; font-weight:900; color:#0284c7;">📷 ثبت عکس سلفی</span>
             <input type="file" id="selfieCam" accept="image/*" capture="user" onchange="handleImageCapture(this, 'selfiePreview', 'selfieBase64')">
@@ -254,9 +253,9 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">💳 عکس پاسپورت (دوربین پشت):</label>
+          <label class="form-label">💳 عکس پاسپورت یا کارت شناسایی (ارسال مستقیم به تلگرام):</label>
           <div class="camera-btn-box">
-            <span style="font-size:12px; font-weight:900; color:#0284c7;">📸 ثبت عکس پاسپورت</span>
+            <span style="font-size:12px; font-weight:900; color:#0284c7;">📸 ثبت عکس مدرک</span>
             <input type="file" id="docCam" accept="image/*" capture="environment" onchange="handleImageCapture(this, 'docPreview', 'docBase64')">
             <img id="docPreview" class="preview-img">
             <input type="hidden" id="docBase64">
@@ -279,16 +278,13 @@
         <div id="userBalancesContainer" style="margin-top:6px;"></div>
       </div>
 
-      <!-- تب‌های انتخاب سرویس -->
       <div class="tab-container">
         <button class="tab-btn active" id="tabBtnAfn" onclick="switchServiceTab('afn')">📲 شارژ افغانستان</button>
         <button class="tab-btn" id="tabBtnIq" onclick="switchServiceTab('iq')">💳 رصید شبکه‌های عراق</button>
       </div>
 
-      <!-- محتوای فعال خدمات -->
       <div id="chargeActiveContent">
         
-        <!-- ۱. سرویس شارژ افغانستان -->
         <div id="serviceAfnBox">
           <div class="form-group">
             <label class="form-label">شماره تلفن مقصد در افغانستان (موبایل - ۱۰ رقم با صفر اول):</label>
@@ -305,7 +301,6 @@
           </div>
         </div>
 
-        <!-- ۲. سرویس شارژ (رصید) عراق -->
         <div id="serviceIqBox" class="hidden">
           <div class="form-group">
             <label class="form-label">انتخاب شبکه همراه:</label>
@@ -338,7 +333,6 @@
         <button class="btn-main" id="btnSubmitCharge" style="margin-top:12px;" onclick="submitActiveServiceTransaction()">ثبت درخواست و ارسال</button>
       </div>
 
-      <!-- هشدار عدم موجودی یا عدم تایید -->
       <div id="chargeBlockedWarning" class="warning-box hidden">
         <div id="blockedWarningText">حساب شما موجودی یا اعتبار کافی ندارد.</div>
         <a id="whatsappSupportBtn" href="https://wa.me/+9647721878997" target="_blank" class="btn-main" style="background:#25d366; margin-top:10px; font-size:13px; text-decoration:none;">
@@ -352,16 +346,16 @@
     </div>
 
   </div>
-<!-- کتابخانه رسمی Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // اطلاعات اتصال Supabase شما
     const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
     const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const ADMIN_WHATSAPP = "+9647721878997"; 
+    const TELEGRAM_BOT_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
+    const TELEGRAM_CHAT_ID = "802655440";
     const AFN_TO_IQD_RATE = 26.5;
 
     let activeServiceTab = 'afn';
@@ -375,15 +369,11 @@
     let isTimerRunning = false;
     let isIdCopied = false;
 
-    // دریافت مستقیم داده‌های JSON از Supabase
     async function getSupabaseData() {
       const [accRes, txRes] = await Promise.all([
         _supabase.from('accounts').select('*'),
         _supabase.from('transactions').select('*')
       ]);
-
-      if (accRes.error) console.error("خطا در جدول accounts:", accRes.error);
-      if (txRes.error) console.error("خطا در جدول transactions:", txRes.error);
 
       return {
         accounts: accRes.data || [],
@@ -391,7 +381,6 @@
       };
     }
 
-    // ورود آنی با حافظه مرورگر
     window.addEventListener('DOMContentLoaded', () => {
       let savedAcc = sessionStorage.getItem('current_active_account_id') || localStorage.getItem('persistent_account_id');
       
@@ -400,7 +389,6 @@
         document.getElementById('welcomeUserTitle').innerText = `👤 ${savedAcc}`;
         document.getElementById('userAccountDetails').innerText = `شناسه حساب: ${savedAcc}`;
         showStep('stepChargePanel');
-
         fetchAndRenderDataInBackground(savedAcc);
       } else {
         showStep('stepLogin');
@@ -625,7 +613,6 @@
       return '';
     }
 
-    // بررسی آیدی مستقیماً از داده‌های JSON دریافتی از Supabase
     async function processLogin() {
       const accId = document.getElementById('loginAccId').value.trim();
       if (!accId) {
@@ -636,7 +623,6 @@
       showLoading(true);
       try {
         const res = await getSupabaseData();
-
         if (res.accounts) {
           let foundAcc = res.accounts.find(acc => {
             let idVal = getVal(acc, ['AccountID', 'accountid', 'id']);
@@ -657,7 +643,7 @@
           }
         } else {
           showLoading(false);
-          alert("خطا در دریافت اطلاعات از Supabase. لطفاً دوباره تلاش کنید.");
+          alert("خطا در دریافت اطلاعات از سرور. لطفاً دوباره تلاش کنید.");
         }
       } catch (e) {
         showLoading(false);
@@ -672,7 +658,7 @@
     }
 
     function logoutAccount() {
-      if (confirm("⚠️ آیا مطمئن هستید که می‌خواهید از حساب خارج شوید؟\n\nبا خروج از حساب، برای ورود بعدی باید مجدداً شناسه (آیدی) خود را وارد کنید.")) {
+      if (confirm("⚠️ آیا مطمئن هستید که می‌خواهید از حساب خارج شوید؟")) {
         sessionStorage.removeItem('current_active_account_id');
         localStorage.removeItem('persistent_account_id');
         loggedInAccount = null;
@@ -765,7 +751,6 @@
 
       if (isStudentAccount) {
         maxUsableIqdLimit = currentNetIqdBalance + 30000;
-
         if (maxUsableIqdLimit <= 0) {
           chargeActive.classList.add('hidden');
           blockedWarning.classList.remove('hidden');
@@ -776,7 +761,6 @@
         }
       } else {
         maxUsableIqdLimit = currentNetIqdBalance > 0 ? currentNetIqdBalance : 0;
-
         if (maxUsableIqdLimit <= 0) {
           chargeActive.classList.add('hidden');
           blockedWarning.classList.remove('hidden');
@@ -794,7 +778,6 @@
     function startPendingTimer(accId) {
       if (isTimerRunning) return;
       isTimerRunning = true;
-
       let secondsLeft = 180;
 
       if (timerInterval) clearInterval(timerInterval);
@@ -845,7 +828,6 @@
           let opType = getVal(tx, ['OperationType', 'operationtype']) || '';
           let dir = getVal(tx, ['Direction', 'direction']) || '';
           let amt = parseFloat(getVal(tx, ['Amount', 'amount']));
-
           let isDebit = dir.includes("بدهکار") || opType.includes("پرداخت") || opType.includes("امانت");
           return isDebit && Math.abs(amt - p.iqdAmount) < 1;
         });
@@ -874,7 +856,6 @@
             <div style="font-size:11px; color:#ea580c; margin-top:4px;">لطفاً چند لحظه شکیبا باشید تا پس از بررسی، رسید و پین شارژ صادر شود.</div>
           </div>
         `;
-
         startPendingTimer(accId);
       } else {
         if (timerInterval) clearInterval(timerInterval);
@@ -911,8 +892,8 @@
 
       container.innerHTML += `
         <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:12px; margin-top:10px; font-size:11.5px; color:#1e40af; font-weight:700; text-align:center; line-height:1.6;">
-          اگر پیام گزارش ارسال موفق ثبت نشده، از بالای صفحه حساب را بروزرسانی کنید. اگر بازم نشد به کریمی پیام بدهید.<br>
-          <a href="https://wa.me/+9647721878997" target="_blank" style="display:inline-block; background:#25d366; color:#fff; text-decoration:none; padding:8px 16px; border-radius:10px; font-weight:900; margin-top:8px;">💬 ارتباط با کریمی (واتساپ)</a>
+          اگر پیام گزارش ارسال ثبت نشده، از بالای صفحه حساب را بروزرسانی کنید.<br>
+          <a href="https://wa.me/${ADMIN_WHATSAPP}" target="_blank" style="display:inline-block; background:#25d366; color:#fff; text-decoration:none; padding:8px 16px; border-radius:10px; font-weight:900; margin-top:8px;">💬 ارتباط با کریمی (واتساپ)</a>
         </div>
       `;
 
@@ -924,6 +905,34 @@
       const encodedMsg = encodeURIComponent(message);
       const waUrl = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodedMsg}`;
       window.open(waUrl, '_blank');
+    }
+
+    // تابع ارسال عکس و متن به ربات تلگرام
+    async function sendPhotoToTelegram(base64Data, captionText) {
+      try {
+        // تبدیل base64 به Blob
+        const arr = base64Data.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        const blob = new Blob([u8arr], { type: mime });
+
+        const formData = new FormData();
+        formData.append('chat_id', TELEGRAM_CHAT_ID);
+        formData.append('photo', blob, 'image.jpg');
+        formData.append('caption', captionText);
+
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+          method: 'POST',
+          body: formData
+        });
+      } catch (err) {
+        console.error("خطا در ارسال تصویر به تلگرام:", err);
+      }
     }
 
     async function submitActiveServiceTransaction() {
@@ -1001,13 +1010,11 @@
       localStorage.setItem(`pending_charge_${accId}`, JSON.stringify(pendingList));
 
       renderRecentRequests(accId, allTransactions);
-
       sendWhatsAppNotification(waText);
 
       showLoading(false);
-
       playBeepSound('success');
-      alert("✅ درخواست شما ثبت شد. لطفا پیام واتساپ باز شده را ارسال کنید تا بررسی شود.");
+      alert("✅ درخواست شما ثبت شد. لطفا پیام واتساپ باز شده را ارسال کنید.");
 
       document.getElementById('targetPhoneAfn').value = "";
       document.getElementById('chargeAmountAfn').value = "";
@@ -1017,7 +1024,7 @@
       if (activeServiceTab === 'iq') calculateIqCardAndValidate();
     }
 
-    // ثبت مستقیم حساب جدید در جدول accounts در Supabase
+    // ثبت حساب جدید (ارسال متن به واتساپ و ارسال عکس‌ها مستقیماً به تلگرام)
     async function submitAccountRequest() {
       if (!isIdCopied) {
         alert("لطفاً ابتدا دکمه «کپی شناسه حساب» را بزنید و آیدی خود را ذخیره کنید.");
@@ -1053,10 +1060,28 @@
           ]);
 
         if (error) {
-          console.error("خطا در ثبت حساب در Supabase:", error);
+          console.error("خطا در ثبت حساب در پایگاه داده:", error);
         }
       } catch (e) {
         console.error("خطای غیرمنتظره:", e);
+      }
+
+      // اگر کاربر حوزوی باشد و عکس‌ها را گرفته باشد، مستقیماً به تلگرام ارسال می‌شود
+      if (isStudentMode) {
+        const selfieBase64 = document.getElementById('selfieBase64').value;
+        const docBase64 = document.getElementById('docBase64').value;
+
+        const photoCaption = `🎓 مدارک افتتاح حساب حوزوی\n\n` +
+                             `🔑 شناسه: ${accId}\n` +
+                             `👤 نام: ${name}\n` +
+                             `📱 تلفن: ${fullPhone}`;
+
+        if (selfieBase64) {
+          await sendPhotoToTelegram(selfieBase64, photoCaption + " (سلفی زنده)");
+        }
+        if (docBase64) {
+          await sendPhotoToTelegram(docBase64, photoCaption + " (مدرک/پاسپورت)");
+        }
       }
 
       const waText = `📋 درخواست افتتاح حساب جدید\n\n` +
@@ -1064,7 +1089,7 @@
                      `🔑 شناسه: ${accId}\n` +
                      `👤 نام: ${name}\n` +
                      `📱 تلفن: ${fullPhone}\n` +
-                     (isStudentMode ? `*(کاربر گرامی لطفاً عکس سلفی و پاسپورت خود را در ادامه همین پیام واتساپ برای بررسی و تایید هویت ارسال نمایید)*` : ``);
+                     (isStudentMode ? `*(عکس‌های سلفی و پاسپورت این کاربر مستقیماً به ربات تلگرام شما ارسال شد)*` : ``);
 
       sendWhatsAppNotification(waText);
 
