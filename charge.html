@@ -157,7 +157,7 @@
 <body>
 
   <div id="loadingOverlay">
-    <div style="font-size: 16px; color: #10b981;">⚡ در حال بررسی شناسه و دریافت اطلاعات...</div>
+    <div style="font-size: 16px; color: #10b981;">⚡ در حال بررسی شناسه و دریافت اطلاعات از Supabase...</div>
     <div style="width: 100%; max-width: 320px;">
       <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
     </div>
@@ -352,11 +352,16 @@
     </div>
 
   </div>
-  <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaCdwpY7tcQj-_sDC47fUO8PBoL2ncDtIFeHgbk3HhpxuQr4biosiaK_jOFCq0Xu7v/exec"; 
-    
-    const ADMIN_WHATSAPP = "+9647721878997"; 
+<!-- کتابخانه رسمی Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <script>
+    // اطلاعات اتصال Supabase شما
+    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
+    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const ADMIN_WHATSAPP = "+9647721878997"; 
     const AFN_TO_IQD_RATE = 26.5;
 
     let activeServiceTab = 'afn';
@@ -369,6 +374,22 @@
     let timerInterval = null;
     let isTimerRunning = false;
     let isIdCopied = false;
+
+    // دریافت مستقیم داده‌های JSON از Supabase
+    async function getSupabaseData() {
+      const [accRes, txRes] = await Promise.all([
+        _supabase.from('accounts').select('*'),
+        _supabase.from('transactions').select('*')
+      ]);
+
+      if (accRes.error) console.error("خطا در جدول accounts:", accRes.error);
+      if (txRes.error) console.error("خطا در جدول transactions:", txRes.error);
+
+      return {
+        accounts: accRes.data || [],
+        transactions: txRes.data || []
+      };
+    }
 
     // ورود آنی با حافظه مرورگر
     window.addEventListener('DOMContentLoaded', () => {
@@ -519,7 +540,7 @@
         return;
       }
 
-      let accId = loggedInAccount ? (getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID) : "";
+      let accId = loggedInAccount ? (loggedInAccount.AccountID || loggedInAccount.accountid) : "";
       let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
       if (pendingLocal.length > 0) {
         btnSubmit.disabled = true;
@@ -567,7 +588,7 @@
         return;
       }
 
-      let accId = loggedInAccount ? (getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID) : "";
+      let accId = loggedInAccount ? (loggedInAccount.AccountID || loggedInAccount.accountid) : "";
       let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
       if (pendingLocal.length > 0) {
         btnSubmit.disabled = true;
@@ -590,22 +611,8 @@
       }
     }
 
-    function parseRowsToObjects(rows) {
-      if (!rows || rows.length <= 1) return [];
-      if (typeof rows[0] === 'object' && !Array.isArray(rows[0])) return rows;
-      let headers = rows[0].map(h => String(h).trim());
-      let result = [];
-      for (let i = 1; i < rows.length; i++) {
-        let obj = {};
-        for (let j = 0; j < headers.length; j++) {
-          obj[headers[j]] = rows[i][j];
-        }
-        result.push(obj);
-      }
-      return result;
-    }
-
     function getVal(obj, keys) {
+      if (!obj) return '';
       for (let k of keys) {
         if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
         let lower = k.toLowerCase();
@@ -618,7 +625,7 @@
       return '';
     }
 
-    // بررسی دقیق آیدی در گوگل شیت و جلوگیری از ورود در صورت نامعتبر بودن
+    // بررسی آیدی مستقیماً از داده‌های JSON دریافتی از Supabase
     async function processLogin() {
       const accId = document.getElementById('loginAccId').value.trim();
       if (!accId) {
@@ -628,21 +635,20 @@
 
       showLoading(true);
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=getData`);
-        const res = await response.json();
+        const res = await getSupabaseData();
 
         if (res.accounts) {
-          let accounts = parseRowsToObjects(res.accounts);
-          let foundAcc = accounts.find(acc => String(getVal(acc, ['AccountID', 'accountid'])).trim().toLowerCase() === accId.toLowerCase());
+          let foundAcc = res.accounts.find(acc => {
+            let idVal = getVal(acc, ['AccountID', 'accountid', 'id']);
+            return String(idVal).trim().toLowerCase() === accId.toLowerCase();
+          });
 
           if (foundAcc) {
-            // آیدی معتبر است و در گوگل شیت وجود دارد
             sessionStorage.setItem('current_active_account_id', accId);
             localStorage.setItem('persistent_account_id', accId);
             processServerData(res, accId);
             showLoading(false);
           } else {
-            // آیدی در گوگل شیت وجود ندارد یا اشتباه است
             showLoading(false);
             playBeepSound('error');
             if (confirm("❌ این آیدی در سیستم وجود ندارد یا اشتباه است!\n\nآیا می‌خواهید یک حساب جدید ایجاد کنید؟")) {
@@ -651,7 +657,7 @@
           }
         } else {
           showLoading(false);
-          alert("خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.");
+          alert("خطا در دریافت اطلاعات از Supabase. لطفاً دوباره تلاش کنید.");
         }
       } catch (e) {
         showLoading(false);
@@ -659,7 +665,6 @@
       }
     }
 
-    // اگر کاربر آیدی خود را فراموش کرده باشد
     function forgotMyId() {
       playBeepSound('click');
       const msg = encodeURIComponent("سلام جناب کریمی، من آیدی حساب خود را فراموش کرده‌ام. لطفاً راهنمایی فرمایید.");
@@ -678,7 +683,7 @@
 
     async function refreshUserData() {
       if (!loggedInAccount) return;
-      let realId = getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID;
+      let realId = getVal(loggedInAccount, ['AccountID', 'accountid', 'id']);
       showLoading(true);
       await fetchAndRenderData(realId);
       showLoading(false);
@@ -686,33 +691,31 @@
 
     async function fetchAndRenderDataInBackground(accId) {
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=getData`);
-        const res = await response.json();
+        const res = await getSupabaseData();
         processServerData(res, accId);
       } catch (e) {}
     }
 
     async function fetchAndRenderData(accId) {
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=getData`);
-        const res = await response.json();
+        const res = await getSupabaseData();
         processServerData(res, accId);
       } catch (e) {}
     }
 
     function processServerData(res, accId) {
       if (res.accounts) {
-        let accounts = parseRowsToObjects(res.accounts);
-        let transactions = parseRowsToObjects(res.transactions);
-
-        let foundAcc = accounts.find(acc => String(getVal(acc, ['AccountID', 'accountid'])).trim().toLowerCase() === accId.toLowerCase());
+        let foundAcc = res.accounts.find(acc => {
+          let idVal = getVal(acc, ['AccountID', 'accountid', 'id']);
+          return String(idVal).trim().toLowerCase() === accId.toLowerCase();
+        });
 
         if (foundAcc) {
           loggedInAccount = foundAcc;
-          allTransactions = transactions;
+          allTransactions = res.transactions;
           
           let rawName = getVal(foundAcc, ['Name', 'name']);
-          let realId = getVal(foundAcc, ['AccountID', 'accountid']);
+          let realId = getVal(foundAcc, ['AccountID', 'accountid', 'id']);
           
           isAccountPendingApproval = (!rawName || rawName.trim() === "");
           let displayName = isAccountPendingApproval ? "در انتظار تأیید مدیریت" : rawName;
@@ -720,8 +723,8 @@
           document.getElementById('welcomeUserTitle').innerText = `👤 ${displayName}`;
           document.getElementById('userAccountDetails').innerText = `شناسه حساب: ${realId}`;
           
-          evaluateAccountAccess(realId, transactions, realId.toUpperCase().startsWith("TLB"), isAccountPendingApproval);
-          renderRecentRequests(realId, transactions);
+          evaluateAccountAccess(realId, res.transactions, realId.toUpperCase().startsWith("TLB"), isAccountPendingApproval);
+          renderRecentRequests(realId, res.transactions);
 
           showStep('stepChargePanel');
         }
@@ -740,7 +743,10 @@
         return;
       }
 
-      let accTxs = txs.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId));
+      let accTxs = txs.filter(t => {
+        let tAccId = getVal(t, ['AccountID', 'accountid']);
+        return String(tAccId) === String(accId);
+      });
       currentNetIqdBalance = 0;
 
       accTxs.forEach(tx => {
@@ -829,7 +835,10 @@
       let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
       let activePendingList = [];
 
-      let accTxs = txs.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).reverse();
+      let accTxs = txs.filter(t => {
+        let tAccId = getVal(t, ['AccountID', 'accountid']);
+        return String(tAccId) === String(accId);
+      }).reverse();
 
       pendingLocal.forEach(p => {
         let isMatched = accTxs.some(tx => {
@@ -923,8 +932,8 @@
         return;
       }
 
-      let accId = getVal(loggedInAccount, ['AccountID', 'accountid']) || loggedInAccount.AccountID;
-      let accName = getVal(loggedInAccount, ['Name', 'name']) || loggedInAccount.Name;
+      let accId = loggedInAccount ? (loggedInAccount.AccountID || loggedInAccount.accountid) : "";
+      let accName = loggedInAccount ? (loggedInAccount.Name || loggedInAccount.name) : "";
       if (!accName) accName = "نامشخص / در انتظار تایید";
 
       let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
@@ -1008,6 +1017,7 @@
       if (activeServiceTab === 'iq') calculateIqCardAndValidate();
     }
 
+    // ثبت مستقیم حساب جدید در جدول accounts در Supabase
     async function submitAccountRequest() {
       if (!isIdCopied) {
         alert("لطفاً ابتدا دکمه «کپی شناسه حساب» را بزنید و آیدی خود را ذخیره کنید.");
@@ -1029,17 +1039,25 @@
 
       showLoading(true);
 
-      let formData = new FormData();
-      formData.append("action", "addAccount");
-      formData.append("accountId", accId);
-      
       let sheetNameValue = isStudentMode ? "" : `${name} (عادی)`;
-      formData.append("accountName", sheetNameValue);
-      formData.append("phone", fullPhone);
 
       try {
-        await fetch(SCRIPT_URL, { method: "POST", body: formData, mode: "no-cors" });
-      } catch (e) {}
+        const { error } = await _supabase
+          .from('accounts')
+          .insert([
+            {
+              AccountID: accId,
+              Name: sheetNameValue,
+              Phone: fullPhone
+            }
+          ]);
+
+        if (error) {
+          console.error("خطا در ثبت حساب در Supabase:", error);
+        }
+      } catch (e) {
+        console.error("خطای غیرمنتظره:", e);
+      }
 
       const waText = `📋 درخواست افتتاح حساب جدید\n\n` +
                      `📌 نوع: ${accountTypeStr}\n` +
