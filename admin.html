@@ -99,20 +99,14 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: none; z-index: 5000;
     }
 
-    .profile-img-preview {
-      width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);
-    }
-    .receipt-img-preview {
-      width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); margin-top: 8px;
-    }
-    .op-badge-item {
-      display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f1f5f9; border-radius: 8px; margin-bottom: 6px;
-    }
+    .profile-img-preview { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+    .receipt-img-preview { width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); margin-top: 8px; }
+    .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f1f5f9; border-radius: 8px; margin-bottom: 6px; }
   </style>
 </head>
 <body>
 
-  <div id="syncIndicator">🔄 در حال ذخیره در Supabase...</div>
+  <div id="syncIndicator">🔄 در حال اتصال زنده به دیتابیس...</div>
 
   <!-- صفحه لاگین -->
   <div id="authOverlay">
@@ -139,7 +133,7 @@
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🏛️ پنل مدیریت صرافی کریمی</h3>
         <div class="flex-row">
-          <button class="btn btn-secondary btn-sm" onclick="loadDataFromSupabase(true)">🔄 همگام‌سازی شبکه</button>
+          <button class="btn btn-secondary btn-sm" onclick="loadDataFromSupabase(true)">🔄 همگام‌سازی زنده</button>
           <button class="btn btn-danger btn-sm" onclick="handleLogout()">خروج</button>
         </div>
       </div>
@@ -191,9 +185,7 @@
             <option value="month">ماهانه (۳۰ روز گذشته)</option>
           </select>
         </div>
-
         <div id="transferSummaryHeader" class="stat-card" style="background:#ecfdf5; border-color:var(--accent); margin-bottom:10px;"></div>
-
         <div id="transfersReportContainer"></div>
       </div>
     </div>
@@ -236,7 +228,6 @@
         <div class="form-group">
           <input type="text" id="searchAccountInput" placeholder="🔍 جستجوی پیشرفته (نام، تلفن، آیدی حساب یا کُد تراکنش)..." oninput="advancedSearchAccounts()">
         </div>
-
         <div id="accountsListContainer" style="margin-top: 8px;"></div>
       </div>
     </div>
@@ -281,7 +272,7 @@
     <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
   </div>
 
-  <!-- مودال مدیریت انواع عملیات (OperationType) -->
+  <!-- مودال مدیریت انواع عملیات -->
   <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 400px; margin: 0; max-height:90vh; overflow-y:auto;">
       <h3>⚙️ مدیریت انواع عملیات</h3>
@@ -379,7 +370,6 @@
   </div>
 
   <script>
-    // تنظیمات Supabase با کلید و لینک جدید شما
     const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
     const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -398,21 +388,8 @@
       if (sessionStorage.getItem("adminAuthSession") === "active") {
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
-        
-        let cachedAcc = localStorage.getItem("cached_accounts");
-        let cachedTx = localStorage.getItem("cached_transactions");
-        let cachedOp = localStorage.getItem("cached_op_types");
-        
-        if (cachedAcc && cachedTx) {
-          allAccounts = JSON.parse(cachedAcc);
-          allTransactions = JSON.parse(cachedTx);
-          if (cachedOp) customOpTypes = JSON.parse(cachedOp);
-          renderDashboardStats();
-          renderAccountsList(allAccounts);
-          populateOpTypeSelect();
-        }
-        
-        loadDataFromSupabase(false);
+        // بارگیری مستقیم و زنده از Supabase بدون خواندن حافظه محلی (کش)
+        loadDataFromSupabase(true);
       }
     };
 
@@ -439,17 +416,11 @@
       document.getElementById(viewId).classList.add('active');
     }
 
-    function saveToLocalCache() {
-      localStorage.setItem("cached_accounts", JSON.stringify(allAccounts));
-      localStorage.setItem("cached_transactions", JSON.stringify(allTransactions));
-      localStorage.setItem("cached_op_types", JSON.stringify(customOpTypes));
-    }
-
-    // بارگیری اطلاعات از Supabase
-    async function loadDataFromSupabase(showLoader = false) {
+    // بارگیری اطلاعات مستقیماً و فقط از دیتابیس زنده Supabase
+    async function loadDataFromSupabase(showLoader = true) {
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
-        indicator.innerText = "🔄 در حال دریافت اطلاعات از Supabase...";
+        indicator.innerText = "🔄 در حال دریافت اطلاعات زنده از Supabase...";
         indicator.style.display = "block";
       }
 
@@ -460,13 +431,15 @@
           _supabase.from('operation_types').select('*')
         ]);
 
+        if (accRes.error) console.error("خطا در دریافت حساب‌ها:", accRes.error);
+        if (txRes.error) console.error("خطا در دریافت تراکنش‌ها:", txRes.error);
+
         if (accRes.data) allAccounts = accRes.data;
         if (txRes.data) allTransactions = txRes.data;
         if (opRes.data && opRes.data.length > 0) {
           customOpTypes = opRes.data.map(o => o.title);
         }
 
-        saveToLocalCache();
         renderDashboardStats();
         renderAccountsList(allAccounts);
         populateOpTypeSelect();
@@ -476,7 +449,7 @@
           if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
         }
       } catch (e) {
-        console.log("خطا در ارتباط با Supabase:", e);
+        console.log("خطا در ارتباط با سرور:", e);
       } finally {
         if (indicator) indicator.style.display = "none";
       }
@@ -496,25 +469,15 @@
       return '';
     }
 
-    // آپلود فایل در Storage
     async function uploadFileToSupabase(file, bucketName) {
       if (!file) return null;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-      const { data, error } = await _supabase.storage
-        .from(bucketName)
-        .upload(fileName, file);
+      const { data, error } = await _supabase.storage.from(bucketName).upload(fileName, file);
+      if (error) { console.error("خطا در آپلود عکس:", error); return null; }
 
-      if (error) {
-        console.error("خطا در آپلود عکس:", error);
-        return null;
-      }
-
-      const { data: publicUrlData } = _supabase.storage
-        .from(bucketName)
-        .getPublicUrl(fileName);
-
+      const { data: publicUrlData } = _supabase.storage.from(bucketName).getPublicUrl(fileName);
       return publicUrlData.publicUrl;
     }
 
@@ -557,9 +520,7 @@
         customOpTypes.push(title);
         populateOpTypeSelect();
         renderOpTypesList();
-        saveToLocalCache();
         input.value = "";
-        
         await _supabase.from('operation_types').insert([{ title: title }]);
       }
     }
@@ -568,8 +529,6 @@
       customOpTypes = customOpTypes.filter(o => o !== title);
       populateOpTypeSelect();
       renderOpTypesList();
-      saveToLocalCache();
-
       await _supabase.from('operation_types').delete().eq('title', title);
     }
 
@@ -644,7 +603,6 @@
       let filteredTxs = allTransactions.filter(tx => {
         let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
         if (opType !== "حواله") return false;
-
         if (period === "all") return true;
 
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
@@ -656,7 +614,6 @@
         if (period === "today" && diffDays <= 1) return true;
         if (period === "week" && diffDays <= 7) return true;
         if (period === "month" && diffDays <= 30) return true;
-
         return false;
       });
 
@@ -895,13 +852,9 @@
       window.open(`https://wa.me/${phone}`, '_blank');
     }
 
-    // جستجوی پیشرفته
     function advancedSearchAccounts() {
       const q = document.getElementById("searchAccountInput").value.trim().toLowerCase();
-      if (!q) {
-        renderAccountsList(allAccounts);
-        return;
-      }
+      if (!q) { renderAccountsList(allAccounts); return; }
 
       let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
       if (matchedTx) {
@@ -917,7 +870,6 @@
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
         return name.includes(q) || phone.includes(q) || accId.includes(q);
       });
-
       renderAccountsList(filtered);
     }
 
@@ -954,13 +906,10 @@
       let photoUrl = document.getElementById("existingAccountPhotoUrl").value;
 
       if (!accName) { alert("نام مشتری الزامی است"); return; }
-
       closeAccountModal();
+
       const indicator = document.getElementById("syncIndicator");
-      if (indicator) {
-        indicator.innerText = "🔄 در حال ثبت حساب در Supabase...";
-        indicator.style.display = "block";
-      }
+      if (indicator) { indicator.innerText = "🔄 در حال ثبت حساب..."; indicator.style.display = "block"; }
 
       if (fileInput.files.length > 0) {
         const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'Accounts_Images');
@@ -968,43 +917,27 @@
       }
 
       let accountId = editId ? editId : "ACC-" + Math.floor(100000 + Math.random() * 900000);
-
-      const payload = {
-        AccountID: accountId,
-        Name: accName,
-        Phone: accPhone,
-        Photo: photoUrl
-      };
+      const payload = { AccountID: accountId, Name: accName, Phone: accPhone, Photo: photoUrl };
 
       if (editId) {
-        let accIndex = allAccounts.findIndex(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId));
-        if (accIndex !== -1) allAccounts[accIndex] = payload;
         await _supabase.from('accounts').update(payload).eq('AccountID', editId);
       } else {
-        allAccounts.push(payload);
         await _supabase.from('accounts').insert([payload]);
       }
 
-      saveToLocalCache();
-      renderAccountsList(allAccounts);
-      if (indicator) indicator.style.display = "none";
+      await loadDataFromSupabase(false);
     }
 
     async function deleteCurrentAccount() {
       if (!confirm("آیا از حذف این حساب و تمام تراکنش‌های آن مطمئن هستید؟")) return;
-      
       let accIdToDelete = currentAccountId;
-      
-      allAccounts = allAccounts.filter(a => String(getVal(a, ['AccountID', 'accountid'])) !== String(accIdToDelete));
-      allTransactions = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) !== String(accIdToDelete));
-      
-      saveToLocalCache();
+
       currentAccountId = null;
       switchView('viewAccounts');
-      renderAccountsList(allAccounts);
 
       await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
       await _supabase.from('transactions').delete().eq('AccountID', accIdToDelete);
+      await loadDataFromSupabase(true);
     }
 
     function selectAccount(accId, accName) {
@@ -1015,12 +948,7 @@
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
       let photoUrl = acc ? getVal(acc, ['Photo', 'photo']) : '';
       const photoEl = document.getElementById("detailAccountPhoto");
-      if (photoUrl) {
-        photoEl.src = photoUrl;
-        photoEl.style.display = "block";
-      } else {
-        photoEl.style.display = "none";
-      }
+      if (photoUrl) { photoEl.src = photoUrl; photoEl.style.display = "block"; } else { photoEl.style.display = "none"; }
 
       switchView('viewAccountDetail');
       renderAccountDetailTransactions(accId);
@@ -1055,7 +983,6 @@
           let rawDate = String(getVal(tx, ['Date', 'date']) || new Date().toISOString());
           let cleanDate = rawDate.split('T')[0];
           let txNumber = txs.length - idx;
-
           let dirColor = dir.includes('بستانکار') ? '#059669' : '#dc2626';
 
           container.innerHTML += `
@@ -1116,7 +1043,6 @@
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
         <div style="margin-top:6px; background:#f1f5f9; padding:8px; border-radius:8px;"><b>توضیحات:</b> ${desc || 'بدون شرح'}</div>
         ${receiptHtml}
-        <div style="margin-top:10px; font-size:0.75rem; color:#64748b; text-align:center;">⚠️ داشتن اسناد برای موقع گرفتن پول الزامی هست</div>
       `;
 
       let btnContainer = document.getElementById("txActionButtonsContainer");
@@ -1162,12 +1088,8 @@
       
       let dirVal = getVal(tx, ['Direction', 'direction']) || "بستانکار";
       let currVal = getVal(tx, ['Currency', 'currency']) || "AFN";
-      if(document.querySelector(`input[name="txDir"][value="${dirVal}"]`)) {
-        document.querySelector(`input[name="txDir"][value="${dirVal}"]`).checked = true;
-      }
-      if(document.querySelector(`input[name="txCurr"][value="${currVal}"]`)) {
-        document.querySelector(`input[name="txCurr"][value="${currVal}"]`).checked = true;
-      }
+      if(document.querySelector(`input[name="txDir"][value="${dirVal}"]`)) document.querySelector(`input[name="txDir"][value="${dirVal}"]`).checked = true;
+      if(document.querySelector(`input[name="txCurr"][value="${currVal}"]`)) document.querySelector(`input[name="txCurr"][value="${currVal}"]`).checked = true;
 
       document.getElementById("txAmount").value = getVal(tx, ['Amount', 'amount']) || "";
       document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
@@ -1194,10 +1116,7 @@
 
       closeTransactionModal();
       const indicator = document.getElementById("syncIndicator");
-      if (indicator) {
-        indicator.innerText = "🔄 در حال ثبت تراکنش در Supabase...";
-        indicator.style.display = "block";
-      }
+      if (indicator) { indicator.innerText = "🔄 در حال ثبت..."; indicator.style.display = "block"; }
 
       if (fileInput.files.length > 0) {
         const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'receipts');
@@ -1205,7 +1124,6 @@
       }
 
       let transIdToSave = editTransId || ("TX-" + Math.floor(10000000 + Math.random() * 90000000));
-
       const payload = {
         TransID: transIdToSave,
         AccountID: currentAccountId,
@@ -1219,32 +1137,22 @@
       };
 
       if (editTransId) {
-        let index = allTransactions.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
-        if (index !== -1) allTransactions[index] = payload;
         await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
       } else {
-        allTransactions.push(payload);
         await _supabase.from('transactions').insert([payload]);
       }
 
-      saveToLocalCache();
+      await loadDataFromSupabase(false);
       selectAccount(currentAccountId, currentAccountName);
-      renderDashboardStats();
-      if (indicator) indicator.style.display = "none";
     }
 
     async function deleteSingleTransaction() {
       if (!confirm("آیا از حذف این تراکنش مطمئن هستید؟")) return;
-      
       let txIdToDelete = selectedTxId;
 
-      allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid'])) !== String(txIdToDelete));
-      saveToLocalCache();
-
-      selectAccount(currentAccountId, currentAccountName);
-      renderDashboardStats();
-
       await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
+      await loadDataFromSupabase(false);
+      selectAccount(currentAccountId, currentAccountName);
     }
 
     function sendGeneralWhatsAppReport() {
@@ -1269,7 +1177,7 @@
         `نوع تراکنش: ${opType} (${dirVal})`,
         `مبلغ: ${amtVal}${currVal}`,
         ``,
-        `جهت مشاهده بیلانس کامل و جزئیات تراکنش از لینک زیر استفاده نمایید:`,
+        `لینک سامانه:`,
         siteLink
       ];
 
@@ -1285,15 +1193,7 @@
       if(!tx) return;
 
       let rawDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ').trim();
-
-      let lines = [
-        `📄 *رسید انتقال:*`,
-        `────────────────────`,
-        rawDesc,
-        `────────────────────`,
-        `⚠️ *داشتن اسناد الزامی است.*`
-      ];
-
+      let lines = [`📄 *رسید انتقال:*`, `────────────────────`, rawDesc, `────────────────────`, `⚠️ *داشتن اسناد الزامی است.*`];
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
       window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
     }
@@ -1317,27 +1217,14 @@
         if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
       });
 
-      let lines = [
-        `سلام و احترام خدمت آقای ${currentAccountName}`,
-        ``,
-        `📊 صورت‌حساب و بیلان فعلی شما در صرافی کریمی:`
-      ];
-
+      let lines = [`سلام و احترام خدمت آقای ${currentAccountName}`, ``, `📊 صورت‌حساب و بیلان فعلی شما در صرافی کریمی:`];
       let hasBalance = false;
       for (let curr in accCurrencies) {
         hasBalance = true;
         let cred = accCurrencies[curr].credit;
         let deb = accCurrencies[curr].debit;
         let net = cred - deb;
-        
-        let statusStr = "";
-        if (net > 0) {
-          statusStr = `بدهکاریم: ${Math.abs(net).toLocaleString()}${curr}`;
-        } else if (net < 0) {
-          statusStr = `طلبکاریم: ${Math.abs(net).toLocaleString()}${curr}`;
-        } else {
-          statusStr = `تسویه حساب کامل`;
-        }
+        let statusStr = net > 0 ? `بدهکاریم: ${Math.abs(net).toLocaleString()}${curr}` : (net < 0 ? `طلبکاریم: ${Math.abs(net).toLocaleString()}${curr}` : `تسویه حساب کامل`);
 
         lines.push(``);
         lines.push(`🔹 ارز: ${curr}`);
@@ -1345,14 +1232,8 @@
         lines.push(`وضعیت: ${statusStr}`);
       }
 
-      if (!hasBalance) {
-        lines.push(`هیچ تراکنش یا مانده حسابی برای شما ثبت نشده است.`);
-      }
-
-      lines.push(``);
-      lines.push(`----------------------------------------`);
-      lines.push(`جهت مشاهده جزئیات بیشتر تراکنش‌ها:`);
-      lines.push(siteLink);
+      if (!hasBalance) { lines.push(`هیچ تراکنش یا مانده حسابی برای شما ثبت نشده است.`); }
+      lines.push(``, `----------------------------------------`, siteLink);
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
       window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
