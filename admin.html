@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>پنل مدیریت سامانه کریمی</title>
+  <!-- کتابخانه Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --primary: #0f172a;
@@ -56,7 +58,7 @@
       background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
-    .stat-row { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 3px; }
+    .stat-row { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 3px; align-items: center; }
     .stat-badge { text-align: center; padding: 6px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; margin-top: 4px; }
 
     .btn { padding: 10px 12px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.88rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; }
@@ -96,11 +98,21 @@
       padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: none; z-index: 5000;
     }
+
+    .profile-img-preview {
+      width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);
+    }
+    .receipt-img-preview {
+      width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); margin-top: 8px;
+    }
+    .op-badge-item {
+      display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f1f5f9; border-radius: 8px; margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
 
-  <div id="syncIndicator">🔄 در حال ذخیره در گوگل‌شیت...</div>
+  <div id="syncIndicator">🔄 در حال ذخیره در Supabase...</div>
 
   <!-- صفحه لاگین -->
   <div id="authOverlay">
@@ -127,7 +139,7 @@
       <div class="card flex-row" style="justify-content: space-between;">
         <h3>🏛️ پنل مدیریت صرافی کریمی</h3>
         <div class="flex-row">
-          <button class="btn btn-secondary btn-sm" onclick="loadData(true)">🔄 همگام‌سازی شیت</button>
+          <button class="btn btn-secondary btn-sm" onclick="loadDataFromSupabase(true)">🔄 همگام‌سازی شبکه</button>
           <button class="btn btn-danger btn-sm" onclick="handleLogout()">خروج</button>
         </div>
       </div>
@@ -136,6 +148,7 @@
         <h3 style="margin-bottom: 12px; font-size: 1.1rem;">انتخاب بخش مدیریت:</h3>
         <button class="btn btn-info" onclick="switchView('viewGlobalStatsPage')" style="padding: 14px; font-size: 1rem;">📊 دیدن آمارها و گزارشات کلی</button>
         <button class="btn" onclick="switchView('viewAccounts')" style="padding: 14px; font-size: 1rem; margin-top: 6px;">👥 ورود به لیست حساب‌ها و مشتریان</button>
+        <button class="btn btn-warning" onclick="openOpTypeManagerModal()" style="padding: 14px; font-size: 1rem; margin-top: 6px;">⚙️ مدیریت انواع عملیات (OperationType)</button>
       </div>
     </div>
 
@@ -221,7 +234,7 @@
           <button class="btn btn-sm" onclick="openAccountModal()">+ ایجاد حساب جدید</button>
         </div>
         <div class="form-group">
-          <input type="text" id="searchAccountInput" placeholder="🔍 جستجوی نام یا تلفن مشتری..." oninput="filterAccounts()">
+          <input type="text" id="searchAccountInput" placeholder="🔍 جستجوی پیشرفته (نام، تلفن، آیدی حساب یا کُد تراکنش)..." oninput="advancedSearchAccounts()">
         </div>
 
         <div id="accountsListContainer" style="margin-top: 8px;"></div>
@@ -231,7 +244,10 @@
     <!-- صفحه جزئیات حساب و تراکنش‌ها -->
     <div id="viewAccountDetail" class="view-section">
       <div class="card flex-row" style="justify-content: space-between;">
-        <h3 id="detailAccountTitle">جزئیات حساب</h3>
+        <div class="flex-row">
+          <img id="detailAccountPhoto" src="" class="profile-img-preview" style="display:none; width:40px; height:40px;">
+          <h3 id="detailAccountTitle">جزئیات حساب</h3>
+        </div>
         <button class="btn btn-secondary btn-sm" onclick="switchView('viewAccounts')">← لیست حساب‌ها</button>
       </div>
 
@@ -241,7 +257,7 @@
         <div class="flex-row" style="gap: 4px; flex-wrap: wrap; margin-bottom: 8px;">
           <button class="btn btn-sm" onclick="openAddTransactionModal()">➕ ثبت تراکنش جدید</button>
           <button class="btn btn-whatsapp btn-sm" onclick="sendAccountBalanceWhatsApp()" style="background:#128c7e;">📲 ارسال صورت‌حساب (بیلان) در واتساپ</button>
-          <button class="btn btn-warning btn-sm" onclick="openEditAccountModal()">✏️ ویرایش نام/تلفن</button>
+          <button class="btn btn-warning btn-sm" onclick="openEditAccountModal()">✏️ ویرایش حساب/عکس</button>
           <button class="btn btn-danger btn-sm" onclick="deleteCurrentAccount()">🗑️ حذف حساب</button>
         </div>
 
@@ -265,6 +281,26 @@
     <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
   </div>
 
+  <!-- مودال مدیریت انواع عملیات (OperationType) -->
+  <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
+    <div class="card" style="width: 100%; max-width: 400px; margin: 0; max-height:90vh; overflow-y:auto;">
+      <h3>⚙️ مدیریت انواع عملیات</h3>
+      <div class="form-group" style="margin-top:10px;">
+        <label>عنوان عملیات جدید:</label>
+        <div class="flex-row">
+          <input type="text" id="newOpTypeInput" placeholder="مثلاً: صرافی، کمیسیون...">
+          <button class="btn btn-sm" style="width: auto; whitespace: nowrap;" onclick="addNewOperationType()">+ افزودن</button>
+        </div>
+      </div>
+      <hr style="margin: 10px 0;">
+      <label>لیست انواع عملیات فعال:</label>
+      <div id="opTypesListContainer" style="margin-top:8px;"></div>
+      <div class="flex-row" style="justify-content: flex-end; margin-top:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="closeOpTypeManagerModal()">بستن</button>
+      </div>
+    </div>
+  </div>
+
   <!-- مودال حساب -->
   <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
     <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
@@ -278,6 +314,11 @@
         <label>تلفن:</label>
         <input type="text" id="modalAccountPhone" dir="ltr" placeholder="07...">
       </div>
+      <div class="form-group">
+        <label>عکس صاحب حساب (Photo):</label>
+        <input type="file" id="modalAccountPhotoInput" accept="image/*">
+        <input type="hidden" id="existingAccountPhotoUrl">
+      </div>
       <div class="flex-row" style="justify-content: flex-end;">
         <button class="btn btn-secondary btn-sm" onclick="closeAccountModal()">انصراف</button>
         <button class="btn btn-sm" onclick="saveAccount()">ذخیره</button>
@@ -287,7 +328,7 @@
 
   <!-- مودال تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000; padding:12px;">
-    <div class="card" style="width: 100%; max-width: 360px; margin: 0;">
+    <div class="card" style="width: 100%; max-width: 360px; margin: 0; max-height:90vh; overflow-y:auto;">
       <h3 id="txModalTitle">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
       
@@ -316,13 +357,13 @@
 
       <div class="form-group">
         <label>نوع عملیات:</label>
-        <select id="txOpType">
-          <option value="امانت">امانت</option>
-          <option value="حواله">حواله</option>
-          <option value="دریافت">دریافت</option>
-          <option value="پرداخت">پرداخت</option>
-          <option value="تسویه">تسویه</option>
-        </select>
+        <select id="txOpType"></select>
+      </div>
+
+      <div class="form-group">
+        <label>تصویر رسید (receipt_url):</label>
+        <input type="file" id="txReceiptInput" accept="image/*">
+        <input type="hidden" id="existingReceiptUrl">
       </div>
 
       <div class="form-group">
@@ -337,12 +378,17 @@
     </div>
   </div>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaCdwpY7tcQj-_sDC47fUO8PBoL2ncDtIFeHgbk3HhpxuQr4biosiaK_jOFCq0Xu7v/exec";
+    // تنظیمات Supabase
+    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwZWh3a3Z0YmljZXVyZnBhZml3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMzgwMTAsImV4cCI6MjA1NjzgMTYxMH0.fV_9q6p4xV9ZpA3W7bV0X9ZpA3W7bV0X9ZpA3W7bV0X"; // کلید عمومی anon شما
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     const ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
     const ADMIN_PIN = "77218731";
     
     let allAccounts = [];
     let allTransactions = [];
+    let customOpTypes = ["امانت", "حواله", "دریافت", "پرداخت", "تسویه"];
     let currentAccountId = null;
     let currentAccountName = "";
     let selectedTxId = null;
@@ -354,15 +400,18 @@
         
         let cachedAcc = localStorage.getItem("cached_accounts");
         let cachedTx = localStorage.getItem("cached_transactions");
+        let cachedOp = localStorage.getItem("cached_op_types");
         
         if (cachedAcc && cachedTx) {
           allAccounts = JSON.parse(cachedAcc);
           allTransactions = JSON.parse(cachedTx);
+          if (cachedOp) customOpTypes = JSON.parse(cachedOp);
           renderDashboardStats();
           renderAccountsList(allAccounts);
+          populateOpTypeSelect();
         }
         
-        loadData(false);
+        loadDataFromSupabase(false);
       }
     };
 
@@ -373,7 +422,7 @@
         sessionStorage.setItem("adminAuthSession", "active");
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
-        loadData(true);
+        loadDataFromSupabase(true);
       } else {
         alert("ایمیل یا رمز اشتباه است!");
       }
@@ -389,83 +438,51 @@
       document.getElementById(viewId).classList.add('active');
     }
 
-    function saveAndSync(data, statusText) {
-      data.adminEmail = ADMIN_EMAIL;
-      data.adminPin = ADMIN_PIN;
-
-      const indicator = document.getElementById("syncIndicator");
-      if (indicator) {
-        indicator.innerText = statusText || "🔄 در حال ذخیره در گوگل‌شیت...";
-        indicator.style.display = "block";
-      }
-
-      let formData = new FormData();
-      for (let k in data) {
-        if (data[k] !== undefined && data[k] !== null) {
-          formData.append(k, data[k]);
-        }
-      }
-
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: formData,
-        mode: "no-cors"
-      }).then(() => {
-        setTimeout(() => {
-          if (indicator) indicator.style.display = "none";
-          loadData(false);
-        }, 2500);
-      }).catch(err => {
-        console.log("خطا در شبکه، ثبت محلی محفوظ است.");
-        if (indicator) indicator.style.display = "none";
-      });
-    }
-
     function saveToLocalCache() {
       localStorage.setItem("cached_accounts", JSON.stringify(allAccounts));
       localStorage.setItem("cached_transactions", JSON.stringify(allTransactions));
+      localStorage.setItem("cached_op_types", JSON.stringify(customOpTypes));
     }
 
-    async function loadData(silent = false) {
-      try {
-        const response = await fetch(SCRIPT_URL + "?action=getData");
-        const res = await response.json();
-        
-        if (res.accounts) {
-          allAccounts = parseRowsToObjects(res.accounts);
-          allTransactions = parseRowsToObjects(res.transactions);
-          
-          saveToLocalCache();
+    // بارگیری اطلاعات مستقیم از Supabase
+    async function loadDataFromSupabase(showLoader = false) {
+      const indicator = document.getElementById("syncIndicator");
+      if (showLoader && indicator) {
+        indicator.innerText = "🔄 در حال دریافت اطلاعات از Supabase...";
+        indicator.style.display = "block";
+      }
 
-          renderDashboardStats();
-          renderAccountsList(allAccounts);
-          
-          if (currentAccountId) {
-            let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
-            if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
-          }
+      try {
+        const [accRes, txRes, opRes] = await Promise.all([
+          _supabase.from('accounts').select('*'),
+          _supabase.from('transactions').select('*'),
+          _supabase.from('operation_types').select('*')
+        ]);
+
+        if (accRes.data) allAccounts = accRes.data;
+        if (txRes.data) allTransactions = txRes.data;
+        if (opRes.data && opRes.data.length > 0) {
+          customOpTypes = opRes.data.map(o => o.title);
+        }
+
+        saveToLocalCache();
+        renderDashboardStats();
+        renderAccountsList(allAccounts);
+        populateOpTypeSelect();
+
+        if (currentAccountId) {
+          let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+          if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
         }
       } catch (e) {
-        console.log("خطا در دانلود داده جدید از شیت");
+        console.log("خطا در دانلود داده جدید از Supabase:", e);
+      } finally {
+        if (indicator) indicator.style.display = "none";
       }
-    }
-
-    function parseRowsToObjects(rows) {
-      if (!rows || rows.length <= 1) return [];
-      if (typeof rows[0] === 'object' && !Array.isArray(rows[0])) return rows;
-      let headers = rows[0].map(h => String(h).trim());
-      let result = [];
-      for (let i = 1; i < rows.length; i++) {
-        let obj = {};
-        for (let j = 0; j < headers.length; j++) {
-          obj[headers[j]] = rows[i][j];
-        }
-        result.push(obj);
-      }
-      return result;
     }
 
     function getVal(obj, keys) {
+      if(!obj) return '';
       for (let k of keys) {
         if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
         let lower = k.toLowerCase();
@@ -478,6 +495,85 @@
       return '';
     }
 
+    // آپلود تصویر در Supabase Storage
+    async function uploadFileToSupabase(file, bucketName) {
+      if (!file) return null;
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { data, error } = await _supabase.storage
+        .from(bucketName)
+        .upload(filePath, file);
+
+      if (error) {
+        console.error("خطا در آپلود عکس:", error);
+        return null;
+      }
+
+      const { data: publicUrlData } = _supabase.storage
+        .from(bucketName)
+        .getPublicUrl(filePath);
+
+      return publicUrlData.publicUrl;
+    }
+
+    // مدیریت OperationType
+    function populateOpTypeSelect() {
+      const select = document.getElementById("txOpType");
+      select.innerHTML = "";
+      customOpTypes.forEach(op => {
+        select.innerHTML += `<option value="${op}">${op}</option>`;
+      });
+    }
+
+    function openOpTypeManagerModal() {
+      renderOpTypesList();
+      document.getElementById("opTypeManagerModal").style.display = "flex";
+    }
+
+    function closeOpTypeManagerModal() {
+      document.getElementById("opTypeManagerModal").style.display = "none";
+    }
+
+    function renderOpTypesList() {
+      const container = document.getElementById("opTypesListContainer");
+      container.innerHTML = "";
+      customOpTypes.forEach((op, index) => {
+        container.innerHTML += `
+          <div class="op-badge-item">
+            <span><b>${op}</b></span>
+            <button class="btn btn-danger btn-sm" onclick="removeOperationType('${op}')">حذف</button>
+          </div>
+        `;
+      });
+    }
+
+    async function addNewOperationType() {
+      const input = document.getElementById("newOpTypeInput");
+      const title = input.value.trim();
+      if (!title) return;
+      if (!customOpTypes.includes(title)) {
+        customOpTypes.push(title);
+        populateOpTypeSelect();
+        renderOpTypesList();
+        saveToLocalCache();
+        input.value = "";
+        
+        await _supabase.from('operation_types').insert([{ title: title }]);
+      }
+    }
+
+    async function removeOperationType(title) {
+      customOpTypes = customOpTypes.filter(o => o !== title);
+      populateOpTypeSelect();
+      renderOpTypesList();
+      saveToLocalCache();
+
+      await _supabase.from('operation_types').delete().eq('title', title);
+    }
+
+    // محاسبات و نمایش داشبورد
     function renderDashboardStats() {
       let totalsByCurrency = {};
 
@@ -525,7 +621,7 @@
         gridHtml += `
           <div class="stat-card">
             <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده خالص: <b>${finalNet.toLocaleString()}</b></span></div>
-            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکاران: ${cred.toLocaleString()} \vert{} کل بدهکاران: ${deb.toLocaleString()}</div>
+            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکاران: ${cred.toLocaleString()} | کل بدهکاران: ${deb.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -586,7 +682,7 @@
       }
 
       let totalCount = filteredTxs.length;
-      filteredTxs.reverse().forEach((tx, idx) => {
+      filteredTxs.slice().reverse().forEach((tx, idx) => {
         let txNum = totalCount - idx;
         let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
@@ -749,6 +845,7 @@
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let accPhone = String(getVal(acc, ['Phone', 'phone']) || '');
+        let photoUrl = getVal(acc, ['Photo', 'photo']);
         if (!accId) return;
 
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
@@ -772,11 +869,18 @@
         }
 
         let cleanPhone = accPhone.replace(/\D/g, '');
+        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:36px; height:36px; margin-left:8px;">` : '';
 
         container.innerHTML += `
           <div class="account-item-card" onclick="selectAccount('${accId}', '${accName}')">
             <div class="account-item-header">
-              <span class="account-name-title">${accName}</span>
+              <div class="flex-row">
+                ${photoHtml}
+                <div>
+                  <span class="account-name-title">${accName}</span>
+                  <div style="font-size:0.75rem; color:#64748b;">کُد حساب: ${accId}</div>
+                </div>
+              </div>
               <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); openDirectWhatsApp('${cleanPhone}')">💬 واتساپ</button>
             </div>
             <div style="font-size:0.85rem; margin-top:4px;">
@@ -792,13 +896,31 @@
       window.open(`https://wa.me/${phone}`, '_blank');
     }
 
-    function filterAccounts() {
-      const q = document.getElementById("searchAccountInput").value.toLowerCase();
+    // جستجوی پیشرفته (نام، تلفن، AccountID، TransID)
+    function advancedSearchAccounts() {
+      const q = document.getElementById("searchAccountInput").value.trim().toLowerCase();
+      if (!q) {
+        renderAccountsList(allAccounts);
+        return;
+      }
+
+      // ۱. اگر آیدی تراکنش سرچ شد
+      let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
+      if (matchedTx) {
+        let matchedAccId = getVal(matchedTx, ['AccountID', 'accountid']);
+        const filtered = allAccounts.filter(acc => String(getVal(acc, ['AccountID', 'accountid'])) === String(matchedAccId));
+        renderAccountsList(filtered);
+        return;
+      }
+
+      // ۲. سرچ بر اساس نام، تلفن و AccountID
       const filtered = allAccounts.filter(acc => {
         let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
         let phone = String(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
-        return name.includes(q) || phone.includes(q);
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
+        return name.includes(q) || phone.includes(q) || accId.includes(q);
       });
+
       renderAccountsList(filtered);
     }
 
@@ -807,6 +929,8 @@
       document.getElementById("modalAccountTitle").innerText = "ایجاد حساب جدید";
       document.getElementById("modalAccountName").value = "";
       document.getElementById("modalAccountPhone").value = "";
+      document.getElementById("modalAccountPhotoInput").value = "";
+      document.getElementById("existingAccountPhotoUrl").value = "";
       document.getElementById("accountModal").style.display = "flex";
     }
 
@@ -817,6 +941,7 @@
       document.getElementById("modalAccountTitle").innerText = "ویرایش حساب مشتری";
       document.getElementById("modalAccountName").value = getVal(acc, ['Name', 'name']) || "";
       document.getElementById("modalAccountPhone").value = getVal(acc, ['Phone', 'phone']) || "";
+      document.getElementById("existingAccountPhotoUrl").value = getVal(acc, ['Photo', 'photo']) || "";
       document.getElementById("accountModal").style.display = "flex";
     }
 
@@ -824,36 +949,52 @@
       document.getElementById("accountModal").style.display = "none";
     }
 
-    function saveAccount() {
+    async function saveAccount() {
       let editId = document.getElementById("editAccountId").value;
       let accName = document.getElementById("modalAccountName").value;
       let accPhone = document.getElementById("modalAccountPhone").value;
+      let fileInput = document.getElementById("modalAccountPhotoInput");
+      let photoUrl = document.getElementById("existingAccountPhotoUrl").value;
+
       if (!accName) { alert("نام مشتری الزامی است"); return; }
 
-      let action = editId ? "editAccount" : "addAccount";
+      closeAccountModal();
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) {
+        indicator.innerText = "🔄 در حال ثبت حساب در Supabase...";
+        indicator.style.display = "block";
+      }
+
+      // آپلود عکس در صورت انتخاب فایل جدید
+      if (fileInput.files.length > 0) {
+        const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'avatars');
+        if (uploadedUrl) photoUrl = uploadedUrl;
+      }
+
       let accountId = editId ? editId : "ACC-" + Math.floor(100000 + Math.random() * 900000);
 
-      closeAccountModal();
-
-      let statusMsg = editId ? "✏️ در حال ویرایش حساب در گوگل‌شیت..." : "🔄 در حال ثبت حساب جدید در گوگل‌شیت...";
+      const payload = {
+        AccountID: accountId,
+        Name: accName,
+        Phone: accPhone,
+        Photo: photoUrl
+      };
 
       if (editId) {
         let accIndex = allAccounts.findIndex(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId));
-        if (accIndex !== -1) {
-          allAccounts[accIndex].Name = accName;
-          allAccounts[accIndex].Phone = accPhone;
-        }
+        if (accIndex !== -1) allAccounts[accIndex] = payload;
+        await _supabase.from('accounts').update(payload).eq('AccountID', editId);
       } else {
-        allAccounts.push({ AccountID: accountId, Name: accName, Phone: accPhone });
+        allAccounts.push(payload);
+        await _supabase.from('accounts').insert([payload]);
       }
 
       saveToLocalCache();
       renderAccountsList(allAccounts);
-
-      saveAndSync({ action: action, accountId: accountId, accountName: accName, phone: accPhone }, statusMsg);
+      if (indicator) indicator.style.display = "none";
     }
 
-    function deleteCurrentAccount() {
+    async function deleteCurrentAccount() {
       if (!confirm("آیا از حذف این حساب و تمام تراکنش‌های آن مطمئن هستید؟")) return;
       
       let accIdToDelete = currentAccountId;
@@ -866,19 +1007,31 @@
       switchView('viewAccounts');
       renderAccountsList(allAccounts);
 
-      saveAndSync({ action: "deleteAccount", accountId: accIdToDelete }, "🗑️ در حال حذف حساب از گوگل‌شیت...");
+      await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
+      await _supabase.from('transactions').delete().eq('AccountID', accIdToDelete);
     }
 
     function selectAccount(accId, accName) {
       currentAccountId = accId;
       currentAccountName = accName;
       document.getElementById("detailAccountTitle").innerText = `حساب: ${accName}`;
+      
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
+      let photoUrl = acc ? getVal(acc, ['Photo', 'photo']) : '';
+      const photoEl = document.getElementById("detailAccountPhoto");
+      if (photoUrl) {
+        photoEl.src = photoUrl;
+        photoEl.style.display = "block";
+      } else {
+        photoEl.style.display = "none";
+      }
+
       switchView('viewAccountDetail');
       renderAccountDetailTransactions(accId);
     }
 
     function renderAccountDetailTransactions(accId) {
-      const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).reverse();
+      const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).slice().reverse();
       const container = document.getElementById("transactionsListContainer");
       container.innerHTML = "";
       let accCurrencies = {};
@@ -934,7 +1087,7 @@
         statsHtml += `
           <div class="stat-card">
             <div class="stat-row"><span><b>ارز: ${curr}</b></span><span>مانده: <b>${net.toLocaleString()}</b></span></div>
-            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکار: ${accCurrencies[curr].credit.toLocaleString()} \vert{} کل بدهکار: ${accCurrencies[curr].debit.toLocaleString()}</div>
+            <div class="stat-row" style="font-size:0.75rem; color:#64748b;">کل بستانکار: ${accCurrencies[curr].credit.toLocaleString()} | کل بدهکار: ${accCurrencies[curr].debit.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -954,14 +1107,19 @@
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       let date = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+      let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
+
+      let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><img src="${receiptUrl}" class="receipt-img-preview"></div>` : '';
 
       document.getElementById("txDetailCard").innerHTML = `
         <h3>جزئیات کامل تراکنش</h3>
+        <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
         <div class="stat-row"><span>تاریخ:</span><b>${date}</b></div>
         <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
         <div class="stat-row"><span>مبلغ:</span><b>${amt}${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
         <div style="margin-top:6px; background:#f1f5f9; padding:8px; border-radius:8px;"><b>توضیحات:</b> ${desc || 'بدون شرح'}</div>
+        ${receiptHtml}
         <div style="margin-top:10px; font-size:0.75rem; color:#64748b; text-align:center;">⚠️ داشتن اسناد برای موقع گرفتن پول الزامی هست</div>
       `;
 
@@ -993,7 +1151,8 @@
       document.getElementById("txModalTitle").innerText = "ثبت تراکنش جدید";
       document.getElementById("txAmount").value = "";
       document.getElementById("txDesc").value = "";
-      document.getElementById("txOpType").value = "امانت";
+      document.getElementById("txReceiptInput").value = "";
+      document.getElementById("existingReceiptUrl").value = "";
       document.querySelector('input[name="txDir"][value="بستانکار"]').checked = true;
       document.querySelector('input[name="txCurr"][value="AFN"]').checked = true;
       document.getElementById("transactionModal").style.display = "flex";
@@ -1017,6 +1176,7 @@
       document.getElementById("txAmount").value = getVal(tx, ['Amount', 'amount']) || "";
       document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
       document.getElementById("txDesc").value = (getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+      document.getElementById("existingReceiptUrl").value = getVal(tx, ['receipt_url', 'Receipt_URL']) || "";
       document.getElementById("transactionModal").style.display = "flex";
     }
 
@@ -1024,61 +1184,61 @@
       document.getElementById("transactionModal").style.display = "none";
     }
 
-    function submitTransaction() {
+    async function submitTransaction() {
       let amt = document.getElementById("txAmount").value;
       if (!amt || isNaN(parseFloat(amt))) { alert("لطفاً یک مبلغ معتبر وارد کنید"); return; }
       let opType = document.getElementById("txOpType").value;
       let desc = document.getElementById("txDesc").value;
       let editTransId = document.getElementById("editTransId").value;
+      let fileInput = document.getElementById("txReceiptInput");
+      let receiptUrl = document.getElementById("existingReceiptUrl").value;
 
       let selectedDir = document.querySelector('input[name="txDir"]:checked').value;
       let selectedCurr = document.querySelector('input[name="txCurr"]:checked').value;
 
       closeTransactionModal();
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) {
+        indicator.innerText = "🔄 در حال ثبت تراکنش در Supabase...";
+        indicator.style.display = "block";
+      }
+
+      // آپلود تصویر رسید در صورت انتخاب فایل
+      if (fileInput.files.length > 0) {
+        const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'receipts');
+        if (uploadedUrl) receiptUrl = uploadedUrl;
+      }
 
       let transIdToSave = editTransId || ("TX-" + Math.floor(10000000 + Math.random() * 90000000));
-      let statusMsg = editTransId ? "✏️ در حال ویرایش تراکنش در گوگل‌شیت..." : "🔄 در حال ثبت تراکنش جدید در گوگل‌شیت...";
+
+      const payload = {
+        TransID: transIdToSave,
+        AccountID: currentAccountId,
+        Direction: selectedDir,
+        Amount: parseFloat(amt),
+        Currency: selectedCurr,
+        OperationType: opType,
+        Description: desc,
+        receipt_url: receiptUrl,
+        Date: new Date().toISOString()
+      };
 
       if (editTransId) {
         let index = allTransactions.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
-        if (index !== -1) {
-          allTransactions[index].Direction = selectedDir;
-          allTransactions[index].Amount = parseFloat(amt);
-          allTransactions[index].Currency = selectedCurr;
-          allTransactions[index].OperationType = opType;
-          allTransactions[index].Description = desc;
-        }
+        if (index !== -1) allTransactions[index] = payload;
+        await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
       } else {
-        allTransactions.push({
-          TransID: transIdToSave,
-          AccountID: currentAccountId,
-          Direction: selectedDir,
-          Amount: parseFloat(amt),
-          Currency: selectedCurr,
-          OperationType: opType,
-          Description: desc,
-          Date: new Date().toISOString()
-        });
+        allTransactions.push(payload);
+        await _supabase.from('transactions').insert([payload]);
       }
 
       saveToLocalCache();
-
       selectAccount(currentAccountId, currentAccountName);
       renderDashboardStats();
-
-      saveAndSync({
-        action: "addTransaction",
-        transId: editTransId || undefined,
-        accountId: currentAccountId,
-        direction: selectedDir,
-        amount: parseFloat(amt),
-        currency: selectedCurr,
-        operationType: opType,
-        description: desc
-      }, statusMsg);
+      if (indicator) indicator.style.display = "none";
     }
 
-    function deleteSingleTransaction() {
+    async function deleteSingleTransaction() {
       if (!confirm("آیا از حذف این تراکنش مطمئن هستید؟")) return;
       
       let txIdToDelete = selectedTxId;
@@ -1089,7 +1249,7 @@
       selectAccount(currentAccountId, currentAccountName);
       renderDashboardStats();
 
-      saveAndSync({ action: "deleteTransaction", transId: txIdToDelete }, "🗑️ در حال حذف تراکنش از گوگل‌شیت...");
+      await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
     }
 
     function sendGeneralWhatsAppReport() {
@@ -1100,15 +1260,11 @@
       if(!tx) return;
 
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
-      let rawDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ').trim();
       let rawAmt = getVal(tx, ['Amount', 'amount']);
       let amtVal = isNaN(parseFloat(rawAmt)) ? "0" : parseFloat(rawAmt).toLocaleString();
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
       let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
       let siteLink = "https://karimi-trust-app.vercel.app/";
-
-      let allAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).reverse();
-      let txIndex = allAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId)) + 1;
 
       let lines = [
         `سلام و احترام خدمت آقای ${currentAccountName}`,
@@ -1190,7 +1346,7 @@
 
         lines.push(``);
         lines.push(`🔹 ارز: ${curr}`);
-        lines.push(`کل بستانکار: ${cred.toLocaleString()} \vert{} کل بدهکار: ${deb.toLocaleString()}`);
+        lines.push(`کل بستانکار: ${cred.toLocaleString()} | کل بدهکار: ${deb.toLocaleString()}`);
         lines.push(`وضعیت: ${statusStr}`);
       }
 
@@ -1207,5 +1363,3 @@
       window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
     }
   </script>
-</body>
-</html>
