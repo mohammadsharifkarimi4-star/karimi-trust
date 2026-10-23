@@ -143,12 +143,12 @@
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;
     }
 
-    /* شبکه دکمه‌های بسیار ریز، کم‌حجم و مرتب در جزئیات حساب */
+    /* شبکه دکمه‌های کوچک در ۲ ستون */
     .action-grid-2col {
       display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;
     }
 
-    /* دکمه شناور ایجاد حساب در پایین لیست */
+    /* دکمه شناور ایجاد حساب در پایین */
     .floating-create-account-btn {
       position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white;
       padding: 10px 18px; border-radius: 30px; font-weight: 900; font-size: 0.9rem;
@@ -285,8 +285,8 @@
         <h3>🚀 منوی گزارشات تفکیکی</h3>
         <div class="flex-row" style="gap: 6px; flex-direction: column;">
           <button class="btn btn-info" onclick="playInteractionEffect(); openTransfersReport()">📜 آمار و لیست حواله‌ها</button>
-          <button class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های برداشت‌کننده</button>
-          <button class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های واریزکننده</button>
+          <button class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های بدهکار</button>
+          <button class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های بستانکار</button>
         </div>
       </div>
     </div>
@@ -312,11 +312,11 @@
       </div>
     </div>
 
-    <!-- گزارش برداشت‌ها (بدهکاران) -->
+    <!-- گزارش بدهکاران -->
     <div id="viewDebtorsReport" class="view-section">
       <div class="card">
         <div class="card-header-styled">
-          <h3>🔴 لیست حساب‌های برداشت‌کننده</h3>
+          <h3>🔴 لیست حساب‌های بدهکار</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
         <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:var(--danger-color); margin-bottom:6px;"></div>
@@ -324,11 +324,11 @@
       </div>
     </div>
 
-    <!-- گزارش واریزها (بستانکاران) -->
+    <!-- گزارش بستانکاران -->
     <div id="viewCreditorsReport" class="view-section">
       <div class="card">
         <div class="card-header-styled">
-          <h3>🟢 لیست حساب‌های واریزکننده</h3>
+          <h3>🟢 لیست حساب‌های بستانکار</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
         <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:var(--accent-green-dark); margin-bottom:6px;"></div>
@@ -353,7 +353,7 @@
       </button>
     </div>
 
-    <!-- صفحه اختصاصی حساب - بسیار مرتب و خلوت -->
+    <!-- صفحه اختصاصی حساب -->
     <div id="viewAccountDetail" class="view-section">
       <div class="card">
         <div class="card-header-styled">
@@ -366,14 +366,14 @@
 
         <div class="stats-grid" id="accountStatsGrid"></div>
 
-        <!-- دکمه اصلی و شاخص ثبت تراکنش -->
+        <!-- دکمه اصلی ثبت تراکنش -->
         <div style="margin-top: 8px;">
           <button class="btn-hero-transaction" onclick="playInteractionEffect(); openAddTransactionModal()">
             <span>➕ ثبت تراکنش جدید برای این حساب</span>
           </button>
         </div>
 
-        <!-- دکمه‌های بسیار ریز و ریزنقش در ۲ ستون (بدون اشغال فضای صفحه) -->
+        <!-- دکمه‌های بسیار ریز و مرتب در ۲ ستون -->
         <div class="action-grid-2col">
           <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">📲 بیلان واتساپ</button>
           <button class="btn btn-whatsapp-dark" onclick="playInteractionEffect(); generateAccountPDFReport()">📄 دانلود PDF</button>
@@ -403,7 +403,7 @@
 
   <div id="pdfExportContainer" style="display:none; padding: 20px; background: #fff; color: #000; direction: rtl;"></div>
 
-  <!-- مودال ثبت تراکنش (با کادر مبلغ خالص و کیبورد عددی) -->
+  <!-- مودال ثبت تراکنش (با کادر مبلغ عددی روان) -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
     <div class="card" style="width: 100%; margin: 0; max-height:94vh; overflow-y:auto; position:relative;">
       <h3 id="txModalTitle" style="margin-bottom:8px;">ثبت تراکنش جدید</h3>
@@ -415,16 +415,16 @@
         <input type="date" id="txDateInput">
       </div>
 
-      <!-- ۲. جهت بر اساس واریز و برداشت -->
+      <!-- ۲. جهت -->
       <div class="form-group">
         <label>۲. جهت تراکنش (حتماً انتخاب کنید):</label>
         <div class="radio-group">
-          <div class="btn-select-option" id="btnDirCreditor" onclick="selectTxDirection('بستانکار')">واریز (+)</div>
-          <div class="btn-select-option" id="btnDirDebtor" onclick="selectTxDirection('بدهکار')">برداشت (-)</div>
+          <div class="btn-select-option" id="btnDirCreditor" onclick="selectTxDirection('بستانکار')">بستانکار (+)</div>
+          <div class="btn-select-option" id="btnDirDebtor" onclick="selectTxDirection('بدهکار')">بدهکار (-)</div>
         </div>
       </div>
 
-      <!-- ۳. ارز بدون پیش‌فرض -->
+      <!-- ۳. ارز -->
       <div class="form-group">
         <label>۳. واحد پول / ارز (حتماً انتخاب کنید):</label>
         <div class="radio-group">
@@ -435,7 +435,7 @@
         </div>
       </div>
 
-      <!-- ۴. مبلغ (کیبورد عددی خالص بدون محدودیت) -->
+      <!-- ۴. مبلغ (ورود روان عددی با کیبورد عددی) -->
       <div class="form-group">
         <label>۴. مبلغ تراکنش:</label>
         <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.1rem; color:var(--accent-green-dark);">
@@ -733,7 +733,7 @@
       await _supabase.from('operation_types').delete().eq('title', title);
     }
 
-    /* نمایش زنده بر اساس منطق واریز و برداشت مشتری */
+    /* آمار کلی به حالت ساده و استاندارد بدهکار/بستانکار */
     function renderDashboardStats() {
       let totalsByCurrency = {};
       allAccounts.forEach(acc => {
@@ -766,15 +766,15 @@
       for (let curr in totalsByCurrency) {
         let cred = totalsByCurrency[curr].credSum;
         let deb = totalsByCurrency[curr].debSum;
-        let finalNet = deb - cred;
-        let isDebtor = finalNet > 0;
-        let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `مجموع برداشت مشتریان: ${Math.abs(finalNet).toLocaleString()} ${curr}` : `مجموع واریز مشتریان: ${Math.abs(finalNet).toLocaleString()} ${curr}`;
+        let finalNet = cred - deb;
+        let isCreditor = finalNet > 0;
+        let bgStyle = isCreditor ? "background:#f0fdf4; color:#15803d;" : "background:#fef2f2; color:#dc2626;";
+        let label = isCreditor ? `بستانکار: ${Math.abs(finalNet).toLocaleString()} ${curr}` : `بدهکار: ${Math.abs(finalNet).toLocaleString()} ${curr}`;
 
         gridHtml += `
           <div class="stat-card">
             <div class="stat-row"><span style="font-weight:900;">ارز: ${curr}</span><span style="font-weight:900;">مانده خالص: <b>${finalNet.toLocaleString()}</b></span></div>
-            <div class="stat-row" style="font-size:0.78rem; color:#64748b;">کل واریزی‌ها: ${cred.toLocaleString()} | کل برداشت‌ها: ${deb.toLocaleString()}</div>
+            <div class="stat-row" style="font-size:0.78rem; color:#64748b;">کل بستانکاری: ${cred.toLocaleString()} | کل بدهکاری: ${deb.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -862,21 +862,22 @@
         });
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
-          if(val > 0) {
-            debtors.push({ name: accName, id: accId, amount: val, currency: curr });
+          if(val < 0) {
+            let absVal = Math.abs(val);
+            debtors.push({ name: accName, id: accId, amount: absVal, currency: curr });
             if (!currencyTotals[curr]) currencyTotals[curr] = 0;
-            currencyTotals[curr] += val;
+            currencyTotals[curr] += absVal;
           }
         }
       });
 
-      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل برداشت‌کنندگان:</b></span><b>${debtors.length} مورد</b></div>`;
-      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع برداشت از حساب (${curr}):</span><b style="color:var(--danger-color);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بدهکاران:</b></span><b>${debtors.length} مورد</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بدهکاری (${curr}):</span><b style="color:var(--danger-color);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:8px;">هیچ حساب برداشت‌کننده‌ای وجود ندارد</div>`; return; }
+      if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:8px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
       debtors.forEach(d => {
-        container.innerHTML += `<div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')"><div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">شما این مبلغ را از حسابتان برداشت کردید: ${d.amount.toLocaleString()} ${d.currency}</span></div></div>`;
+        container.innerHTML += `<div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')"><div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">بدهکار: ${d.amount.toLocaleString()} ${d.currency}</span></div></div>`;
       });
     }
 
@@ -903,25 +904,25 @@
         });
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
-          if(val < 0) {
-            let absVal = Math.abs(val);
-            creditors.push({ name: accName, id: accId, amount: absVal, currency: curr });
+          if(val > 0) {
+            creditors.push({ name: accName, id: accId, amount: val, currency: curr });
             if (!currencyTotals[curr]) currencyTotals[curr] = 0;
-            currencyTotals[curr] += absVal;
+            currencyTotals[curr] += val;
           }
         }
       });
 
-      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل واریزکنندگان:</b></span><b>${creditors.length} مورد</b></div>`;
-      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع واریز به حساب (${curr}):</span><b style="color:var(--accent-green-dark);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بستانکاران:</b></span><b>${creditors.length} مورد</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بستانکاری (${curr}):</span><b style="color:var(--accent-green-dark);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if(creditors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:8px;">هیچ حساب واریزکننده‌ای وجود ندارد</div>`; return; }
+      if(creditors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:8px;">هیچ حساب بستانکاری وجود ندارد</div>`; return; }
       creditors.forEach(c => {
-        container.innerHTML += `<div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')"><div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">شما این مبلغ را به حسابتان واریز کردید: ${c.amount.toLocaleString()} ${c.currency}</span></div></div>`;
+        container.innerHTML += `<div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')"><div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">بستانکار: ${c.amount.toLocaleString()} ${c.currency}</span></div></div>`;
       });
     }
 
+    /* نمایش حساب‌ها با عبارت ساده بدهکار / بستانکار */
     function renderAccountsList(accounts) {
       const container = document.getElementById("accountsListContainer");
       container.innerHTML = "";
@@ -948,8 +949,8 @@
         let badgesHtml = '';
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
-          let color = val > 0 ? '#dc2626' : (val < 0 ? '#059669' : '#64748b');
-          let label = val > 0 ? `شما این مبلغ را از حسابتان برداشت کردید:${Math.abs(val).toLocaleString()}` : (val < 0 ? `شما این مبلغ را به حسابتان واریز کردید:${Math.abs(val).toLocaleString()}` : `تسویه`);
+          let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
+          let label = val > 0 ? `بستانکار:${Math.abs(val).toLocaleString()}` : (val < 0 ? `بدهکار:${Math.abs(val).toLocaleString()}` : `تسویه`);
           badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
         }
 
@@ -1089,15 +1090,13 @@
           let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
           let cleanDate = String(getVal(tx, ['Date', 'date']) || new Date().toISOString()).split('T')[0];
           let txNumber = txs.length - idx;
-          let isCreditor = dir.includes('بستانکار');
-          let dirLabel = isCreditor ? 'واریز' : 'برداشت';
-          let dirColor = isCreditor ? '#059669' : '#dc2626';
+          let dirColor = dir.includes('بستانکار') ? '#059669' : '#dc2626';
 
           container.innerHTML += `
             <div class="tx-item-card" onclick="playInteractionEffect(); selectTransaction('${txId}')">
               <div class="stat-row">
                 <span><b>تراکنش شماره #${txNumber}</b> (${cleanDate})</span>
-                <span style="color:${dirColor}; font-weight:900;">${dirLabel}</span>
+                <span style="color:${dirColor}; font-weight:900;">${dir}</span>
               </div>
               <div class="stat-row">
                 <span>نوع: <b>${opType}</b></span>
@@ -1111,14 +1110,14 @@
       let statsHtml = '';
       for (let curr in accCurrencies) {
         let net = accCurrencies[curr].credit - accCurrencies[curr].debit;
-        let isDebtor = net > 0;
-        let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `شما این مبلغ را از حسابتان برداشت کردید: ${Math.abs(net).toLocaleString()} ${curr}` : (net < 0 ? `شما این مبلغ را به حسابتان واریز کردید: ${Math.abs(net).toLocaleString()} ${curr}` : "تسویه حساب کامل");
+        let isCreditor = net > 0;
+        let bgStyle = isCreditor ? "background:#f0fdf4; color:#15803d;" : "background:#fef2f2; color:#dc2626;";
+        let label = net > 0 ? `بستانکار: ${Math.abs(net).toLocaleString()} ${curr}` : (net < 0 ? `بدهکار: ${Math.abs(net).toLocaleString()} ${curr}` : "تسویه حساب کامل");
 
         statsHtml += `
           <div class="stat-card">
             <div class="stat-row"><span style="font-weight:900;">ارز: ${curr}</span><span style="font-weight:900;">مانده: <b>${net.toLocaleString()}</b></span></div>
-            <div class="stat-row" style="font-size:0.78rem; color:#64748b;">کل واریزی‌ها: ${accCurrencies[curr].credit.toLocaleString()} | کل برداشت‌ها: ${accCurrencies[curr].debit.toLocaleString()}</div>
+            <div class="stat-row" style="font-size:0.78rem; color:#64748b;">کل بستانکار: ${accCurrencies[curr].credit.toLocaleString()} | کل بدهکار: ${accCurrencies[curr].debit.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -1138,14 +1137,13 @@
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       let date = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
-      let dirLabel = dir.includes('بستانکار') ? 'واریز' : 'برداشت';
 
       let receiptHtml = receiptUrl ? `<div style="margin-top:6px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
       document.getElementById("txDetailCard").innerHTML = `
         <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
         <div class="stat-row"><span>تاریخ:</span><b>${date}</b></div>
-        <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dirLabel}</b></div>
+        <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
         <div class="stat-row"><span>مبلغ:</span><b style="font-size:1rem;">${amt} ${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
         <div style="margin-top:4px; background:#f1f5f9; padding:6px; border-radius:6px;"><b>توضیحات:</b> ${desc || 'بدون شرح'}</div>
@@ -1206,7 +1204,7 @@
     async function submitTransaction() {
       let amt = parseFloat(document.getElementById("txAmountInput").value);
 
-      if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (واریز یا برداشت) را انتخاب کنید!"); return; }
+      if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
       if (!selectedCurrencyValue) { alert("لطفاً واحد پول / ارز را انتخاب کنید!"); return; }
       if (!amt || isNaN(amt) || amt <= 0) { alert("لطفاً یک مبلغ معتبر وارد کنید"); return; }
 
@@ -1254,7 +1252,7 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    /* متون عامیانه و خودمانی گزارشات بر اساس دیدگاه مشتری */
+    /* گزارش واتساپ ساده و محترمانه */
     function sendGeneralWhatsAppReport() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
@@ -1267,24 +1265,23 @@
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
       let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
       let txDate = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
-      let statusText = dirVal.includes('بدهکار') ? `مبلغ ${amtVal} ${currVal} از حسابتان برداشت کردید` : `مبلغ ${amtVal} ${currVal} به حسابتان واریز کردید`;
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
         `────────────────────────`,
-        `سلام و احترام خدمت آقای *${currentAccountName}*`,
-        `تراکنش جدید در حساب شما ثبت شد:`,
+        `محترم آقای *${currentAccountName}*`,
+        `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
         ``,
         `📌 *جزئیات تراکنش:*`,
-        `🔹 نوع: *${opType}*`,
-        `💰 وضعیت: *${statusText}*`,
+        `🔹 نوع: *${opType}* (${dirVal})`,
+        `💰 مبلغ: *${amtVal} ${currVal}*`,
         `📅 تاریخ: ${txDate}`,
         ``,
-        `🌐 جهت مشاهده آنلاین حساب:`,
+        `🌐 بررسی آنلاین حساب:`,
         siteLink,
         `────────────────────────`,
-        `از اعتماد شما سپاسگزاریم 🙏`
+        `با تشکر، امانت‌داری کریمی 🙏`
       ];
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
@@ -1308,14 +1305,14 @@
         if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
       });
 
-      let lines = [`✨ *امانت‌داری کریمی* ✨`, `────────────────────────`, `سلام خدمت آقای *${currentAccountName}*`, `📊 *صورت‌حساب و مانده حساب شما:*`];
+      let lines = [`✨ *امانت‌داری کریمی* ✨`, `────────────────────────`, `محترم آقای *${currentAccountName}*`, `📊 *صورت‌حساب و مانده حساب شما:*`];
       let hasBalance = false;
       for (let curr in accCurrencies) {
         hasBalance = true;
         let cred = accCurrencies[curr].credit;
         let deb = accCurrencies[curr].debit;
         let net = cred - deb;
-        let statusStr = net > 0 ? `شما این مبلغ را از حسابتان برداشت کردید: ${Math.abs(net).toLocaleString()} ${curr}` : (net < 0 ? `شما این مبلغ را به حسابتان واریز کردید: ${Math.abs(net).toLocaleString()} ${curr}` : `تسویه حساب کامل`);
+        let statusStr = net > 0 ? `بستانکار: ${Math.abs(net).toLocaleString()} ${curr}` : (net < 0 ? `بدهکار: ${Math.abs(net).toLocaleString()} ${curr}` : `تسویه حساب کامل`);
 
         lines.push(``, `🔹 ارز: *${curr}*`, `وضعیت: *${statusStr}*`);
       }
@@ -1340,13 +1337,12 @@
         let amt = (parseFloat(getVal(tx, ['Amount', 'amount'])) || 0).toLocaleString();
         let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-        let dirLabel = dir.includes('بستانکار') ? 'واریز' : 'برداشت';
 
         rowsHtml += `
           <tr style="border-bottom: 1px solid #ddd; text-align: center;">
             <td style="padding: 6px;">${txNum}</td>
             <td style="padding: 6px;">${date}</td>
-            <td style="padding: 6px;">${opType} (${dirLabel})</td>
+            <td style="padding: 6px;">${opType} (${dir})</td>
             <td style="padding: 6px; font-weight: bold;">${amt} ${curr}</td>
             <td style="padding: 6px; font-size: 11px; color: #555;">${desc || '-'}</td>
           </tr>
