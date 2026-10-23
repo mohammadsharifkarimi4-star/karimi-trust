@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title> مدیریت امانتداری کریمی</title>
+  <title>مدیریت امانت‌داری کریمی</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
@@ -12,7 +12,7 @@
       --primary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       --accent-green: #10b981;
       --accent-green-dark: #059669;
-      --bg-main: #f1f5f9;
+      --bg-main: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --border-color: #cbd5e1;
@@ -21,9 +21,9 @@
       --info-color: #0284c7;
       --whatsapp-color: #25d366;
       --whatsapp-dark: #128c7e;
-      --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
-      --shadow-btn: 0 4px 14px rgba(15, 23, 42, 0.15);
-      --radius-md: 12px;
+      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 8px 20px rgba(15, 23, 42, 0.1);
+      --radius-md: 10px;
     }
 
     * {
@@ -38,224 +38,211 @@
     body {
       background: var(--bg-main);
       color: var(--text-main);
-      padding: 4px;
+      padding: 6px;
       font-size: 14px;
       min-height: 100vh;
       padding-bottom: 90px;
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* لاگین تمام صفحه */
+    /* لاگین */
     #authOverlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px);
-      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 8px;
+      background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(10px);
+      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 12px;
     }
     .auth-card {
-      background: #ffffff; width: 100%; padding: 24px; border-radius: 20px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
+      background: #ffffff; width: 100%; max-width: 380px; padding: 22px; border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 12px;
       animation: fadeInUp 0.3s ease-out;
     }
-    .auth-title { font-size: 1.25rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
+    .auth-title { font-size: 1.2rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
 
-    /* کانتینر اصلی تمام‌عرض (چسبیده به لبه‌ها) */
     .container { max-width: 100%; width: 100%; display: none; margin: 0; padding: 0; }
 
-    /* کارت‌های تمام‌صفحه در عرض و برجسته با سایه زیبا */
+    /* کارت‌های شکیل و منظم */
     .card {
       background: var(--card-bg);
       border-radius: var(--radius-md);
-      padding: 14px;
-      box-shadow: var(--shadow-card);
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
       border: 1px solid #e2e8f0;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       width: 100%;
-      animation: fadeInUp 0.3s ease-out;
+      animation: fadeInUp 0.25s ease-out;
     }
 
     .card-header-styled {
       background: var(--primary-gradient);
       color: #ffffff;
-      padding: 12px 14px;
-      border-radius: 10px;
-      margin: -14px -14px 12px -14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin: -12px -12px 10px -12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
     }
-    .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 1rem; }
+    .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 0.95rem; }
 
-    h3 { font-size: 1.05rem; font-weight: 900; color: var(--primary-dark); margin-bottom: 10px; }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 0.88rem; font-weight: 800; margin-bottom: 5px; color: #334155; }
+    h3 { font-size: 1rem; font-weight: 900; color: var(--primary-dark); margin-bottom: 8px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 4px; color: #334155; }
 
     input, select, textarea {
-      width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px;
-      font-size: 1rem; background: #f8fafc; outline: none; transition: all 0.2s ease;
+      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-color); border-radius: 8px;
+      font-size: 0.95rem; background: #ffffff; outline: none; transition: all 0.2s ease;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: var(--accent-green-dark); background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      border-color: var(--accent-green-dark);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
     }
-    textarea { resize: vertical; min-height: 75px; }
+    textarea { resize: vertical; min-height: 70px; }
 
-    /* دکمه‌های انتخاب بدون پیش‌فرض */
-    .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    /* دکمه‌های انتخاب جهت و ارز */
+    .radio-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
     .btn-select-option {
-      flex: 1; min-width: 70px; padding: 10px 6px; text-align: center; background: #f1f5f9;
-      border: 2px solid var(--border-color); border-radius: 10px; font-size: 0.95rem;
+      flex: 1; min-width: 65px; padding: 8px 4px; text-align: center; background: #f1f5f9;
+      border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.9rem;
       font-weight: 900; cursor: pointer; transition: all 0.2s ease; user-select: none; color: #475569;
     }
     .btn-select-option.selected-creditor {
       background: #ecfdf5 !important; border-color: var(--accent-green) !important; color: var(--accent-green-dark) !important;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
     }
     .btn-select-option.selected-debtor {
       background: #fef2f2 !important; border-color: var(--danger-color) !important; color: var(--danger-color) !important;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
     }
     .btn-select-option.selected-currency {
       background: #f0f9ff !important; border-color: var(--info-color) !important; color: var(--info-color) !important;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
     }
 
-    /* دکمه‌های تمام‌صفحه با ارتفاع استاندارد و باریک (نه دراز) */
+    /* دکمه‌های منظم و مرتب با اندازه استاندارد */
     .btn {
-      padding: 10px 14px; background: var(--accent-green-dark); color: white; border: none;
-      border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 0.95rem;
+      padding: 9px 12px; background: var(--accent-green-dark); color: white; border: none;
+      border-radius: 8px; font-weight: 900; cursor: pointer; font-size: 0.9rem;
       display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
-      box-shadow: var(--shadow-btn); transition: all 0.15s ease; user-select: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.15s ease; user-select: none;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-danger { background: var(--danger-color); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
-    .btn-secondary { background: #475569; box-shadow: 0 4px 12px rgba(71, 85, 105, 0.2); }
-    .btn-warning { background: var(--warning-color); color: #fff; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
-    .btn-info { background: var(--info-color); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2); }
-    .btn-whatsapp { background: var(--whatsapp-color); color: #ffffff; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25); }
-    .btn-whatsapp-dark { background: var(--whatsapp-dark); color: #ffffff; box-shadow: 0 4px 12px rgba(18, 140, 126, 0.25); }
+    .btn-danger { background: var(--danger-color); }
+    .btn-secondary { background: #475569; }
+    .btn-warning { background: var(--warning-color); color: #fff; }
+    .btn-info { background: var(--info-color); }
+    .btn-whatsapp { background: var(--whatsapp-color); color: #ffffff; }
+    .btn-whatsapp-dark { background: var(--whatsapp-dark); color: #ffffff; }
 
-    .btn-sm { padding: 6px 12px; font-size: 0.85rem; width: auto; box-shadow: none; }
+    .btn-sm { padding: 5px 10px; font-size: 0.8rem; width: auto; box-shadow: none; }
 
-    /* دکمه شاخص و برجسته ثبت تراکنش */
     .btn-hero-transaction {
-      padding: 12px; font-size: 1.05rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white; border-radius: 12px; border: none; font-weight: 900; width: 100%;
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px; font-size: 0.95rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white; border-radius: 8px; border: none; font-weight: 900; width: 100%;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .btn-hero-transaction:active { transform: scale(0.97); }
 
-    /* دکمه شناور ذخیره در مودال */
+    /* شبکه دکمه‌های کوچک در جزئیات حساب */
+    .action-grid-2col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;
+    }
+
+    /* دکمه شناور ایجاد حساب در پایین صفحه لیست حساب‌ها */
+    .floating-create-account-btn {
+      position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white;
+      padding: 12px 20px; border-radius: 30px; font-weight: 900; font-size: 0.95rem;
+      box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4); z-index: 5000; border: none; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .floating-create-account-btn:active { transform: scale(0.95); }
+
+    /* دکمه شناور ذخیره تراکنش */
     .floating-save-bar {
-      position: sticky; bottom: -8px; background: #ffffff; padding: 10px 0 0 0;
+      position: sticky; bottom: -8px; background: #ffffff; padding: 8px 0 0 0;
       border-top: 1px solid var(--border-color); display: flex; gap: 8px; z-index: 10;
     }
 
     /* دکمه شناور پاپ‌آپ جستجو */
     .floating-search-trigger {
-      position: fixed; bottom: 16px; right: 16px; width: 56px; height: 56px;
+      position: fixed; bottom: 16px; right: 16px; width: 50px; height: 50px;
       background: var(--primary-gradient); color: #ffffff; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.4); z-index: 6000; cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35); z-index: 6000; cursor: pointer;
     }
-    .floating-search-trigger:active { transform: scale(0.9); }
 
     #searchDrawerModal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px);
       z-index: 7000; display: none; justify-content: center; align-items: flex-start; padding: 8px;
     }
     .search-drawer-card {
-      background: #ffffff; width: 100%; border-radius: 16px;
-      padding: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); animation: slideDown 0.25s ease-out; margin-top: 6px;
+      background: #ffffff; width: 100%; border-radius: 12px;
+      padding: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); margin-top: 6px;
     }
 
-    .search-box-wrapper { position: relative; }
-    .search-box-wrapper input { padding-left: 38px; font-size: 0.95rem; }
-    .clear-search-btn {
-      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-      background: #cbd5e1; border: none; border-radius: 50%; width: 24px; height: 24px;
-      font-size: 13px; font-weight: bold; cursor: pointer; display: none; align-items: center; justify-content: center; color: #334155;
-    }
-
-    /* متن درشت‌تر و بسیار خوانا در آمار موجودی */
     .stats-grid { display: flex; flex-direction: column; gap: 8px; }
     .stat-card {
-      background: #ffffff; border: 2px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;
-      box-shadow: var(--shadow-card);
+      background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 10px;
+      box-shadow: var(--shadow-sm);
     }
-    .stat-row { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 6px; align-items: center; }
-    .stat-badge { text-align: center; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; margin-top: 6px; }
+    .stat-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; align-items: center; }
+    .stat-badge { text-align: center; padding: 8px; border-radius: 8px; font-weight: 900; font-size: 1rem; margin-top: 4px; }
 
     .account-item-card, .tx-item-card {
-      background: #ffffff; border: 2px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;
-      margin-bottom: 10px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 6px;
-      cursor: pointer; user-select: none; transition: all 0.2s ease; width: 100%;
+      background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 12px;
+      margin-bottom: 8px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 4px;
+      cursor: pointer; user-select: none; transition: all 0.15s ease; width: 100%;
     }
-    .account-item-card:active, .tx-item-card:active { border-color: var(--accent-green-dark); background: #f8fafc; transform: scale(0.98); }
+    .account-item-card:active, .tx-item-card:active { border-color: var(--accent-green-dark); background: #f8fafc; }
     .account-item-header { display: flex; justify-content: space-between; align-items: center; }
-    .account-name-title { font-size: 1.15rem; font-weight: 900; color: var(--primary-dark); }
+    .account-name-title { font-size: 1.05rem; font-weight: 900; color: var(--primary-dark); }
 
-    .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .back-home { display: block; text-align: center; margin-top: 16px; color: #475569; text-decoration: none; font-size: 12px; font-weight: 800; }
-    .currency-badge { display: inline-block; padding: 4px 10px; background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; margin: 2px; font-weight: 900; }
+    .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .back-home { display: block; text-align: center; margin-top: 14px; color: #475569; text-decoration: none; font-size: 12px; font-weight: 800; }
+    .currency-badge { display: inline-block; padding: 3px 8px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; margin: 2px; font-weight: 800; }
 
     .view-section { display: none; }
     .view-section.active { display: block; }
 
     #syncIndicator {
       position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white;
-      padding: 8px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 900;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: none; z-index: 8000;
+      padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 900;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25); display: none; z-index: 8000;
     }
 
-    /* پروفایل روشن، شفاف و برجسته (بدون ظاهر سیاه) */
     .profile-img-preview {
-      width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
-      border: 2px solid var(--accent-green); background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--accent-green); background: #ffffff;
     }
-    .receipt-img-preview { width: 100%; max-height: 250px; object-fit: contain; border-radius: 10px; border: 2px solid var(--border-color); margin-top: 8px; background: #ffffff; }
-    .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f1f5f9; border-radius: 10px; margin-bottom: 6px; }
+    .receipt-img-preview { width: 100%; max-height: 220px; object-fit: contain; border-radius: 8px; border: 1.5px solid var(--border-color); margin-top: 6px; background: #ffffff; }
+    .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f1f5f9; border-radius: 8px; margin-bottom: 6px; }
   </style>
 </head>
 <body>
 
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
 
-  <!-- دکمه شناور جستجو -->
+  <!-- دکمه شناور پاپ‌آپ جستجو -->
   <div class="floating-search-trigger" onclick="playInteractionEffect(); openSearchDrawer()" title="جستجوی سریع">🔍</div>
 
   <!-- کشوی جستجو -->
   <div id="searchDrawerModal" onclick="closeSearchDrawerOnBack(event)">
     <div class="search-drawer-card" onclick="event.stopPropagation()">
-      <div class="flex-row" style="justify-content: space-between; margin-bottom: 10px;">
+      <div class="flex-row" style="justify-content: space-between; margin-bottom: 8px;">
         <h3>🔍 جستجوی هوشمند</h3>
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeSearchDrawer()">✕ بستن</button>
       </div>
       <div class="form-group" style="margin-bottom: 0;">
-        <div class="search-box-wrapper">
-          <input type="text" id="drawerSearchInput" placeholder="نام مشتری، تلفن، کُد حساب یا کد تراکنش..." oninput="handleDrawerSearch()">
-          <button type="button" class="clear-search-btn" id="drawerClearBtn" onclick="clearDrawerSearch()">✕</button>
-        </div>
+        <input type="text" id="drawerSearchInput" placeholder="نام مشتری، تلفن، کُد حساب یا کد تراکنش..." oninput="handleDrawerSearch()">
       </div>
-      <div id="drawerSearchResults" style="margin-top: 10px; max-height: 60vh; overflow-y: auto;"></div>
+      <div id="drawerSearchResults" style="margin-top: 8px; max-height: 60vh; overflow-y: auto;"></div>
     </div>
   </div>
 
   <!-- لاگین -->
   <div id="authOverlay">
     <div class="auth-card">
-      <div class="auth-title">🔐 ورود به پنل مدیریت امانتداری</div>
+      <div class="auth-title">🔐 مدیریت امانت‌داری کریمی</div>
       <div class="form-group"><label>ایمیل مدیریت:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور..."></div>
       <button class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
@@ -269,15 +256,15 @@
     <div id="viewDashboard" class="view-section active">
       <div class="card">
         <div class="card-header-styled">
-          <h3>🏛️ مدیریت امانتداری کریمی</h3>
+          <h3>🏛️ مدیریت امانت‌داری کریمی</h3>
           <div class="flex-row">
             <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); loadDataFromSupabase(true)">🔄 همگام‌سازی</button>
             <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); handleLogout()">خروج</button>
           </div>
         </div>
-        <div style="padding: 6px 0; text-align: center;">
-          <button class="btn btn-info" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')" style="margin-bottom: 10px;">📊 آمارها و گزارشات کلی</button>
-          <button class="btn" onclick="playInteractionEffect(); switchView('viewAccounts')" style="margin-bottom: 10px;">👥 لیست کامل حساب‌ها</button>
+        <div style="padding: 4px 0; text-align: center;">
+          <button class="btn btn-info" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')" style="margin-bottom: 8px;">📊 آمارها و گزارشات کلی</button>
+          <button class="btn" onclick="playInteractionEffect(); switchView('viewAccounts')" style="margin-bottom: 8px;">👥 لیست کامل حساب‌ها</button>
           <button class="btn btn-warning" onclick="playInteractionEffect(); openOpTypeManagerModal()">⚙️ مدیریت انواع عملیات</button>
         </div>
       </div>
@@ -290,12 +277,12 @@
           <h3>📊 آمار و گزارشات کلی سیستم</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
-        <h3 style="font-size:1.1rem; margin-bottom:8px;">موجودی‌های فعال (مانده زنده)</h3>
+        <h3 style="font-size:0.95rem; margin-bottom:6px;">موجودی‌های فعال (مانده زنده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
       </div>
       <div class="card">
         <h3>🚀 منوی گزارشات تفکیکی</h3>
-        <div class="flex-row" style="gap: 8px; flex-direction: column;">
+        <div class="flex-row" style="gap: 6px; flex-direction: column;">
           <button class="btn btn-info" onclick="playInteractionEffect(); openTransfersReport()">📜 آمار و لیست حواله‌ها</button>
           <button class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های بدهکار</button>
           <button class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های بستانکار</button>
@@ -319,7 +306,7 @@
             <option value="month">ماهانه (۳۰ روز گذشته)</option>
           </select>
         </div>
-        <div id="transferSummaryHeader" class="stat-card" style="background:#ecfdf5; border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
+        <div id="transferSummaryHeader" class="stat-card" style="background:#ecfdf5; border-color:var(--accent-green-dark); margin-bottom:8px;"></div>
         <div id="transfersReportContainer"></div>
       </div>
     </div>
@@ -331,7 +318,7 @@
           <h3>🔴 لیست حساب‌های بدهکار</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
-        <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:var(--danger-color); margin-bottom:10px;"></div>
+        <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:var(--danger-color); margin-bottom:8px;"></div>
         <div id="debtorsContainer"></div>
       </div>
     </div>
@@ -343,7 +330,7 @@
           <h3>🟢 لیست حساب‌های بستانکار</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
-        <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
+        <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:var(--accent-green-dark); margin-bottom:8px;"></div>
         <div id="creditorsContainer"></div>
       </div>
     </div>
@@ -355,13 +342,17 @@
           <h3>👥 لیست کامل حساب‌ها</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
-        <button class="btn" style="margin-bottom: 10px;" onclick="playInteractionEffect(); openAccountModal()">+ ایجاد حساب جدید</button>
         <div class="form-group"><input type="text" id="searchAccountInput" placeholder="🔍 جستجو در حساب‌ها..." oninput="advancedSearchAccounts()"></div>
-        <div id="accountsListContainer" style="margin-top: 8px;"></div>
+        <div id="accountsListContainer" style="margin-top: 6px;"></div>
       </div>
+
+      <!-- دکمه شناور ایجاد حساب در پایین صفحه -->
+      <button class="floating-create-account-btn" onclick="playInteractionEffect(); openAccountModal()">
+        <span>➕ ایجاد حساب جدید</span>
+      </button>
     </div>
 
-    <!-- صفحه اختصاصی حساب - تمام‌عرض و منظم -->
+    <!-- صفحه اختصاصی حساب - مرتب، شکیل و منظم -->
     <div id="viewAccountDetail" class="view-section">
       <div class="card">
         <div class="card-header-styled">
@@ -374,25 +365,23 @@
 
         <div class="stats-grid" id="accountStatsGrid"></div>
 
-        <!-- دکمه برجسته و شاخص ثبت تراکنش -->
-        <div style="margin-top: 12px;">
+        <!-- دکمه برجسته و منظم ثبت تراکنش -->
+        <div style="margin-top: 10px;">
           <button class="btn-hero-transaction" onclick="playInteractionEffect(); openAddTransactionModal()">
             <span>➕ ثبت تراکنش جدید برای این حساب</span>
           </button>
         </div>
 
-        <!-- سایر دکمه‌های تمام‌صفحه و باریک در یک ستون -->
-        <div class="flex-row" style="gap: 8px; flex-direction: column;">
-          <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">📲 ارسال بیلان واتساپ</button>
-          <button class="btn btn-whatsapp-dark" onclick="playInteractionEffect(); generateAccountPDFReport()">📄 دانلود PDF گزارش مالی</button>
-          <div class="flex-row" style="gap: 6px; width: 100%;">
-            <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditAccountModal()">✏️ ویرایش حساب</button>
-            <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); deleteCurrentAccount()">🗑️ حذف حساب</button>
-          </div>
+        <!-- شبکه دکمه‌های مرتب و کوچک در ۲ ستون -->
+        <div class="action-grid-2col">
+          <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">📲 بیلان واتساپ</button>
+          <button class="btn btn-whatsapp-dark" onclick="playInteractionEffect(); generateAccountPDFReport()">📄 دانلود PDF</button>
+          <button class="btn btn-warning" onclick="playInteractionEffect(); openEditAccountModal()">✏️ ویرایش حساب</button>
+          <button class="btn btn-danger" onclick="playInteractionEffect(); deleteCurrentAccount()">🗑️ حذف حساب</button>
         </div>
 
-        <h3 style="margin-top: 16px;">📜 تراکنش‌های این حساب</h3>
-        <div id="transactionsListContainer" style="margin-top: 8px;"></div>
+        <h3 style="margin-top: 14px;">📜 تراکنش‌های این حساب</h3>
+        <div id="transactionsListContainer" style="margin-top: 6px;"></div>
       </div>
     </div>
 
@@ -404,7 +393,7 @@
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); selectAccount(currentAccountId, currentAccountName)">← بازگشت</button>
         </div>
         <div id="txDetailCard"></div>
-        <div style="margin-top: 12px;" id="txActionButtonsContainer"></div>
+        <div style="margin-top: 10px;" id="txActionButtonsContainer"></div>
       </div>
     </div>
 
@@ -413,10 +402,10 @@
 
   <div id="pdfExportContainer" style="display:none; padding: 20px; background: #fff; color: #000; direction: rtl;"></div>
 
-  <!-- مودال ثبت/ویرایش تراکنش (با ترتیب درخواست‌شده) -->
+  <!-- مودال ثبت/ویرایش تراکنش (با کادر مبلغ خالص و کیبورد عددی) -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
     <div class="card" style="width: 100%; margin: 0; max-height:94vh; overflow-y:auto; position:relative;">
-      <h3 id="txModalTitle" style="margin-bottom:12px;">ثبت تراکنش جدید</h3>
+      <h3 id="txModalTitle" style="margin-bottom:10px;">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
 
       <!-- ۱. تاریخ -->
@@ -445,17 +434,17 @@
         </div>
       </div>
 
-      <!-- ۴. مبلغ با تفکیک زنده ۳ رقم ۳ رقم درون کادر -->
+      <!-- ۴. مبلغ (کیبورد خالص عددی، بدون محدودیت و متن اضافه) -->
       <div class="form-group">
         <label>۴. مبلغ تراکنش:</label>
-        <input type="text" id="txAmountInput" placeholder="مقدار مبلغ..." oninput="handleAmountFormat(this)" dir="ltr" style="text-align:right; font-weight:900; font-size:1.15rem; color:var(--accent-green-dark);">
+        <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.15rem; color:var(--accent-green-dark);">
       </div>
 
-      <!-- ۵. نوع عملیات -->
-      <div class="form-group"><label>۵. نوع عملیات:</label><select id="txOpType"></select></div>
+      <!-- ۵. توضیحات (بالاتر از امانت) -->
+      <div class="form-group"><label>۵. توضیحات / شرح تراکنش:</label><textarea id="txDesc" placeholder="توضیحات تراکنش..."></textarea></div>
 
-      <!-- ۶. توضیحات -->
-      <div class="form-group"><label>۶. توضیحات / شرح تراکنش:</label><textarea id="txDesc" placeholder="توضیحات تراکنش..."></textarea></div>
+      <!-- ۶. نوع عملیات -->
+      <div class="form-group"><label>۶. نوع عملیات:</label><select id="txOpType"></select></div>
 
       <!-- ۷. تصویر رسید -->
       <div class="form-group"><label>۷. تصویر رسید:</label><input type="file" id="txReceiptInput" accept="image/*"><input type="hidden" id="existingReceiptUrl"></div>
@@ -475,14 +464,14 @@
       <div class="form-group" style="margin-top:8px;">
         <label>عنوان عملیات جدید:</label>
         <div class="flex-row">
-          <input type="text" id="newOpTypeInput" placeholder="مثلاً: صرافی، کمیسیون...">
+          <input type="text" id="newOpTypeInput" placeholder="مثلاً: کمیسیون...">
           <button class="btn btn-sm" style="width: auto;" onclick="playInteractionEffect(); addNewOperationType()">+ افزودن</button>
         </div>
       </div>
-      <hr style="margin: 10px 0;">
+      <hr style="margin: 8px 0;">
       <label>لیست انواع عملیات فعال:</label>
       <div id="opTypesListContainer" style="margin-top:6px;"></div>
-      <div class="flex-row" style="justify-content: flex-end; margin-top:10px;">
+      <div class="flex-row" style="justify-content: flex-end; margin-top:8px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeOpTypeManagerModal()">بستن</button>
       </div>
     </div>
@@ -519,7 +508,7 @@
     let selectedDirectionValue = null;
     let selectedCurrencyValue = null;
 
-    /* سیستم بازخورد لمسی (ویبره) و صدای کلیک صوتی بسیار ملایم */
+    /* بازخورد صوتی و لمسی ملایم */
     function playInteractionEffect() {
       if (navigator.vibrate) { navigator.vibrate(20); }
       try {
@@ -580,7 +569,13 @@
       document.getElementById("searchDrawerModal").style.display = "flex";
       document.getElementById("drawerSearchInput").focus();
     }
-    function closeSearchDrawer() { document.getElementById("searchDrawerModal").style.display = "none"; }
+
+    /* پاک شدن خودکار کادر سرچ هنگام بستن کشو */
+    function closeSearchDrawer() {
+      document.getElementById("searchDrawerModal").style.display = "none";
+      document.getElementById("drawerSearchInput").value = "";
+      document.getElementById("drawerSearchResults").innerHTML = "";
+    }
     function closeSearchDrawerOnBack(e) { if(e.target.id === 'searchDrawerModal') closeSearchDrawer(); }
 
     function handleDrawerSearch() {
@@ -588,11 +583,9 @@
       const input = document.getElementById("drawerSearchInput");
       const q = input.value.trim().toLowerCase();
       const container = document.getElementById("drawerSearchResults");
-      const clearBtn = document.getElementById("drawerClearBtn");
       container.innerHTML = "";
 
-      if (q.length > 0) clearBtn.style.display = "flex";
-      else { clearBtn.style.display = "none"; return; }
+      if (q.length === 0) return;
 
       let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
       let filtered = [];
@@ -610,7 +603,7 @@
       }
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">نتیجه‌ای یافت نشد</div>`;
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">نتیجه‌ای یافت نشد</div>`;
         return;
       }
 
@@ -618,38 +611,20 @@
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let photoUrl = getVal(acc, ['Photo', 'photo']);
-        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:36px; height:36px; margin-left:8px;">` : '';
+        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:34px; height:34px; margin-left:8px;">` : '';
 
         container.innerHTML += `
-          <div class="account-item-card" style="padding:10px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName}')">
+          <div class="account-item-card" style="padding:8px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName}')">
             <div class="flex-row">
               ${photoHtml}
               <div>
-                <span style="font-weight:900; font-size:1rem;">${accName}</span>
-                <span style="font-size:0.8rem; color:#64748b; margin-right:6px;">کُد: ${accId}</span>
+                <span style="font-weight:900; font-size:0.95rem;">${accName}</span>
+                <span style="font-size:0.75rem; color:#64748b; margin-right:6px;">کُد: ${accId}</span>
               </div>
             </div>
           </div>
         `;
       });
-    }
-
-    function clearDrawerSearch() {
-      document.getElementById("drawerSearchInput").value = "";
-      document.getElementById("drawerSearchResults").innerHTML = "";
-      document.getElementById("drawerClearBtn").style.display = "none";
-      document.getElementById("drawerSearchInput").focus();
-    }
-
-    /* فرمت روان و خودکار ۳ رقم ۳ رقم درون کادر مبلغ */
-    function handleAmountFormat(input) {
-      playInteractionEffect();
-      let rawVal = input.value.replace(/\D/g, '');
-      if (!rawVal) {
-        input.value = "";
-        return;
-      }
-      input.value = Number(rawVal).toLocaleString();
     }
 
     function selectTxDirection(dir) {
@@ -792,12 +767,12 @@
         let finalNet = deb - cred;
         let isDebtor = finalNet > 0;
         let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `مجموع بدهکار صرافی: ${Math.abs(finalNet).toLocaleString()} ${curr}` : `مجموع طلبکار صرافی: ${Math.abs(finalNet).toLocaleString()} ${curr}`;
+        let label = isDebtor ? `شما این مبلغ را بدهکار هستید: ${Math.abs(finalNet).toLocaleString()} ${curr}` : `در حساب شما این مبلغ اضافه شده است: ${Math.abs(finalNet).toLocaleString()} ${curr}`;
 
         gridHtml += `
           <div class="stat-card">
-            <div class="stat-row"><span style="font-weight:900; font-size:1.05rem;">ارز: ${curr}</span><span style="font-weight:900;">مانده خالص: <b>${finalNet.toLocaleString()}</b></span></div>
-            <div class="stat-row" style="font-size:0.85rem; color:#64748b;">کل بستانکاران: ${cred.toLocaleString()} | کل بدهکاران: ${deb.toLocaleString()}</div>
+            <div class="stat-row"><span style="font-weight:900;">ارز: ${curr}</span><span style="font-weight:900;">مانده خالص: <b>${finalNet.toLocaleString()}</b></span></div>
+            <div class="stat-row" style="font-size:0.8rem; color:#64748b;">کل بستانکار: ${cred.toLocaleString()} | کل بدهکار: ${deb.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -836,10 +811,10 @@
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل حواله‌ها:</b></span><b>${filteredTxs.length} عدد</b></div>`;
-      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع حواله (${curr}):</span><b style="color:var(--accent-green-dark); font-size:1.05rem;">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع حواله (${curr}):</span><b style="color:var(--accent-green-dark);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حواله‌ای یافت نشد</div>`; return; }
+      if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حواله‌ای یافت نشد</div>`; return; }
 
       let totalCount = filteredTxs.length;
       filteredTxs.slice().reverse().forEach((tx, idx) => {
@@ -854,9 +829,9 @@
 
         container.innerHTML += `
           <div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
-            <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">حواله #${txNum} - مشتری: ${accName}</span><span style="font-size:0.8rem; color:#64748b;">${date}</span></div>
-            <div class="stat-row"><span>مبلغ حواله:</span><b style="color:var(--primary-dark); font-size:1.1rem;">${amt} ${curr}</b></div>
-            <div style="font-size:0.88rem; color:#475569; margin-top:4px; background:#f1f5f9; padding:8px; border-radius:8px;"><b>شرح:</b> ${desc}</div>
+            <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">حواله #${txNum} - مشتری: ${accName}</span><span style="font-size:0.75rem; color:#64748b;">${date}</span></div>
+            <div class="stat-row"><span>مبلغ حواله:</span><b style="color:var(--primary-dark); font-size:1.05rem;">${amt} ${curr}</b></div>
+            <div style="font-size:0.85rem; color:#475569; margin-top:4px; background:#f1f5f9; padding:6px; border-radius:6px;"><b>شرح:</b> ${desc}</div>
           </div>
         `;
       });
@@ -894,12 +869,12 @@
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بدهکاران:</b></span><b>${debtors.length} مورد</b></div>`;
-      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع طلب ما (${curr}):</span><b style="color:var(--danger-color); font-size:1.05rem;">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>شما بدهکار هستید (${curr}):</span><b style="color:var(--danger-color);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
+      if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
       debtors.forEach(d => {
-        container.innerHTML += `<div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')"><div class="stat-row"><span style="font-weight:900; font-size:1.05rem;">${d.name}</span><span style="color:var(--danger-color); font-weight:900; font-size:1.1rem;">${d.amount.toLocaleString()} ${d.currency}</span></div></div>`;
+        container.innerHTML += `<div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')"><div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">شما این مبلغ را بدهکار هستید: ${d.amount.toLocaleString()} ${d.currency}</span></div></div>`;
       });
     }
 
@@ -936,12 +911,12 @@
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بستانکاران:</b></span><b>${creditors.length} مورد</b></div>`;
-      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بدهی ما (${curr}):</span><b style="color:var(--accent-green-dark); font-size:1.05rem;">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>اضافه شده به حساب (${curr}):</span><b style="color:var(--accent-green-dark);">${currencyTotals[curr].toLocaleString()} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if(creditors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بستانکاری وجود ندارد</div>`; return; }
+      if(creditors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب بستانکاری وجود ندارد</div>`; return; }
       creditors.forEach(c => {
-        container.innerHTML += `<div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')"><div class="stat-row"><span style="font-weight:900; font-size:1.05rem;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900; font-size:1.1rem;">${c.amount.toLocaleString()} ${c.currency}</span></div></div>`;
+        container.innerHTML += `<div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')"><div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">در حساب شما این مبلغ اضافه شده است: ${c.amount.toLocaleString()} ${c.currency}</span></div></div>`;
       });
     }
 
@@ -972,12 +947,12 @@
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
           let color = val > 0 ? '#dc2626' : (val < 0 ? '#059669' : '#64748b');
-          let label = val > 0 ? `بدهکاریم:${Math.abs(val).toLocaleString()}` : (val < 0 ? `طلبکاریم:${Math.abs(val).toLocaleString()}` : `تسویه`);
+          let label = val > 0 ? `شما این مبلغ را بدهکار هستید:${Math.abs(val).toLocaleString()}` : (val < 0 ? `در حساب شما این مبلغ اضافه شده است:${Math.abs(val).toLocaleString()}` : `تسویه`);
           badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
         }
 
         let cleanPhone = accPhone.replace(/\D/g, '');
-        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:38px; height:38px; margin-left:8px;">` : '';
+        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:36px; height:36px; margin-left:8px;">` : '';
 
         container.innerHTML += `
           <div class="account-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
@@ -986,12 +961,12 @@
                 ${photoHtml}
                 <div>
                   <span class="account-name-title">${accName}</span>
-                  <div style="font-size:0.8rem; color:#64748b;">کُد حساب: ${accId}</div>
+                  <div style="font-size:0.75rem; color:#64748b;">کُد حساب: ${accId}</div>
                 </div>
               </div>
               <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openDirectWhatsApp('${cleanPhone}')">💬 واتساپ</button>
             </div>
-            <div style="font-size:0.88rem; margin-top:4px;">${badgesHtml || 'تسویه حساب کامل'}</div>
+            <div style="font-size:0.85rem; margin-top:4px;">${badgesHtml || 'تسویه حساب کامل'}</div>
           </div>
         `;
       });
@@ -1002,6 +977,7 @@
       window.open(`https://wa.me/${phone}`, '_blank');
     }
 
+    /* پاک شدن خودکار کادر سرچ حساب‌ها پس از لغو */
     function advancedSearchAccounts() {
       playInteractionEffect();
       const q = document.getElementById("searchAccountInput").value.trim().toLowerCase();
@@ -1063,7 +1039,7 @@
     }
 
     async function deleteCurrentAccount() {
-      if (!confirm("آیا از حذف این حساب و تمام تراکنش‌های آن مطمئن هستید؟")) return;
+      if (!confirm("آیا از حذف این حساب مطمئن هستید؟")) return;
       let accIdToDelete = currentAccountId;
       currentAccountId = null;
       switchView('viewAccounts');
@@ -1122,7 +1098,7 @@
               </div>
               <div class="stat-row">
                 <span>نوع: <b>${opType}</b></span>
-                <span style="font-weight:900; font-size:1.05rem;">مبلغ: <b>${amt} ${curr}</b></span>
+                <span style="font-weight:900;">مبلغ: <b>${amt} ${curr}</b></span>
               </div>
             </div>
           `;
@@ -1134,12 +1110,12 @@
         let net = accCurrencies[curr].credit - accCurrencies[curr].debit;
         let isDebtor = net > 0;
         let bgStyle = isDebtor ? "background:#fef2f2; color:#dc2626;" : "background:#f0fdf4; color:#15803d;";
-        let label = isDebtor ? `بدهکاریم: ${Math.abs(net).toLocaleString()} ${curr}` : (net < 0 ? `طلبکاریم: ${Math.abs(net).toLocaleString()} ${curr}` : "تسویه حساب کامل");
+        let label = isDebtor ? `شما این مبلغ را بدهکار هستید: ${Math.abs(net).toLocaleString()} ${curr}` : (net < 0 ? `در حساب شما این مبلغ اضافه شده است: ${Math.abs(net).toLocaleString()} ${curr}` : "تسویه حساب کامل");
 
         statsHtml += `
           <div class="stat-card">
-            <div class="stat-row"><span style="font-weight:900; font-size:1.05rem;">ارز: ${curr}</span><span style="font-weight:900;">مانده: <b>${net.toLocaleString()}</b></span></div>
-            <div class="stat-row" style="font-size:0.85rem; color:#64748b;">کل بستانکار: ${accCurrencies[curr].credit.toLocaleString()} | کل بدهکار: ${accCurrencies[curr].debit.toLocaleString()}</div>
+            <div class="stat-row"><span style="font-weight:900;">ارز: ${curr}</span><span style="font-weight:900;">مانده: <b>${net.toLocaleString()}</b></span></div>
+            <div class="stat-row" style="font-size:0.8rem; color:#64748b;">کل بستانکار: ${accCurrencies[curr].credit.toLocaleString()} | کل بدهکار: ${accCurrencies[curr].debit.toLocaleString()}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
@@ -1160,37 +1136,26 @@
       let date = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
 
-      let receiptHtml = receiptUrl ? `<div style="margin-top:10px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
+      let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
       document.getElementById("txDetailCard").innerHTML = `
         <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
         <div class="stat-row"><span>تاریخ:</span><b>${date}</b></div>
         <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
-        <div class="stat-row"><span>مبلغ:</span><b style="font-size:1.1rem;">${amt} ${curr}</b></div>
+        <div class="stat-row"><span>مبلغ:</span><b style="font-size:1.05rem;">${amt} ${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
-        <div style="margin-top:8px; background:#f1f5f9; padding:10px; border-radius:8px;"><b>توضیحات:</b> ${desc || 'بدون شرح'}</div>
+        <div style="margin-top:6px; background:#f1f5f9; padding:8px; border-radius:6px;"><b>توضیحات:</b> ${desc || 'بدون شرح'}</div>
         ${receiptHtml}
       `;
 
       let btnContainer = document.getElementById("txActionButtonsContainer");
-      if (opType === "حواله") {
-        btnContainer.innerHTML = `
-          <div class="flex-row" style="gap: 6px; margin-bottom:8px;">
-            <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
-            <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); deleteSingleTransaction()">🗑️ حذف</button>
-          </div>
-          <button class="btn btn-whatsapp" style="margin-bottom:6px;" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال گزارش تراکنش در واتساپ</button>
-          <button class="btn btn-whatsapp-dark" onclick="playInteractionEffect(); sendTransferReceiptWhatsApp()">📄 ارسال رسید حواله در واتساپ</button>
-        `;
-      } else {
-        btnContainer.innerHTML = `
-          <div class="flex-row" style="gap: 6px; margin-bottom:8px;">
-            <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
-            <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); deleteSingleTransaction()">🗑️ حذف</button>
-          </div>
-          <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال گزارش تراکنش در واتساپ</button>
-        `;
-      }
+      btnContainer.innerHTML = `
+        <div class="flex-row" style="gap: 6px; margin-bottom:6px;">
+          <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
+          <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); deleteSingleTransaction()">🗑️ حذف</button>
+        </div>
+        <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال گزارش در واتساپ</button>
+      `;
 
       switchView('viewTransactionDetail');
     }
@@ -1224,9 +1189,7 @@
       selectTxDirection(dirVal);
       selectTxCurrency(currVal);
 
-      let rawAmt = getVal(tx, ['Amount', 'amount']) || "";
-      document.getElementById("txAmountInput").value = rawAmt ? Number(rawAmt).toLocaleString() : "";
-
+      document.getElementById("txAmountInput").value = getVal(tx, ['Amount', 'amount']) || "";
       document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
       document.getElementById("txDateInput").value = String(getVal(tx, ['Date', 'date']) || new Date().toISOString()).split('T')[0];
       document.getElementById("txDesc").value = (getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
@@ -1237,8 +1200,7 @@
     function closeTransactionModal() { document.getElementById("transactionModal").style.display = "none"; }
 
     async function submitTransaction() {
-      let rawAmtStr = document.getElementById("txAmountInput").value.replace(/,/g, '');
-      let amt = parseFloat(rawAmtStr);
+      let amt = parseFloat(document.getElementById("txAmountInput").value);
 
       if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
       if (!selectedCurrencyValue) { alert("لطفاً واحد پول / ارز را انتخاب کنید!"); return; }
@@ -1288,6 +1250,7 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
+    /* متون اصلاح شده گزارش با نام امانت‌داری کریمی */
     function sendGeneralWhatsAppReport() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
@@ -1300,40 +1263,27 @@
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
       let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
       let txDate = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
-      let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']) || '';
+      let statusText = dirVal.includes('بدهکار') ? `شما این مبلغ را بدهکار هستید` : `در حساب شما این مبلغ اضافه شده است`;
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let lines = [
-        `✨ *امانتداری کریمی* ✨`,
+        `✨ *امانت‌داری کریمی* ✨`,
         `────────────────────────`,
-        `حضور گرامی آقای *${currentAccountName}*`,
-        `با سلام و احترام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
+        `محترم آقای *${currentAccountName}*`,
+        `با سلام، تراکنش جدیدی ثبت گردید:`,
         ``,
-        `📌 *جزئیات تراکنش:*`,
-        `🔹 نوع عملیات: *${opType}* (${dirVal})`,
+        `📌 *جزئیات:*`,
+        `🔹 نوع: *${opType}*`,
         `💰 مبلغ: *${amtVal} ${currVal}*`,
-        `📅 تاریخ ثبت: ${txDate}`,
-        receiptUrl ? `🖼 لینک تصویر رسید: ${receiptUrl}` : ``,
+        `📊 وضعیت: *${statusText}*`,
+        `📅 تاریخ: ${txDate}`,
         ``,
-        `🌐 بررسی حساب از طریق سامانه:`,
+        `🌐 بررسی آنلاین حساب:`,
         siteLink,
         `────────────────────────`,
-        `از اعتماد شما سپاسگزاریم 🙏`
-      ].filter(l => l !== '');
+        `با تشکر، امانت‌داری کریمی 🙏`
+      ];
 
-      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-    }
-
-    function sendTransferReceiptWhatsApp() {
-      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
-      if (!acc) return;
-      let phone = String(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
-      if(!tx) return;
-
-      let rawDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ').trim();
-      let lines = [`📄 *رسید رسمی انتقال وجه:*`, `────────────────────`, rawDesc, `────────────────────`, `⚠️ *داشتن اسناد و مدارک الزامی است.*`];
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
       window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
     }
@@ -1355,24 +1305,26 @@
         if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
       });
 
+      let lines = [`✨ *امانت‌داری کریمی* ✨`, `────────────────────────`, `محترم آقای *${currentAccountName}*`, `📊 *صورت‌حساب مالی شما:*`];
       let hasBalance = false;
       for (let curr in accCurrencies) {
         hasBalance = true;
         let cred = accCurrencies[curr].credit;
         let deb = accCurrencies[curr].debit;
         let net = cred - deb;
-        let statusStr = net > 0 ? `بدهکاریم: ${Math.abs(net).toLocaleString()} ${curr}` : (net < 0 ? `طلبکاریم: ${Math.abs(net).toLocaleString()} ${curr}` : `تسویه حساب کامل`);
+        let statusStr = net > 0 ? `شما این مبلغ را بدهکار هستید: ${Math.abs(net).toLocaleString()} ${curr}` : (net < 0 ? `در حساب شما این مبلغ اضافه شده است: ${Math.abs(net).toLocaleString()} ${curr}` : `تسویه حساب کامل`);
 
-        lines.push(``, `🔹 ارز: *${curr}*`, `کل بستانکار: ${cred.toLocaleString()} | کل بدهکار: ${deb.toLocaleString()}`, `وضعیت نهایی: *${statusStr}*`);
+        lines.push(``, `🔹 ارز: *${curr}*`, `وضعیت: *${statusStr}*`);
       }
 
-      if (!hasBalance) lines.push(`هیچ تراکنش یا مانده حسابی ثبت نشده است.`);
+      if (!hasBalance) lines.push(`تراکنشی ثبت نشده است.`);
       lines.push(``, `────────────────────────`, `🌐 لینک سامانه:`, siteLink);
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
       window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
     }
 
+    /* گزارش PDF بدون کلمه صرافی */
     function generateAccountPDFReport() {
       const exportContainer = document.getElementById("pdfExportContainer");
       const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).slice().reverse();
@@ -1400,8 +1352,8 @@
 
       exportContainer.innerHTML = `
         <div style="direction: rtl; text-align: right; padding: 15px; font-family: Tahoma, sans-serif;">
-          <h2 style="text-align: center; color: #0f172a; margin-bottom: 5px;">صرافی معتبر کریمی</h2>
-          <p style="text-align: center; font-size: 12px; color: #64748b; margin-bottom: 20px;">گزارش رسمی صورت‌حساب مالی مشتری</p>
+          <h2 style="text-align: center; color: #0f172a; margin-bottom: 5px;">امانت‌داری کریمی</h2>
+          <p style="text-align: center; font-size: 12px; color: #64748b; margin-bottom: 20px;">گزارش صورت‌حساب مشتری</p>
           <hr style="border: 1px solid #cbd5e1; margin-bottom: 15px;">
           <p><b>نام مشتری:</b> ${currentAccountName}</p>
           <p><b>کُد حساب:</b> ${currentAccountId}</p>
@@ -1422,7 +1374,7 @@
             </tbody>
           </table>
           <br><br>
-          <p style="text-align: left; font-size: 11px; color: #94a3b8;">سیستم حسابداری صرافی کریمی</p>
+          <p style="text-align: left; font-size: 11px; color: #94a3b8;">امانت‌داری کریمی</p>
         </div>
       `;
 
