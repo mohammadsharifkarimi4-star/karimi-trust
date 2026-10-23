@@ -289,7 +289,7 @@
         <label>عنوان عملیات جدید:</label>
         <div class="flex-row">
           <input type="text" id="newOpTypeInput" placeholder="مثلاً: صرافی، کمیسیون...">
-          <button class="btn btn-sm" style="width: auto; whitespace: nowrap;" onclick="addNewOperationType()">+ افزودن</button>
+          <button class="btn btn-sm" style="width: auto;" onclick="addNewOperationType()">+ افزودن</button>
         </div>
       </div>
       <hr style="margin: 10px 0;">
@@ -377,10 +377,11 @@
       </div>
     </div>
   </div>
+
   <script>
-    // تنظیمات Supabase
+    // تنظیمات Supabase با کلید و لینک جدید شما
     const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwZWh3a3Z0YmljZXVyZnBhZml3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMzgwMTAsImV4cCI6MjA1NjzgMTYxMH0.fV_9q6p4xV9ZpA3W7bV0X9ZpA3W7bV0X9ZpA3W7bV0X"; // کلید عمومی anon شما
+    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
@@ -444,7 +445,7 @@
       localStorage.setItem("cached_op_types", JSON.stringify(customOpTypes));
     }
 
-    // بارگیری اطلاعات مستقیم از Supabase
+    // بارگیری اطلاعات از Supabase
     async function loadDataFromSupabase(showLoader = false) {
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
@@ -475,7 +476,7 @@
           if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
         }
       } catch (e) {
-        console.log("خطا در دانلود داده جدید از Supabase:", e);
+        console.log("خطا در ارتباط با Supabase:", e);
       } finally {
         if (indicator) indicator.style.display = "none";
       }
@@ -495,16 +496,15 @@
       return '';
     }
 
-    // آپلود تصویر در Supabase Storage
+    // آپلود فایل در Storage
     async function uploadFileToSupabase(file, bucketName) {
       if (!file) return null;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${fileName}`;
 
       const { data, error } = await _supabase.storage
         .from(bucketName)
-        .upload(filePath, file);
+        .upload(fileName, file);
 
       if (error) {
         console.error("خطا در آپلود عکس:", error);
@@ -513,14 +513,14 @@
 
       const { data: publicUrlData } = _supabase.storage
         .from(bucketName)
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       return publicUrlData.publicUrl;
     }
 
-    // مدیریت OperationType
     function populateOpTypeSelect() {
       const select = document.getElementById("txOpType");
+      if(!select) return;
       select.innerHTML = "";
       customOpTypes.forEach(op => {
         select.innerHTML += `<option value="${op}">${op}</option>`;
@@ -539,7 +539,7 @@
     function renderOpTypesList() {
       const container = document.getElementById("opTypesListContainer");
       container.innerHTML = "";
-      customOpTypes.forEach((op, index) => {
+      customOpTypes.forEach((op) => {
         container.innerHTML += `
           <div class="op-badge-item">
             <span><b>${op}</b></span>
@@ -573,7 +573,6 @@
       await _supabase.from('operation_types').delete().eq('title', title);
     }
 
-    // محاسبات و نمایش داشبورد
     function renderDashboardStats() {
       let totalsByCurrency = {};
 
@@ -896,7 +895,7 @@
       window.open(`https://wa.me/${phone}`, '_blank');
     }
 
-    // جستجوی پیشرفته (نام، تلفن، AccountID، TransID)
+    // جستجوی پیشرفته
     function advancedSearchAccounts() {
       const q = document.getElementById("searchAccountInput").value.trim().toLowerCase();
       if (!q) {
@@ -904,7 +903,6 @@
         return;
       }
 
-      // ۱. اگر آیدی تراکنش سرچ شد
       let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
       if (matchedTx) {
         let matchedAccId = getVal(matchedTx, ['AccountID', 'accountid']);
@@ -913,7 +911,6 @@
         return;
       }
 
-      // ۲. سرچ بر اساس نام، تلفن و AccountID
       const filtered = allAccounts.filter(acc => {
         let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
         let phone = String(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
@@ -965,9 +962,8 @@
         indicator.style.display = "block";
       }
 
-      // آپلود عکس در صورت انتخاب فایل جدید
       if (fileInput.files.length > 0) {
-        const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'avatars');
+        const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'Accounts_Images');
         if (uploadedUrl) photoUrl = uploadedUrl;
       }
 
@@ -1203,7 +1199,6 @@
         indicator.style.display = "block";
       }
 
-      // آپلود تصویر رسید در صورت انتخاب فایل
       if (fileInput.files.length > 0) {
         const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'receipts');
         if (uploadedUrl) receiptUrl = uploadedUrl;
@@ -1363,3 +1358,5 @@
       window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
     }
   </script>
+</body>
+</html>
