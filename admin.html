@@ -102,7 +102,6 @@
     }
     textarea { resize: vertical; min-height: 65px; }
 
-    /* دکمه‌های انتخاب جهت و ارز */
     .radio-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
     .btn-select-option {
       flex: 1; min-width: 65px; padding: 8px 4px; text-align: center; background: #f1f5f9;
@@ -119,7 +118,6 @@
       background: #f0f9ff !important; border-color: var(--info-color) !important; color: var(--info-color) !important;
     }
 
-    /* دکمه‌های اصلی سیستم */
     .btn {
       padding: 8px 10px; background: var(--accent-green-dark); color: white; border: none;
       border-radius: 8px; font-weight: 900; cursor: pointer; font-size: 0.85rem;
@@ -133,22 +131,16 @@
     .btn-info { background: var(--info-color); }
     .btn-whatsapp { background: var(--whatsapp-color); color: #ffffff; }
     .btn-whatsapp-dark { background: var(--whatsapp-dark); color: #ffffff; }
-
     .btn-sm { padding: 5px 10px; font-size: 0.78rem; width: auto; box-shadow: none; }
 
-    /* دکمه برجسته و سایه‌دار ثبت تراکنش */
     .btn-hero-transaction {
       padding: 11px; font-size: 0.95rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white; border-radius: 8px; border: none; font-weight: 900; width: 100%;
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;
     }
 
-    /* شبکه دکمه‌های کوچک در ۲ ستون */
-    .action-grid-2col {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;
-    }
+    .action-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
 
-    /* دکمه شناور ایجاد حساب در پایین */
     .floating-create-account-btn {
       position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white;
       padding: 10px 18px; border-radius: 30px; font-weight: 900; font-size: 0.9rem;
@@ -157,13 +149,11 @@
     }
     .floating-create-account-btn:active { transform: scale(0.95); }
 
-    /* دکمه شناور ذخیره تراکنش */
     .floating-save-bar {
       position: sticky; bottom: -8px; background: #ffffff; padding: 8px 0 0 0;
       border-top: 1px solid var(--border-color); display: flex; gap: 6px; z-index: 10;
     }
 
-    /* دکمه شناور پاپ‌آپ جستجو */
     .floating-search-trigger {
       position: fixed; bottom: 16px; right: 16px; width: 48px; height: 48px;
       background: var(--primary-gradient); color: #ffffff; border-radius: 50%;
@@ -211,10 +201,7 @@
       box-shadow: 0 6px 16px rgba(0,0,0,0.25); display: none; z-index: 8000;
     }
 
-    .profile-img-preview {
-      width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
-      border: 2px solid var(--accent-green); background: #ffffff;
-    }
+    .profile-img-preview { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-green); background: #ffffff; }
     .receipt-img-preview { width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px; border: 1.5px solid var(--border-color); margin-top: 6px; background: #ffffff; }
     .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: #f1f5f9; border-radius: 6px; margin-bottom: 4px; }
   </style>
@@ -223,10 +210,8 @@
 
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
 
-  <!-- دکمه شناور پاپ‌آپ جستجو -->
   <div class="floating-search-trigger" onclick="playInteractionEffect(); openSearchDrawer()" title="جستجوی سریع">🔍</div>
 
-  <!-- کشوی جستجو -->
   <div id="searchDrawerModal" onclick="closeSearchDrawerOnBack(event)">
     <div class="search-drawer-card" onclick="event.stopPropagation()">
       <div class="flex-row" style="justify-content: space-between; margin-bottom: 6px;">
@@ -244,7 +229,7 @@
   <div id="authOverlay">
     <div class="auth-card">
       <div class="auth-title">🔐 مدیریت امانت‌داری کریمی</div>
-      <div class="form-group"><label>ایمیل مدیریت:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
+      <div class="form-group"><label>ایمیل ادمین:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور..."></div>
       <button class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
       <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
@@ -253,7 +238,6 @@
 
   <!-- پنل اصلی -->
   <div class="container" id="adminContainer">
-    <!-- منوی اصلی -->
     <div id="viewDashboard" class="view-section active">
       <div class="card">
         <div class="card-header-styled">
@@ -266,7 +250,11 @@
         <div style="padding: 2px 0; text-align: center;">
           <button class="btn btn-info" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')" style="margin-bottom: 6px;">📊 آمارها و گزارشات کلی</button>
           <button class="btn" onclick="playInteractionEffect(); switchView('viewAccounts')" style="margin-bottom: 6px;">👥 لیست کامل حساب‌ها</button>
-          <button class="btn btn-warning" onclick="playInteractionEffect(); openOpTypeManagerModal()">⚙️ مدیریت انواع عملیات</button>
+          <button class="btn btn-warning" onclick="playInteractionEffect(); openOpTypeManagerModal()" style="margin-bottom: 6px;">⚙️ مدیریت انواع عملیات</button>
+          <!-- دکمه مدیریت ادمین‌ها (فقط برای مالک اصلی نمایش داده می‌شود یا ادمین‌های مجاز) -->
+          <div id="superAdminMenuBtn" style="display:none; margin-top:6px;">
+            <button class="btn" style="background: linear-gradient(135deg, #7c3aed, #4f46e5);" onclick="playInteractionEffect(); openAdminManagerModal()">🛡️ ایجاد و مدیریت ادمین‌های همکار</button>
+          </div>
         </div>
       </div>
     </div>
@@ -347,7 +335,6 @@
         <div id="accountsListContainer" style="margin-top: 6px;"></div>
       </div>
 
-      <!-- دکمه شناور ایجاد حساب در پایین -->
       <button class="floating-create-account-btn" onclick="playInteractionEffect(); openAccountModal()">
         <span>➕ ایجاد حساب جدید</span>
       </button>
@@ -366,14 +353,12 @@
 
         <div class="stats-grid" id="accountStatsGrid"></div>
 
-        <!-- دکمه اصلی ثبت تراکنش -->
         <div style="margin-top: 8px;">
           <button class="btn-hero-transaction" onclick="playInteractionEffect(); openAddTransactionModal()">
             <span>➕ ثبت تراکنش جدید برای این حساب</span>
           </button>
         </div>
 
-        <!-- دکمه‌های بسیار ریز و مرتب در ۲ ستون -->
         <div class="action-grid-2col">
           <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">📲 بیلان واتساپ</button>
           <button class="btn btn-whatsapp-dark" onclick="playInteractionEffect(); generateAccountPDFReport()">📄 دانلود PDF</button>
@@ -403,19 +388,14 @@
 
   <div id="pdfExportContainer" style="display:none; padding: 20px; background: #fff; color: #000; direction: rtl;"></div>
 
-  <!-- مودال ثبت تراکنش (با کادر مبلغ عددی روان) -->
+  <!-- مودال ثبت تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
     <div class="card" style="width: 100%; margin: 0; max-height:94vh; overflow-y:auto; position:relative;">
       <h3 id="txModalTitle" style="margin-bottom:8px;">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
 
-      <!-- ۱. تاریخ -->
-      <div class="form-group">
-        <label>۱. تاریخ تراکنش:</label>
-        <input type="date" id="txDateInput">
-      </div>
+      <div class="form-group"><label>۱. تاریخ تراکنش:</label><input type="date" id="txDateInput"></div>
 
-      <!-- ۲. جهت -->
       <div class="form-group">
         <label>۲. جهت تراکنش (حتماً انتخاب کنید):</label>
         <div class="radio-group">
@@ -424,7 +404,6 @@
         </div>
       </div>
 
-      <!-- ۳. ارز -->
       <div class="form-group">
         <label>۳. واحد پول / ارز (حتماً انتخاب کنید):</label>
         <div class="radio-group">
@@ -435,22 +414,15 @@
         </div>
       </div>
 
-      <!-- ۴. مبلغ (ورود روان عددی با کیبورد عددی) -->
       <div class="form-group">
         <label>۴. مبلغ تراکنش:</label>
         <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.1rem; color:var(--accent-green-dark);">
       </div>
 
-      <!-- ۵. توضیحات -->
       <div class="form-group"><label>۵. توضیحات / شرح تراکنش:</label><textarea id="txDesc" placeholder="توضیحات تراکنش..."></textarea></div>
-
-      <!-- ۶. نوع عملیات -->
       <div class="form-group"><label>۶. نوع عملیات:</label><select id="txOpType"></select></div>
-
-      <!-- ۷. تصویر رسید -->
       <div class="form-group"><label>۷. تصویر رسید:</label><input type="file" id="txReceiptInput" accept="image/*"><input type="hidden" id="existingReceiptUrl"></div>
 
-      <!-- دکمه شناور ذخیره -->
       <div class="floating-save-bar">
         <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeTransactionModal()">انصراف</button>
         <button class="btn btn-sm" style="flex:2;" onclick="playInteractionEffect(); submitTransaction()">💾 ثبت و ذخیره تراکنش</button>
@@ -458,7 +430,7 @@
     </div>
   </div>
 
-  <!-- مودال‌های جانبی -->
+  <!-- مودال مدیریت انواع عملیات -->
   <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
     <div class="card" style="width: 100%; margin: 0; max-height:90vh; overflow-y:auto;">
       <h3>⚙️ مدیریت انواع عملیات</h3>
@@ -478,6 +450,28 @@
     </div>
   </div>
 
+  <!-- مودال ایجاد و مدیریت ادمین‌های جدید (مخصوص مالک اصلی) -->
+  <div id="adminManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:8px;">
+    <div class="card" style="width: 100%; margin: 0; max-height:90vh; overflow-y:auto;">
+      <h3>🛡️ ایجاد و مدیریت ادمین‌های همکار</h3>
+      <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px;">در این بخش می‌توانید برای برادرتان یا سایر همکاران، ایمیل و رمز عبور اختصاصی بسازید تا هر کس فقط به حساب‌های خودش دسترسی داشته باشد.</p>
+      
+      <div class="form-group"><label>نام ادمین / همکار:</label><input type="text" id="newAdminName" placeholder="مثلاً: برادرم..."></div>
+      <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
+      <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
+      <button class="btn" style="background: var(--accent-green-dark); margin-bottom: 10px;" onclick="playInteractionEffect(); createNewAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
+
+      <hr style="margin: 8px 0;">
+      <label><b>لیست ادمین‌های همکار فعال در سیستم:</b></label>
+      <div id="adminsListContainer" style="margin-top:6px;"></div>
+
+      <div class="flex-row" style="justify-content: flex-end; margin-top:8px;">
+        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAdminManagerModal()">بستن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال ایجاد حساب مشتری -->
   <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
     <div class="card" style="width: 100%; margin: 0;">
       <h3 id="modalAccountTitle">حساب جدید</h3>
@@ -491,16 +485,19 @@
       </div>
     </div>
   </div>
-  <script>
+<script>
     const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
     const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
-    const ADMIN_PIN = "77218731";
-    
+    // مالک اصلی سیستم (Super Admin پیش‌فرض)
+    const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
+    const MASTER_ADMIN_PIN = "77218731";
+    const MASTER_ADMIN_ID = "master_owner";
+
     let allAccounts = [];
     let allTransactions = [];
+    let allAdmins = [];
     let customOpTypes = ["امانت", "حواله", "دریافت", "پرداخت", "تسویه"];
     let currentAccountId = null;
     let currentAccountName = "";
@@ -509,7 +506,9 @@
     let selectedDirectionValue = null;
     let selectedCurrencyValue = null;
 
-    /* بازخورد لمسی و صوتی ملایم */
+    // اطلاعات ادمین لاگین کرده در این نشست
+    let currentLoggedInAdmin = null;
+
     function playInteractionEffect() {
       if (navigator.vibrate) { navigator.vibrate(20); }
       try {
@@ -527,11 +526,23 @@
       } catch(e) {}
     }
 
-    window.onload = function() {
-      if (sessionStorage.getItem("adminAuthSession") === "active") {
-        document.getElementById("authOverlay").style.display = "none";
-        document.getElementById("adminContainer").style.display = "block";
-        loadDataFromSupabase(true);
+    window.onload = async function() {
+      let savedSession = sessionStorage.getItem("adminAuthSessionData");
+      if (savedSession) {
+        try {
+          currentLoggedInAdmin = JSON.parse(savedSession);
+          document.getElementById("authOverlay").style.display = "none";
+          document.getElementById("adminContainer").style.display = "block";
+          
+          // اگر مالک اصلی است، دکمه ایجاد ادمین نمایش داده شود
+          if (currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase()) {
+            document.getElementById("superAdminMenuBtn").style.display = "block";
+          }
+
+          await loadDataFromSupabase(true);
+        } catch(e) {
+          sessionStorage.removeItem("adminAuthSessionData");
+        }
       }
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
@@ -539,6 +550,7 @@
         if (event.state && event.state.view) {
           if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
           if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
+          if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
           if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
           if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
           switchView(event.state.view, false);
@@ -546,18 +558,62 @@
       };
     };
 
-    function handleLogin() {
+    async function handleLogin() {
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
       const pin = document.getElementById("loginPin").value.trim();
-      if (email === ADMIN_EMAIL && pin === ADMIN_PIN) {
-        sessionStorage.setItem("adminAuthSession", "active");
+
+      if (!email || !pin) {
+        alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
+        return;
+      }
+
+      // ۱. بررسی اگر مالک اصلی (Master Admin) باشد
+      if (email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
+        currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "محمد شریف کریمی (مالک)", email: MASTER_ADMIN_EMAIL };
+        sessionStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+        
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
-        loadDataFromSupabase(true);
-      } else { alert("ایمیل یا رمز اشتباه است!"); }
+        document.getElementById("superAdminMenuBtn").style.display = "block";
+        await loadDataFromSupabase(true);
+        return;
+      }
+
+      // ۲. بررسی در جدول ادمین‌های دیتابیس (Supabase)
+      try {
+        const { data: adminsData, error } = await _supabase.from('admins').select('*');
+        if (adminsData) {
+          let foundAdmin = adminsData.find(adm => {
+            let admEmail = String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase();
+            let admPin = String(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '').trim();
+            return admEmail === email && admPin === pin;
+          });
+
+          if (foundAdmin) {
+            let adminId = String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || foundAdmin.id);
+            let adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'همکار');
+
+            currentLoggedInAdmin = { id: adminId, name: adminName, email: email };
+            sessionStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+
+            document.getElementById("authOverlay").style.display = "none";
+            document.getElementById("adminContainer").style.display = "block";
+            document.getElementById("superAdminMenuBtn").style.display = "none"; // ادمین‌های فرعی دکمه ساخت ادمین ندارند
+            await loadDataFromSupabase(true);
+            return;
+          }
+        }
+      } catch(e) {
+        console.log("خطا در بررسی ادمین‌ها:", e);
+      }
+
+      alert("ایمیل یا رمز عبور اشتباه است!");
     }
 
-    function handleLogout() { sessionStorage.removeItem("adminAuthSession"); location.reload(); }
+    function handleLogout() { 
+      sessionStorage.removeItem("adminAuthSessionData"); 
+      location.reload(); 
+    }
 
     function switchView(viewId, pushHistory = true) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -571,7 +627,6 @@
       document.getElementById("drawerSearchInput").focus();
     }
 
-    /* پاک شدن خودکار کادر سرچ پس از بستن کشو */
     function closeSearchDrawer() {
       document.getElementById("searchDrawerModal").style.display = "none";
       document.getElementById("drawerSearchInput").value = "";
@@ -588,6 +643,7 @@
 
       if (q.length === 0) return;
 
+      // فیلتر جستجو فقط در حساب‌های مختص همین ادمین لاگین‌کرده
       let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
       let filtered = [];
 
@@ -643,6 +699,7 @@
       if (map[curr]) document.getElementById(map[curr]).classList.add('selected-currency');
     }
 
+    // 🔄 بارگذاری داده‌ها از Supabase با اعمال فیلتر هوشمند مالکیت (Admin Isolation)
     async function loadDataFromSupabase(showLoader = true) {
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
@@ -651,15 +708,43 @@
       }
 
       try {
-        const [accRes, txRes, opRes] = await Promise.all([
+        const [accRes, txRes, opRes, admRes] = await Promise.all([
           _supabase.from('accounts').select('*'),
           _supabase.from('transactions').select('*'),
-          _supabase.from('operation_types').select('*')
+          _supabase.from('operation_types').select('*'),
+          _supabase.from('admins').select('*')
         ]);
 
-        if (accRes.data) allAccounts = accRes.data;
-        if (txRes.data) allTransactions = txRes.data;
+   let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+        let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
+        let rawAccounts = accRes.data || [];
+        
+        if (isMaster) {
+          // مالک اصلی: تمام حساب‌هایی که یا برچسب master_owner دارند و یا کلاً خالی هستند (حساب‌های قدیمی خودتان)
+          allAccounts = rawAccounts.filter(acc => {
+            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
+            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner";
+          });
+        } else {
+          // ادمین‌های همکار: فقط و فقط حساب‌هایی که با آیدی خودِ همان ادمین ثبت شده‌اند (به هیچ وجه حساب‌های خالی یا مالکان دیگر را نمی‌بینند)
+          allAccounts = rawAccounts.filter(acc => {
+            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
+            return creator === String(currentAdminId);
+          });
+        }
+
+        // فیلتر تراکنش‌ها: فقط تراکنش‌های مربوط به حساب‌های مجاز همین ادمین
+        let rawTransactions = txRes.data || [];
+        let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
+        
+        allTransactions = rawTransactions.filter(tx => {
+          let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
+          return authorizedAccountIds.includes(txAccId);
+        });
+
         if (opRes.data && opRes.data.length > 0) customOpTypes = opRes.data.map(o => o.title);
+        if (admRes.data) allAdmins = admRes.data;
 
         renderDashboardStats();
         renderAccountsList(allAccounts);
@@ -733,7 +818,83 @@
       await _supabase.from('operation_types').delete().eq('title', title);
     }
 
-    /* آمار کلی به حالت ساده و استاندارد بدهکار/بستانکار */
+    // مدیریت ادمین‌های همکار جدید (ایجاد، نمایش و حذف)
+    function openAdminManagerModal() {
+      renderAdminsList();
+      document.getElementById("adminManagerModal").style.display = "flex";
+    }
+    function closeAdminManagerModal() {
+      document.getElementById("adminManagerModal").style.display = "none";
+    }
+
+    function renderAdminsList() {
+      const container = document.getElementById("adminsListContainer");
+      container.innerHTML = "";
+      if (allAdmins.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:6px;">هیچ ادمین همکاری تعریف نشده است</div>`;
+        return;
+      }
+      allAdmins.forEach(adm => {
+        let admId = String(getVal(adm, ['AdminID', 'adminid', 'id']) || adm.id);
+        let admName = String(getVal(adm, ['Name', 'name']) || 'بدون نام');
+        let admEmail = String(getVal(adm, ['Email', 'email']) || '');
+        let admPin = String(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '');
+
+        container.innerHTML += `
+          <div class="op-badge-item" style="background:#f8fafc; border:1px solid #cbd5e1; margin-bottom:6px;">
+            <div>
+              <b style="color:var(--primary-dark);">${admName}</b><br>
+              <span style="font-size:0.75rem; color:#64748b;">ایمیل: ${admEmail} | رمز: ${admPin}</span>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); deleteAdminAccount('${admId}')">حذف</button>
+          </div>
+        `;
+      });
+    }
+
+    async function createNewAdminAccount() {
+      let name = document.getElementById("newAdminName").value.trim();
+      let email = document.getElementById("newAdminEmail").value.trim().toLowerCase();
+      let pin = document.getElementById("newAdminPin").value.trim();
+
+      if (!name || !email || !pin) {
+        alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید.");
+        return;
+      }
+
+      let adminId = "ADM-" + Math.floor(1000 + Math.random() * 9000);
+      const newAdminPayload = {
+        AdminID: adminId,
+        Name: name,
+        Email: email,
+        Pin: pin
+      };
+
+      const { error } = await _supabase.from('admins').insert([newAdminPayload]);
+      if (error) {
+        alert("خطا در ایجاد ادمین: " + (error.message || "لطفاً مجدداً تلاش کنید"));
+        return;
+      }
+
+      alert("✅ ادمین جدید با موفقیت ایجاد شد!");
+      document.getElementById("newAdminName").value = "";
+      document.getElementById("newAdminEmail").value = "";
+      document.getElementById("newAdminPin").value = "";
+
+      // بروزرسانی لیست ادمین‌ها
+      const { data } = await _supabase.from('admins').select('*');
+      if (data) allAdmins = data;
+      renderAdminsList();
+    }
+
+    async function deleteAdminAccount(admId) {
+      if (!confirm("آیا از حذف دسترسی این ادمین مطمئن هستید؟")) return;
+      await _supabase.from('admins').delete().eq('AdminID', admId);
+      const { data } = await _supabase.from('admins').select('*');
+      if (data) allAdmins = data;
+      renderAdminsList();
+    }
+
     function renderDashboardStats() {
       let totalsByCurrency = {};
       allAccounts.forEach(acc => {
@@ -922,7 +1083,6 @@
       });
     }
 
-    /* نمایش حساب‌ها با عبارت ساده بدهکار / بستانکار */
     function renderAccountsList(accounts) {
       const container = document.getElementById("accountsListContainer");
       container.innerHTML = "";
@@ -1032,7 +1192,16 @@
       }
 
       let accountId = editId ? editId : "ACC-" + Math.floor(100000 + Math.random() * 900000);
-      const payload = { AccountID: accountId, Name: accName, Phone: accPhone, Photo: photoUrl };
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
+
+      // ثبت حساب با برچسب سازنده (`CreatedBy`) جهت جداسازی کامل بین ادمین‌ها
+      const payload = { 
+        AccountID: accountId, 
+        Name: accName, 
+        Phone: accPhone, 
+        Photo: photoUrl,
+        CreatedBy: String(currentAdminId)
+      };
 
       if (editId) await _supabase.from('accounts').update(payload).eq('AccountID', editId);
       else await _supabase.from('accounts').insert([payload]);
@@ -1252,7 +1421,6 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    /* گزارش واتساپ ساده و محترمانه */
     function sendGeneralWhatsAppReport() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
