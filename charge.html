@@ -338,6 +338,7 @@
     </div>
 
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -753,7 +754,6 @@
       accTxs.forEach(tx => {
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'IQD').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '');
-        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
 
         if (desc.includes("REJECTED") || desc.includes("CANCELED") || desc.includes("رد شد")) return;
 
