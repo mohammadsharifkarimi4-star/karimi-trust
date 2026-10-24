@@ -149,7 +149,7 @@
 <body>
 
   <div id="loadingOverlay">
-    <div style="font-size: 16px; color: #10b981;">⚡ در حال بررسی و ارسال اطلاعات...</div>
+    <div style="font-size: 16px; color: #10b981;">⚡ در حال ثبت امن تراکنش و ارسال...</div>
     <div style="width: 100%; max-width: 320px;">
       <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
     </div>
@@ -247,7 +247,7 @@
         <div class="form-group">
           <label class="form-label">💳 عکس پاسپورت یا کارت شناسایی (الزامی - ارسال به تلگرام):</label>
           <div class="camera-btn-box">
-            <span style="font-size:12px; font-weight:900; color:#0284c7;">📸 ثبت عکس مدرک</span>
+            <span style="font-size:12px; font-weight:900; color:#0284c7;">📷 ثبت عکس مدرک</span>
             <input type="file" id="docCam" accept="image/*" capture="environment" onchange="handleImageCapture(this, 'docPreview', 'docBase64')">
             <img id="docPreview" class="preview-img">
             <input type="hidden" id="docBase64">
@@ -277,7 +277,7 @@
 
       <div id="chargeActiveContent">
         
-        <!-- کادر نمایش کد پیگیری تراکنش برای مدیریت -->
+        <!-- کادر نمایش کد پیگیری تراکنش برای مدیریت و کاربر -->
         <div id="activeTxIdBox" class="hidden" style="background:#fefce8; border:1.5px solid #facc15; padding:10px; border-radius:10px; margin-bottom:8px; text-align:center;">
           <span style="font-size:11.5px; font-weight:900; color:#854d0e;">🔑 کد پیگیری تراکنش جاری شما:</span>
           <div id="displayTxIdCode" style="font-family:monospace; font-size:14px; font-weight:900; color:#ca8a04; margin-top:2px;">-</div>
@@ -1060,9 +1060,9 @@
 
       showLoading(true);
 
-      // ۱. ثبت تراکنش با شناسه یکتا در حالت انتظار در Supabase
+      // ۱. ابتدا حتماً تراکنش در Supabase با انتظار کامل ثبت شود
       try {
-        await _supabase.from('transactions').insert([{
+        const { error } = await _supabase.from('transactions').insert([{
           AccountID: accId,
           Amount: iqdAmount,
           Currency: 'IQD',
@@ -1070,17 +1070,23 @@
           OperationType: 'پرداخت امانت',
           Description: pendingDesc
         }]);
+
+        if (error) {
+          console.error("خطای Supabase:", error);
+          alert("خطا در ثبت تراکنش روی سرور. لطفاً دوباره تلاش کنید.");
+          showLoading(false);
+          return;
+        }
       } catch (e) {
-        console.error("خطا در ثبت دیتابیس:", e);
+        console.error("خطا در ارتباط با دیتابیس:", e);
+        showLoading(false);
+        return;
       }
 
       showLoading(false);
 
-      // ۲. باز کردن آنی واتساپ
-      openWhatsAppImmediately(reqText);
-
-      // ۳. ارسال به تلگرام
-      sendTelegramTextMessage(reqText);
+      // ۲. بروزرسانی اطلاعات روی صفحه قبل از انتقال به واتساپ
+      await fetchAndRenderData(accId);
 
       playBeepSound('success');
 
@@ -1088,7 +1094,9 @@
       document.getElementById('chargeAmountAfn').value = "";
       document.getElementById('calculatedDinarValAfn').innerText = "0";
 
-      await fetchAndRenderData(accId);
+      // ۳. باز کردن واتساپ به عنوان آخرین مرحله
+      openWhatsAppImmediately(reqText);
+      sendTelegramTextMessage(reqText);
     }
 
     async function submitAccountRequest() {
@@ -1126,20 +1134,21 @@
                       `👤 نام: ${name}\n` +
                       `📱 تلفن: ${fullPhone}`;
 
-      // ۱. باز کردن سریع واتساپ
-      openWhatsAppImmediately(reqText);
+      showLoading(true);
 
-      // ۲. ذخیره در Supabase
+      // ۱. ذخیره حساب در Supabase با انتظار کامل
       try {
         await _supabase.from('accounts').insert([{ AccountID: accId, Name: sheetNameValue, Phone: fullPhone }]);
       } catch (e) {
-        console.error("خطا در ثبت دیتابیس:", e);
+        console.error("خطا در ثبت دیتابیس حساب:", e);
       }
 
-      // ۳. ارسال پیام به تلگرام
+      showLoading(false);
+
+      // ۲. ارسال پیام به تلگرام
       sendTelegramTextMessage(reqText);
 
-      // ۴. ارسال مدارک تصویری در صورت حوزوی بودن
+      // ۳. ارسال تصاویر در صورت حوزوی بودن
       if (isStudentMode) {
         const selfieBase64 = document.getElementById('selfieBase64').value;
         const docBase64 = document.getElementById('docBase64').value;
@@ -1155,7 +1164,6 @@
 
       playBeepSound('success');
 
-      // ۵. ذخیره آیدی جهت جایگذاری خودکار در کادر ورود
       document.getElementById('loginAccId').value = accId;
 
       if (isStudentMode) {
@@ -1165,6 +1173,9 @@
       }
 
       showStep('stepLogin');
+
+      // ۴. باز کردن واتساپ در انتهای کار
+      openWhatsAppImmediately(reqText);
     }
   </script>
 
