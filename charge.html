@@ -277,6 +277,12 @@
 
       <div id="chargeActiveContent">
         
+        <!-- کادر نمایش کد پیگیری تراکنش برای مدیریت -->
+        <div id="activeTxIdBox" class="hidden" style="background:#fefce8; border:1.5px solid #facc15; padding:10px; border-radius:10px; margin-bottom:8px; text-align:center;">
+          <span style="font-size:11.5px; font-weight:900; color:#854d0e;">🔑 کد پیگیری تراکنش جاری شما:</span>
+          <div id="displayTxIdCode" style="font-family:monospace; font-size:14px; font-weight:900; color:#ca8a04; margin-top:2px;">-</div>
+        </div>
+
         <div id="serviceAfnBox">
           <div class="form-group">
             <label class="form-label">شماره تلفن مقصد در افغانستان (موبایل - ۱۰ رقم با صفر اول):</label>
@@ -338,7 +344,6 @@
     </div>
 
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -836,28 +841,45 @@
         return desc.startsWith("PENDING") || opType.startsWith("PENDING");
       });
 
+      const activeTxBox = document.getElementById('activeTxIdBox');
+      const displayTxCode = document.getElementById('displayTxIdCode');
+
       if (pendingTx) {
         hasActivePendingTransaction = true;
         let pAmt = parseFloat(getVal(pendingTx, ['Amount', 'amount'])).toLocaleString();
         let pDesc = String(getVal(pendingTx, ['Description', 'description']) || '');
-        let cleanDesc = pDesc.replace("PENDING:", "").trim();
+        
+        let txIdExtracted = "TX-XXXX";
+        let parts = pDesc.split('|');
+        if (parts.length > 1) {
+          txIdExtracted = parts[0].replace("PENDING:", "").trim();
+        } else {
+          txIdExtracted = "TX-" + Math.floor(1000 + Math.random() * 9000);
+        }
+
+        activeTxBox.classList.remove('hidden');
+        displayTxCode.innerText = txIdExtracted;
+
+        let cleanDesc = parts.length > 1 ? parts[1].trim() : pDesc.replace("PENDING:", "").trim();
 
         container.innerHTML += `
           <div id="pendingCard_${accId}" style="background:#fff8f1; border:1.5px dashed #f97316; padding:12px; border-radius:12px; margin-top:8px; font-size:12px;">
             <div style="display:flex; justify-content:space-between; font-weight:900; color:#c2410c; align-items:center;">
               <span style="display:flex; align-items:center; gap:6px;">
                 <span class="spinner-icon"></span>
-                در حال ارسال شارژ... (<span id="timerCountdown_${accId}">3:00</span>)
+                در حال بررسی (${txIdExtracted}) - ماندگار: <span id="timerCountdown_${accId}">3:00</span>
               </span>
               <span style="font-size:13px; font-weight:900;">${pAmt} IQD</span>
             </div>
             <div style="margin-top:6px; color:#9a3412; font-weight:700;">📌 ${cleanDesc || 'درخواست ارسال شارژ در دست بررسی'}</div>
-            <div style="font-size:11px; color:#ea580c; margin-top:4px;">لطفاً چند لحظه شکیبا باشید تا پس از بررسی مدیریت، رسید و پین شارژ صادر شود.</div>
+            <div style="font-size:11px; color:#ea580c; margin-top:4px;">مدیر گرامی با این کد می‌توانید در دیتابیس تراکنش را تایید یا رد کنید.</div>
           </div>
         `;
         startPendingTimer(accId);
       } else {
         hasActivePendingTransaction = false;
+        activeTxBox.classList.add('hidden');
+        displayTxCode.innerText = "-";
         if (timerInterval) clearInterval(timerInterval);
         isTimerRunning = false;
       }
@@ -985,6 +1007,7 @@
       let iqdAmount = 0;
       let reqText = "";
       let pendingDesc = "";
+      let generatedTxId = "TX-" + Math.floor(1000 + Math.random() * 9000);
 
       if (activeServiceTab === 'afn') {
         const targetPhone = document.getElementById('targetPhoneAfn').value.trim();
@@ -1007,8 +1030,8 @@
           return;
         }
 
-        pendingDesc = `PENDING: شماره افغانستان ${targetPhone} (${afnAmount} AFN)`;
-        reqText = `🚨 درخواست شارژ افغانستان\n\n` +
+        pendingDesc = `PENDING:${generatedTxId} | شماره افغانستان ${targetPhone} (${afnAmount} AFN)`;
+        reqText = `🚨 درخواست شارژ افغانستان [کد: ${generatedTxId}]\n\n` +
                   `👤 نام حساب: ${accName}\n` +
                   `🔑 شناسه: ${accId}\n` +
                   `📞 شماره مقصد: ${targetPhone}\n` +
@@ -1026,8 +1049,8 @@
           return;
         }
 
-        pendingDesc = `PENDING: رصید ${network} (${baseCardAmt.toLocaleString()} دینار)`;
-        reqText = `💳 درخواست کارت شارژ (رصید) عراق\n\n` +
+        pendingDesc = `PENDING:${generatedTxId} | رصید ${network} (${baseCardAmt.toLocaleString()} دینار)`;
+        reqText = `💳 درخواست کارت شارژ عراق [کد: ${generatedTxId}]\n\n` +
                   `👤 نام حساب: ${accName}\n` +
                   `🔑 شناسه: ${accId}\n` +
                   `📡 شبکه: ${network}\n` +
@@ -1037,7 +1060,7 @@
 
       showLoading(true);
 
-      // ۱. ثبت تراکنش در حالت انتظار در Supabase
+      // ۱. ثبت تراکنش با شناسه یکتا در حالت انتظار در Supabase
       try {
         await _supabase.from('transactions').insert([{
           AccountID: accId,
