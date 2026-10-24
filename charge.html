@@ -157,7 +157,7 @@
 <body>
 
   <div id="loadingOverlay">
-    <div style="font-size: 16px; color: #10b981;">⚡ در حال بررسی شناسه و ارسال اطلاعات...</div>
+    <div style="font-size: 16px; color: #10b981;">⚡ در حال بررسی و ارسال اطلاعات...</div>
     <div style="width: 100%; max-width: 320px;">
       <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
     </div>
@@ -637,9 +637,7 @@
           } else {
             showLoading(false);
             playBeepSound('error');
-            if (confirm("❌ این آیدی در سیستم وجود ندارد یا اشتباه است!\n\nآیا می‌خواهید یک حساب جدید ایجاد کنید؟")) {
-              showStep('stepAccountType');
-            }
+            alert("❌ شناسه وارد شده در سیستم وجود ندارد یا اشتباه است!");
           }
         } else {
           showLoading(false);
@@ -901,16 +899,30 @@
       if (activeServiceTab === 'iq') calculateIqCardAndValidate();
     }
 
-    function sendWhatsAppNotification(message) {
+    function openWhatsAppImmediately(message) {
       const encodedMsg = encodeURIComponent(message);
       const waUrl = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodedMsg}`;
       window.open(waUrl, '_blank');
     }
 
-    // تابع ارسال عکس و متن به ربات تلگرام
+    async function sendTelegramTextMessage(text) {
+      try {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: text,
+            parse_mode: 'HTML'
+          })
+        });
+      } catch (err) {
+        console.error("خطا در ارسال پیام متنی به تلگرام:", err);
+      }
+    }
+
     async function sendPhotoToTelegram(base64Data, captionText) {
       try {
-        // تبدیل base64 به Blob
         const arr = base64Data.split(',');
         const mime = arr[0].match(/:(.*?);/)[1];
         const bstr = atob(arr[1]);
@@ -952,7 +964,7 @@
       }
 
       let iqdAmount = 0;
-      let waText = "";
+      let reqText = "";
       let pendingObj = {};
 
       if (activeServiceTab === 'afn') {
@@ -977,12 +989,12 @@
         }
 
         pendingObj = { type: 'afn', targetPhone, afnAmount, iqdAmount, date: new Date().toISOString() };
-        waText = `🚨 درخواست شارژ افغانستان\n\n` +
-                 `👤 نام حساب: ${accName}\n` +
-                 `🔑 شناسه: ${accId}\n` +
-                 `📞 شماره مقصد: ${targetPhone}\n` +
-                 `💵 مبلغ افغانی: ${afnAmount} AFN\n` +
-                 `💰 معادل دینار: ${iqdAmount.toLocaleString()} IQD`;
+        reqText = `🚨 درخواست شارژ افغانستان\n\n` +
+                  `👤 نام حساب: ${accName}\n` +
+                  `🔑 شناسه: ${accId}\n` +
+                  `📞 شماره مقصد: ${targetPhone}\n` +
+                  `💵 مبلغ افغانی: ${afnAmount} AFN\n` +
+                  `💰 معادل دینار: ${iqdAmount.toLocaleString()} IQD`;
 
       } else if (activeServiceTab === 'iq') {
         const network = document.getElementById('iqNetworkSelect').value;
@@ -996,25 +1008,26 @@
         }
 
         pendingObj = { type: 'iq', network, baseCardAmt, iqdAmount, date: new Date().toISOString() };
-        waText = `💳 درخواست کارت شارژ (رصید) عراق\n\n` +
-                 `👤 نام حساب: ${accName}\n` +
-                 `🔑 شناسه: ${accId}\n` +
-                 `📡 شبکه: ${network}\n` +
-                 `💵 کارت درخواستی: ${baseCardAmt.toLocaleString()} IQD\n` +
-                 `💰 مبلغ کل کسر از حساب: ${iqdAmount.toLocaleString()} IQD`;
+        reqText = `💳 درخواست کارت شارژ (رصید) عراق\n\n` +
+                  `👤 نام حساب: ${accName}\n` +
+                  `🔑 شناسه: ${accId}\n` +
+                  `📡 شبکه: ${network}\n` +
+                  `💵 کارت درخواستی: ${baseCardAmt.toLocaleString()} IQD\n` +
+                  `💰 مبلغ کل کسر از حساب: ${iqdAmount.toLocaleString()} IQD`;
       }
-
-      showLoading(true);
 
       let pendingList = [pendingObj];
       localStorage.setItem(`pending_charge_${accId}`, JSON.stringify(pendingList));
 
       renderRecentRequests(accId, allTransactions);
-      sendWhatsAppNotification(waText);
 
-      showLoading(false);
+      // ۱. هدایت سریع و بدون معطلی به واتساپ
+      openWhatsAppImmediately(reqText);
+
+      // ۲. ارسال پیام متنی به تلگرام در پس‌زمینه
+      sendTelegramTextMessage(reqText);
+
       playBeepSound('success');
-      alert("✅ درخواست شما ثبت شد. لطفا پیام واتساپ باز شده را ارسال کنید.");
 
       document.getElementById('targetPhoneAfn').value = "";
       document.getElementById('chargeAmountAfn').value = "";
@@ -1024,7 +1037,6 @@
       if (activeServiceTab === 'iq') calculateIqCardAndValidate();
     }
 
-    // ثبت حساب جدید (ارسال متن به واتساپ و ارسال عکس‌ها مستقیماً به تلگرام)
     async function submitAccountRequest() {
       if (!isIdCopied) {
         alert("لطفاً ابتدا دکمه «کپی شناسه حساب» را بزنید و آیدی خود را ذخیره کنید.");
@@ -1044,29 +1056,28 @@
       const fullPhone = code + phone;
       const accountTypeStr = isStudentMode ? "اعتباری حوزوی (سقف ۳۰,۰۰۰ دینار)" : "عادی / نقدی";
 
-      showLoading(true);
-
       let sheetNameValue = isStudentMode ? "" : `${name} (عادی)`;
 
-      try {
-        const { error } = await _supabase
-          .from('accounts')
-          .insert([
-            {
-              AccountID: accId,
-              Name: sheetNameValue,
-              Phone: fullPhone
-            }
-          ]);
+      const reqText = `📋 درخواست افتتاح حساب جدید\n\n` +
+                      `📌 نوع: ${accountTypeStr}\n` +
+                      `🔑 شناسه: ${accId}\n` +
+                      `👤 نام: ${name}\n` +
+                      `📱 تلفن: ${fullPhone}`;
 
-        if (error) {
-          console.error("خطا در ثبت حساب در پایگاه داده:", error);
-        }
+      // ۱. باز کردن سریع واتساپ
+      openWhatsAppImmediately(reqText);
+
+      // ۲. ذخیره در دیتابیس Supabase
+      try {
+        await _supabase.from('accounts').insert([{ AccountID: accId, Name: sheetNameValue, Phone: fullPhone }]);
       } catch (e) {
-        console.error("خطای غیرمنتظره:", e);
+        console.error("خطا در ثبت پایگاه داده:", e);
       }
 
-      // اگر کاربر حوزوی باشد و عکس‌ها را گرفته باشد، مستقیماً به تلگرام ارسال می‌شود
+      // ۳. ارسال متن به تلگرام
+      sendTelegramTextMessage(reqText);
+
+      // ۴. ارسال مدارک تصویری به تلگرام در صورت حوزوی بودن
       if (isStudentMode) {
         const selfieBase64 = document.getElementById('selfieBase64').value;
         const docBase64 = document.getElementById('docBase64').value;
@@ -1077,24 +1088,22 @@
                              `📱 تلفن: ${fullPhone}`;
 
         if (selfieBase64) {
-          await sendPhotoToTelegram(selfieBase64, photoCaption + " (سلفی زنده)");
+          sendPhotoToTelegram(selfieBase64, photoCaption + " (سلفی زنده)");
         }
         if (docBase64) {
-          await sendPhotoToTelegram(docBase64, photoCaption + " (مدرک/پاسپورت)");
+          sendPhotoToTelegram(docBase64, photoCaption + " (مدرک/پاسپورت)");
         }
       }
 
-      const waText = `📋 درخواست افتتاح حساب جدید\n\n` +
-                     `📌 نوع: ${accountTypeStr}\n` +
-                     `🔑 شناسه: ${accId}\n` +
-                     `👤 نام: ${name}\n` +
-                     `📱 تلفن: ${fullPhone}\n` +
-
-      sendWhatsAppNotification(waText);
-
-      showLoading(false);
       playBeepSound('success');
-      alert("✅ درخواست ثبت شد. لطفا پیام واتساپ باز شده را برای مدیریت ارسال کنید.");
+
+      // ۵. نمایش پیام‌های مجزا و هدایت کاربر
+      if (isStudentMode) {
+        alert("✅ درخواست حساب شما در حال ایجاد است.\n\nلطفاً پس از تأیید مدیریت با همین آیدی وارد حساب شوید.");
+      } else {
+        alert("✅ حساب شما با موفقیت ایجاد شد!\n\nبا همین آیدی که کپی کرده‌اید وارد شوید، حساب خود را شارژ کنید و استفاده نمایید.");
+      }
+
       showStep('stepLogin');
     }
   </script>
