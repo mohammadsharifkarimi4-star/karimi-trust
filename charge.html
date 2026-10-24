@@ -149,7 +149,7 @@
 <body>
 
   <div id="loadingOverlay">
-    <div style="font-size: 16px; color: #10b981;">⚡ در حال ثبت امن اطلاعات در سرور...</div>
+    <div style="font-size: 16px; color: #10b981;">⚡ در حال ثبت امن تراکنش...</div>
     <div style="width: 100%; max-width: 320px;">
       <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
     </div>
@@ -277,8 +277,9 @@
 
       <div id="chargeActiveContent">
         
+        <!-- کادر نمایش خودکار آیدی تراکنش -->
         <div id="activeTxIdBox" class="hidden" style="background:#fefce8; border:1.5px solid #facc15; padding:10px; border-radius:10px; margin-bottom:8px; text-align:center;">
-          <span style="font-size:11.5px; font-weight:900; color:#854d0e;">🔑 کد پیگیری تراکنش جاری:</span>
+          <span style="font-size:11.5px; font-weight:900; color:#854d0e;">🔑 آیدی تراکنش جاری شما:</span>
           <div id="displayTxIdCode" style="font-family:monospace; font-size:14px; font-weight:900; color:#ca8a04; margin-top:2px;">-</div>
         </div>
 
@@ -759,7 +760,7 @@
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'IQD').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '');
 
-        // اگر رد یا کنسل شد، مبلغ در محاسبه موجودی کسر نمی‌شود (بازمی‌گردد)
+        // اگر رد یا کنسل شده باشد، مبلغ از موجودی کسر نمی‌شود (پول به حساب برمی‌گردد)
         if (desc.includes("REJECTED") || desc.includes("CANCELED") || desc.includes("رد شد") || desc.includes("کنسل شد")) return;
 
         if (curr === 'IQD') {
@@ -848,31 +849,24 @@
         hasActivePendingTransaction = true;
         let pAmt = parseFloat(getVal(pendingTx, ['Amount', 'amount'])).toLocaleString();
         let pDesc = String(getVal(pendingTx, ['Description', 'description']) || '');
+        let pTransId = String(getVal(pendingTx, ['TransID', 'transid']) || 'TX-XXXX');
         
-        let txIdExtracted = "TX-XXXX";
-        let parts = pDesc.split('|');
-        if (parts.length > 1) {
-          txIdExtracted = parts[0].replace("PENDING:", "").trim();
-        } else {
-          txIdExtracted = "TX-" + Math.floor(1000 + Math.random() * 9000);
-        }
-
         activeTxBox.classList.remove('hidden');
-        displayTxCode.innerText = txIdExtracted;
+        displayTxCode.innerText = pTransId;
 
-        let cleanDesc = parts.length > 1 ? parts[1].trim() : pDesc.replace("PENDING:", "").trim();
+        let cleanDesc = pDesc.replace("PENDING:", "").trim();
 
         container.innerHTML += `
           <div id="pendingCard_${accId}" style="background:#fff8f1; border:1.5px dashed #f97316; padding:12px; border-radius:12px; margin-top:8px; font-size:12px;">
             <div style="display:flex; justify-content:space-between; font-weight:900; color:#c2410c; align-items:center;">
               <span style="display:flex; align-items:center; gap:6px;">
                 <span class="spinner-icon"></span>
-                در حال بررسی (${txIdExtracted}) - ماندگار: <span id="timerCountdown_${accId}">3:00</span>
+                در حال بررسی (${pTransId}) - مانده: <span id="timerCountdown_${accId}">3:00</span>
               </span>
               <span style="font-size:13px; font-weight:900;">${pAmt} IQD</span>
             </div>
             <div style="margin-top:6px; color:#9a3412; font-weight:700;">📌 ${cleanDesc || 'درخواست ارسال شارژ در دست بررسی'}</div>
-            <div style="font-size:11px; color:#ea580c; margin-top:4px;">مدیر گرامی با این کد می‌توانید در دیتابیس تراکنش را تایید یا رد کنید.</div>
+            <div style="font-size:11px; color:#ea580c; margin-top:4px;">مدیر گرامی با این آیدی تراکنش می‌توانید آن را در دیتابیس تایید یا رد کنید.</div>
           </div>
         `;
         startPendingTimer(accId);
@@ -1030,7 +1024,7 @@
           return;
         }
 
-        pendingDesc = `PENDING:${generatedTxId} | شماره افغانستان ${targetPhone} (${afnAmount} AFN)`;
+        pendingDesc = `شماره افغانستان ${targetPhone} (${afnAmount} AFN)`;
         reqText = `🚨 درخواست شارژ افغانستان [کد: ${generatedTxId}]\n\n` +
                   `👤 نام حساب: ${accName}\n` +
                   `🔑 شناسه: ${accId}\n` +
@@ -1049,7 +1043,7 @@
           return;
         }
 
-        pendingDesc = `PENDING:${generatedTxId} | رصید ${network} (${baseCardAmt.toLocaleString()} دینار)`;
+        pendingDesc = `رصید ${network} (${baseCardAmt.toLocaleString()} دینار)`;
         reqText = `💳 درخواست کارت شارژ عراق [کد: ${generatedTxId}]\n\n` +
                   `👤 نام حساب: ${accName}\n` +
                   `🔑 شناسه: ${accId}\n` +
@@ -1060,14 +1054,15 @@
 
       showLoading(true);
 
-      // ساخت آبجکت دقیق مطابق با کلیدهای جدول Supabase
+      // ساخت دقیق رکورد همراه با TransID جهت انطباق با قید Not-Null دیتابیس Supabase
       const newTransaction = {
+        TransID: generatedTxId,
         AccountID: String(accId),
         Amount: Number(iqdAmount),
         Currency: "IQD",
         Direction: "بدهکار",
         OperationType: "پرداخت امانت",
-        Description: pendingDesc
+        Description: "PENDING: " + pendingDesc
       };
 
       try {
@@ -1080,7 +1075,7 @@
           return;
         }
       } catch (e) {
-        console.error("خطا در ارسال به دیتابیس:", e);
+        console.error("خطا در ارتباط با دیتابیس:", e);
         alert("خطا در شبکه یا دیتابیس. لطفاً مجدداً تلاش کنید.");
         showLoading(false);
         return;
@@ -1088,7 +1083,7 @@
 
       showLoading(false);
 
-      // ۲. بروزرسانی و نمایش آنی اطلاعات و کادر PENDING
+      // بروزرسانی اطلاعات در صفحه و فعال‌سازی تایمر
       await fetchAndRenderData(accId);
 
       playBeepSound('success');
@@ -1097,7 +1092,7 @@
       document.getElementById('chargeAmountAfn').value = "";
       document.getElementById('calculatedDinarValAfn').innerText = "0";
 
-      // ۳. انتقال پیام به واتساپ و تلگرام
+      // انتقال به واتساپ و تلگرام
       openWhatsAppImmediately(reqText);
       sendTelegramTextMessage(reqText);
     }
