@@ -149,7 +149,7 @@
 <body>
 
   <div id="loadingOverlay">
-    <div style="font-size: 16px; color: #10b981;">⚡ در حال ثبت امن تراکنش و ارسال...</div>
+    <div style="font-size: 16px; color: #10b981;">⚡ در حال ثبت امن اطلاعات در سرور...</div>
     <div style="width: 100%; max-width: 320px;">
       <div class="battery-loading-bar"><div class="battery-loading-fill"></div></div>
     </div>
@@ -277,9 +277,8 @@
 
       <div id="chargeActiveContent">
         
-        <!-- کادر نمایش کد پیگیری تراکنش برای مدیریت و کاربر -->
         <div id="activeTxIdBox" class="hidden" style="background:#fefce8; border:1.5px solid #facc15; padding:10px; border-radius:10px; margin-bottom:8px; text-align:center;">
-          <span style="font-size:11.5px; font-weight:900; color:#854d0e;">🔑 کد پیگیری تراکنش جاری شما:</span>
+          <span style="font-size:11.5px; font-weight:900; color:#854d0e;">🔑 کد پیگیری تراکنش جاری:</span>
           <div id="displayTxIdCode" style="font-family:monospace; font-size:14px; font-weight:900; color:#ca8a04; margin-top:2px;">-</div>
         </div>
 
@@ -760,7 +759,8 @@
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'IQD').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '');
 
-        if (desc.includes("REJECTED") || desc.includes("CANCELED") || desc.includes("رد شد")) return;
+        // اگر رد یا کنسل شد، مبلغ در محاسبه موجودی کسر نمی‌شود (بازمی‌گردد)
+        if (desc.includes("REJECTED") || desc.includes("CANCELED") || desc.includes("رد شد") || desc.includes("کنسل شد")) return;
 
         if (curr === 'IQD') {
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
@@ -895,7 +895,7 @@
           let dir = getVal(tx, ['Direction', 'direction']);
           let opType = getVal(tx, ['OperationType', 'operationtype']) || 'تراکنش';
 
-          let isRejected = desc.includes("REJECTED") || desc.includes("CANCELED") || desc.includes("رد شد");
+          let isRejected = desc.includes("REJECTED") || desc.includes("CANCELED") || desc.includes("رد شد") || desc.includes("کنسل شد");
 
           if (isRejected) {
             container.innerHTML += `
@@ -1000,8 +1000,8 @@
         return;
       }
 
-      let accId = loggedInAccount ? (loggedInAccount.AccountID || loggedInAccount.accountid) : "";
-      let accName = loggedInAccount ? (loggedInAccount.Name || loggedInAccount.name) : "";
+      let accId = loggedInAccount ? getVal(loggedInAccount, ['AccountID', 'accountid', 'id']) : "";
+      let accName = loggedInAccount ? getVal(loggedInAccount, ['Name', 'name']) : "";
       if (!accName) accName = "نامشخص / در انتظار تایید";
 
       let iqdAmount = 0;
@@ -1060,32 +1060,35 @@
 
       showLoading(true);
 
-      // ۱. ابتدا حتماً تراکنش در Supabase با انتظار کامل ثبت شود
+      // ساخت آبجکت دقیق مطابق با کلیدهای جدول Supabase
+      const newTransaction = {
+        AccountID: String(accId),
+        Amount: Number(iqdAmount),
+        Currency: "IQD",
+        Direction: "بدهکار",
+        OperationType: "پرداخت امانت",
+        Description: pendingDesc
+      };
+
       try {
-        const { error } = await _supabase.from('transactions').insert([{
-          AccountID: accId,
-          Amount: iqdAmount,
-          Currency: 'IQD',
-          Direction: 'بدهکار',
-          OperationType: 'پرداخت امانت',
-          Description: pendingDesc
-        }]);
+        const { error } = await _supabase.from('transactions').insert([newTransaction]);
 
         if (error) {
-          console.error("خطای Supabase:", error);
-          alert("خطا در ثبت تراکنش روی سرور. لطفاً دوباره تلاش کنید.");
+          console.error("خطای دیتابیس Supabase:", error);
+          alert("خطا در ثبت تراکنش روی سرور: " + (error.message || "لطفاً مجدداً تلاش کنید"));
           showLoading(false);
           return;
         }
       } catch (e) {
-        console.error("خطا در ارتباط با دیتابیس:", e);
+        console.error("خطا در ارسال به دیتابیس:", e);
+        alert("خطا در شبکه یا دیتابیس. لطفاً مجدداً تلاش کنید.");
         showLoading(false);
         return;
       }
 
       showLoading(false);
 
-      // ۲. بروزرسانی اطلاعات روی صفحه قبل از انتقال به واتساپ
+      // ۲. بروزرسانی و نمایش آنی اطلاعات و کادر PENDING
       await fetchAndRenderData(accId);
 
       playBeepSound('success');
@@ -1094,7 +1097,7 @@
       document.getElementById('chargeAmountAfn').value = "";
       document.getElementById('calculatedDinarValAfn').innerText = "0";
 
-      // ۳. باز کردن واتساپ به عنوان آخرین مرحله
+      // ۳. انتقال پیام به واتساپ و تلگرام
       openWhatsAppImmediately(reqText);
       sendTelegramTextMessage(reqText);
     }
@@ -1136,19 +1139,25 @@
 
       showLoading(true);
 
-      // ۱. ذخیره حساب در Supabase با انتظار کامل
+      const newAccountObj = {
+        AccountID: String(accId),
+        Name: sheetNameValue,
+        Phone: fullPhone
+      };
+
       try {
-        await _supabase.from('accounts').insert([{ AccountID: accId, Name: sheetNameValue, Phone: fullPhone }]);
+        const { error } = await _supabase.from('accounts').insert([newAccountObj]);
+        if (error) {
+          console.error("خطا در ثبت حساب جدید:", error);
+        }
       } catch (e) {
-        console.error("خطا در ثبت دیتابیس حساب:", e);
+        console.error("خطا در ارتباط با دیتابیس حساب:", e);
       }
 
       showLoading(false);
 
-      // ۲. ارسال پیام به تلگرام
       sendTelegramTextMessage(reqText);
 
-      // ۳. ارسال تصاویر در صورت حوزوی بودن
       if (isStudentMode) {
         const selfieBase64 = document.getElementById('selfieBase64').value;
         const docBase64 = document.getElementById('docBase64').value;
@@ -1174,7 +1183,6 @@
 
       showStep('stepLogin');
 
-      // ۴. باز کردن واتساپ در انتهای کار
       openWhatsAppImmediately(reqText);
     }
   </script>
