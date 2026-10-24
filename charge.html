@@ -140,14 +140,6 @@
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .fade-out-shrink {
-      animation: fadeShrink 0.6s ease forwards;
-    }
-    @keyframes fadeShrink {
-      0% { opacity: 1; transform: scale(1); max-height: 150px; margin-top: 8px; }
-      100% { opacity: 0; transform: scale(0.9); max-height: 0; margin-top: 0; padding: 0; overflow: hidden; display: none; }
-    }
-
     #loadingOverlay {
       position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(9, 13, 22, 0.9);
       display:none; justify-content:center; align-items:center; z-index:9999; color:#fff; font-weight:900; font-size:15px; flex-direction:column; gap:16px; padding: 0 20px;
@@ -243,7 +235,7 @@
 
       <div id="studentFields" class="hidden">
         <div class="form-group">
-          <label class="form-label">📸 عکس سلفی زنده (ارسال مستقیم به تلگرام کریمی):</label>
+          <label class="form-label">📸 عکس سلفی زنده (الزامی - ارسال به تلگرام کریمی):</label>
           <div class="camera-btn-box">
             <span style="font-size:12px; font-weight:900; color:#0284c7;">📷 ثبت عکس سلفی</span>
             <input type="file" id="selfieCam" accept="image/*" capture="user" onchange="handleImageCapture(this, 'selfiePreview', 'selfieBase64')">
@@ -253,7 +245,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">💳 عکس پاسپورت یا کارت شناسایی (ارسال مستقیم به تلگرام):</label>
+          <label class="form-label">💳 عکس پاسپورت یا کارت شناسایی (الزامی - ارسال به تلگرام):</label>
           <div class="camera-btn-box">
             <span style="font-size:12px; font-weight:900; color:#0284c7;">📸 ثبت عکس مدرک</span>
             <input type="file" id="docCam" accept="image/*" capture="environment" onchange="handleImageCapture(this, 'docPreview', 'docBase64')">
@@ -368,6 +360,7 @@
     let timerInterval = null;
     let isTimerRunning = false;
     let isIdCopied = false;
+    let hasActivePendingTransaction = false;
 
     async function getSupabaseData() {
       const [accRes, txRes] = await Promise.all([
@@ -385,6 +378,7 @@
       let savedAcc = sessionStorage.getItem('current_active_account_id') || localStorage.getItem('persistent_account_id');
       
       if (savedAcc) {
+        document.getElementById('loginAccId').value = savedAcc;
         loggedInAccount = { AccountID: savedAcc, Name: "کاربر گرامی" };
         document.getElementById('welcomeUserTitle').innerText = `👤 ${savedAcc}`;
         document.getElementById('userAccountDetails').innerText = `شناسه حساب: ${savedAcc}`;
@@ -447,6 +441,28 @@
       if (tab === 'iq') calculateIqCardAndValidate();
     }
 
+    function checkFormValidation() {
+      const btnSubmit = document.getElementById('btnSubmitAccountReg');
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+
+      if (!isIdCopied || !name || !phone) {
+        btnSubmit.disabled = true;
+        return;
+      }
+
+      if (isStudentMode) {
+        const selfie = document.getElementById('selfieBase64').value;
+        const doc = document.getElementById('docBase64').value;
+        if (!selfie || !doc) {
+          btnSubmit.disabled = true;
+          return;
+        }
+      }
+
+      btnSubmit.disabled = false;
+    }
+
     function openRegistrationForm(isStudent) {
       playBeepSound('click');
       isStudentMode = isStudent;
@@ -463,6 +479,16 @@
       const title = document.getElementById('regTitle');
       const studentFields = document.getElementById('studentFields');
       const countryCodeInput = document.getElementById('regCountryCode');
+
+      document.getElementById('regName').value = "";
+      document.getElementById('regPhone').value = "";
+      document.getElementById('selfieBase64').value = "";
+      document.getElementById('docBase64').value = "";
+      document.getElementById('selfiePreview').style.display = 'none';
+      document.getElementById('docPreview').style.display = 'none';
+
+      document.getElementById('regName').oninput = checkFormValidation;
+      document.getElementById('regPhone').oninput = checkFormValidation;
 
       if (isStudent) {
         title.innerText = "افتتاح حساب اعتباری حوزوی (سقف ۳۰,۰۰۰ دینار)";
@@ -490,7 +516,7 @@
       btnCopy.style.background = "#10b981";
       btnCopy.innerHTML = "✅ شناسه با موفقیت کپی شد";
 
-      document.getElementById('btnSubmitAccountReg').disabled = false;
+      checkFormValidation();
     }
 
     function handleImageCapture(input, previewId, hiddenBase64Id) {
@@ -500,6 +526,7 @@
           document.getElementById(previewId).src = e.target.result;
           document.getElementById(previewId).style.display = 'block';
           document.getElementById(hiddenBase64Id).value = e.target.result;
+          checkFormValidation();
         }
         reader.readAsDataURL(input.files[0]);
       }
@@ -523,17 +550,12 @@
 
       calcSpan.innerText = iqdCalculated.toLocaleString();
 
-      if (isAccountPendingApproval || maxUsableIqdLimit <= 0) {
+      if (isAccountPendingApproval || maxUsableIqdLimit <= 0 || hasActivePendingTransaction) {
         btnSubmit.disabled = true;
-        return;
-      }
-
-      let accId = loggedInAccount ? (loggedInAccount.AccountID || loggedInAccount.accountid) : "";
-      let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
-      if (pendingLocal.length > 0) {
-        btnSubmit.disabled = true;
-        warnDiv.style.display = 'block';
-        warnDiv.innerHTML = `⚠️ <b>درخواست شارژ قبلی شما در حال پردازش است.</b><br>لطفاً تا تکمیل تراکنش شکیبا باشید.`;
+        if (hasActivePendingTransaction) {
+          warnDiv.style.display = 'block';
+          warnDiv.innerHTML = `⚠️ <b>درخواست شارژ قبلی شما در حال بررسی است.</b><br>لطفاً تا تعیین تکلیف تراکنش قبلی صبور باشید.`;
+        }
         return;
       }
 
@@ -571,17 +593,12 @@
 
       calcSpan.innerText = totalDinarToDeduct.toLocaleString();
 
-      if (isAccountPendingApproval || maxUsableIqdLimit <= 0) {
+      if (isAccountPendingApproval || maxUsableIqdLimit <= 0 || hasActivePendingTransaction) {
         btnSubmit.disabled = true;
-        return;
-      }
-
-      let accId = loggedInAccount ? (loggedInAccount.AccountID || loggedInAccount.accountid) : "";
-      let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
-      if (pendingLocal.length > 0) {
-        btnSubmit.disabled = true;
-        warnDiv.style.display = 'block';
-        warnDiv.innerHTML = `⚠️ <b>درخواست شارژ قبلی شما در حال پردازش است.</b><br>لطفاً تا تکمیل تراکنش شکیبا باشید.`;
+        if (hasActivePendingTransaction) {
+          warnDiv.style.display = 'block';
+          warnDiv.innerHTML = `⚠️ <b>درخواست شارژ قبلی شما در حال بررسی است.</b><br>لطفاً تا تعیین تکلیف تراکنش قبلی صبور باشید.`;
+        }
         return;
       }
 
@@ -735,6 +752,11 @@
 
       accTxs.forEach(tx => {
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'IQD').toUpperCase();
+        let desc = String(getVal(tx, ['Description', 'description']) || '');
+        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+
+        if (desc.includes("REJECTED") || desc.includes("CANCELED") || desc.includes("رد شد")) return;
+
         if (curr === 'IQD') {
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let rawAmt = getVal(tx, ['Amount', 'amount']);
@@ -794,17 +816,7 @@
         if (secondsLeft <= 0) {
           clearInterval(timerInterval);
           isTimerRunning = false;
-          
-          let pendingBox = document.getElementById(`pendingCard_${accId}`);
-          if (pendingBox) {
-            pendingBox.classList.add('fade-out-shrink');
-            setTimeout(async () => {
-              localStorage.removeItem(`pending_charge_${accId}`);
-              showLoading(true);
-              await fetchAndRenderData(accId);
-              showLoading(false);
-            }, 600);
-          }
+          refreshUserData();
         }
       }, 1000);
     }
@@ -813,34 +825,23 @@
       let container = document.getElementById('recentRequestsContainer');
       container.innerHTML = "";
 
-      let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
-      let activePendingList = [];
-
       let accTxs = txs.filter(t => {
         let tAccId = getVal(t, ['AccountID', 'accountid']);
         return String(tAccId) === String(accId);
       }).reverse();
 
-      pendingLocal.forEach(p => {
-        let isMatched = accTxs.some(tx => {
-          let opType = getVal(tx, ['OperationType', 'operationtype']) || '';
-          let dir = getVal(tx, ['Direction', 'direction']) || '';
-          let amt = parseFloat(getVal(tx, ['Amount', 'amount']));
-          let isDebit = dir.includes("بدهکار") || opType.includes("پرداخت") || opType.includes("امانت");
-          return isDebit && Math.abs(amt - p.iqdAmount) < 1;
-        });
-
-        if (!isMatched) {
-          activePendingList.push(p);
-        }
+      let pendingTx = accTxs.find(tx => {
+        let desc = String(getVal(tx, ['Description', 'description']) || '');
+        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+        return desc.startsWith("PENDING") || opType.startsWith("PENDING");
       });
 
-      localStorage.setItem(`pending_charge_${accId}`, JSON.stringify(activePendingList));
+      if (pendingTx) {
+        hasActivePendingTransaction = true;
+        let pAmt = parseFloat(getVal(pendingTx, ['Amount', 'amount'])).toLocaleString();
+        let pDesc = String(getVal(pendingTx, ['Description', 'description']) || '');
+        let cleanDesc = pDesc.replace("PENDING:", "").trim();
 
-      if (activePendingList.length > 0) {
-        let p = activePendingList[0];
-        let detailsStr = p.type === 'iq' ? `رصید ${p.network} (${p.baseCardAmt.toLocaleString()} دینار)` : `شماره افغانستان: ${p.targetPhone} (${p.afnAmount} AFN)`;
-        
         container.innerHTML += `
           <div id="pendingCard_${accId}" style="background:#fff8f1; border:1.5px dashed #f97316; padding:12px; border-radius:12px; margin-top:8px; font-size:12px;">
             <div style="display:flex; justify-content:space-between; font-weight:900; color:#c2410c; align-items:center;">
@@ -848,14 +849,15 @@
                 <span class="spinner-icon"></span>
                 در حال ارسال شارژ... (<span id="timerCountdown_${accId}">3:00</span>)
               </span>
-              <span style="font-size:13px; font-weight:900;">${p.iqdAmount.toLocaleString()} IQD</span>
+              <span style="font-size:13px; font-weight:900;">${pAmt} IQD</span>
             </div>
-            <div style="margin-top:6px; color:#9a3412; font-weight:700;">📌 ${detailsStr}</div>
-            <div style="font-size:11px; color:#ea580c; margin-top:4px;">لطفاً چند لحظه شکیبا باشید تا پس از بررسی، رسید و پین شارژ صادر شود.</div>
+            <div style="margin-top:6px; color:#9a3412; font-weight:700;">📌 ${cleanDesc || 'درخواست ارسال شارژ در دست بررسی'}</div>
+            <div style="font-size:11px; color:#ea580c; margin-top:4px;">لطفاً چند لحظه شکیبا باشید تا پس از بررسی مدیریت، رسید و پین شارژ صادر شود.</div>
           </div>
         `;
         startPendingTimer(accId);
       } else {
+        hasActivePendingTransaction = false;
         if (timerInterval) clearInterval(timerInterval);
         isTimerRunning = false;
       }
@@ -863,28 +865,46 @@
       if (accTxs.length > 0) {
         container.innerHTML += `<div style="font-size:12px; font-weight:800; margin-top:12px; color:#475569;">📋 صورت‌حساب و رسیدهای دریافتی شما:</div>`;
         accTxs.forEach((tx, index) => {
+          let desc = String(getVal(tx, ['Description', 'description']) || '');
+          if (desc.startsWith("PENDING")) return;
+
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])).toLocaleString();
           let curr = getVal(tx, ['Currency', 'currency']);
           let dir = getVal(tx, ['Direction', 'direction']);
-          let desc = getVal(tx, ['Description', 'description']) || 'رسید/پین شارژ ثبت شده است';
           let opType = getVal(tx, ['OperationType', 'operationtype']) || 'تراکنش';
 
-          let isPaymentCharge = opType.includes("پرداخت") || dir.includes("بدهکار");
-          let titleText = isPaymentCharge ? "ارسال شارژ با موفقیت انجام شد" : `${opType} (${dir})`;
-          let amountColor = isPaymentCharge ? "#b91c1c" : "#15803d"; 
-          let animClass = (index === 0) ? "slide-in-success" : "";
+          let isRejected = desc.includes("REJECTED") || desc.includes("CANCELED") || desc.includes("رد شد");
 
-          container.innerHTML += `
-            <div class="${animClass}" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px 12px; border-radius:10px; margin-top:6px; font-size:11.5px;">
-              <div style="display:flex; justify-content:space-between; font-weight:900; align-items:center;">
-                <span style="color:#15803d;">✅ ${titleText}</span>
-                <span style="color:${amountColor}; font-size:13px; font-weight:900;">${amt} ${curr}</span>
+          if (isRejected) {
+            container.innerHTML += `
+              <div style="background:#fef2f2; border:1px solid #fca5a5; padding:10px 12px; border-radius:10px; margin-top:6px; font-size:11.5px;">
+                <div style="display:flex; justify-content:space-between; font-weight:900; align-items:center;">
+                  <span style="color:#b91c1c;">❌ درخواست شارژ رد شد (ناموفق)</span>
+                  <span style="color:#b91c1c; font-size:13px; font-weight:900;">${amt} ${curr}</span>
+                </div>
+                <div style="color:#991b1b; margin-top:5px; font-weight:700;">
+                  علت: ${desc.replace("REJECTED:", "").replace("CANCELED:", "").trim() || 'درخواست توسط مدیریت لغو شد و مبلغ به حسابتان برگشت.'}
+                </div>
               </div>
-              <div style="color:#166534; margin-top:5px; font-weight:700; background:#ffffff; padding:6px 8px; border-radius:6px; border:1px dashed #a7f3d0; margin-top:6px;">
-                📜 رسید / پین و سریال شارژ: <span style="color:#0f172a; font-family:monospace; font-size:12px;">${desc}</span>
+            `;
+          } else {
+            let isPaymentCharge = opType.includes("پرداخت") || dir.includes("بدهکار");
+            let titleText = isPaymentCharge ? "ارسال شارژ با موفقیت انجام شد" : `${opType} (${dir})`;
+            let amountColor = isPaymentCharge ? "#b91c1c" : "#15803d"; 
+            let animClass = (index === 0) ? "slide-in-success" : "";
+
+            container.innerHTML += `
+              <div class="${animClass}" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px 12px; border-radius:10px; margin-top:6px; font-size:11.5px;">
+                <div style="display:flex; justify-content:space-between; font-weight:900; align-items:center;">
+                  <span style="color:#15803d;">✅ ${titleText}</span>
+                  <span style="color:${amountColor}; font-size:13px; font-weight:900;">${amt} ${curr}</span>
+                </div>
+                <div style="color:#166534; margin-top:5px; font-weight:700; background:#ffffff; padding:6px 8px; border-radius:6px; border:1px dashed #a7f3d0; margin-top:6px;">
+                  📜 رسید / پین و سریال شارژ: <span style="color:#0f172a; font-family:monospace; font-size:12px;">${desc || 'تایید شده توسط کریمی'}</span>
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          }
         });
       }
 
@@ -953,19 +973,18 @@
         return;
       }
 
+      if (hasActivePendingTransaction) {
+        alert("شما یک تراکنش در حال بررسی دارید. لطفاً تا تعیین تکلیف آن صبور باشید.");
+        return;
+      }
+
       let accId = loggedInAccount ? (loggedInAccount.AccountID || loggedInAccount.accountid) : "";
       let accName = loggedInAccount ? (loggedInAccount.Name || loggedInAccount.name) : "";
       if (!accName) accName = "نامشخص / در انتظار تایید";
 
-      let pendingLocal = JSON.parse(localStorage.getItem(`pending_charge_${accId}`) || "[]");
-      if (pendingLocal.length > 0) {
-        alert("شما یک درخواست در حال پردازش دارید. لطفاً تا تکمیل آن صبور باشید.");
-        return;
-      }
-
       let iqdAmount = 0;
       let reqText = "";
-      let pendingObj = {};
+      let pendingDesc = "";
 
       if (activeServiceTab === 'afn') {
         const targetPhone = document.getElementById('targetPhoneAfn').value.trim();
@@ -988,7 +1007,7 @@
           return;
         }
 
-        pendingObj = { type: 'afn', targetPhone, afnAmount, iqdAmount, date: new Date().toISOString() };
+        pendingDesc = `PENDING: شماره افغانستان ${targetPhone} (${afnAmount} AFN)`;
         reqText = `🚨 درخواست شارژ افغانستان\n\n` +
                   `👤 نام حساب: ${accName}\n` +
                   `🔑 شناسه: ${accId}\n` +
@@ -1007,7 +1026,7 @@
           return;
         }
 
-        pendingObj = { type: 'iq', network, baseCardAmt, iqdAmount, date: new Date().toISOString() };
+        pendingDesc = `PENDING: رصید ${network} (${baseCardAmt.toLocaleString()} دینار)`;
         reqText = `💳 درخواست کارت شارژ (رصید) عراق\n\n` +
                   `👤 نام حساب: ${accName}\n` +
                   `🔑 شناسه: ${accId}\n` +
@@ -1016,15 +1035,28 @@
                   `💰 مبلغ کل کسر از حساب: ${iqdAmount.toLocaleString()} IQD`;
       }
 
-      let pendingList = [pendingObj];
-      localStorage.setItem(`pending_charge_${accId}`, JSON.stringify(pendingList));
+      showLoading(true);
 
-      renderRecentRequests(accId, allTransactions);
+      // ۱. ثبت تراکنش در حالت انتظار در Supabase
+      try {
+        await _supabase.from('transactions').insert([{
+          AccountID: accId,
+          Amount: iqdAmount,
+          Currency: 'IQD',
+          Direction: 'بدهکار',
+          OperationType: 'پرداخت امانت',
+          Description: pendingDesc
+        }]);
+      } catch (e) {
+        console.error("خطا در ثبت دیتابیس:", e);
+      }
 
-      // ۱. هدایت سریع و بدون معطلی به واتساپ
+      showLoading(false);
+
+      // ۲. باز کردن آنی واتساپ
       openWhatsAppImmediately(reqText);
 
-      // ۲. ارسال پیام متنی به تلگرام در پس‌زمینه
+      // ۳. ارسال به تلگرام
       sendTelegramTextMessage(reqText);
 
       playBeepSound('success');
@@ -1032,9 +1064,8 @@
       document.getElementById('targetPhoneAfn').value = "";
       document.getElementById('chargeAmountAfn').value = "";
       document.getElementById('calculatedDinarValAfn').innerText = "0";
-      
-      if (activeServiceTab === 'afn') calculateAfnAndValidate();
-      if (activeServiceTab === 'iq') calculateIqCardAndValidate();
+
+      await fetchAndRenderData(accId);
     }
 
     async function submitAccountRequest() {
@@ -1053,9 +1084,17 @@
         return;
       }
 
+      if (isStudentMode) {
+        const selfie = document.getElementById('selfieBase64').value;
+        const doc = document.getElementById('docBase64').value;
+        if (!selfie || !doc) {
+          alert("لطفاً هر دو عکس (سلفی زنده و کارت شناسایی) را ثبت نمایید.");
+          return;
+        }
+      }
+
       const fullPhone = code + phone;
       const accountTypeStr = isStudentMode ? "اعتباری حوزوی (سقف ۳۰,۰۰۰ دینار)" : "عادی / نقدی";
-
       let sheetNameValue = isStudentMode ? "" : `${name} (عادی)`;
 
       const reqText = `📋 درخواست افتتاح حساب جدید\n\n` +
@@ -1067,17 +1106,17 @@
       // ۱. باز کردن سریع واتساپ
       openWhatsAppImmediately(reqText);
 
-      // ۲. ذخیره در دیتابیس Supabase
+      // ۲. ذخیره در Supabase
       try {
         await _supabase.from('accounts').insert([{ AccountID: accId, Name: sheetNameValue, Phone: fullPhone }]);
       } catch (e) {
-        console.error("خطا در ثبت پایگاه داده:", e);
+        console.error("خطا در ثبت دیتابیس:", e);
       }
 
-      // ۳. ارسال متن به تلگرام
+      // ۳. ارسال پیام به تلگرام
       sendTelegramTextMessage(reqText);
 
-      // ۴. ارسال مدارک تصویری به تلگرام در صورت حوزوی بودن
+      // ۴. ارسال مدارک تصویری در صورت حوزوی بودن
       if (isStudentMode) {
         const selfieBase64 = document.getElementById('selfieBase64').value;
         const docBase64 = document.getElementById('docBase64').value;
@@ -1087,17 +1126,15 @@
                              `👤 نام: ${name}\n` +
                              `📱 تلفن: ${fullPhone}`;
 
-        if (selfieBase64) {
-          sendPhotoToTelegram(selfieBase64, photoCaption + " (سلفی زنده)");
-        }
-        if (docBase64) {
-          sendPhotoToTelegram(docBase64, photoCaption + " (مدرک/پاسپورت)");
-        }
+        if (selfieBase64) sendPhotoToTelegram(selfieBase64, photoCaption + " (سلفی زنده)");
+        if (docBase64) sendPhotoToTelegram(docBase64, photoCaption + " (مدرک/پاسپورت)");
       }
 
       playBeepSound('success');
 
-      // ۵. نمایش پیام‌های مجزا و هدایت کاربر
+      // ۵. ذخیره آیدی جهت جایگذاری خودکار در کادر ورود
+      document.getElementById('loginAccId').value = accId;
+
       if (isStudentMode) {
         alert("✅ درخواست حساب شما در حال ایجاد است.\n\nلطفاً پس از تأیید مدیریت با همین آیدی وارد حساب شوید.");
       } else {
