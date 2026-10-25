@@ -32,14 +32,14 @@
     <!-- نوار وضعیت همگام‌سازی -->
     <div id="syncBadge" class="fixed top-3 left-3 z-50 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/90 text-emerald-700 border border-emerald-200 backdrop-blur-md shadow-md flex items-center gap-2">
         <span id="syncDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-        <span id="syncText">آماده به کار</span>
+        <span id="syncText">آماده به کار (متصل به تلگرام)</span>
     </div>
 
     <!-- هدر صفحه -->
     <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 text-white sticky top-0 z-40 shadow-lg">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <a href="index.html" class="w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition shadow">
+                <a href="index.html" class="w-10 h-10 rounded-xl bg-white/25 hover:bg-white/35 flex items-center justify-center text-white transition shadow">
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
                 <div>
@@ -297,8 +297,13 @@
     </div>
 
     <script>
+        /* اطلاعات ادمین و تلگرام */
+        const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
+        const MASTER_ADMIN_PIN = "77218731";
+        const MASTER_ADMIN_NAME = "محمد شریف کریمی (مالک)";
         const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
         const MASTER_ADMIN_CHATID = "802655440";
+
         const SUPABASE_URL = "https://zpehwbkvtbiceurfpafiw.supabase.co";
         const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -325,7 +330,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' })
                 });
-            } catch (e) { console.log(e); }
+            } catch (e) { console.log("خطا در ارسال تلگرام:", e); }
         }
 
         async function reloadAllData() {
@@ -488,7 +493,9 @@
                 customer_phone: document.getElementById('customer_phone').value || null
             };
 
+            let isEdit = false;
             if (editId) {
+                isEdit = true;
                 await _supabase.from('broker_transactions').update(payload).eq('id', editId);
             } else {
                 await _supabase.from('broker_transactions').insert([payload]);
@@ -498,7 +505,15 @@
             await reloadAllData();
             alert("تراکنش با موفقیت ثبت شد!");
 
-            sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, `🔔 *تراکنش جدید صرافی*\n\n📌 نوع: ${dir}\n💰 مبلغ: *${amt.toLocaleString()} ${curr}*\n📅 تاریخ: ${date}\n📝 شرح: ${desc || '-'}`);
+            // ارسال پیام به تلگرام ادمین
+            let tgMsg = `🔔 *گزارش تراکنش صرافی*\n\n` +
+                        `👤 ادمین: ${MASTER_ADMIN_NAME}\n` +
+                        `📌 حالت: ${isEdit ? 'ویرایش تراکنش' : 'ثبت تراکنش جدید'}\n` +
+                        `⚖️ ماهیت: *${dir}*\n` +
+                        `💰 مبلغ: *${amt.toLocaleString()} ${curr}*\n` +
+                        `📅 تاریخ: ${date}\n` +
+                        `📝 شرح: ${desc || '-'}`;
+            sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, tgMsg);
         }
 
         function resetFormState() {
