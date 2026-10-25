@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -30,7 +29,7 @@
 </head>
 <body class="pb-20">
 
-    <!-- کادر امنیتی ورود (لاگین) به محض ورود به صفحه -->
+    <!-- کادر امنیتی ورود (لاگین) -->
     <div id="loginModalOverlay" class="fixed inset-0 bg-slate-950/90 z-50 flex items-center justify-center p-4 backdrop-blur-md">
         <div class="card-custom bg-white w-full max-w-sm p-6 space-y-4 shadow-2xl border text-right">
             <div class="text-center space-y-1 border-b pb-3">
@@ -54,12 +53,6 @@
                 <a href="index.html" class="text-slate-400 hover:text-slate-600 text-[11px] font-bold">بازگشت به منوی اصلی</a>
             </div>
         </div>
-    </div>
-
-    <!-- نوار وضعیت همگام‌سازی -->
-    <div id="syncBadge" class="fixed top-3 left-3 z-40 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/90 text-emerald-700 border border-emerald-200 backdrop-blur-md shadow-md flex items-center gap-2">
-        <span id="syncDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-        <span id="syncText">آماده به کار (امن)</span>
     </div>
 
     <!-- هدر صفحه -->
@@ -89,7 +82,7 @@
 
     <main class="max-w-6xl mx-auto px-4 mt-6 space-y-6">
 
-        <!-- پنل انتخاب صرافی و کارت‌های مانده -->
+        <!-- پنل انتخاب صرافی و کارت‌های مانده (منتقل شده به بالای صفحه) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <div class="card-custom p-5 space-y-3 lg:col-span-1">
                 <label class="block text-xs font-black text-slate-700 mb-1 flex items-center gap-1.5">
@@ -412,7 +405,7 @@
                     renderAddressesListAndSelect();
                     renderReports();
                 }
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("خطا در دریافت اطلاعات:", err); }
         }
 
         function renderBrokersSelect() {
@@ -421,16 +414,23 @@
             if (allBrokers.length === 0) {
                 select.innerHTML = '<option value="">هیچ صرافی‌ای یافت نشد</option>';
                 currentBrokerId = null;
+                updateBrokerMeta();
                 return;
             }
             allBrokers.forEach(b => {
-                const bId = b.id || b.broker_id;
-                const bName = b.broker_name || b.name || 'بدون نام';
+                const bId = b.broker_id || b.id;
+                const bName = b.broker_name || 'بدون نام';
                 select.innerHTML += `<option value="${bId}">${bName} ${b.city ? '('+b.city+')':''}</option>`;
             });
-            if (!currentBrokerId) currentBrokerId = allBrokers[0].id || allBrokers[0].broker_id;
+            if (!currentBrokerId || !allBrokers.some(b => String(b.broker_id || b.id) === String(currentBrokerId))) {
+                currentBrokerId = allBrokers[0].broker_id || allBrokers[0].id;
+            }
             select.value = currentBrokerId;
             updateBrokerMeta();
+            calculateAndRenderBalances();
+            renderLedgerTable();
+            renderAddressesListAndSelect();
+            renderReports();
         }
 
         function handleBrokerChange() {
@@ -443,7 +443,7 @@
         }
 
         function updateBrokerMeta() {
-            const b = allBrokers.find(x => String(x.id || x.broker_id) === String(currentBrokerId));
+            const b = allBrokers.find(x => String(x.broker_id || x.id) === String(currentBrokerId));
             document.getElementById('metaPhone').innerText = b ? (b.phone || '-') : '-';
             document.getElementById('metaCity').innerText = b ? (b.city || '-') : '-';
         }
@@ -554,7 +554,7 @@
             let isEdit = false;
             if (editId) {
                 isEdit = true;
-                await _supabase.from('broker_transactions').update(payload).eq('id', editId);
+                await _supabase.from('broker_transactions').update(payload).eq('tx_id', editId);
             } else {
                 await _supabase.from('broker_transactions').insert([payload]);
             }
@@ -619,6 +619,7 @@
 
             txs.forEach((t, i) => {
                 const isCred = String(t.direction).includes('بستانکار');
+                const tId = t.tx_id || t.id;
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3.5 text-slate-400">${txs.length - i}</td>
@@ -629,8 +630,8 @@
                         <td class="p-3.5 font-semibold">${t.address || '-'}</td>
                         <td class="p-3.5 text-slate-600 truncate max-w-xs">${t.description || '-'}</td>
                         <td class="p-3.5 text-center">
-                            <button onclick="editTransaction('${t.id}')" class="bg-amber-50 text-amber-700 p-2 rounded-xl"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteTransaction('${t.id}')" class="bg-red-50 text-red-700 p-2 rounded-xl"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="editTransaction('${tId}')" class="bg-amber-50 text-amber-700 p-2 rounded-xl"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteTransaction('${tId}')" class="bg-red-50 text-red-700 p-2 rounded-xl"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -638,9 +639,9 @@
         }
 
         function editTransaction(id) {
-            const tx = allTransactions.find(t => String(t.id) === String(id));
+            const tx = allTransactions.find(t => String(t.tx_id || t.id) === String(id));
             if (!tx) return;
-            document.getElementById('edit_tx_id').value = tx.id;
+            document.getElementById('edit_tx_id').value = tx.tx_id || tx.id;
             document.getElementById('tx_date').value = tx.tx_date || '';
             document.getElementById('amount').value = tx.amount || '';
             document.getElementById('commission').value = tx.commission || '';
@@ -656,7 +657,7 @@
 
         async function deleteTransaction(id) {
             if (!confirm("حذف شود؟")) return;
-            await _supabase.from('broker_transactions').delete().eq('id', id);
+            await _supabase.from('broker_transactions').delete().eq('tx_id', id);
             await reloadAllData();
         }
 
@@ -667,7 +668,7 @@
                 const a = t.address || 'بدون آدرس';
                 map[a] = (map[a] || 0) + (parseFloat(t.amount) || 0);
             });
-            container.innerHTML = '';
+            container.innerHTML = Object.keys(map).length === 0 ? '<div class="text-slate-400 text-center py-2">بدون داده</div>' : '';
             for (let a in map) {
                 container.innerHTML += `<div class="flex justify-between bg-slate-50 p-3 rounded-xl border"><span>${a}</span><b class="text-emerald-700">${map[a].toLocaleString()}</b></div>`;
             }
@@ -675,9 +676,20 @@
 
         async function handleAddBroker(e) {
             e.preventDefault();
-            await _supabase.from('brokers').insert([{ broker_name: document.getElementById('new_broker_name').value, phone: document.getElementById('new_broker_phone').value, city: document.getElementById('new_broker_city').value }]);
+            const brokerName = document.getElementById('new_broker_name').value;
+            const phone = document.getElementById('new_broker_phone').value;
+            const city = document.getElementById('new_broker_city').value;
+
+            const { data, error } = await _supabase.from('brokers').insert([{ broker_name: brokerName, phone: phone, city: city }]).select();
+            
             closeModal('brokerModal');
             await reloadAllData();
+            
+            if (data && data.length > 0) {
+                currentBrokerId = data[0].broker_id || data[0].id;
+                document.getElementById('activeBrokerSelect').value = currentBrokerId;
+                handleBrokerChange();
+            }
             alert("صرافی افزوده شد!");
         }
 
