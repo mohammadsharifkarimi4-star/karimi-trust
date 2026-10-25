@@ -29,14 +29,40 @@
 </head>
 <body class="pb-20">
 
+    <!-- کادر امنیتی ورود (لاگین) به محض ورود به صفحه -->
+    <div id="loginModalOverlay" class="fixed inset-0 bg-slate-950/90 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="card-custom bg-white w-full max-w-sm p-6 space-y-4 shadow-2xl border text-right">
+            <div class="text-center space-y-1 border-b pb-3">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto text-xl font-black mb-2 shadow-inner">🔒</div>
+                <h2 class="font-black text-sm text-slate-800">ورود به مدیریت صرافی و کارگزاران</h2>
+                <p class="text-[11px] text-slate-500">لطفاً ایمیل و رمز ادمین را وارد کنید</p>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-black text-slate-700 mb-1">ایمیل ادمین:</label>
+                    <input type="email" id="loginEmail" required placeholder="mohammadsharifkarimi4@gmail.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs font-bold outline-none text-left" dir="ltr">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-black text-slate-700 mb-1">رمز عبور (PIN):</label>
+                    <input type="password" id="loginPin" required placeholder="رمز عبور..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs font-bold outline-none text-left" dir="ltr">
+                </div>
+                <div id="loginErrorMsg" class="text-red-600 text-[11px] font-bold text-center hidden">ایمیل یا رمز عبور اشتباه است!</div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-black text-xs shadow-lg transition">تایید و ورود به سامانه</button>
+            </form>
+            <div class="text-center pt-2">
+                <a href="index.html" class="text-slate-400 hover:text-slate-600 text-[11px] font-bold">بازگشت به منوی اصلی</a>
+            </div>
+        </div>
+    </div>
+
     <!-- نوار وضعیت همگام‌سازی -->
-    <div id="syncBadge" class="fixed top-3 left-3 z-50 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/90 text-emerald-700 border border-emerald-200 backdrop-blur-md shadow-md flex items-center gap-2">
+    <div id="syncBadge" class="fixed top-3 left-3 z-40 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/90 text-emerald-700 border border-emerald-200 backdrop-blur-md shadow-md flex items-center gap-2">
         <span id="syncDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-        <span id="syncText">آماده به کار (متصل به تلگرام)</span>
+        <span id="syncText">آماده به کار (امن)</span>
     </div>
 
     <!-- هدر صفحه -->
-    <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 text-white sticky top-0 z-40 shadow-lg">
+    <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 text-white sticky top-0 z-30 shadow-lg">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <a href="index.html" class="w-10 h-10 rounded-xl bg-white/25 hover:bg-white/35 flex items-center justify-center text-white transition shadow">
@@ -44,7 +70,7 @@
                 </a>
                 <div>
                     <h1 class="font-black text-base sm:text-lg tracking-wide">مدیریت صرافی و کارگزاران</h1>
-                    <p class="text-[11px] text-purple-100">سامانه حسابداری ارزی و لینک با امانت‌داری</p>
+                    <p class="text-[11px] text-purple-100">مدیر: <span id="adminNameDisplay">محمد شریف کریمی</span></p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -297,7 +323,7 @@
     </div>
 
     <script>
-        /* اطلاعات ادمین و تلگرام */
+        /* اطلاعات امنیتی ادمین و تلگرام */
         const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
         const MASTER_ADMIN_PIN = "77218731";
         const MASTER_ADMIN_NAME = "محمد شریف کریمی (مالک)";
@@ -314,13 +340,44 @@
         let allCustomerAccounts = [];
         let currentBrokerId = null;
 
+        // بررسی لاگین ادمین به محض بارگذاری صفحه
         window.onload = async function() {
+            const isAuth = sessionStorage.getItem('broker_admin_logged');
+            if (isAuth === 'true') {
+                document.getElementById('loginModalOverlay').style.display = 'none';
+            } else {
+                document.getElementById('loginModalOverlay').style.display = 'flex';
+                return;
+            }
+
             document.getElementById('tx_date').value = new Date().toISOString().split('T')[0];
             setDirection('بستانکار');
             setCurrency('USD');
             setCustomerType('cash');
             await reloadAllData();
         };
+
+        // تابع اعتبارسنجی ایمیل و رمز عبور ادمین
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const inputEmail = document.getElementById('loginEmail').value.trim();
+            const inputPin = document.getElementById('loginPin').value.trim();
+            const errorBox = document.getElementById('loginErrorMsg');
+
+            if (inputEmail === MASTER_ADMIN_EMAIL && inputPin === MASTER_ADMIN_PIN) {
+                sessionStorage.setItem('broker_admin_logged', 'true');
+                document.getElementById('loginModalOverlay').style.display = 'none';
+                errorBox.classList.add('hidden');
+                
+                document.getElementById('tx_date').value = new Date().toISOString().split('T')[0];
+                setDirection('بستانکار');
+                setCurrency('USD');
+                setCustomerType('cash');
+                await reloadAllData();
+            } else {
+                errorBox.classList.remove('hidden');
+            }
+        }
 
         async function sendTelegramMessage(token, chatId, text) {
             if (!token || !chatId) return;
