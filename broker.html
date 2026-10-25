@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>مدیریت صرافی و کارگزاران - حساب‌کتاب من</title>
-    <!-- Supabase JS SDK -->
+    <!-- Supabase JS SDK v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,13 +26,13 @@
 </head>
 <body class="pb-20">
 
-    <!-- کادر امنیتی ورود (لاگین) -->
+    <!-- کادر امنیتی ورود (لاگین ادمین) -->
     <div id="loginModalOverlay" class="fixed inset-0 bg-slate-950/90 z-50 flex items-center justify-center p-4 backdrop-blur-md">
         <div class="card-custom bg-white w-full max-w-sm p-6 space-y-4 shadow-2xl border text-right">
             <div class="text-center space-y-1 border-b pb-3">
                 <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto text-xl font-black mb-2 shadow-inner">🔒</div>
                 <h2 class="font-black text-sm text-slate-800">ورود به مدیریت صرافی و کارگزاران</h2>
-                <p class="text-[11px] text-slate-500">لطفاً ایمیل و رمز ادمین را وارد کنید</p>
+                <p class="text-[11px] text-slate-500">لطفاً ایمیل و رمز پین ادمین را وارد کنید</p>
             </div>
             <form onsubmit="handleAdminLogin(event)" class="space-y-3">
                 <div>
@@ -79,7 +79,7 @@
 
     <main class="max-w-6xl mx-auto px-4 mt-6 space-y-6">
 
-        <!-- پنل انتخاب صرافی و کارت‌های مانده -->
+        <!-- پنل انتخاب صرافی فعال و کارت‌های مانده -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <div class="card-custom p-5 space-y-3 lg:col-span-1 bg-white">
                 <label class="block text-xs font-black text-slate-700 mb-1 flex items-center gap-1.5">
@@ -125,7 +125,7 @@
             </div>
         </div>
 
-        <!-- تب‌های ناوبری (صفحه به صفحه) -->
+        <!-- تب‌های ناوبری اصلی (صفحه به صفحه بدون اسکرول بلند) -->
         <div class="flex border-b border-slate-200 text-xs font-bold gap-6 bg-white px-4 rounded-2xl shadow-sm">
             <button id="tab-form-btn" onclick="switchTab('form')" class="tab-btn active py-3.5 text-slate-500 flex items-center gap-2">
                 <i class="fa-solid fa-pen-to-square"></i> ثبت تراکنش جدید
@@ -168,7 +168,7 @@
                     </div>
                 </div>
 
-                <!-- محاسبه خودکار مبلغ اولیه با قابلیت انتخاب ضرب یا تقسیم -->
+                <!-- محاسبه خودکار مبلغ اولیه با انتخاب ضرب یا تقسیم -->
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
                     <div>
                         <label class="block text-xs font-black text-slate-700 mb-1.5">مبلغ اولیه (Source):</label>
@@ -212,7 +212,7 @@
                     <textarea id="description" rows="2" placeholder="جزئیات کامل حواله..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm outline-none resize-none font-medium"></textarea>
                 </div>
 
-                <!-- لینک هوشمند به جدول accounts امانت‌داری با نام‌های دقیق AccountID و Name -->
+                <!-- لینک هوشمند به جدول accounts (نام ستون‌ها: AccountID و Name) -->
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50/60 border border-blue-200 p-4 rounded-2xl space-y-3">
                     <label class="block text-xs font-black text-blue-900 flex items-center gap-1.5">
                         <i class="fa-solid fa-link text-blue-600"></i> لینک هوشمند به سیستم امانت‌داری (جدول accounts):
@@ -248,7 +248,7 @@
             </form>
         </div>
 
-        <!-- تب دوم: دفتر معین -->
+        <!-- تب دوم: دفتر معین و تاریخچه -->
         <div id="tab-ledger-content" class="hidden space-y-4">
             <div class="card-custom p-4 flex justify-between items-center bg-white">
                 <input type="text" id="ledgerSearchInput" oninput="renderLedgerTable()" placeholder="جستجو در شرح، آدرس یا مبلغ..." class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold outline-none w-full sm:w-72">
@@ -278,7 +278,7 @@
             </div>
         </div>
 
-        <!-- تب سوم: گزارشات -->
+        <!-- تب سوم: گزارشات تفکیکی -->
         <div id="tab-reports-content" class="hidden space-y-5">
             <div class="card-custom p-5 space-y-3 bg-white">
                 <h3 class="font-black text-sm text-slate-800 border-b pb-2">آمار تراکنش‌ها به تفکیک آدرس مقصد</h3>
@@ -355,7 +355,7 @@
             setCustomerType('cash');
             await reloadAllData();
 
-            // مدیریت دکمه برگشت گوشی برای هدایت به تب فرم
+            // مدیریت دکمه برگشت گوشی برای هدایت به تب فرم به جای خروج از صفحه
             window.addEventListener('popstate', function(event) {
                 switchTab('form');
             });
