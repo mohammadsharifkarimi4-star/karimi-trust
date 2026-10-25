@@ -355,7 +355,6 @@
             setCustomerType('cash');
             await reloadAllData();
 
-            // مدیریت دکمه برگشت گوشی برای هدایت به تب فرم به جای خروج از صفحه
             window.addEventListener('popstate', function(event) {
                 switchTab('form');
             });
