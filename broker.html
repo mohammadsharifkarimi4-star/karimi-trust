@@ -19,9 +19,13 @@
         .btn-currency { transition: all 0.2s ease; background: #f8fafc; border: 1.5px solid #cbd5e1; color: #475569; }
         .btn-currency.active { background: linear-gradient(135deg, #2563eb, #1d4ed8) !important; color: #ffffff !important; border-color: #1e40af !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
         .btn-cust-type.active { background: linear-gradient(135deg, #0d9488, #0f766e) !important; color: #ffffff !important; border-color: #115e59 !important; }
-        .tab-btn { position: relative; transition: all 0.2s ease; }
-        .tab-btn.active { color: #059669; font-weight: 900; }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; right: 0; left: 0; height: 3px; background: #059669; border-radius: 3px 3px 0 0; }
+        
+        /* استایل اختصاصی تب‌ها */
+        .tab-btn { position: relative; transition: all 0.25s ease; color: #64748b; }
+        .tab-btn.active { color: #059669 !important; font-weight: 900; background: #ecfdf5; border-radius: 0.75rem; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="pb-20">
@@ -89,7 +93,7 @@
                     <option value="">در حال بارگذاری صرافی‌ها...</option>
                 </select>
                 <div class="pt-3 border-t border-slate-100 text-xs text-slate-600 space-y-1.5">
-                    <div class="flex justify-between"><span>شناسه (ID):</span> <b id="metaBrokerId" class="text-indigo-600 font-mono">-</b></div>
+                    <div class="flex justify-between"><span>شناسه (broker_id):</span> <b id="metaBrokerId" class="text-indigo-600 font-mono">-</b></div>
                     <div class="flex justify-between"><span>شماره تماس:</span> <b id="metaPhone" class="text-slate-900">-</b></div>
                     <div class="flex justify-between"><span>شهر / موقعیت:</span> <b id="metaCity" class="text-slate-900">-</b></div>
                 </div>
@@ -125,21 +129,21 @@
             </div>
         </div>
 
-        <!-- تب‌های ناوبری اصلی (صفحه به صفحه بدون اسکرول بلند) -->
-        <div class="flex border-b border-slate-200 text-xs font-bold gap-6 bg-white px-4 rounded-2xl shadow-sm">
-            <button id="tab-form-btn" onclick="switchTab('form')" class="tab-btn active py-3.5 text-slate-500 flex items-center gap-2">
-                <i class="fa-solid fa-pen-to-square"></i> ثبت تراکنش جدید
+        <!-- منوی تب‌های ظاهری (کاملاً ساختاریافته و مدرن) -->
+        <div class="grid grid-cols-3 bg-white p-2 rounded-2xl shadow-sm border gap-2 text-center font-bold text-xs">
+            <button id="tab-form-btn" onclick="switchTab('form')" class="tab-btn active py-3 flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-pen-to-square"></i> ثبت تراکنش
             </button>
-            <button id="tab-ledger-btn" onclick="switchTab('ledger')" class="tab-btn py-3.5 text-slate-500 flex items-center gap-2">
-                <i class="fa-solid fa-receipt"></i> دفتر معین و تاریخچه
+            <button id="tab-ledger-btn" onclick="switchTab('ledger')" class="tab-btn py-3 flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-receipt"></i> دفتر معین
             </button>
-            <button id="tab-reports-btn" onclick="switchTab('reports')" class="tab-btn py-3.5 text-slate-500 flex items-center gap-2">
-                <i class="fa-solid fa-chart-pie"></i> گزارشات تفکیکی
+            <button id="tab-reports-btn" onclick="switchTab('reports')" class="tab-btn py-3 flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-chart-pie"></i> گزارشات
             </button>
         </div>
 
         <!-- تب اول: فرم ثبت تراکنش -->
-        <div id="tab-form-content" class="card-custom p-5 md:p-7 space-y-5 bg-white">
+        <div id="tab-form-content" class="tab-pane active card-custom p-5 md:p-7 space-y-5 bg-white">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
                     <span class="w-3 h-5 bg-emerald-500 rounded-full inline-block"></span>
@@ -249,7 +253,7 @@
         </div>
 
         <!-- تب دوم: دفتر معین و تاریخچه -->
-        <div id="tab-ledger-content" class="hidden space-y-4">
+        <div id="tab-ledger-content" class="tab-pane space-y-4">
             <div class="card-custom p-4 flex justify-between items-center bg-white">
                 <input type="text" id="ledgerSearchInput" oninput="renderLedgerTable()" placeholder="جستجو در شرح، آدرس یا مبلغ..." class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold outline-none w-full sm:w-72">
                 <span class="text-xs text-slate-600 font-extrabold bg-slate-100 px-3 py-1.5 rounded-xl">تعداد کل: <b id="txCountBadge" class="text-indigo-600">0</b></span>
@@ -279,7 +283,7 @@
         </div>
 
         <!-- تب سوم: گزارشات تفکیکی -->
-        <div id="tab-reports-content" class="hidden space-y-5">
+        <div id="tab-reports-content" class="tab-pane space-y-5">
             <div class="card-custom p-5 space-y-3 bg-white">
                 <h3 class="font-black text-sm text-slate-800 border-b pb-2">آمار تراکنش‌ها به تفکیک آدرس مقصد</h3>
                 <div id="addressStatsList" class="space-y-2 text-xs text-slate-600">بدون داده</div>
@@ -426,12 +430,12 @@
                 return;
             }
             allBrokers.forEach(b => {
-                const bId = b.broker_id || b.id;
+                const bId = b.broker_id; // تطابق دقیق با دیتابیس
                 const bName = b.broker_name || 'بدون نام';
                 select.innerHTML += `<option value="${bId}">${bName} ${b.city ? '('+b.city+')':''}</option>`;
             });
-            if (!currentBrokerId || !allBrokers.some(b => String(b.broker_id || b.id) === String(currentBrokerId))) {
-                currentBrokerId = allBrokers[0].broker_id || allBrokers[0].id;
+            if (!currentBrokerId || !allBrokers.some(b => String(b.broker_id) === String(currentBrokerId))) {
+                currentBrokerId = allBrokers[0].broker_id;
             }
             select.value = currentBrokerId;
             updateBrokerMeta();
@@ -451,7 +455,7 @@
         }
 
         function updateBrokerMeta() {
-            const b = allBrokers.find(x => String(x.broker_id || x.id) === String(currentBrokerId));
+            const b = allBrokers.find(x => String(x.broker_id) === String(currentBrokerId));
             document.getElementById('metaBrokerId').innerText = currentBrokerId || '-';
             document.getElementById('metaPhone').innerText = b ? (b.phone || '-') : '-';
             document.getElementById('metaCity').innerText = b ? (b.city || '-') : '-';
@@ -461,8 +465,8 @@
             const select = document.getElementById('customer_account_id');
             select.innerHTML = '<option value="">انتخاب حساب مشتری امانی...</option>';
             allCustomerAccounts.forEach(acc => {
-                const accId = acc.AccountID || acc.accountid || acc.id;
-                const accName = acc.Name || acc.name || 'مشتری';
+                const accId = acc.AccountID; // تطابق دقیق با دیتابیس accounts
+                const accName = acc.Name || 'مشتری';
                 select.innerHTML += `<option value="${accId}">${accName} (کُد: ${accId})</option>`;
             });
         }
@@ -629,7 +633,7 @@
             }
 
             txs.forEach((t, i) => {
-                const tId = t.tx_id || t.id;
+                const tId = t.tx_id;
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3.5 text-slate-400">${txs.length - i}</td>
@@ -650,9 +654,9 @@
         }
 
         function editTransaction(id) {
-            const tx = allTransactions.find(t => String(t.tx_id || t.id) === String(id));
+            const tx = allTransactions.find(t => String(t.tx_id) === String(id));
             if (!tx) return;
-            document.getElementById('edit_tx_id').value = tx.tx_id || tx.id;
+            document.getElementById('edit_tx_id').value = tx.tx_id;
             document.getElementById('tx_date').value = tx.tx_date || '';
             document.getElementById('source_amount').value = tx.source_amount || '';
             document.getElementById('exchange_rate').value = tx.exchange_rate || '';
@@ -714,7 +718,7 @@
             await reloadAllData();
             
             if (data && data.length > 0) {
-                currentBrokerId = data[0].broker_id || data[0].id;
+                currentBrokerId = data[0].broker_id;
                 document.getElementById('activeBrokerSelect').value = currentBrokerId;
                 handleBrokerChange();
             }
@@ -724,12 +728,22 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
         function closeModal(id) { document.getElementById(id).classList.remove('flex'); document.getElementById(id).classList.add('hidden'); }
 
+        // تابع تعویض تب‌ها (ظاهر تب‌بندی کاملاً پویا)
         function switchTab(tab) {
             ['form', 'ledger', 'reports'].forEach(t => {
-                document.getElementById(`tab-${t}-btn`).className = "tab-btn py-3.5 text-slate-500 " + (t === tab ? "active" : "");
-                document.getElementById(`tab-${t}-content`).style.display = (t === tab) ? "block" : "none";
+                const btn = document.getElementById(`tab-${t}-btn`);
+                const content = document.getElementById(`tab-${t}-content`);
+                if (btn && content) {
+                    if (t === tab) {
+                        btn.classList.add('active');
+                        content.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                        content.classList.remove('active');
+                    }
+                }
             });
-            history.pushState({tab: tab}, '');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>
