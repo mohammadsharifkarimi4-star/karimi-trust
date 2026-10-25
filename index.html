@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -140,6 +139,7 @@
       padding: 3px 10px;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
     }
 
     .day-badge {
@@ -213,7 +213,7 @@
       color: #a7f3d0;
     }
 
-    /* کادر زنده پندها و کلمات قصار */
+    /* کادر زنده پندها و کلمات قصار (قفل شده روی حالت اصلی) */
     .hadith-display-box {
       background: rgba(0, 0, 0, 0.35);
       border-radius: 12px;
@@ -369,7 +369,8 @@
     <div class="hero-card">
       <div class="hero-top-info">
         <span class="hero-main-title">حساب‌کتاب من</span>
-        <div class="day-time-badge-box">
+        <!-- ترفند مخفی صرافی: ۳ بار کلیک روی این بخش -->
+        <div class="day-time-badge-box" onclick="handleSecretBrokerClick()">
           <span class="day-badge" id="dayNameDisplay">شنبه</span>
           <span class="top-live-clock eng-num" id="liveClock">00:00:00</span>
         </div>
@@ -411,15 +412,15 @@
         </div>
       </div>
 
-      <!-- کادر زنده پندها و کلمات قصار -->
+      <!-- کادر زنده پندها و کلمات قصار (ثابت و قفل شده) -->
       <div class="hadith-display-box" id="hadithBox">
         <div class="hadith-header-row">
           <span>💡 پند و حکمت روز</span>
           <span id="hadithAuthor">کوروش کبیر</span>
         </div>
-        <div class="hadith-text" id="hadithText">«...»</div>
-        <div class="hadith-translation" id="hadithTrans">...</div>
-        <div class="hadith-source" id="hadithSource">[ تاریخ باستان ]</div>
+        <div class="hadith-text" id="hadithText">«باران باش و ببار و نپرس که پیاله‌های خالی از آن کیست.»</div>
+        <div class="hadith-translation" id="hadithTrans">نیکی کردن بدون چشم‌داشت، بزرگ‌ترین نشانه بزرگی روح است.</div>
+        <div class="hadith-source" id="hadithSource">[ منشور باستان ]</div>
       </div>
     </div>
 
@@ -451,24 +452,7 @@
   </div>
 
   <script>
-    const wisdomQuotes = [
-      { author: "کوروش کبیر", text: "«باران باش و ببار و نپرس که پیاله‌های خالی از آن کیست.»", trans: "نیکی کردن بدون چشم‌داشت، بزرگ‌ترین نشانه بزرگی روح است.", source: "منشور باستان" },
-      { author: "آبراهام لینکلن", text: "«بهترین راه پیش‌بینی آینده خود، ساختن آن است.»", trans: "با اراده و تلاش خود، آینده‌ای که می‌خواهید را خلق کنید.", source: "سخنرانی‌ها" },
-      { author: "نيلسون ماندلا", text: "«همیشه قبل از انجام کار، غیرممکن به نظر می‌رسد تا زمانی که آن را انجام دهی.»", trans: "بزرگ‌ترین مانع، ترس از شروع است.", source: "زندگینامه" },
-      { author: "آلبرت اینشتین", text: "«تلاش نکنید آدم موفقیت باشید، بلکه سعی کنید آدم باارزشی باشید.»", trans: "ارزش انسان به خدمت به جامعه است.", source: "مقالات" },
-      { author: "سعدی شیرازی", text: "«بنی‌آ آدم اعضای یک پیکرند که در آفرینش ز یک گوهرند.»", trans: "همبستگی و همدلی پایه آرامش جامعه است.", source: "گلستان" },
-      { author: "فردوسی بزرگ", text: "«توانا بود هر که دانا بود، ز دانش دل پیر برنا بود.»", trans: "دانش سرچشمه قدرت و توانمندی است.", source: "شاهنامه" }
-    ];
-
-    function loadRandomHadith() {
-      const randomIndex = Math.floor(Math.random() * wisdomQuotes.length);
-      const item = wisdomQuotes[randomIndex];
-      document.getElementById('hadithAuthor').innerText = item.author;
-      document.getElementById('hadithText').innerText = item.text;
-      document.getElementById('hadithTrans').innerText = item.trans;
-      document.getElementById('hadithSource').innerText = `[ ${item.source} ]`;
-    }
-
+    // ورود به پنل ادمین اصلی (۳ بار کلیک روی «خوش آمدید»)
     let secretClickCount = 0;
     let secretClickTimer = null;
 
@@ -480,6 +464,21 @@
         window.location.href = "admin.html";
       } else {
         secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 1200);
+      }
+    }
+
+    // ورود مخفیانه به بخش صرافی (۳ بار کلیک روی بخش ساعت و روز در بنر بالا)
+    let brokerClickCount = 0;
+    let brokerClickTimer = null;
+
+    function handleSecretBrokerClick() {
+      brokerClickCount++;
+      clearTimeout(brokerClickTimer);
+      if (brokerClickCount >= 3) {
+        brokerClickCount = 0;
+        window.location.href = "broker.html";
+      } else {
+        brokerClickTimer = setTimeout(() => { brokerClickCount = 0; }, 1200);
       }
     }
 
@@ -515,7 +514,6 @@
     }
 
     updateCalendarAndClock();
-    loadRandomHadith();
     setInterval(updateCalendarAndClock, 1000);
   </script>
 
