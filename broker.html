@@ -125,7 +125,7 @@
             </div>
         </div>
 
-        <!-- تب‌های ناوبری -->
+        <!-- تب‌های ناوبری (صفحه به صفحه بدون اسکرول طولانی) -->
         <div class="flex border-b border-slate-200 text-xs font-bold gap-6 bg-white px-4 rounded-2xl shadow-sm">
             <button id="tab-form-btn" onclick="switchTab('form')" class="tab-btn active py-3.5 text-slate-500 flex items-center gap-2">
                 <i class="fa-solid fa-pen-to-square"></i> ثبت تراکنش جدید
@@ -168,15 +168,15 @@
                     </div>
                 </div>
 
-                <!-- فیلدهای تطبیق‌یافته با جدول source_amount و exchange_rate و amount -->
+                <!-- محاسبه خودکار مبلغ اولیه ضربدر نرخ تبادل -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-black text-slate-700 mb-1.5">مبلغ اولیه (Source):</label>
-                        <input type="number" step="any" id="source_amount" placeholder="مبلغ اولیه..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold outline-none">
+                        <input type="number" step="any" id="source_amount" oninput="calculateFinalAmount()" placeholder="مبلغ اولیه..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-black text-slate-700 mb-1.5">نرخ صرف / تبادل:</label>
-                        <input type="number" step="any" id="exchange_rate" placeholder="نرخ..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold outline-none">
+                        <input type="number" step="any" id="exchange_rate" oninput="calculateFinalAmount()" placeholder="نرخ..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-black text-emerald-900 mb-1.5">مبلغ اصلی / نهایی ثبت در حساب:</label>
@@ -347,6 +347,12 @@
             setCurrency('USD');
             setCustomerType('cash');
             await reloadAllData();
+
+            // مدیریت دکمه برگشت گوشی برای جلوگیری از خروج ناخواسته و بازگشت به تب فرم
+            window.addEventListener('popstate', function(event) {
+                switchTab('form');
+            });
+            history.pushState({tab: 'form'}, '');
         };
 
         async function handleAdminLogin(e) {
@@ -516,6 +522,14 @@
             });
         }
 
+        function calculateFinalAmount() {
+            const src = parseFloat(document.getElementById('source_amount').value) || 0;
+            const rate = parseFloat(document.getElementById('exchange_rate').value) || 0;
+            if (src > 0 && rate > 0) {
+                document.getElementById('amount').value = (src * rate).toFixed(2);
+            }
+        }
+
         async function handleTxSubmit(e) {
             e.preventDefault();
             if (!currentBrokerId) return alert("لطفاً صرافی را انتخاب کنید!");
@@ -670,7 +684,6 @@
             const phone = document.getElementById('new_broker_phone').value;
             const city = document.getElementById('new_broker_city').value;
 
-            // تولید یک broker_id تصادفی و یکتا جهت جلوگیری از خطای خالی بودن کلید
             const randomBrokerId = 'BRK-' + Math.floor(1000 + Math.random() * 9000);
 
             const { data, error } = await _supabase.from('brokers').insert([{ 
@@ -703,6 +716,7 @@
                 document.getElementById(`tab-${t}-btn`).className = "tab-btn py-3.5 text-slate-500 " + (t === tab ? "active" : "");
                 document.getElementById(`tab-${t}-content`).style.display = (t === tab) ? "block" : "none";
             });
+            history.pushState({tab: tab}, '');
         }
     </script>
 </body>
