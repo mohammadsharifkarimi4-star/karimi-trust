@@ -15,12 +15,9 @@
     <style>
         * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 50%, #faf5ff 100%); color: #1e293b; min-height: 100vh; padding-bottom: 90px; }
-        .card-custom { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border-radius: 1.25rem; }
+        .card-custom { background: #ffffff; border: 1.5px solid #e2e8f0; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border-radius: 1.25rem; }
         .btn-currency { transition: all 0.2s ease; background: #f8fafc; border: 1.5px solid #cbd5e1; color: #475569; }
         .btn-currency.active { background: linear-gradient(135deg, #2563eb, #1d4ed8) !important; color: #ffffff !important; border-color: #1e40af !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
-        .btn-direction { transition: all 0.2s ease; border: 1.5px solid #cbd5e1; }
-        .btn-direction.active-creditor { background: linear-gradient(135deg, #059669, #047857) !important; color: #ffffff !important; border-color: #065f46 !important; }
-        .btn-direction.active-debtor { background: linear-gradient(135deg, #dc2626, #b91c1c) !important; color: #ffffff !important; border-color: #991b1b !important; }
         .btn-cust-type.active { background: linear-gradient(135deg, #0d9488, #0f766e) !important; color: #ffffff !important; border-color: #115e59 !important; }
         .tab-btn { position: relative; transition: all 0.2s ease; }
         .tab-btn.active { color: #059669; font-weight: 900; }
@@ -82,9 +79,9 @@
 
     <main class="max-w-6xl mx-auto px-4 mt-6 space-y-6">
 
-        <!-- پنل انتخاب صرافی و کارت‌های مانده (منتقل شده به بالای صفحه) -->
+        <!-- پنل انتخاب صرافی و کارت‌های مانده (بالای صفحه) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div class="card-custom p-5 space-y-3 lg:col-span-1">
+            <div class="card-custom p-5 space-y-3 lg:col-span-1 bg-white">
                 <label class="block text-xs font-black text-slate-700 mb-1 flex items-center gap-1.5">
                     <i class="fa-solid fa-store text-indigo-600"></i> انتخاب صرافی فعال:
                 </label>
@@ -92,6 +89,7 @@
                     <option value="">در حال بارگذاری صرافی‌ها...</option>
                 </select>
                 <div class="pt-3 border-t border-slate-100 text-xs text-slate-600 space-y-1.5">
+                    <div class="flex justify-between"><span>شناسه (ID):</span> <b id="metaBrokerId" class="text-indigo-600 font-mono">-</b></div>
                     <div class="flex justify-between"><span>شماره تماس:</span> <b id="metaPhone" class="text-slate-900">-</b></div>
                     <div class="flex justify-between"><span>شهر / موقعیت:</span> <b id="metaCity" class="text-slate-900">-</b></div>
                 </div>
@@ -141,11 +139,11 @@
         </div>
 
         <!-- تب اول: فرم ثبت تراکنش -->
-        <div id="tab-form-content" class="card-custom p-5 md:p-7 space-y-5">
+        <div id="tab-form-content" class="card-custom p-5 md:p-7 space-y-5 bg-white">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
                     <span class="w-3 h-5 bg-emerald-500 rounded-full inline-block"></span>
-                    فرم ثبت حواله / تراکنش مالی
+                    فرم ثبت حواله / تراکنش مالی صرافی
                 </h2>
                 <span id="formModeBadge" class="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-xl font-extrabold">ثبت جدید</span>
             </div>
@@ -159,29 +157,31 @@
                         <input type="date" id="tx_date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold text-slate-800 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1.5">ماهیت تراکنش:</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" id="btn-dir-creditor" onclick="setDirection('بستانکار')" class="btn-direction py-3 rounded-xl text-xs font-black text-emerald-700 bg-emerald-50">بستانکار (+)</button>
-                            <button type="button" id="btn-dir-debtor" onclick="setDirection('بدهکار')" class="btn-direction py-3 rounded-xl text-xs font-black text-red-700 bg-red-50">بدهکار (-)</button>
+                        <label class="block text-xs font-black text-slate-700 mb-1.5">واحد پول (ارز):</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <button type="button" id="btn-curr-USD" onclick="setCurrency('USD')" class="btn-currency py-3 rounded-xl text-xs font-black">دلار (USD)</button>
+                            <button type="button" id="btn-curr-AFN" onclick="setCurrency('AFN')" class="btn-currency py-3 rounded-xl text-xs font-black">افغانی (AFN)</button>
+                            <button type="button" id="btn-curr-IQD" onclick="setCurrency('IQD')" class="btn-currency py-3 rounded-xl text-xs font-black">دینار (IQD)</button>
+                            <button type="button" id="btn-curr-TMN" onclick="setCurrency('تومان')" class="btn-currency py-3 rounded-xl text-xs font-black">تومان (TMN)</button>
                         </div>
-                        <input type="hidden" id="selected_direction" value="بستانکار">
+                        <input type="hidden" id="selected_currency" value="USD">
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-black text-slate-700 mb-1.5">واحد پول (ارز):</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <button type="button" id="btn-curr-USD" onclick="setCurrency('USD')" class="btn-currency py-3 rounded-xl text-xs font-black">دلار (USD)</button>
-                        <button type="button" id="btn-curr-AFN" onclick="setCurrency('AFN')" class="btn-currency py-3 rounded-xl text-xs font-black">افغانی (AFN)</button>
-                        <button type="button" id="btn-curr-IQD" onclick="setCurrency('IQD')" class="btn-currency py-3 rounded-xl text-xs font-black">دینار (IQD)</button>
-                        <button type="button" id="btn-curr-TMN" onclick="setCurrency('تومان')" class="btn-currency py-3 rounded-xl text-xs font-black">تومان (TMN)</button>
+                <!-- فیلدهای تطبیق‌یافته با جدول source_amount و exchange_rate و amount -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1.5">مبلغ اولیه (Source):</label>
+                        <input type="number" step="any" id="source_amount" placeholder="مبلغ اولیه..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold outline-none">
                     </div>
-                    <input type="hidden" id="selected_currency" value="USD">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-black text-emerald-900 mb-1.5">مبلغ اصلی ثبت در حساب:</label>
-                    <input type="number" step="any" id="amount" required placeholder="مبلغ نهایی..." class="w-full bg-emerald-50/50 border-2 border-emerald-500 rounded-xl p-3.5 text-base font-black text-emerald-900 outline-none">
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1.5">نرخ صرف / تبادل:</label>
+                        <input type="number" step="any" id="exchange_rate" placeholder="نرخ..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-emerald-900 mb-1.5">مبلغ اصلی / نهایی ثبت در حساب:</label>
+                        <input type="number" step="any" id="amount" required placeholder="مبلغ نهایی..." class="w-full bg-emerald-50/50 border-2 border-emerald-500 rounded-xl p-3 text-sm font-black text-emerald-900 outline-none">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -191,14 +191,14 @@
                     </div>
                     <div>
                         <label class="block text-xs font-black text-slate-700 mb-1.5">آدرس مقصد:</label>
-                        <div class="flex gap-2">
-                            <select id="addressSelect" onchange="applySelectedAddress()" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs font-bold outline-none">
-                                <option value="">انتخاب از آدرس‌های این صرافی...</option>
-                            </select>
-                        </div>
+                        <select id="addressSelect" onchange="applySelectedAddress()" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs font-bold outline-none">
+                            <option value="">انتخاب از آدرس‌های این صرافی...</option>
+                        </select>
                     </div>
                 </div>
-                <input type="text" id="address" placeholder="یا تایپ آدرس مقصد..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm outline-none font-bold">
+                <div>
+                    <input type="text" id="address" placeholder="یا تایپ آدرس مقصد..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm outline-none font-bold">
+                </div>
 
                 <div>
                     <label class="block text-xs font-black text-slate-700 mb-1.5">شرح و توضیحات:</label>
@@ -243,19 +243,20 @@
 
         <!-- تب دوم: دفتر معین -->
         <div id="tab-ledger-content" class="hidden space-y-4">
-            <div class="card-custom p-4 flex justify-between items-center">
+            <div class="card-custom p-4 flex justify-between items-center bg-white">
                 <input type="text" id="ledgerSearchInput" oninput="renderLedgerTable()" placeholder="جستجو در شرح، آدرس یا مبلغ..." class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold outline-none w-full sm:w-72">
                 <span class="text-xs text-slate-600 font-extrabold bg-slate-100 px-3 py-1.5 rounded-xl">تعداد کل: <b id="txCountBadge" class="text-indigo-600">0</b></span>
             </div>
-            <div class="card-custom overflow-hidden">
+            <div class="card-custom overflow-hidden bg-white">
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
                         <thead>
                             <tr class="bg-slate-50 text-slate-700 border-b border-slate-200 font-black">
                                 <th class="p-3.5">#</th>
                                 <th class="p-3.5">تاریخ</th>
-                                <th class="p-3.5">ماهیت</th>
-                                <th class="p-3.5">مبلغ</th>
+                                <th class="p-3.5">مبلغ اولیه</th>
+                                <th class="p-3.5">نرخ</th>
+                                <th class="p-3.5">مبلغ اصلی</th>
                                 <th class="p-3.5">ارز</th>
                                 <th class="p-3.5">آدرس مقصد</th>
                                 <th class="p-3.5">شرح</th>
@@ -263,7 +264,7 @@
                             </tr>
                         </thead>
                         <tbody id="ledgerTableBody" class="divide-y divide-slate-100 text-slate-800 font-medium">
-                            <tr><td colspan="8" class="p-6 text-center text-slate-400">در حال بارگذاری...</td></tr>
+                            <tr><td colspan="9" class="p-6 text-center text-slate-400">در حال بارگذاری...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -272,7 +273,7 @@
 
         <!-- تب سوم: گزارشات -->
         <div id="tab-reports-content" class="hidden space-y-5">
-            <div class="card-custom p-5 space-y-3">
+            <div class="card-custom p-5 space-y-3 bg-white">
                 <h3 class="font-black text-sm text-slate-800 border-b pb-2">آمار تراکنش‌ها به تفکیک آدرس مقصد</h3>
                 <div id="addressStatsList" class="space-y-2 text-xs text-slate-600">بدون داده</div>
             </div>
@@ -317,7 +318,6 @@
     </div>
 
     <script>
-        /* اطلاعات امنیتی ادمین و تلگرام */
         const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
         const MASTER_ADMIN_PIN = "77218731";
         const MASTER_ADMIN_NAME = "محمد شریف کریمی (مالک)";
@@ -334,7 +334,6 @@
         let allCustomerAccounts = [];
         let currentBrokerId = null;
 
-        // بررسی لاگین ادمین به محض بارگذاری صفحه
         window.onload = async function() {
             const isAuth = sessionStorage.getItem('broker_admin_logged');
             if (isAuth === 'true') {
@@ -345,13 +344,11 @@
             }
 
             document.getElementById('tx_date').value = new Date().toISOString().split('T')[0];
-            setDirection('بستانکار');
             setCurrency('USD');
             setCustomerType('cash');
             await reloadAllData();
         };
 
-        // تابع اعتبارسنجی ایمیل و رمز عبور ادمین
         async function handleAdminLogin(e) {
             e.preventDefault();
             const inputEmail = document.getElementById('loginEmail').value.trim();
@@ -364,7 +361,6 @@
                 errorBox.classList.add('hidden');
                 
                 document.getElementById('tx_date').value = new Date().toISOString().split('T')[0];
-                setDirection('بستانکار');
                 setCurrency('USD');
                 setCustomerType('cash');
                 await reloadAllData();
@@ -444,6 +440,7 @@
 
         function updateBrokerMeta() {
             const b = allBrokers.find(x => String(x.broker_id || x.id) === String(currentBrokerId));
+            document.getElementById('metaBrokerId').innerText = currentBrokerId || '-';
             document.getElementById('metaPhone').innerText = b ? (b.phone || '-') : '-';
             document.getElementById('metaCity').innerText = b ? (b.city || '-') : '-';
         }
@@ -501,12 +498,6 @@
             await reloadAllData();
         }
 
-        function setDirection(dir) {
-            document.getElementById('selected_direction').value = dir;
-            document.getElementById('btn-dir-creditor').className = "btn-direction py-3 rounded-xl text-xs font-black " + (dir === 'بستانکار' ? "active-creditor" : "text-emerald-700 bg-emerald-50");
-            document.getElementById('btn-dir-debtor').className = "btn-direction py-3 rounded-xl text-xs font-black " + (dir === 'بدهکار' ? "active-debtor" : "text-red-700 bg-red-50");
-        }
-
         function setCurrency(curr) {
             document.getElementById('selected_currency').value = curr;
             ['USD', 'AFN', 'IQD', 'تومان'].forEach(c => {
@@ -531,16 +522,18 @@
 
             const editId = document.getElementById('edit_tx_id').value;
             const amt = parseFloat(document.getElementById('amount').value) || 0;
+            const srcAmt = document.getElementById('source_amount').value ? parseFloat(document.getElementById('source_amount').value) : null;
+            const exRate = document.getElementById('exchange_rate').value ? parseFloat(document.getElementById('exchange_rate').value) : null;
             const curr = document.getElementById('selected_currency').value;
-            const dir = document.getElementById('selected_direction').value;
             const date = document.getElementById('tx_date').value;
             const desc = document.getElementById('description').value;
 
             const payload = {
                 broker_id: String(currentBrokerId),
                 tx_date: date,
-                direction: dir,
                 currency: curr,
+                source_amount: srcAmt,
+                exchange_rate: exRate,
                 amount: amt,
                 commission: document.getElementById('commission').value,
                 address: document.getElementById('address').value,
@@ -563,12 +556,10 @@
             await reloadAllData();
             alert("تراکنش با موفقیت ثبت شد!");
 
-            // ارسال پیام به تلگرام ادمین
             let tgMsg = `🔔 *گزارش تراکنش صرافی*\n\n` +
                         `👤 ادمین: ${MASTER_ADMIN_NAME}\n` +
                         `📌 حالت: ${isEdit ? 'ویرایش تراکنش' : 'ثبت تراکنش جدید'}\n` +
-                        `⚖️ ماهیت: *${dir}*\n` +
-                        `💰 مبلغ: *${amt.toLocaleString()} ${curr}*\n` +
+                        `💰 مبلغ اصلی: *${amt.toLocaleString()} ${curr}*\n` +
                         `📅 تاریخ: ${date}\n` +
                         `📝 شرح: ${desc || '-'}`;
             sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, tgMsg);
@@ -580,7 +571,6 @@
             document.getElementById('tx_date').value = new Date().toISOString().split('T')[0];
             document.getElementById('formModeBadge').innerText = "ثبت جدید";
             document.getElementById('cancelEditBtn').classList.add('hidden');
-            setDirection('بستانکار');
             setCurrency('USD');
             setCustomerType('cash');
         }
@@ -591,8 +581,7 @@
                 const c = String(t.currency || 'USD').toUpperCase();
                 const a = parseFloat(t.amount) || 0;
                 if (totals[c] !== undefined) {
-                    if (String(t.direction).includes('بستانکار')) totals[c] += a;
-                    else totals[c] -= a;
+                    totals[c] += a;
                 }
             });
             document.getElementById('bal-USD').innerText = totals['USD'].toLocaleString();
@@ -613,19 +602,19 @@
 
             document.getElementById('txCountBadge').innerText = txs.length;
             if (txs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">تراکنشی یافت نشد.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-slate-400">تراکنشی یافت نشد.</td></tr>';
                 return;
             }
 
             txs.forEach((t, i) => {
-                const isCred = String(t.direction).includes('بستانکار');
                 const tId = t.tx_id || t.id;
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3.5 text-slate-400">${txs.length - i}</td>
                         <td class="p-3.5 font-bold">${t.tx_date || '-'}</td>
-                        <td class="p-3.5"><span class="px-2.5 py-1 rounded-lg text-[10px] font-black ${isCred ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${t.direction}</span></td>
-                        <td class="p-3.5 font-black">${(parseFloat(t.amount)||0).toLocaleString()}</td>
+                        <td class="p-3.5 text-slate-600">${t.source_amount ? parseFloat(t.source_amount).toLocaleString() : '-'}</td>
+                        <td class="p-3.5 text-slate-600">${t.exchange_rate || '-'}</td>
+                        <td class="p-3.5 font-black text-emerald-700">${(parseFloat(t.amount)||0).toLocaleString()}</td>
                         <td class="p-3.5 font-extrabold text-indigo-700">${t.currency || ''}</td>
                         <td class="p-3.5 font-semibold">${t.address || '-'}</td>
                         <td class="p-3.5 text-slate-600 truncate max-w-xs">${t.description || '-'}</td>
@@ -643,11 +632,12 @@
             if (!tx) return;
             document.getElementById('edit_tx_id').value = tx.tx_id || tx.id;
             document.getElementById('tx_date').value = tx.tx_date || '';
+            document.getElementById('source_amount').value = tx.source_amount || '';
+            document.getElementById('exchange_rate').value = tx.exchange_rate || '';
             document.getElementById('amount').value = tx.amount || '';
             document.getElementById('commission').value = tx.commission || '';
             document.getElementById('address').value = tx.address || '';
             document.getElementById('description').value = tx.description || '';
-            setDirection(tx.direction || 'بستانکار');
             setCurrency(tx.currency || 'USD');
             setCustomerType(tx.customer_type || 'cash');
             document.getElementById('formModeBadge').innerText = "ویرایش";
@@ -680,9 +670,21 @@
             const phone = document.getElementById('new_broker_phone').value;
             const city = document.getElementById('new_broker_city').value;
 
-            const { data, error } = await _supabase.from('brokers').insert([{ broker_name: brokerName, phone: phone, city: city }]).select();
+            // تولید یک broker_id تصادفی و یکتا جهت جلوگیری از خطای خالی بودن کلید
+            const randomBrokerId = 'BRK-' + Math.floor(1000 + Math.random() * 9000);
+
+            const { data, error } = await _supabase.from('brokers').insert([{ 
+                broker_id: randomBrokerId,
+                broker_name: brokerName, 
+                phone: phone, 
+                city: city 
+            }]).select();
             
             closeModal('brokerModal');
+            document.getElementById('new_broker_name').value = '';
+            document.getElementById('new_broker_phone').value = '';
+            document.getElementById('new_broker_city').value = '';
+
             await reloadAllData();
             
             if (data && data.length > 0) {
@@ -690,7 +692,7 @@
                 document.getElementById('activeBrokerSelect').value = currentBrokerId;
                 handleBrokerChange();
             }
-            alert("صرافی افزوده شد!");
+            alert("صرافی با موفقیت افزوده شد!");
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
