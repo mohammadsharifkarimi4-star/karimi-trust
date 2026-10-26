@@ -68,9 +68,8 @@
     .view-section { display: none; }
     .view-section.active { display: block; }
 
-    .filter-btn { padding: 6px 12px; font-size: 0.78rem; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; cursor: pointer; font-weight: bold; }
-    .filter-btn.active { background: var(--info-color); color: #fff; border-color: var(--info-color); box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3); }
-
+    .filter-box { background: #f8fafc; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    
     #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: 800; z-index: 9999; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   </style>
 </head>
@@ -90,23 +89,23 @@
 
   <div class="container" id="appContent">
     
-    <!-- هدر بالای صفحه -->
+    <!-- هدر بالای صفحه (بسیار خلوت و مرتب) -->
     <div class="card">
       <div class="card-header">
         <h3 id="mainHeaderTitle">🏦 مدیریت صرافی</h3>
         <div style="display:flex; gap:6px;">
-          <a href="admin.html" class="btn btn-secondary btn-sm">👥 مدیریت مشتریان</a>
+          <a href="admin.html" class="btn btn-secondary btn-sm">👥 مشتریان</a>
           <button class="btn btn-danger btn-sm" onclick="handleLogout()">خروج</button>
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom: 0;">
-        <label>انتخاب صرافی / کارگزار فعال:</label>
-        <div style="display:flex; gap:6px;">
-          <select id="selectedBrokerSelect" onchange="onBrokerChange()" style="flex:1;"></select>
-          <button class="btn btn-info btn-sm" onclick="openBrokerModal(false)">➕ جدید</button>
-          <button class="btn btn-warning btn-sm" onclick="openBrokerModal(true)">✏️ ویرایش</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteCurrentBroker()">🗑️ حذف</button>
+      <div class="form-group" style="margin-bottom: 0; display:flex; gap:8px; align-items:center; margin-top:4px;">
+        <div style="flex:1;">
+          <label>صرافی فعال:</label>
+          <select id="selectedBrokerSelect" onchange="onBrokerChange()"></select>
+        </div>
+        <div style="padding-top:20px;">
+          <button class="btn btn-info btn-sm" onclick="openBrokersListModal()">⚙️ انتخاب / مدیریت صرافی‌ها</button>
         </div>
       </div>
     </div>
@@ -116,13 +115,23 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <h3>📊 آمار و مانده حساب</h3>
-          <div style="display:flex; gap:4px; flex-wrap:wrap;">
-            <button class="filter-btn active" onclick="setStatsFilter('all', this)">کل</button>
-            <button class="filter-btn" onclick="setStatsFilter('today', this)">امروز</button>
-            <button class="filter-btn" onclick="setStatsFilter('month', this)">این ماه</button>
-            <button class="filter-btn" onclick="setStatsFilter('year', this)">امسال</button>
+        </div>
+        
+        <!-- فیلتر پیشرفته بر اساس بازه تاریخی دقیق -->
+        <div class="filter-box">
+          <div style="flex:1; min-width:120px;">
+            <label style="font-size:0.75rem;">از تاریخ:</label>
+            <input type="date" id="filterDateFrom" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.8rem;">
+          </div>
+          <div style="flex:1; min-width:120px;">
+            <label style="font-size:0.75rem;">تا تاریخ:</label>
+            <input type="date" id="filterDateTo" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.8rem;">
+          </div>
+          <div style="padding-top:16px;">
+            <button class="btn btn-secondary btn-sm" onclick="clearDateFilter()">🔄 پاک کردن فیلتر</button>
           </div>
         </div>
+
         <div class="stats-grid" id="brokerStatsGrid"></div>
         <div style="margin-top: 12px; display:flex; gap:8px;">
           <button class="btn" style="padding:12px;" onclick="openAddTransactionView()">➕ ثبت معامله جدید صرافی</button>
@@ -234,6 +243,7 @@
           </div>
 
           <input type="hidden" id="selectedCustId">
+          <input type="hidden" id="editCustomerTxId">
           
           <div class="grid-2">
             <div class="form-group">
@@ -301,10 +311,22 @@
     </div>
 
   </div>
-  <!-- مدال مدیریت / ویرایش / افزودن صرافی -->
-  <div id="brokerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
+  <!-- مدال مدیریت کامل لیست صرافی‌ها (انتخاب، ایجاد، ویرایش، حذف) -->
+  <div id="brokersListModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
+    <div class="card" style="width:100%; max-width:480px; margin:0; max-height:85vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h3>⚙️ مدیریت صرافی‌ها و کارگزاران</h3>
+        <button class="btn btn-sm" onclick="openBrokerModal(false)">➕ صرافی جدید</button>
+      </div>
+      <div id="brokersListContainer" style="margin-top:10px;"></div>
+      <div style="text-align:right; margin-top:14px;"><button class="btn btn-secondary btn-sm" onclick="closeBrokersListModal()">بستن</button></div>
+    </div>
+  </div>
+
+  <!-- مدال ویرایش / افزودن صرافی تکی -->
+  <div id="brokerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:8px;">
     <div class="card" style="width:100%; max-width:400px; margin:0;">
-      <h3 id="brokerModalTitle">افزودن صرافی / کارگزار جدید</h3>
+      <h3 id="brokerModalTitle">افزودن صرافی جدید</h3>
       <input type="hidden" id="editBrokerModalId">
       <div class="form-group" style="margin-top:8px;"><label>نام صرافی:</label><input type="text" id="brokerName"></div>
       <div class="form-group"><label>تلفن تماس / واتساپ:</label><input type="text" id="brokerPhone" dir="ltr"></div>
@@ -373,7 +395,6 @@
     let selectedCurrency = null;
     let currentCalcMode = 'multiply';
     let selectedBrokerTxId = null;
-    let currentStatsFilter = 'all';
 
     window.onload = async function() {
       checkAuth();
@@ -495,38 +516,40 @@
       const { data } = await _supabase.from('broker_transactions').select('*').eq('broker_id', brokerId);
       brokerTxs = data || [];
       
-      renderBrokerStats();
-      renderBrokerTxList();
+      renderBrokerStatsAndTxs();
     }
 
     function onBrokerChange() {
       loadBrokerTransactions();
     }
 
-    function setStatsFilter(filter, btn) {
-      currentStatsFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderBrokerStats();
+    function clearDateFilter() {
+      document.getElementById("filterDateFrom").value = "";
+      document.getElementById("filterDateTo").value = "";
+      renderBrokerStatsAndTxs();
     }
 
-    function renderBrokerStats() {
-      let now = new Date();
-      let filtered = brokerTxs.filter(tx => {
+    function getFilteredTxs() {
+      let dateFrom = document.getElementById("filterDateFrom").value;
+      let dateTo = document.getElementById("filterDateTo").value;
+
+      return brokerTxs.filter(tx => {
         if (!tx.date) return true;
-        let txDate = new Date(tx.date);
-        if (currentStatsFilter === 'today') {
-          return tx.date === now.toISOString().split('T')[0];
-        } else if (currentStatsFilter === 'month') {
-          return txDate.getFullYear() === now.getFullYear() && txDate.getMonth() === now.getMonth();
-        } else if (currentStatsFilter === 'year') {
-          return txDate.getFullYear() === now.getFullYear();
-        }
+        if (dateFrom && tx.date < dateFrom) return false;
+        if (dateTo && tx.date > dateTo) return false;
         return true;
       });
+    }
 
+    function renderBrokerStatsAndTxs() {
+      let filtered = getFilteredTxs();
+      renderBrokerStats(filtered);
+      renderBrokerTxList(filtered);
+    }
+
+    function renderBrokerStats(filteredTxs) {
       let currencyTotals = {};
-      filtered.forEach(tx => {
+      filteredTxs.forEach(tx => {
         let curr = (tx.currency || 'USD').toUpperCase();
         let dir = tx.direction || '';
         let amt = parseFloat(tx.amount_final || tx.amount_initial) || 0;
@@ -561,6 +584,34 @@
           </div>
         `;
       }
+    }
+
+    function renderBrokerTxList(filteredTxs) {
+      const container = document.getElementById("brokerTxList");
+      document.getElementById("txCountBadge").innerText = `${filteredTxs.length} تراکنش`;
+      container.innerHTML = "";
+
+      if (filteredTxs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">بدون تراکنش</div>`;
+        return;
+      }
+
+      filteredTxs.slice().reverse().forEach((tx, idx) => {
+        let txNum = filteredTxs.length - idx;
+        let dirColor = tx.direction === 'بستانکار' ? '#059669' : '#dc2626';
+        container.innerHTML += `
+          <div class="tx-item" onclick="selectBrokerTx('${tx.broker_tx_id}')">
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+              <span>#${txNum} - ${tx.operation_type} (${tx.date})</span>
+              <span style="color:${dirColor};">${tx.direction}</span>
+            </div>
+            <div style="font-size:0.85rem; margin-top:4px;">
+              مبلغ: <b class="highlight-amount" style="font-size:0.95rem !important;">${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}</b>
+            </div>
+            ${tx.description ? `<div style="font-size:0.78rem; color:#475569; margin-top:2px;">شرح: ${tx.description}</div>` : ''}
+          </div>
+        `;
+      });
     }
 
     function setDirection(dir) {
@@ -627,6 +678,7 @@
 
     function openAddTransactionView() {
       document.getElementById("editBrokerTxId").value = "";
+      document.getElementById("editCustomerTxId").value = "";
       document.getElementById("formTitle").innerText = "📝 ثبت معامله جدید";
       document.getElementById("amtInitial").value = "";
       document.getElementById("exchangeRate").value = "1";
@@ -694,6 +746,7 @@
       const desc = document.getElementById("txDesc").value.trim();
       const address = document.getElementById("txAddress").value.trim();
       const editId = document.getElementById("editBrokerTxId").value;
+      const editCustTxId = document.getElementById("editCustomerTxId").value;
 
       showSync(true);
 
@@ -717,9 +770,8 @@
       const custBoxVisible = document.getElementById("customerBox").style.display === "block";
       const custName = document.getElementById("custNameInput").value.trim();
       let targetCustId = document.getElementById("selectedCustId").value;
-      let targetCustChatId = "";
 
-      if (custBoxVisible && custName && !editId) {
+      if (custBoxVisible && custName) {
         if (!targetCustId) {
           targetCustId = "ACC-" + Math.floor(100000 + Math.random() * 900000);
           await _supabase.from('accounts').insert([{
@@ -728,9 +780,6 @@
             Phone: document.getElementById("custPhoneInput").value.trim(),
             CreatedBy: "master_owner"
           }]);
-        } else {
-          let foundAcc = allAccounts.find(a => String(a.AccountID) === String(targetCustId));
-          if (foundAcc) targetCustChatId = foundAcc.ChatID || "";
         }
 
         const custAmt = parseFloat(document.getElementById("custAmount").value) || amtFin;
@@ -742,8 +791,7 @@
           combinedDesc = combinedDesc ? `${combinedDesc} | آدرس: ${address}` : `آدرس: ${address}`;
         }
 
-        await _supabase.from('transactions').insert([{
-          TransID: "TX-" + Math.floor(10000000 + Math.random() * 90000000),
+        const custTxObj = {
           AccountID: targetCustId,
           Direction: custDir,
           Amount: custAmt,
@@ -751,50 +799,30 @@
           OperationType: opType,
           Description: combinedDesc,
           Date: new Date(txDate).toISOString()
-        }]);
+        };
+
+        if (editCustTxId) {
+          await _supabase.from('transactions').update(custTxObj).eq('TransID', editCustTxId);
+        } else {
+          custTxObj.TransID = "TX-" + Math.floor(10000000 + Math.random() * 90000000);
+          await _supabase.from('transactions').insert([custTxObj]);
+        }
       }
 
       await loadBrokerTransactions();
 
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(brokerId));
       let verticalReport = generateVerticalBalanceReport();
+      let actionTitle = editId ? "✏️ *ویرایش معامله صرافی*" : "🏦 *معامله جدید صرافی*";
 
-      let msgText = `🏦 *معامله صرافی*\n🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n🔹 نوع: *${opType}* (${selectedDirection})\n💰 مبلغ نهایی: *${amtFin.toLocaleString()} ${selectedCurrency}*${rate !== 1 ? `\n🔱 مبلغ اولیه: ${amtInit.toLocaleString()} (نرخ: ${rate})` : ''}\n📅 تاریخ: ${txDate}\n📝 شرح: ${desc || '-'}\n📍 آدرس: ${address || '-'}\n${verticalReport}`;
+      let msgText = `${actionTitle}\n🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n🔹 نوع: *${opType}* (${selectedDirection})\n💰 مبلغ نهایی: *${amtFin.toLocaleString()} ${selectedCurrency}*${rate !== 1 ? `\n🔱 مبلغ اولیه: ${amtInit.toLocaleString()} (نرخ: ${rate})` : ''}\n📅 تاریخ: ${txDate}\n📝 شرح: ${desc || '-'}\n📍 آدرس: ${address || '-'}\n${verticalReport}`;
 
       sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
       if (currentBroker && currentBroker.chatid) sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
 
-      alert("✅ معامله با موفقیت ثبت شد!");
+      alert("✅ معامله با موفقیت ثبت/ویرایش شد!");
       switchView('viewDashboard');
       showSync(false);
-    }
-
-    function renderBrokerTxList() {
-      const container = document.getElementById("brokerTxList");
-      document.getElementById("txCountBadge").innerText = `${brokerTxs.length} تراکنش`;
-      container.innerHTML = "";
-
-      if (brokerTxs.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">بدون تراکنش</div>`;
-        return;
-      }
-
-      brokerTxs.slice().reverse().forEach((tx, idx) => {
-        let txNum = brokerTxs.length - idx;
-        let dirColor = tx.direction === 'بستانکار' ? '#059669' : '#dc2626';
-        container.innerHTML += `
-          <div class="tx-item" onclick="selectBrokerTx('${tx.broker_tx_id}')">
-            <div style="display:flex; justify-content:space-between; font-weight:bold;">
-              <span>#${txNum} - ${tx.operation_type} (${tx.date})</span>
-              <span style="color:${dirColor};">${tx.direction}</span>
-            </div>
-            <div style="font-size:0.85rem; margin-top:4px;">
-              مبلغ: <b class="highlight-amount" style="font-size:0.95rem !important;">${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}</b>
-            </div>
-            ${tx.description ? `<div style="font-size:0.78rem; color:#475569; margin-top:2px;">شرح: ${tx.description}</div>` : ''}
-          </div>
-        `;
-      });
     }
 
     function selectBrokerTx(txId) {
@@ -817,7 +845,7 @@
       switchView('viewTransactionDetail');
     }
 
-    function openEditBrokerTx() {
+    async function openEditBrokerTx() {
       const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
       if (!tx) return;
 
@@ -839,13 +867,26 @@
     }
 
     async function deleteBrokerTx() {
-      if (!confirm("حذف شود؟")) return;
+      if (!confirm("آیا از حذف این معامله اطمینان دارید؟")) return;
       showSync(true);
+      
+      const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
       await _supabase.from('broker_transactions').delete().eq('broker_tx_id', selectedBrokerTxId);
+      
       await loadBrokerTransactions();
+
+      if (tx) {
+        const currentBroker = allBrokers.find(b => String(b.broker_id) === String(tx.broker_id));
+        let verticalReport = generateVerticalBalanceReport();
+        let msgText = `🗑️ *حذف معامله صرافی*\n🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n❌ معامله مورخ ${tx.date} (${tx.operation_type} - مبلغ: ${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}) حذف گردید.\n${verticalReport}`;
+
+        sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
+        if (currentBroker && currentBroker.chatid) sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
+      }
+
       switchView('viewDashboard');
       showSync(false);
-      alert("✅ حذف شد.");
+      alert("✅ معامله با موفقیت حذف شد و گزارش به‌روزرسانی به تلگرام ارسال گردید.");
     }
 
     function sendBrokerReceiptTelegram() {
@@ -868,12 +909,40 @@
       window.open(`https://wa.me/${currentBroker.phone}?text=${txt}`, '_blank');
     }
 
-    // باز کردن مدال صرافی برای افزودن یا ویرایش
-    function openBrokerModal(isEdit = false) {
-      if (isEdit) {
-        const brokerId = document.getElementById("selectedBrokerSelect").value;
+    // مدیریت لیست صرافی‌ها در مدال جداگانه و خلوت شدن صفحه اصلی
+    function openBrokersListModal() {
+      renderBrokersListModalContent();
+      document.getElementById("brokersListModal").style.display = "flex";
+    }
+    function closeBrokersListModal() { document.getElementById("brokersListModal").style.display = "none"; }
+
+    function renderBrokersListModalContent() {
+      const container = document.getElementById("brokersListContainer");
+      container.innerHTML = "";
+      if (allBrokers.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ صرافی ثبت نشده است.</div>`;
+        return;
+      }
+      allBrokers.forEach(b => {
+        container.innerHTML += `
+          <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:bold; font-size:0.95rem; color:#0f172a;">${b.name} (${b.city || 'بدون شهر'})</div>
+              <div style="font-size:0.75rem; color:#64748b;">تلفن: ${b.phone || '-'} | چت‌آیدی: ${b.chatid || '-'}</div>
+            </div>
+            <div style="display:flex; gap:4px;">
+              <button class="btn btn-warning btn-sm" onclick="openBrokerModal(true, '${b.broker_id}')">✏️ ویرایش</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteSpecificBroker('${b.broker_id}')">🗑️ حذف</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openBrokerModal(isEdit = false, brokerId = null) {
+      if (isEdit && brokerId) {
         const b = allBrokers.find(item => String(item.broker_id) === String(brokerId));
-        if (!b) { alert("صرافی انتخاب نشده است"); return; }
+        if (!b) return;
         
         document.getElementById("brokerModalTitle").innerText = "✏️ ویرایش اطلاعات صرافی";
         document.getElementById("editBrokerModalId").value = b.broker_id;
@@ -916,18 +985,18 @@
 
       closeBrokerModal();
       await loadInitialData();
+      renderBrokersListModalContent();
       showSync(false);
       alert("✅ اطلاعات صرافی ذخیره شد.");
     }
 
-    async function deleteCurrentBroker() {
-      const brokerId = document.getElementById("selectedBrokerSelect").value;
-      if (!brokerId) return;
+    async function deleteSpecificBroker(brokerId) {
       if (!confirm("آیا از حذف این صرافی و تمامی اطلاعات آن اطمینان دارید؟")) return;
 
       showSync(true);
       await _supabase.from('brokers').delete().eq('broker_id', brokerId);
       await loadInitialData();
+      renderBrokersListModalContent();
       showSync(false);
       alert("✅ صرافی حذف شد.");
     }
