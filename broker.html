@@ -348,6 +348,10 @@
     const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
     const MASTER_ADMIN_CHATID = "802655440";
 
+    // اطلاعات صاحب کل (Super Admin Master)
+    const SUPER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
+    const SUPER_ADMIN_PIN = "77218731";
+
     let allBrokers = [];
     let allAccounts = [];
     let brokerTxs = [];
@@ -380,22 +384,41 @@
       let isLogged = localStorage.getItem("admin_logged_in");
       if (!isLogged) {
         document.getElementById("authScreen").style.display = "flex";
+      } else {
+        document.getElementById("authScreen").style.display = "none";
       }
     }
 
     async function handleLogin() {
-      let email = document.getElementById("authEmail").value.trim();
+      let email = document.getElementById("authEmail").value.trim().toLowerCase();
       let pin = document.getElementById("authPin").value.trim();
       if (!email || !pin) { alert("لطفاً ایمیل و رمز را وارد کنید"); return; }
       
-      const { data, error } = await _supabase.from('admins').select('*').eq('email', email).eq('pin', pin);
-      if (data && data.length > 0) {
+      // ۱. بررسی دسترسی صاحب کل سیستم (Super Admin)
+      if (email === SUPER_ADMIN_EMAIL.toLowerCase() && pin === SUPER_ADMIN_PIN) {
         localStorage.setItem("admin_logged_in", "true");
         document.getElementById("authScreen").style.display = "none";
         await loadInitialData();
-      } else {
-        alert("اطلاعات ورود اشتباه است!");
+        return;
       }
+
+      // ۲. بررسی دیتابیس ادمین‌ها
+      try {
+        const { data, error } = await _supabase.from('admins').select('*').eq('email', email);
+        if (data && data.length > 0) {
+          let foundAdmin = data.find(a => String(a.pin) === pin || String(a.password) === pin);
+          if (foundAdmin) {
+            localStorage.setItem("admin_logged_in", "true");
+            document.getElementById("authScreen").style.display = "none";
+            await loadInitialData();
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Error checking database admin:", e);
+      }
+
+      alert("اطلاعات ورود اشتباه است!");
     }
 
     function handleLogout() {
@@ -404,6 +427,7 @@
     }
 
     async function loadInitialData() {
+      if (!localStorage.getItem("admin_logged_in")) return;
       showSync(true);
       try {
         const [bRes, aRes, opRes] = await Promise.all([
