@@ -730,21 +730,43 @@
         if (dir === 'بدهکار') currencyTotals[curr].debtor += amt;
       });
 
-      let reportLines = ["\n📊 *گزارش عمودی مانده حساب‌ها:*"];
+      let reportLines = ["\nگزارش عمودی مانده حساب‌ها:"];
       for (let curr in currencyTotals) {
         let cred = currencyTotals[curr].creditor;
         let debt = currencyTotals[curr].debtor;
         let net = cred - debt;
         let statusText = net >= 0 ? "بستانکار" : "بدهکار";
         
-        reportLines.push(`🔹 *ارز ${curr}:*`);
+        reportLines.push(`ارز ${curr}:`);
         reportLines.push(`  • کل بستانکار: ${cred.toLocaleString()}`);
         reportLines.push(`  • کل بدهکار: ${debt.toLocaleString()}`);
-        reportLines.push(`  • مانده نهایی: *${Math.abs(net).toLocaleString()} ${curr} (${statusText})*`);
+        reportLines.push(`  • مانده نهایی: ${Math.abs(net).toLocaleString()} ${curr} (${statusText})`);
         reportLines.push(`---------------------------`);
       }
 
       return reportLines.join("\n");
+    }
+
+    // ارسال هوشمند پیام به مدیریت و صرافی (بدون استفاده از کاراکتر ستاره برای جلوگیری از خطا در تلگرام)
+    async function notifyTelegramBoth(actionTitle, txObj, currentBroker) {
+      let verticalReport = generateVerticalBalanceReport();
+      
+      let msgText = `${actionTitle}
+صرافی: ${currentBroker ? currentBroker.name : ''}
+نوع عملیات: ${txObj.operation_type} (${txObj.direction})
+مبلغ نهایی: ${(txObj.amount_final || txObj.amount_initial || 0).toLocaleString()} ${txObj.currency}${txObj.exchange_rate && txObj.exchange_rate !== 1 ? `\nمبلغ اولیه: ${(txObj.amount_initial || 0).toLocaleString()} (نرخ: ${txObj.exchange_rate})` : ''}
+تاریخ: ${txObj.date}
+شرح: ${txObj.description || '-'}
+آدرس مقصد: ${txObj.address_dashboard || '-'}
+${verticalReport}`;
+
+      // ۱. ارسال همیشه برای مدیریت کل
+      await sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
+
+      // ۲. ارسال اختصاصی برای چت‌آیدی صرافی (شخصی، گروه یا کانال) اگر ثبت شده باشد
+      if (currentBroker && currentBroker.chatid) {
+        await sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
+      }
     }
 
     async function saveBrokerTransaction() {
@@ -828,15 +850,11 @@
       await loadBrokerTransactions();
 
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
-      let verticalReport = generateVerticalBalanceReport();
-      let actionTitle = editId ? "✏️ *ویرایش معامله صرافی*" : "🏦 *معامله جدید صرافی*";
+      let actionTitle = editId ? "✏️ ویرایش معامله صرافی" : "🏦 معامله جدید صرافی";
 
-      let msgText = `${actionTitle}\n🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n🔹 نوع: *${opType}* (${selectedDirection})\n💰 مبلغ نهایی: *${amtFin.toLocaleString()} ${selectedCurrency}*${rate !== 1 ? `\n🔱 مبلغ اولیه: ${amtInit.toLocaleString()} (نرخ: ${rate})` : ''}\n📅 تاریخ: ${txDate}\n📝 شرح: ${desc || '-'}\n📍 آدرس: ${address || '-'}\n${verticalReport}`;
+      await notifyTelegramBoth(actionTitle, brokerTxObj, currentBroker);
 
-      sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
-      if (currentBroker && currentBroker.chatid) sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
-
-      alert("✅ معامله با موفقیت ثبت/ویرایش شد!");
+      alert("✅ معامله با موفقیت ثبت/ویرایش شد و گزارش به تلگرام ارسال گردید!");
       switchView('viewDashboard');
       showSync(false);
     }
@@ -893,11 +911,7 @@
 
       if (tx) {
         const currentBroker = allBrokers.find(b => String(b.broker_id) === String(tx.broker_id));
-        let verticalReport = generateVerticalBalanceReport();
-        let msgText = `🗑️ *حذف معامله صرافی*\n🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n❌ معامله مورخ ${tx.date} (${tx.operation_type} - مبلغ: ${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}) حذف گردید.\n${verticalReport}`;
-
-        sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
-        if (currentBroker && currentBroker.chatid) sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
+        await notifyTelegramBoth("🗑️ حذف معامله صرافی", tx, currentBroker);
       }
 
       switchView('viewDashboard');
@@ -911,7 +925,13 @@
       if (!tx || !currentBroker || !currentBroker.chatid) { alert("چت‌آیدی تلگرام برای این صرافی ثبت نشده است."); return; }
       
       let verticalReport = generateVerticalBalanceReport();
-      let txt = `📜 *رسید معامله صرافی*\n🏛️ صرافی: ${currentBroker.name}\n📅 تاریخ: ${tx.date}\n🔹 نوع: ${tx.operation_type} (${tx.direction})\n💰 مبلغ: ${(tx.amount_final || 0).toLocaleString()} ${tx.currency}\n📝 شرح: ${tx.description || '-'}\n${verticalReport}`;
+      let txt = `📜 رسید معامله صرافی
+صرافی: ${currentBroker.name}
+تاریخ: ${tx.date}
+نوع: ${tx.operation_type} (${tx.direction})
+مبلغ: ${(tx.amount_final || 0).toLocaleString()} ${tx.currency}
+شرح: ${tx.description || '-'}
+${verticalReport}`;
       
       sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, txt);
       alert("✅ رسید به تلگرام ارسال شد!");
@@ -921,7 +941,7 @@
       const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
       if (!tx || !currentBroker || !currentBroker.phone) { alert("شماره واتساپ صرافی ثبت نشده است."); return; }
-      let txt = encodeURIComponent(`📜 *رسید صرافی*\nتاریخ: ${tx.date}\nنوع: ${tx.operation_type} (${tx.direction})\nمبلغ: ${(tx.amount_final || 0).toLocaleString()} ${tx.currency}\nشرح: ${tx.description || '-'}`);
+      let txt = encodeURIComponent(`📜 رسید صرافی\nتاریخ: ${tx.date}\nنوع: ${tx.operation_type} (${tx.direction})\nمبلغ: ${(tx.amount_final || 0).toLocaleString()} ${tx.currency}\nشرح: ${tx.description || '-'}`);
       window.open(`https://wa.me/${currentBroker.phone}?text=${txt}`, '_blank');
     }
 
@@ -1094,7 +1114,7 @@
         await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: 'Markdown' })
+          body: JSON.stringify({ chat_id: chatId, text: messageText })
         });
       } catch (err) { console.log(err); }
     }
