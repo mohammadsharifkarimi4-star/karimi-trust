@@ -59,7 +59,7 @@
     .tx-item { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
     .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; transform: translateY(-1px); }
     
-    .highlight-amount { color: #059669 !important; font-size: 1.2rem !important; font-weight: 900 !important; }
+    .highlight-amount { color: #059669 !important; font-size: 1.25rem !important; font-weight: 900 !important; }
 
     .search-results { background: #fff; border: 1px solid var(--border-color); max-height: 150px; overflow-y: auto; border-radius: 6px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .search-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
@@ -78,7 +78,7 @@
 
   <div id="syncIndicator">🔄 در حال به‌روزرسانی...</div>
 
-  <!-- صفحه احراز هویت ادمین (فیلدها کاملاً خالی در ظاهر، چک شدن پشت صحنه برای مالک) -->
+  <!-- صفحه احراز هویت ادمین -->
   <div id="authScreen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:99999; padding:16px; justify-content:center; align-items:center;">
     <div class="card" style="width:100%; max-width:360px; text-align:center;">
       <h2 style="margin-bottom:14px; color:#0f172a; font-weight:900;">🔐 مدیریت امانت‌داری کریمی</h2>
@@ -103,8 +103,10 @@
       <div class="form-group" style="margin-bottom: 0;">
         <label>انتخاب صرافی / کارگزار فعال:</label>
         <div style="display:flex; gap:6px;">
-          <select id="selectedBrokerSelect" onchange="onBrokerChange()"></select>
-          <button class="btn btn-info btn-sm" onclick="openBrokerModal()">➕ صرافی جدید</button>
+          <select id="selectedBrokerSelect" onchange="onBrokerChange()" style="flex:1;"></select>
+          <button class="btn btn-info btn-sm" onclick="openBrokerModal(false)">➕ جدید</button>
+          <button class="btn btn-warning btn-sm" onclick="openBrokerModal(true)">✏️ ویرایش</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCurrentBroker()">🗑️ حذف</button>
         </div>
       </div>
     </div>
@@ -124,7 +126,7 @@
         <div class="stats-grid" id="brokerStatsGrid"></div>
         <div style="margin-top: 12px; display:flex; gap:8px;">
           <button class="btn" style="padding:12px;" onclick="openAddTransactionView()">➕ ثبت معامله جدید صرافی</button>
-          <a href="admin.html" class="btn btn-secondary" style="width:auto;">↩️ بازگشت به منو</a>
+          <a href="admin.html" class="btn btn-secondary" style="width:auto; text-decoration:none;">↩️ بازگشت به منو</a>
         </div>
       </div>
 
@@ -142,7 +144,7 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
           <h3 id="formTitle">📝 ثبت معامله جدید</h3>
-          <a href="admin.html" class="btn btn-secondary btn-sm">↩️ بازگشت به منو</a>
+          <a href="admin.html" class="btn btn-secondary btn-sm" style="text-decoration:none;">↩️ بازگشت به منو</a>
         </div>
         <hr style="margin: 8px 0 12px 0; border:0; border-top:1px solid #e2e8f0;">
 
@@ -299,18 +301,21 @@
     </div>
 
   </div>
-
-  <!-- مدال‌ها -->
+  <!-- مدال مدیریت / ویرایش / افزودن صرافی -->
   <div id="brokerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
     <div class="card" style="width:100%; max-width:400px; margin:0;">
-      <h3>افزودن صرافی / کارگزار جدید</h3>
+      <h3 id="brokerModalTitle">افزودن صرافی / کارگزار جدید</h3>
+      <input type="hidden" id="editBrokerModalId">
       <div class="form-group" style="margin-top:8px;"><label>نام صرافی:</label><input type="text" id="brokerName"></div>
-      <div class="form-group"><label>تلفن تماس:</label><input type="text" id="brokerPhone" dir="ltr"></div>
+      <div class="form-group"><label>تلفن تماس / واتساپ:</label><input type="text" id="brokerPhone" dir="ltr"></div>
       <div class="form-group"><label>شهر:</label><input type="text" id="brokerCity"></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام:</label><input type="text" id="brokerChatId" dir="ltr" placeholder="Chat ID..."></div>
+      <div class="form-group">
+        <label>چت‌آیدی تلگرام (شخصی، گروه یا کانال):</label>
+        <input type="text" id="brokerChatId" dir="ltr" placeholder="مثال: 123456789 یا 100123456789-">
+      </div>
       <div style="display:flex; gap:6px; margin-top:10px;">
         <button class="btn btn-secondary btn-sm" onclick="closeBrokerModal()">انصراف</button>
-        <button class="btn btn-sm" onclick="saveBrokerInfo()">ذخیره</button>
+        <button class="btn btn-sm" onclick="saveBrokerInfo()">ذخیره اطلاعات</button>
       </div>
     </div>
   </div>
@@ -355,7 +360,6 @@
     const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
     const MASTER_ADMIN_CHATID = "802655440";
 
-    // بررسی امنیتی پشت صحنه برای صاحب کل سیستم
     const SUPER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
     const SUPER_ADMIN_PIN = "77218731";
 
@@ -401,7 +405,6 @@
       let pin = document.getElementById("authPin").value.trim();
       if (!email || !pin) { alert("لطفاً ایمیل و رمز را وارد کنید"); return; }
       
-      // بررسی پشت صحنه برای مالک اصلی سیستم
       if (email === SUPER_ADMIN_EMAIL.toLowerCase() && pin === SUPER_ADMIN_PIN) {
         localStorage.setItem("admin_logged_in", "true");
         document.getElementById("authScreen").style.display = "none";
@@ -409,7 +412,6 @@
         return;
       }
 
-      // بررسی جدول دیتابیس ادمین‌ها
       try {
         const { data, error } = await _supabase.from('admins').select('*').eq('email', email);
         if (data && data.length > 0) {
@@ -646,6 +648,36 @@
       switchView('viewTransactionForm');
     }
 
+    // ساخت گزارش عمودی مانده حساب‌ها برای تلگرام
+    function generateVerticalBalanceReport() {
+      let currencyTotals = {};
+      brokerTxs.forEach(tx => {
+        let curr = (tx.currency || 'USD').toUpperCase();
+        let dir = tx.direction || '';
+        let amt = parseFloat(tx.amount_final || tx.amount_initial) || 0;
+
+        if (!currencyTotals[curr]) currencyTotals[curr] = { creditor: 0, debtor: 0 };
+        if (dir === 'بستانکار') currencyTotals[curr].creditor += amt;
+        if (dir === 'بدهکار') currencyTotals[curr].debtor += amt;
+      });
+
+      let reportLines = ["\n📊 *گزارش مانده حساب‌ها:*"];
+      for (let curr in currencyTotals) {
+        let cred = currencyTotals[curr].creditor;
+        let debt = currencyTotals[curr].debtor;
+        let net = cred - debt;
+        let statusText = net >= 0 ? "بستانکار" : "بدهکار";
+        
+        reportLines.push(`🔹 *ارز ${curr}:*`);
+        reportLines.push(`  • کل بستانکار: ${cred.toLocaleString()}`);
+        reportLines.push(`  • کل بدهکار: ${debt.toLocaleString()}`);
+        reportLines.push(`  • مانده نهایی: *${Math.abs(net).toLocaleString()} ${curr} (${statusText})*`);
+        reportLines.push(`---------------------------`);
+      }
+
+      return reportLines.join("\n");
+    }
+
     async function saveBrokerTransaction() {
       const brokerId = document.getElementById("selectedBrokerSelect").value;
       if (!brokerId) { alert("لطفاً صرافی را انتخاب کنید"); return; }
@@ -722,15 +754,18 @@
         }]);
       }
 
+      await loadBrokerTransactions();
+
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(brokerId));
-      let msgText = `🏦 *معامله صرافی*\n🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n🔹 نوع: *${opType}* (${selectedDirection})\n💰 مبلغ: *${amtFin.toLocaleString()} ${selectedCurrency}*\n📅 تاریخ: ${txDate}\n📝 شرح: ${desc || '-'}\n📍 آدرس: ${address || '-'}`;
+      let verticalReport = generateVerticalBalanceReport();
+
+      let msgText = `🏦 *معامله صرافی*\n🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n🔹 نوع: *${opType}* (${selectedDirection})\n💰 مبلغ نهایی: *${amtFin.toLocaleString()} ${selectedCurrency}*${rate !== 1 ? `\n🔱 مبلغ اولیه: ${amtInit.toLocaleString()} (نرخ: ${rate})` : ''}\n📅 تاریخ: ${txDate}\n📝 شرح: ${desc || '-'}\n📍 آدرس: ${address || '-'}\n${verticalReport}`;
 
       sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
       if (currentBroker && currentBroker.chatid) sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
 
       alert("✅ معامله با موفقیت ثبت شد!");
       switchView('viewDashboard');
-      await loadBrokerTransactions();
       showSync(false);
     }
 
@@ -816,10 +851,13 @@
     function sendBrokerReceiptTelegram() {
       const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(document.getElementById("selectedBrokerSelect").value));
-      if (!tx || !currentBroker || !currentBroker.chatid) { alert("چت‌آیدی تلگرام ثبت نشده است."); return; }
-      let txt = `📜 *رسید صرافی*\nتاریخ: ${tx.date}\nنوع: ${tx.operation_type} (${tx.direction})\nمبلغ: ${(tx.amount_final || 0).toLocaleString()} ${tx.currency}\nشرح: ${tx.description || '-'}`;
+      if (!tx || !currentBroker || !currentBroker.chatid) { alert("چت‌آیدی تلگرام برای این صرافی ثبت نشده است."); return; }
+      
+      let verticalReport = generateVerticalBalanceReport();
+      let txt = `📜 *رسید معامله صرافی*\n🏛️ صرافی: ${currentBroker.name}\n📅 تاریخ: ${tx.date}\n🔹 نوع: ${tx.operation_type} (${tx.direction})\n💰 مبلغ: ${(tx.amount_final || 0).toLocaleString()} ${tx.currency}\n📝 شرح: ${tx.description || '-'}\n${verticalReport}`;
+      
       sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, txt);
-      alert("✅ به تلگرام صرافی ارسال شد!");
+      alert("✅ رسید عمودی به تلگرام ارسال شد!");
     }
 
     function sendBrokerReceiptWhatsApp() {
@@ -830,20 +868,68 @@
       window.open(`https://wa.me/${currentBroker.phone}?text=${txt}`, '_blank');
     }
 
-    function openBrokerModal() { document.getElementById("brokerModal").style.display = "flex"; }
+    // باز کردن مدال صرافی برای افزودن یا ویرایش
+    function openBrokerModal(isEdit = false) {
+      if (isEdit) {
+        const brokerId = document.getElementById("selectedBrokerSelect").value;
+        const b = allBrokers.find(item => String(item.broker_id) === String(brokerId));
+        if (!b) { alert("صرافی انتخاب نشده است"); return; }
+        
+        document.getElementById("brokerModalTitle").innerText = "✏️ ویرایش اطلاعات صرافی";
+        document.getElementById("editBrokerModalId").value = b.broker_id;
+        document.getElementById("brokerName").value = b.name || "";
+        document.getElementById("brokerPhone").value = b.phone || "";
+        document.getElementById("brokerCity").value = b.city || "";
+        document.getElementById("brokerChatId").value = b.chatid || "";
+      } else {
+        document.getElementById("brokerModalTitle").innerText = "➕ افزودن صرافی / کارگزار جدید";
+        document.getElementById("editBrokerModalId").value = "";
+        document.getElementById("brokerName").value = "";
+        document.getElementById("brokerPhone").value = "";
+        document.getElementById("brokerCity").value = "";
+        document.getElementById("brokerChatId").value = "";
+      }
+      document.getElementById("brokerModal").style.display = "flex";
+    }
+
     function closeBrokerModal() { document.getElementById("brokerModal").style.display = "none"; }
+
     async function saveBrokerInfo() {
       const name = document.getElementById("brokerName").value.trim();
-      if (!name) { alert("نام الزامی است"); return; }
-      await _supabase.from('brokers').insert([{
-        broker_id: "BRK-" + Math.floor(1000 + Math.random() * 9000),
+      if (!name) { alert("نام صرافی الزامی است"); return; }
+      
+      const editId = document.getElementById("editBrokerModalId").value;
+      const bObj = {
         name: name,
         phone: document.getElementById("brokerPhone").value.trim(),
         city: document.getElementById("brokerCity").value.trim(),
         chatid: document.getElementById("brokerChatId").value.trim()
-      }]);
+      };
+
+      showSync(true);
+      if (editId) {
+        await _supabase.from('brokers').update(bObj).eq('broker_id', editId);
+      } else {
+        bObj.broker_id = "BRK-" + Math.floor(1000 + Math.random() * 9000);
+        await _supabase.from('brokers').insert([bObj]);
+      }
+
       closeBrokerModal();
       await loadInitialData();
+      showSync(false);
+      alert("✅ اطلاعات صرافی ذخیره شد.");
+    }
+
+    async function deleteCurrentBroker() {
+      const brokerId = document.getElementById("selectedBrokerSelect").value;
+      if (!brokerId) return;
+      if (!confirm("آیا از حذف این صرافی و تمامی اطلاعات آن اطمینان دارید؟")) return;
+
+      showSync(true);
+      await _supabase.from('brokers').delete().eq('broker_id', brokerId);
+      await loadInitialData();
+      showSync(false);
+      alert("✅ صرافی حذف شد.");
     }
 
     function populateOpTypeSelect() {
