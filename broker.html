@@ -11,77 +11,80 @@
       --primary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       --accent-green: #10b981;
       --accent-green-dark: #059669;
-      --bg-main: #f8fafc;
+      --bg-main: #f1f5f9;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --border-color: #cbd5e1;
       --danger-color: #ef4444;
       --warning-color: #f59e0b;
       --info-color: #0284c7;
-      --radius-md: 10px;
+      --radius-md: 12px;
+      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; direction: rtl; }
-    body { background: var(--bg-main); color: var(--text-main); padding: 8px; font-size: 14px; min-height: 100vh; padding-bottom: 60px; }
+    body { background: var(--bg-main); color: var(--text-main); padding: 10px; font-size: 14px; min-height: 100vh; padding-bottom: 60px; }
 
     .container { max-width: 900px; margin: 0 auto; }
-    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 12px; border: 1px solid var(--border-color); margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-    .card-header { background: var(--primary-gradient); color: #fff; padding: 10px 14px; border-radius: 8px; margin: -12px -12px 12px -12px; display: flex; justify-content: space-between; align-items: center; }
+    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 14px; border: 1px solid rgba(226, 232, 240, 0.8); margin-bottom: 14px; box-shadow: var(--shadow-card); }
+    .card-header { background: var(--primary-gradient); color: #fff; padding: 12px 16px; border-radius: 10px; margin: -14px -14px 14px -14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); }
     
-    h3 { font-size: 1rem; font-weight: 800; }
-    .form-group { margin-bottom: 10px; }
-    label { display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #334155; }
-    input, select, textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; outline: none; background: #fff; }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent-green-dark); }
+    h3 { font-size: 1.05rem; font-weight: 800; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 5px; color: #334155; }
+    input, select, textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; outline: none; background: #fff; transition: all 0.2s; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent-green-dark); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
     
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 
-    .btn { padding: 9px 12px; background: var(--accent-green-dark); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; text-align: center; font-size: 0.85rem; display: inline-flex; justify-content: center; align-items: center; gap: 4px; width: 100%; text-decoration: none; }
-    .btn-secondary { background: #475569; }
-    .btn-warning { background: var(--warning-color); color: #fff; }
-    .btn-danger { background: var(--danger-color); }
-    .btn-info { background: var(--info-color); }
-    .btn-sm { padding: 5px 10px; font-size: 0.78rem; width: auto; }
+    .btn { padding: 10px 14px; background: var(--accent-green-dark); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; text-align: center; font-size: 0.88rem; display: inline-flex; justify-content: center; align-items: center; gap: 6px; width: 100%; text-decoration: none; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2); }
+    .btn-secondary { background: #475569; box-shadow: 0 4px 10px rgba(71, 85, 105, 0.2); }
+    .btn-warning { background: var(--warning-color); color: #fff; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); }
+    .btn-danger { background: var(--danger-color); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+    .btn-info { background: var(--info-color); box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2); }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; }
 
     .radio-group { display: flex; gap: 6px; }
-    .btn-opt { flex: 1; padding: 9px; text-align: center; background: #f1f5f9; border: 1.5px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.85rem; user-select: none; color: #475569; transition: 0.15s; }
-    .btn-opt.active-creditor { background: #10b981 !important; border-color: #059669 !important; color: #ffffff !important; }
-    .btn-opt.active-debtor { background: #ef4444 !important; border-color: #dc2626 !important; color: #ffffff !important; }
-    .btn-opt.active-currency { background: #0284c7 !important; border-color: #0369a1 !important; color: #ffffff !important; }
-    .btn-opt.active-mode { background: #f59e0b !important; border-color: #d97706 !important; color: #ffffff !important; }
+    .btn-opt { flex: 1; padding: 10px; text-align: center; background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.88rem; user-select: none; color: #475569; transition: all 0.2s; }
+    .btn-opt.active-creditor { background: #10b981 !important; border-color: #059669 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+    .btn-opt.active-debtor { background: #ef4444 !important; border-color: #dc2626 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+    .btn-opt.active-currency { background: #0284c7 !important; border-color: #0369a1 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
+    .btn-opt.active-mode { background: #f59e0b !important; border-color: #d97706 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 8px; }
-    .stat-card { background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 10px; }
+    .stat-card { background: linear-gradient(145deg, #ffffff, #f8fafc); border: 1.5px solid var(--border-color); border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
 
-    .customer-box { background: #f0f9ff; border: 1.5px dashed var(--info-color); padding: 10px; border-radius: 8px; margin-top: 10px; display: none; position: relative; }
-    .tx-item { background: #fff; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
-    .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; }
+    .customer-box { background: #f0f9ff; border: 1.5px dashed var(--info-color); padding: 12px; border-radius: 10px; margin-top: 12px; display: none; position: relative; }
+    .tx-item { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; transform: translateY(-1px); }
     
-    .search-results { background: #fff; border: 1px solid var(--border-color); max-height: 150px; overflow-y: auto; border-radius: 6px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; }
+    .highlight-amount { color: #059669 !important; font-size: 1.2rem !important; font-weight: 900 !important; }
+
+    .search-results { background: #fff; border: 1px solid var(--border-color); max-height: 150px; overflow-y: auto; border-radius: 6px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .search-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
     .search-item:hover { background: #f1f5f9; }
 
     .view-section { display: none; }
     .view-section.active { display: block; }
 
-    .filter-btn { padding: 5px 10px; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: #fff; cursor: pointer; font-weight: bold; }
-    .filter-btn.active { background: var(--info-color); color: #fff; border-color: var(--info-color); }
+    .filter-btn { padding: 6px 12px; font-size: 0.78rem; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; cursor: pointer; font-weight: bold; }
+    .filter-btn.active { background: var(--info-color); color: #fff; border-color: var(--info-color); box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3); }
 
-    #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white; padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 800; z-index: 9999; display: none; }
+    #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: 800; z-index: 9999; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   </style>
 </head>
 <body>
 
   <div id="syncIndicator">🔄 در حال به‌روزرسانی...</div>
 
-  <!-- صفحه احراز هویت ادمین -->
+  <!-- صفحه احراز هویت ادمین (فیلدها کاملاً خالی در ظاهر، چک شدن پشت صحنه برای مالک) -->
   <div id="authScreen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:99999; padding:16px; justify-content:center; align-items:center;">
     <div class="card" style="width:100%; max-width:360px; text-align:center;">
-      <h2 style="margin-bottom:12px; color:#0f172a;">🔐 مدیریت امانت‌داری کریمی</h2>
-      <div class="form-group"><input type="email" id="authEmail" value="mohammadsharifkarimi4@gmail.com" placeholder="ایمیل ادمین..." dir="ltr"></div>
-      <div class="form-group"><input type="password" id="authPin" value="77218731" placeholder="کد عبور (PIN)..." dir="ltr"></div>
-      <button class="btn" onclick="handleLogin()">ورود به پنل مدیریت</button>
+      <h2 style="margin-bottom:14px; color:#0f172a; font-weight:900;">🔐 مدیریت امانت‌داری کریمی</h2>
+      <div class="form-group"><input type="email" id="authEmail" value="" placeholder="ایمیل مدیریت..." dir="ltr"></div>
+      <div class="form-group"><input type="password" id="authPin" value="" placeholder="کد عبور (PIN)..." dir="ltr"></div>
+      <button class="btn" style="padding:12px;" onclick="handleLogin()">ورود به پنل مدیریت</button>
     </div>
   </div>
 
@@ -92,7 +95,7 @@
       <div class="card-header">
         <h3 id="mainHeaderTitle">🏦 مدیریت صرافی</h3>
         <div style="display:flex; gap:6px;">
-          <a href="admin.html" class="btn btn-secondary btn-sm">👥 مشتریان</a>
+          <a href="admin.html" class="btn btn-secondary btn-sm">👥 مدیریت مشتریان</a>
           <button class="btn btn-danger btn-sm" onclick="handleLogout()">خروج</button>
         </div>
       </div>
@@ -119,8 +122,9 @@
           </div>
         </div>
         <div class="stats-grid" id="brokerStatsGrid"></div>
-        <div style="margin-top: 10px;">
-          <button class="btn" onclick="openAddTransactionView()">➕ ثبت معامله جدید</button>
+        <div style="margin-top: 12px; display:flex; gap:8px;">
+          <button class="btn" style="padding:12px;" onclick="openAddTransactionView()">➕ ثبت معامله جدید صرافی</button>
+          <a href="admin.html" class="btn btn-secondary" style="width:auto;">↩️ بازگشت به منو</a>
         </div>
       </div>
 
@@ -138,7 +142,7 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
           <h3 id="formTitle">📝 ثبت معامله جدید</h3>
-          <button class="btn btn-secondary btn-sm" onclick="goBack()">← بازگشت</button>
+          <a href="admin.html" class="btn btn-secondary btn-sm">↩️ بازگشت به منو</a>
         </div>
         <hr style="margin: 8px 0 12px 0; border:0; border-top:1px solid #e2e8f0;">
 
@@ -175,8 +179,8 @@
           </div>
         </div>
 
-        <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:8px; margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <div style="background:#f8fafc; border:1px solid var(--border-color); padding:12px; border-radius:10px; margin-bottom:12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <div class="radio-group" style="width:120px;">
               <div class="btn-opt btn-calc active-mode" id="btnModeMultiply" onclick="setCalcMode('multiply')">×</div>
               <div class="btn-opt btn-calc" id="btnModeDivide" onclick="setCalcMode('divide')">÷</div>
@@ -193,7 +197,7 @@
             </div>
             <div class="form-group" style="margin-bottom:0;">
               <label>مبلغ نهایی:</label>
-              <input type="number" id="amtFinal" placeholder="0" style="font-weight:bold; color:var(--accent-green-dark);">
+              <input type="number" id="amtFinal" placeholder="0" class="highlight-amount">
             </div>
           </div>
         </div>
@@ -211,7 +215,7 @@
           </div>
         </div>
 
-        <div style="margin: 12px 0;">
+        <div style="margin: 14px 0;">
           <button type="button" class="btn btn-warning" onclick="toggleCustomerSection()">
             🔗 اتصال / ثبت هم‌زمان برای مشتری (اختیاری)
           </button>
@@ -259,15 +263,18 @@
             </div>
             <div class="form-group">
               <label>مبلغ مشتری:</label>
-              <input type="number" id="custAmount" placeholder="مبلغ">
+              <input type="number" id="custAmount" placeholder="مبلغ" class="highlight-amount" style="font-size:1rem !important;">
             </div>
           </div>
         </div>
 
-        <div style="margin-top: 14px;">
-          <button class="btn" style="padding: 12px; font-size: 1rem;" onclick="saveBrokerTransaction()">
+        <div style="margin-top: 16px; display:flex; gap:8px;">
+          <button class="btn" style="padding: 12px; font-size: 1rem; flex:2;" onclick="saveBrokerTransaction()">
             💾 ذخیره کامل معامله
           </button>
+          <a href="admin.html" class="btn btn-secondary" style="padding: 12px; flex:1; text-decoration:none;">
+            ↩️ بازگشت به منو
+          </a>
         </div>
       </div>
     </div>
@@ -277,14 +284,14 @@
       <div class="card">
         <div class="card-header">
           <h3>🔍 جزئیات تراکنش</h3>
-          <button class="btn btn-secondary btn-sm" onclick="goBack()">← بازگشت</button>
+          <a href="admin.html" class="btn btn-secondary btn-sm" style="text-decoration:none;">↩️ بازگشت به منو</a>
         </div>
         <div id="txDetailCard" style="margin-top: 10px;"></div>
-        <div style="margin-top: 12px; display:flex; gap:6px; flex-wrap:wrap;">
+        <div style="margin-top: 14px; display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-warning" style="flex:1;" onclick="openEditBrokerTx()">✏️ ویرایش</button>
           <button class="btn btn-danger" style="flex:1;" onclick="deleteBrokerTx()">🗑️ حذف</button>
         </div>
-        <div style="margin-top:6px; display:flex; gap:6px;">
+        <div style="margin-top:8px; display:flex; gap:8px;">
           <button class="btn btn-info" style="flex:1;" onclick="sendBrokerReceiptTelegram()">📤 ارسال تلگرام</button>
           <button class="btn" style="flex:1; background:#25D366;" onclick="sendBrokerReceiptWhatsApp()">💬 ارسال واتساپ</button>
         </div>
@@ -348,7 +355,7 @@
     const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
     const MASTER_ADMIN_CHATID = "802655440";
 
-    // اطلاعات صاحب کل (Super Admin Master)
+    // بررسی امنیتی پشت صحنه برای صاحب کل سیستم
     const SUPER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
     const SUPER_ADMIN_PIN = "77218731";
 
@@ -394,7 +401,7 @@
       let pin = document.getElementById("authPin").value.trim();
       if (!email || !pin) { alert("لطفاً ایمیل و رمز را وارد کنید"); return; }
       
-      // ۱. بررسی دسترسی صاحب کل سیستم (Super Admin)
+      // بررسی پشت صحنه برای مالک اصلی سیستم
       if (email === SUPER_ADMIN_EMAIL.toLowerCase() && pin === SUPER_ADMIN_PIN) {
         localStorage.setItem("admin_logged_in", "true");
         document.getElementById("authScreen").style.display = "none";
@@ -402,7 +409,7 @@
         return;
       }
 
-      // ۲. بررسی دیتابیس ادمین‌ها
+      // بررسی جدول دیتابیس ادمین‌ها
       try {
         const { data, error } = await _supabase.from('admins').select('*').eq('email', email);
         if (data && data.length > 0) {
@@ -461,7 +468,7 @@
     }
 
     function goBack() {
-      window.history.back();
+      window.location.href = "admin.html";
     }
 
     function renderBrokerSelect() {
@@ -747,7 +754,7 @@
               <span style="color:${dirColor};">${tx.direction}</span>
             </div>
             <div style="font-size:0.85rem; margin-top:4px;">
-              مبلغ: <b>${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}</b>
+              مبلغ: <b class="highlight-amount" style="font-size:0.95rem !important;">${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}</b>
             </div>
             ${tx.description ? `<div style="font-size:0.78rem; color:#475569; margin-top:2px;">شرح: ${tx.description}</div>` : ''}
           </div>
@@ -767,7 +774,7 @@
         <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>تاریخ:</span><b>${tx.date}</b></div>
         <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>صرافی:</span><b>${currentBroker ? currentBroker.name : ''}</b></div>
         <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>عملیات:</span><b>${tx.operation_type} (${tx.direction})</b></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>مبلغ نهایی:</span><b>${(tx.amount_final || 0).toLocaleString()} ${tx.currency}</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>مبلغ نهایی:</span><b class="highlight-amount" style="font-size:1.1rem !important;">${(tx.amount_final || 0).toLocaleString()} ${tx.currency}</b></div>
         <div style="margin-top:6px; background:#f1f5f9; padding:6px; border-radius:6px;"><b>توضیحات:</b> ${tx.description || '-'}</div>
         ${tx.address_dashboard ? `<div style="margin-top:4px; color:#0284c7; font-size:0.85rem;"><b>آدرس:</b> ${tx.address_dashboard}</div>` : ''}
       `;
