@@ -75,13 +75,13 @@
 
   <div id="syncIndicator">🔄 در حال به‌روزرسانی...</div>
 
-  <!-- صفحه احراز هویت ادمین -->
+  <!-- صفحه احراز هویت ادمین (مشابه سیستم امانت‌داری) -->
   <div id="authScreen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:99999; padding:16px; justify-content:center; align-items:center;">
     <div class="card" style="width:100%; max-width:360px; text-align:center;">
-      <h2 style="margin-bottom:12px; color:#0f172a;">🔐 ورود ادمین صرافی</h2>
-      <div class="form-group"><input type="email" id="authEmail" placeholder="ایمیل مدیریت..." dir="ltr"></div>
+      <h2 style="margin-bottom:12px; color:#0f172a;">🔐 مدیریت امانت‌داری کریمی</h2>
+      <div class="form-group"><input type="email" id="authEmail" placeholder="ایمیل ادمین..." dir="ltr"></div>
       <div class="form-group"><input type="password" id="authPin" placeholder="کد عبور (PIN)..." dir="ltr"></div>
-      <button class="btn" onclick="handleLogin()">ورود به سیستم</button>
+      <button class="btn" onclick="handleLogin()">ورود به پنل مدیریت</button>
     </div>
   </div>
 
@@ -106,7 +106,7 @@
       </div>
     </div>
 
-    <!-- ================= بخش اول: داشبورد اصلی (آمار و لیست) ================= -->
+    <!-- داشبورد اصلی -->
     <div id="viewDashboard" class="view-section active">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <!-- ================= بخش دوم: فرم ثبت / ویرایش معامله ================= -->
+    <!-- فرم ثبت / ویرایش معامله -->
     <div id="viewTransactionForm" class="view-section">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
@@ -175,7 +175,6 @@
           </div>
         </div>
 
-        <!-- تبدیل ارز ساده -->
         <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:8px; margin-bottom:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <div class="radio-group" style="width:120px;">
@@ -212,7 +211,6 @@
           </div>
         </div>
 
-        <!-- بخش مشتری -->
         <div style="margin: 12px 0;">
           <button type="button" class="btn btn-warning" onclick="toggleCustomerSection()">
             🔗 اتصال / ثبت هم‌زمان برای مشتری (اختیاری)
@@ -274,7 +272,7 @@
       </div>
     </div>
 
-    <!-- ================= بخش سوم: جزئیات تراکنش ================= -->
+    <!-- جزئیات تراکنش -->
     <div id="viewTransactionDetail" class="view-section">
       <div class="card">
         <div class="card-header">
@@ -294,6 +292,7 @@
     </div>
 
   </div>
+
   <!-- مدال‌ها -->
   <div id="brokerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
     <div class="card" style="width:100%; max-width:400px; margin:0;">
@@ -367,7 +366,6 @@
       await loadInitialData();
       loadSavedAddressesFromLocal();
 
-      // مدیریت دکمه بازگشت گوشی (History API)
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
         if (event.state && event.state.view) {
@@ -653,7 +651,6 @@
       let qRes = editId ? await _supabase.from('broker_transactions').update(brokerTxObj).eq('broker_tx_id', editId) : await _supabase.from('broker_transactions').insert([brokerTxObj]);
       if (qRes.error) { alert("خطا: " + qRes.error.message); showSync(false); return; }
 
-      // ثبت مشتری و انتقال خودکار آدرس و شرح در صورت فعال بودن باکس اتصال
       const custBoxVisible = document.getElementById("customerBox").style.display === "block";
       const custName = document.getElementById("custNameInput").value.trim();
       let targetCustId = document.getElementById("selectedCustId").value;
@@ -677,7 +674,6 @@
         const custDir = document.getElementById("custDirection").value;
         const custCurr = document.getElementById("custCurrency").value;
 
-        // ترکیب شرح و آدرس صرافی برای توضیحات تراکنش مشتری
         let combinedDesc = desc;
         if (address) {
           combinedDesc = combinedDesc ? `${combinedDesc} | آدرس: ${address}` : `آدرس: ${address}`;
@@ -695,7 +691,6 @@
         }]);
       }
 
-      // اعلان تلگرام
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(brokerId));
       let msgText = `🏦 *معامله صرافی*\n🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n🔹 نوع: *${opType}* (${selectedDirection})\n💰 مبلغ: *${amtFin.toLocaleString()} ${selectedCurrency}*\n📅 تاریخ: ${txDate}\n📝 شرح: ${desc || '-'}\n📍 آدرس: ${address || '-'}`;
 
