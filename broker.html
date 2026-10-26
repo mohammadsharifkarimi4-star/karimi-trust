@@ -1,557 +1,823 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مدیریت صرافی و کارگزاران - حساب‌کتاب من</title>
-    <!-- Supabase JS SDK v2 -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Vazirmatn Font -->
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <style>
-        * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #f8fafc; color: #0f172a; min-height: 100vh; padding-bottom: 80px; }
-        .app-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); }
-        .currency-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; transition: all 0.2s; }
-        .currency-btn.active { background: #2563eb !important; color: #ffffff !important; border-color: #1d4ed8 !important; }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-        .tab-nav-btn.active { color: #059669; border-bottom: 2px solid #059669; font-weight: 900; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>مدیریت صرافی و کارگزاران - کریمی</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --primary-dark: #0f172a;
+      --primary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      --accent-green: #10b981;
+      --accent-green-dark: #059669;
+      --bg-main: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --border-color: #cbd5e1;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --info-color: #0284c7;
+      --radius-md: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; direction: rtl; }
+    body { background: var(--bg-main); color: var(--text-main); padding: 8px; font-size: 14px; min-height: 100vh; padding-bottom: 50px; }
+
+    .container { max-width: 900px; margin: 0 auto; }
+    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 12px; border: 1px solid var(--border-color); margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .card-header { background: var(--primary-gradient); color: #fff; padding: 10px 14px; border-radius: 8px; margin: -12px -12px 12px -12px; display: flex; justify-content: space-between; align-items: center; }
+    
+    h3 { font-size: 1rem; font-weight: 800; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; color: #334155; }
+    input, select, textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; outline: none; background: #fff; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent-green-dark); }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+    .btn { padding: 9px 12px; background: var(--accent-green-dark); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; text-align: center; font-size: 0.85rem; display: inline-flex; justify-content: center; align-items: center; gap: 4px; width: 100%; }
+    .btn-secondary { background: #475569; }
+    .btn-warning { background: var(--warning-color); color: #fff; }
+    .btn-danger { background: var(--danger-color); }
+    .btn-info { background: var(--info-color); }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; width: auto; }
+
+    .radio-group { display: flex; gap: 6px; }
+    .btn-opt { flex: 1; padding: 8px; text-align: center; background: #f1f5f9; border: 1.5px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.85rem; user-select: none; color: #475569; }
+    .btn-opt.active-creditor { background: #ecfdf5 !important; border-color: var(--accent-green) !important; color: var(--accent-green-dark) !important; }
+    .btn-opt.active-debtor { background: #fef2f2 !important; border-color: var(--danger-color) !important; color: var(--danger-color) !important; }
+    .btn-opt.active-currency { background: #f0f9ff !important; border-color: var(--info-color) !important; color: var(--info-color) !important; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .stat-card { background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; }
+
+    .customer-box { background: #f0f9ff; border: 1.5px dashed var(--info-color); padding: 10px; border-radius: 8px; margin-top: 10px; display: none; position: relative; }
+    .tx-item { background: #fff; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+    .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; }
+    
+    .search-results { background: #fff; border: 1px solid var(--border-color); max-height: 150px; overflow-y: auto; border-radius: 6px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; }
+    .search-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+    .search-item:hover { background: #f1f5f9; }
+
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+
+    #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white; padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 800; z-index: 9999; display: none; }
+  </style>
 </head>
-<body class="p-3 sm:p-6">
+<body>
 
-    <!-- لایه احراز هویت ادمین -->
-    <div id="authOverlay" class="fixed inset-0 bg-slate-900/90 z-50 flex items-center justify-center p-4">
-        <div class="app-card bg-white w-full max-w-sm p-6 space-y-4 text-right">
-            <div class="text-center space-y-1 border-b pb-3">
-                <span class="text-2xl">🔐</span>
-                <h2 class="font-black text-sm text-slate-800">ورود به پنل مدیریت صرافی</h2>
-                <p class="text-[11px] text-slate-500">ایمیل و رمز عبور ادمین را وارد کنید</p>
-            </div>
-            <form onsubmit="handleLogin(event)" class="space-y-3">
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">ایمیل:</label>
-                    <input type="email" id="authEmail" required placeholder="mohammadsharifkarimi4@gmail.com" class="w-full bg-slate-50 border p-2.5 rounded-xl text-xs font-bold text-left" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">رمز عبور (PIN):</label>
-                    <input type="password" id="authPin" required placeholder="رمز پین..." class="w-full bg-slate-50 border p-2.5 rounded-xl text-xs font-bold text-left" dir="ltr">
-                </div>
-                <div id="authError" class="text-red-600 text-[11px] font-bold text-center hidden">اطلاعات ورود نادرست است!</div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-black text-xs shadow">ورود به سیستم</button>
-            </form>
+  <div id="syncIndicator">🔄 در حال ذخیره‌سازی...</div>
+
+  <div class="container">
+    
+    <!-- هدر بالای صفحه -->
+    <div class="card">
+      <div class="card-header">
+        <h3 id="mainHeaderTitle">🏦 مدیریت صرافی و کارگزاران</h3>
+        <div>
+          <a href="admin.html" style="color: #fff; text-decoration: none; font-size: 0.8rem;">← پنل اصلی</a>
         </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>انتخاب صرافی / کارگزار فعال:</label>
+        <div style="display:flex; gap:6px;">
+          <select id="selectedBrokerSelect" onchange="onBrokerChange()"></select>
+          <button class="btn btn-info btn-sm" onclick="openBrokerModal()">➕ افزودن صرافی</button>
+        </div>
+      </div>
     </div>
 
-    <!-- کانتینر اصلی اپلیکیشن -->
-    <div class="max-w-4xl mx-auto space-y-4">
-        
-        <!-- هدر بالای صفحه -->
-        <header class="app-card p-4 flex justify-between items-center bg-gradient-to-r from-indigo-900 to-slate-900 text-white">
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center text-white"><i class="fa-solid fa-arrow-right"></i></a>
-                <div>
-                    <h1 class="font-black text-sm">مدیریت صرافی و کارگزاران</h1>
-                    <p class="text-[10px] text-slate-300">مدیر: محمد شریف کریمی</p>
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="openModal('modalNewBroker')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-xl font-black shadow">+ صرافی جدید</button>
-            </div>
-        </header>
-
-        <!-- انتخاب صرافی فعال و اطلاعات آن -->
-        <div class="app-card p-4 space-y-3 bg-white">
-            <div class="flex justify-between items-center">
-                <label class="text-xs font-black text-slate-700">انتخاب صرافی فعال:</label>
-                <button onclick="loadAllDataFromSupabase()" class="text-[11px] text-indigo-600 font-bold flex items-center gap-1"><i class="fa-solid fa-rotate"></i> بروزرسانی داده‌ها</button>
-            </div>
-            <select id="selectBroker" onchange="onBrokerSelected()" class="w-full bg-slate-50 border p-3 rounded-xl text-xs font-black text-indigo-900 outline-none">
-                <option value="">در حال بارگذاری صرافی‌ها...</option>
-            </select>
-            <div class="grid grid-cols-3 gap-2 text-[11px] text-slate-500 pt-2 border-t">
-                <div>شناسه: <b id="infoBrokerId" class="text-indigo-600 font-mono">-</b></div>
-                <div>تلفن: <b id="infoPhone" class="text-slate-800">-</b></div>
-                <div>شهر: <b id="infoCity" class="text-slate-800">-</b></div>
-            </div>
+    <!-- بخش اول: داشبورد اصلی -->
+    <div id="viewDashboard" class="view-section active">
+      <div class="card">
+        <h3>📊 آمار و مانده حساب صرافی به تفکیک ارز</h3>
+        <div class="stats-grid" id="brokerStatsGrid" style="margin-top: 8px;">
+          <div style="text-align:center; color:#64748b; font-size:0.85rem;">داده‌ای موجود نیست</div>
         </div>
-
-        <!-- کارت‌های مانده حساب صرافی -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div class="bg-blue-600 text-white p-3 rounded-xl text-center shadow-sm">
-                <span class="text-[10px] text-blue-100 block font-bold">دلار (USD)</span>
-                <span id="balUSD" class="text-sm font-black">0.00</span>
-            </div>
-            <div class="bg-emerald-600 text-white p-3 rounded-xl text-center shadow-sm">
-                <span class="text-[10px] text-emerald-100 block font-bold">افغانی (AFN)</span>
-                <span id="balAFN" class="text-sm font-black">0</span>
-            </div>
-            <div class="bg-purple-600 text-white p-3 rounded-xl text-center shadow-sm">
-                <span class="text-[10px] text-purple-100 block font-bold">دینار (IQD)</span>
-                <span id="balIQD" class="text-sm font-black">0</span>
-            </div>
-            <div class="bg-amber-600 text-white p-3 rounded-xl text-center shadow-sm">
-                <span class="text-[10px] text-amber-100 block font-bold">تومان (TMN)</span>
-                <span id="balTMN" class="text-sm font-black">0</span>
-            </div>
+        <div style="display:flex; gap:8px; margin-top: 10px;">
+          <button class="btn" onclick="openAddTransactionView()">➕ ثبت معامله جدید</button>
         </div>
+      </div>
 
-        <!-- ناوبری تب‌ها -->
-        <div class="app-card bg-white flex justify-around p-1 text-xs font-bold text-slate-500">
-            <button id="btnTabForm" onclick="switchTab('form')" class="tab-nav-btn active py-2.5 px-4 flex items-center gap-1.5"><i class="fa-solid fa-pen"></i> ثبت تراکنش</button>
-            <button id="btnTabLedger" onclick="switchTab('ledger')" class="tab-nav-btn py-2.5 px-4 flex items-center gap-1.5"><i class="fa-solid fa-receipt"></i> دفتر معین</button>
-            <button id="btnTabReports" onclick="switchTab('reports')" class="tab-nav-btn py-2.5 px-4 flex items-center gap-1.5"><i class="fa-solid fa-chart-pie"></i> گزارشات</button>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <h3>📜 لیست تراکنش‌های صرافی</h3>
+          <span id="txCountBadge" style="font-size:0.78rem; color:#64748b; font-weight:bold;"></span>
         </div>
-
-        <!-- تب اول: فرم ثبت تراکنش -->
-        <div id="paneForm" class="tab-pane active app-card p-4 sm:p-6 space-y-4 bg-white">
-            <h2 class="text-xs font-black text-slate-800 border-b pb-2 flex justify-between items-center">
-                <span>ثبت تراکنش در جدول اصلی transactions</span>
-                <span id="formModeLabel" class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">ثبت جدید</span>
-            </h2>
-
-            <form onsubmit="handleTransactionSubmit(event)" class="space-y-3">
-                <input type="hidden" id="editingTxId" value="">
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">تاریخ:</label>
-                        <input type="date" id="txDate" required class="w-full bg-slate-50 border p-2.5 rounded-xl text-xs font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">نوع جهت (Direction):</label>
-                        <select id="txDirection" class="w-full bg-slate-50 border p-2.5 rounded-xl text-xs font-bold">
-                            <option value="In">ورود (In)</option>
-                            <option value="Out">خروج (Out)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">نوع عملیات (OperationType):</label>
-                        <input type="text" id="txOperationType" value="BrokerExchange" class="w-full bg-slate-50 border p-2.5 rounded-xl text-xs font-bold">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">واحد پول (Currency):</label>
-                        <div class="grid grid-cols-4 gap-1">
-                            <button type="button" onclick="setTxCurrency('USD')" id="curUSD" class="currency-btn py-2 rounded-lg text-[11px] font-black">USD</button>
-                            <button type="button" onclick="setTxCurrency('AFN')" id="curAFN" class="currency-btn py-2 rounded-lg text-[11px] font-black">AFN</button>
-                            <button type="button" onclick="setTxCurrency('IQD')" id="curIQD" class="currency-btn py-2 rounded-lg text-[11px] font-black">IQD</button>
-                            <button type="button" onclick="setTxCurrency('تومان')" id="curTMN" class="currency-btn py-2 rounded-lg text-[11px] font-black">تومان</button>
-                        </div>
-                        <input type="hidden" id="txCurrencyVal" value="USD">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-emerald-800 mb-1">مبلغ (Amount):</label>
-                        <input type="number" step="any" id="txAmount" required placeholder="مبلغ تراکنش..." class="w-full bg-emerald-50 border-2 border-emerald-500 p-2.5 rounded-xl text-xs font-black text-emerald-900">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">حساب مرتبط (AccountID):</label>
-                    <select id="txAccountID" class="w-full bg-slate-50 border p-2.5 rounded-xl text-xs font-bold">
-                        <option value="">انتخاب حساب امانی...</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">شرح و توضیحات (Description):</label>
-                    <textarea id="txDescription" rows="2" placeholder="توضیحات تراکنش صرافی..." class="w-full bg-slate-50 border p-2.5 rounded-xl text-xs font-medium"></textarea>
-                </div>
-
-                <div class="flex gap-2 pt-2">
-                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-black text-xs shadow">ثبت و ذخیره در تراکنش‌ها</button>
-                    <button type="button" id="btnCancelEdit" onclick="resetTxForm()" class="hidden bg-slate-200 text-slate-700 px-4 py-3 rounded-xl font-bold text-xs">انصراف</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- تب دوم: دفتر معین -->
-        <div id="paneLedger" class="tab-pane space-y-3">
-            <div class="app-card p-3 bg-white flex justify-between items-center">
-                <input type="text" id="searchLedger" oninput="renderLedger()" placeholder="جستجو در شرح..." class="bg-slate-50 border p-2 rounded-xl text-xs font-bold w-full sm:w-64">
-                <span class="text-xs font-bold text-slate-500">تعداد: <b id="ledgerCount" class="text-indigo-600">0</b></span>
-            </div>
-            <div class="app-card bg-white overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right text-xs">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-700 border-b font-black">
-                                <th class="p-3">تاریخ</th>
-                                <th class="p-3">مبلغ</th>
-                                <th class="p-3">ارز</th>
-                                <th class="p-3">جهت</th>
-                                <th class="p-3">شرح</th>
-                                <th class="p-3 text-center">عملیات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ledgerTableBody" class="divide-y text-slate-800">
-                            <tr><td colspan="6" class="p-6 text-center text-slate-400">در حال بارگذاری...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- تب سوم: گزارشات -->
-        <div id="paneReports" class="tab-pane space-y-3">
-            <div class="app-card p-4 bg-white space-y-2">
-                <h3 class="font-black text-xs text-slate-800 border-b pb-2">گزارش خلاصه صرافی فعال</h3>
-                <div id="reportsList" class="space-y-2 text-xs text-slate-600">اطلاعاتی موجود نیست</div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- مدال ایجاد صرافی جدید -->
-    <div id="modalNewBroker" class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center p-4 z-50">
-        <div class="app-card bg-white w-full max-w-sm p-5 space-y-3">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-black text-xs text-slate-800">افزودن صرافی جدید</h3>
-                <button onclick="closeModal('modalNewBroker')" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="handleCreateBroker(event)" class="space-y-2.5">
-                <input type="text" id="newBrokerName" required placeholder="نام صرافی (name)..." class="w-full border p-2.5 rounded-xl text-xs font-bold">
-                <input type="text" id="newBrokerPhone" placeholder="شماره تماس..." class="w-full border p-2.5 rounded-xl text-xs font-bold">
-                <input type="text" id="newBrokerCity" placeholder="شهر..." class="w-full border p-2.5 rounded-xl text-xs font-bold">
-                <div class="flex gap-2 pt-2">
-                    <button type="button" onclick="closeModal('modalNewBroker')" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold">انصراف</button>
-                    <button type="submit" class="w-1/2 bg-indigo-600 text-white py-2.5 rounded-xl font-black text-xs">ذخیره صرافی</button>
-                </div>
-            </form>
-        </div>
+        <div id="brokerTxList"></div>
+      </div>
     </div>
 
-    <script>
-        const CONFIG = {
-            ADMIN_EMAIL: "mohammadsharifkarimi4@gmail.com",
-            ADMIN_PIN: "77218731",
-            SUPABASE_URL: "https://zpehwbkvtbiceurfpafiw.supabase.co",
-            SUPABASE_KEY: "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D"
-        };
+    <!-- بخش دوم: فرم ثبت / ویرایش معامله -->
+    <div id="viewTransactionForm" class="view-section">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <h3 id="formTitle">📝 ثبت معامله جدید صرافی</h3>
+          <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت به آمار</button>
+        </div>
+        <hr style="margin: 8px 0 12px 0; border:0; border-top:1px solid #e2e8f0;">
 
-        const supabaseClient = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+        <input type="hidden" id="editBrokerTxId">
 
-        let cacheBrokers = [];
-        let cacheTransactions = [];
-        let cacheAccounts = [];
-        let activeBrokerId = null;
-        let loggedAdminEmail = CONFIG.ADMIN_EMAIL;
+        <div class="grid-2">
+          <div class="form-group">
+            <label>۱. تاریخ معامله:</label>
+            <input type="date" id="txDate" style="max-height: 42px;">
+          </div>
+          <div class="form-group">
+            <label>۲. نوع عملیات:</label>
+            <div style="display:flex; gap:4px;">
+              <select id="txOpType" style="flex:1;"></select>
+              <button class="btn btn-info btn-sm" onclick="openOpTypeManagerModal()" title="مدیریت عملیات">⚙️</button>
+            </div>
+          </div>
+        </div>
 
-        window.onload = async () => {
-            if (sessionStorage.getItem('isLoggedIn') === 'true') {
-                document.getElementById('authOverlay').style.display = 'none';
-            }
-            document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
-            setTxCurrency('USD');
-            await loadAllDataFromSupabase();
-        };
+        <div class="grid-2">
+          <div class="form-group">
+            <label>۳. جهت معامله (صرافی):</label>
+            <div class="radio-group">
+              <div class="btn-opt" id="btnDirCreditor" onclick="setDirection('بستانکار')">بستانکار (+)</div>
+              <div class="btn-opt" id="btnDirDebtor" onclick="setDirection('بدهکار')">بدهکار (-)</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>۴. ارز معامله (انتخاب اجباری):</label>
+            <div class="radio-group" id="currencyGroup">
+              <div class="btn-opt btn-curr" onclick="setCurrency('USD')">USD</div>
+              <div class="btn-opt btn-curr" onclick="setCurrency('AFN')">AFN</div>
+              <div class="btn-opt btn-curr" onclick="setCurrency('تومان')">تومان</div>
+              <div class="btn-opt btn-curr" onclick="setCurrency('IQD')">IQD</div>
+            </div>
+          </div>
+        </div>
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('authEmail').value.trim();
-            const pin = document.getElementById('authPin').value.trim();
-            if (email === CONFIG.ADMIN_EMAIL && pin === CONFIG.ADMIN_PIN) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                loggedAdminEmail = email;
-                document.getElementById('authOverlay').style.display = 'none';
-            } else {
-                document.getElementById('authError').classList.remove('hidden');
-            }
+        <!-- محاسبه تبدیل ارز -->
+        <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:8px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label style="margin:0;">محاسبه تبدیل ارز:</label>
+            <div style="display:flex; gap:10px; font-size:0.8rem; font-weight:bold;">
+              <label><input type="radio" name="calcMode" value="multiply" checked onchange="calculateFinal()"> ضرب (×)</label>
+              <label><input type="radio" name="calcMode" value="divide" onchange="calculateFinal()"> تقسیم (÷)</label>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>مبلغ اولیه (اختیاری):</label>
+              <input type="number" id="amtInitial" placeholder="0" oninput="calculateFinal()">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>نرخ تبدیل:</label>
+              <input type="number" id="exchangeRate" placeholder="1" value="1" oninput="calculateFinal()">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>مبلغ نهایی (قابل ویرایش دستی):</label>
+              <input type="number" id="amtFinal" placeholder="0" style="font-weight:bold; color:var(--accent-green-dark);">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>۵. شرح / توضیحات:</label>
+          <textarea id="txDesc" placeholder="توضیحات معامله..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>۶. آدرس:</label>
+          <div style="display:flex; gap:4px;">
+            <input type="text" id="txAddress" placeholder="انتخاب یا تایپ آدرس...">
+            <button class="btn btn-secondary btn-sm" style="width:auto;" onclick="openAddressDashboardModal()">📂 لیست آدرس‌ها</button>
+          </div>
+        </div>
+
+        <!-- بخش ثبت هم‌زمان مشتری -->
+        <div style="margin: 12px 0;">
+          <button type="button" class="btn btn-warning" onclick="toggleCustomerSection()">
+            🔗 اتصال / ثبت هم‌زمان برای مشتری (اختیاری)
+          </button>
+        </div>
+
+        <div class="customer-box" id="customerBox">
+          <button type="button" class="btn btn-danger btn-sm" style="position:absolute; top:8px; left:8px; width:auto;" onclick="toggleCustomerSection()">✕ انصراف</button>
+          <h4 style="margin-bottom: 8px; color: var(--info-color);">👤 ثبت تراکنش هم‌زمان برای مشتری</h4>
+          
+          <div class="form-group" style="position:relative;">
+            <label>جستجو یا ساخت مشتری:</label>
+            <input type="text" id="custSearchInput" placeholder="نام یا شماره مشتری..." oninput="searchCustomers()">
+            <div class="search-results" id="custSearchResults" style="display:none;"></div>
+          </div>
+
+          <input type="hidden" id="selectedCustId">
+          
+          <div class="grid-2">
+            <div class="form-group">
+              <label>نام مشتری:</label>
+              <input type="text" id="custNameInput" placeholder="نام و فامیلی">
+            </div>
+            <div class="form-group">
+              <label>شماره تماس:</label>
+              <input type="text" id="custPhoneInput" placeholder="07...">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>جهت حساب مشتری:</label>
+              <select id="custDirection">
+                <option value="بدهکار">بدهکار (-)</option>
+                <option value="بستانکار">بستانکار (+)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>مبلغ تراکنش مشتری:</label>
+              <input type="number" id="custAmount" placeholder="مبلغ برای مشتری">
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px;">
+          <button class="btn" style="padding: 12px; font-size: 1rem;" onclick="saveBrokerTransaction()">
+            💾 ذخیره و ثبت نهایی معامله
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- بخش سوم: جزئیات کامل تراکنش صرافی -->
+    <div id="viewTransactionDetail" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <h3>🔍 جزئیات کامل تراکنش</h3>
+          <button class="btn btn-secondary btn-sm" onclick="switchView('viewDashboard')">← بازگشت</button>
+        </div>
+        <div id="txDetailCard" style="margin-top: 10px;"></div>
+        <div style="margin-top: 12px; display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="btn btn-warning" style="flex:1;" onclick="openEditBrokerTx()">✏️ ویرایش تراکنش</button>
+          <button class="btn btn-danger" style="flex:1;" onclick="deleteBrokerTx()">🗑️ حذف تراکنش</button>
+        </div>
+        <button class="btn btn-info" style="margin-top:6px;" onclick="sendBrokerReceiptTelegram()">📤 ارسال رسید به تلگرام صرافی</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- مدال‌ها -->
+  <div id="brokerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
+    <div class="card" style="width:100%; max-width:400px; margin:0;">
+      <h3>افزودن صرافی / کارگزار جدید</h3>
+      <div class="form-group" style="margin-top:8px;"><label>نام صرافی:</label><input type="text" id="brokerName"></div>
+      <div class="form-group"><label>تلفن تماس:</label><input type="text" id="brokerPhone" dir="ltr"></div>
+      <div class="form-group"><label>شهر:</label><input type="text" id="brokerCity"></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام صرافی:</label><input type="text" id="brokerChatId" dir="ltr" placeholder="جهت ارسال پیام خودکار..."></div>
+      <div style="display:flex; gap:6px; margin-top:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="closeBrokerModal()">انصراف</button>
+        <button class="btn btn-sm" onclick="saveBrokerInfo()">ذخیره صرافی</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
+    <div class="card" style="width:100%; max-width:380px; margin:0;">
+      <h3>⚙️ مدیریت انواع عملیات</h3>
+      <div class="form-group" style="margin-top:8px;">
+        <label>عنوان جدید:</label>
+        <div style="display:flex; gap:4px;">
+          <input type="text" id="newOpTypeInput" placeholder="مثلاً تسویه...">
+          <button class="btn btn-sm" style="width:auto;" onclick="addNewOperationType()">+ افزودن</button>
+        </div>
+      </div>
+      <div id="opTypesListContainer" style="max-height:150px; overflow-y:auto; margin:8px 0;"></div>
+      <div style="text-align:right;"><button class="btn btn-secondary btn-sm" onclick="closeOpTypeManagerModal()">بستن</button></div>
+    </div>
+  </div>
+
+  <div id="addressDashboardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
+    <div class="card" style="width:100%; max-width:450px; margin:0; max-height:85vh; overflow-y:auto;">
+      <h3>📂 مدیریت آدرس‌ها</h3>
+      <div class="form-group" style="margin-top:8px;">
+        <label>افزودن آدرس جدید:</label>
+        <div style="display:flex; gap:4px;">
+          <input type="text" id="newAddressInput" placeholder="آدرس کیف پول، صرافی یا مقصد...">
+          <button class="btn btn-sm" style="width:auto;" onclick="saveNewAddress()">+ ذخیره</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="text" id="searchAddressInput" placeholder="🔍 جستجوی آدرس‌های ذخیره‌شده..." oninput="renderSavedAddresses()">
+      </div>
+      <div id="savedAddressesList" style="max-height:200px; overflow-y:auto; margin-top:8px;"></div>
+      <div style="text-align:right; margin-top:10px;"><button class="btn btn-secondary btn-sm" onclick="closeAddressDashboardModal()">بستن</button></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
+    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
+    const MASTER_ADMIN_CHATID = "802655440";
+
+    let allBrokers = [];
+    let allAccounts = [];
+    let brokerTxs = [];
+    let customOpTypes = ["معامله", "حواله", "دریافت", "پرداخت", "تسویه"];
+    let savedAddresses = [];
+
+    let selectedDirection = null;
+    let selectedCurrency = null;
+    let selectedBrokerTxId = null;
+
+    window.onload = async function() {
+      document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
+      await loadInitialData();
+      loadSavedAddressesFromLocal();
+    };
+
+    async function loadInitialData() {
+      showSync(true);
+      try {
+        const [bRes, aRes, opRes] = await Promise.all([
+          _supabase.from('brokers').select('*'),
+          _supabase.from('accounts').select('*'),
+          _supabase.from('operation_types').select('*')
+        ]);
+        allBrokers = bRes.data || [];
+        allAccounts = aRes.data || [];
+        if (opRes.data && opRes.data.length > 0) {
+          customOpTypes = opRes.data.map(o => o.title);
         }
 
-        async function loadAllDataFromSupabase() {
-            try {
-                const [resBrokers, resTx, resAcc] = await Promise.all([
-                    supabaseClient.from('brokers').select('*'),
-                    supabaseClient.from('transactions').select('*'),
-                    supabaseClient.from('accounts').select('*')
-                ]);
+        renderBrokerSelect();
+        populateOpTypeSelect();
 
-                if (resBrokers.error) throw resBrokers.error;
-                if (resTx.error) throw resTx.error;
-                if (resAcc.error) throw resAcc.error;
+        if (allBrokers.length > 0) {
+          await loadBrokerTransactions();
+        }
+      } catch (e) { console.error(e); }
+      finally { showSync(false); }
+    }
 
-                cacheBrokers = resBrokers.data || [];
-                cacheTransactions = resTx.data || [];
-                cacheAccounts = resAcc.data || [];
+    function switchView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+      window.scrollTo(0,0);
+    }
 
-                populateBrokersDropdown();
-                populateAccountsDropdown();
-                if (activeBrokerId) {
-                    refreshUI();
-                }
-            } catch (err) {
-                console.error("خطا در ارتباط با Supabase:", err.message);
-            }
+    function renderBrokerSelect() {
+      const select = document.getElementById("selectedBrokerSelect");
+      select.innerHTML = "";
+      if (allBrokers.length === 0) {
+        select.innerHTML = "<option value=''>هیچ صرافی یافت نشد</option>";
+        return;
+      }
+      allBrokers.forEach(b => {
+        select.innerHTML += `<option value="${b.broker_id}">${b.name} (${b.city || 'شهر نامشخص'})</option>`;
+      });
+    }
+
+    async function loadBrokerTransactions() {
+      const brokerId = document.getElementById("selectedBrokerSelect").value;
+      if (!brokerId) return;
+
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(brokerId));
+      document.getElementById("mainHeaderTitle").innerText = `🏦 صرافی: ${currentBroker ? currentBroker.name : ''}`;
+
+      const { data } = await _supabase.from('broker_transactions').select('*').eq('broker_id', brokerId);
+      brokerTxs = data || [];
+      
+      renderBrokerStats();
+      renderBrokerTxList();
+    }
+
+    function onBrokerChange() {
+      loadBrokerTransactions();
+    }
+
+    function renderBrokerStats() {
+      let currencyTotals = {};
+      brokerTxs.forEach(tx => {
+        let curr = (tx.currency || 'USD').toUpperCase();
+        let dir = tx.direction || '';
+        let amt = parseFloat(tx.amount_final || tx.amount_initial) || 0;
+
+        if (!currencyTotals[curr]) currencyTotals[curr] = 0;
+        if (dir.includes("بستانکار")) currencyTotals[curr] += amt;
+        if (dir.includes("بدهکار")) currencyTotals[curr] -= amt;
+      });
+
+      const grid = document.getElementById("brokerStatsGrid");
+      grid.innerHTML = "";
+
+      if (Object.keys(currencyTotals).length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b; font-size:0.85rem;">بدون مانده فعال</div>`;
+        return;
+      }
+
+      for (let curr in currencyTotals) {
+        let net = currencyTotals[curr];
+        let color = net > 0 ? '#059669' : (net < 0 ? '#dc2626' : '#475569');
+        let status = net > 0 ? 'بستانکار' : (net < 0 ? 'بدهکار' : 'تسویه');
+        grid.innerHTML += `
+          <div class="stat-card">
+            <div style="font-size:0.8rem; font-weight:bold; color:#64748b;">${curr}</div>
+            <div style="font-size:1.05rem; font-weight:900; color:${color}; margin:4px 0;">${Math.abs(net).toLocaleString()}</div>
+            <div style="font-size:0.75rem; font-weight:bold; color:${color};">${status}</div>
+          </div>
+        `;
+      }
+    }
+
+    function setDirection(dir) {
+      selectedDirection = dir;
+      document.getElementById("btnDirCreditor").className = "btn-opt" + (dir === 'بستانکار' ? " active-creditor" : "");
+      document.getElementById("btnDirDebtor").className = "btn-opt" + (dir === 'بدهکار' ? " active-debtor" : "");
+    }
+
+    function setCurrency(curr) {
+      selectedCurrency = curr;
+      document.querySelectorAll('.btn-curr').forEach(el => {
+        el.className = "btn-opt btn-curr" + (el.innerText === curr ? " active-currency" : "");
+      });
+    }
+
+    function calculateFinal() {
+      let init = parseFloat(document.getElementById("amtInitial").value) || 0;
+      let rate = parseFloat(document.getElementById("exchangeRate").value) || 1;
+      let mode = document.querySelector('input[name="calcMode"]:checked').value;
+      
+      let finalVal = mode === 'multiply' ? (init * rate) : (rate !== 0 ? (init / rate) : 0);
+      if(init > 0) {
+        document.getElementById("amtFinal").value = finalVal.toFixed(2);
+      }
+      
+      if (!document.getElementById("custAmount").value && init > 0) {
+        document.getElementById("custAmount").value = init;
+      }
+    }
+
+    function toggleCustomerSection() {
+      const box = document.getElementById("customerBox");
+      box.style.display = box.style.display === "none" || !box.style.display ? "block" : "none";
+    }
+
+    function searchCustomers() {
+      const q = document.getElementById("custSearchInput").value.trim().toLowerCase();
+      const resContainer = document.getElementById("custSearchResults");
+      resContainer.innerHTML = "";
+
+      if (!q) { resContainer.style.display = "none"; return; }
+
+      const filtered = allAccounts.filter(a => 
+        (a.Name && a.Name.toLowerCase().includes(q)) || 
+        (a.Phone && a.Phone.includes(q))
+      );
+
+      if (filtered.length === 0) { resContainer.style.display = "none"; return; }
+
+      resContainer.style.display = "block";
+      filtered.forEach(acc => {
+        resContainer.innerHTML += `
+          <div class="search-item" onclick="selectCustomer('${acc.AccountID}', '${acc.Name}', '${acc.Phone || ''}')">
+            <b>${acc.Name}</b> (${acc.Phone || 'بدون تلفن'})
+          </div>
+        `;
+      });
+    }
+
+    function selectCustomer(id, name, phone) {
+      document.getElementById("selectedCustId").value = id;
+      document.getElementById("custNameInput").value = name;
+      document.getElementById("custPhoneInput").value = phone;
+      document.getElementById("custSearchInput").value = name;
+      document.getElementById("custSearchResults").style.display = "none";
+    }
+
+    function openAddTransactionView() {
+      document.getElementById("editBrokerTxId").value = "";
+      document.getElementById("formTitle").innerText = "📝 ثبت معامله جدید صرافی";
+      document.getElementById("amtInitial").value = "";
+      document.getElementById("exchangeRate").value = "1";
+      document.getElementById("amtFinal").value = "";
+      document.getElementById("txDesc").value = "";
+      document.getElementById("txAddress").value = "";
+      document.getElementById("custSearchInput").value = "";
+      document.getElementById("custNameInput").value = "";
+      document.getElementById("custPhoneInput").value = "";
+      document.getElementById("selectedCustId").value = "";
+      document.getElementById("customerBox").style.display = "none";
+      
+      selectedDirection = null;
+      selectedCurrency = null;
+      document.getElementById("btnDirCreditor").className = "btn-opt";
+      document.getElementById("btnDirDebtor").className = "btn-opt";
+      document.querySelectorAll('.btn-curr').forEach(el => el.className = "btn-opt btn-curr");
+
+      switchView('viewTransactionForm');
+    }
+
+    async function saveBrokerTransaction() {
+      const brokerId = document.getElementById("selectedBrokerSelect").value;
+      if (!brokerId) { alert("لطفاً یک صرافی را انتخاب کنید"); return; }
+      if (!selectedDirection) { alert("لطفاً جهت معامله صرافی را مشخص کنید!"); return; }
+      if (!selectedCurrency) { alert("لطفاً ارز معامله را انتخاب کنید!"); return; }
+
+      const amtInit = parseFloat(document.getElementById("amtInitial").value) || 0;
+      const amtFin = parseFloat(document.getElementById("amtFinal").value) || amtInit;
+      
+      if (amtFin <= 0) { alert("مبلغ نهایی معتبر نیست"); return; }
+
+      const txDate = document.getElementById("txDate").value;
+      const opType = document.getElementById("txOpType").value;
+      const rate = parseFloat(document.getElementById("exchangeRate").value) || 1;
+      const desc = document.getElementById("txDesc").value;
+      const address = document.getElementById("txAddress").value;
+      const editId = document.getElementById("editBrokerTxId").value;
+
+      showSync(true);
+
+      const brokerTxObj = {
+        broker_tx_id: editId ? editId : ("BTX-" + Math.floor(10000000 + Math.random() * 90000000)),
+        broker_id: brokerId,
+        date: txDate,
+        operation_type: opType,
+        direction: selectedDirection,
+        currency: selectedCurrency,
+        amount_initial: amtInit,
+        exchange_rate: rate,
+        amount_final: amtFin,
+        description: desc,
+        address_dashboard: address
+      };
+
+      let queryResult;
+      if (editId) {
+        queryResult = await _supabase.from('broker_transactions').update(brokerTxObj).eq('broker_tx_id', editId);
+      } else {
+        queryResult = await _supabase.from('broker_transactions').insert([brokerTxObj]);
+      }
+
+      if (queryResult.error) {
+        alert("خطا در ثبت صرافی: " + queryResult.error.message);
+        showSync(false);
+        return;
+      }
+
+      // ثبت هم‌زمان مشتری
+      const custBoxVisible = document.getElementById("customerBox").style.display === "block";
+      const custName = document.getElementById("custNameInput").value.trim();
+      let targetCustId = document.getElementById("selectedCustId").value;
+      let targetCustChatId = "";
+
+      if (custBoxVisible && custName && !editId) {
+        if (!targetCustId) {
+          targetCustId = "ACC-" + Math.floor(100000 + Math.random() * 900000);
+          await _supabase.from('accounts').insert([{
+            AccountID: targetCustId,
+            Name: custName,
+            Phone: document.getElementById("custPhoneInput").value.trim(),
+            CreatedBy: "master_owner"
+          }]);
+        } else {
+          let foundAcc = allAccounts.find(a => String(a.AccountID) === String(targetCustId));
+          if (foundAcc) targetCustChatId = foundAcc.ChatID || "";
         }
 
-        function populateBrokersDropdown() {
-            const select = document.getElementById('selectBroker');
-            select.innerHTML = '';
-            if (cacheBrokers.length === 0) {
-                select.innerHTML = '<option value="">هیچ صرافی‌ای یافت نشد</option>';
-                activeBrokerId = null;
-                updateBrokerMeta();
-                return;
-            }
-            cacheBrokers.forEach(b => {
-                // استفاده از ستون name به جای broker_name
-                const bName = b.name || b.broker_name || 'بدون نام';
-                select.innerHTML += `<option value="${b.broker_id}">${bName} (${b.city || 'نامشخص'})</option>`;
-            });
-            if (!activeBrokerId || !cacheBrokers.some(b => String(b.broker_id) === String(activeBrokerId))) {
-                activeBrokerId = cacheBrokers[0].broker_id;
-            }
-            select.value = activeBrokerId;
-            updateBrokerMeta();
-            refreshUI();
-        }
+        const custAmt = parseFloat(document.getElementById("custAmount").value) || amtFin;
+        const custDir = document.getElementById("custDirection").value;
 
-        function onBrokerSelected() {
-            activeBrokerId = document.getElementById('selectBroker').value;
-            updateBrokerMeta();
-            refreshUI();
-        }
+        await _supabase.from('transactions').insert([{
+          TransID: "TX-" + Math.floor(10000000 + Math.random() * 90000000),
+          AccountID: targetCustId,
+          Direction: custDir,
+          Amount: custAmt,
+          Currency: selectedCurrency,
+          OperationType: opType,
+          Description: desc + (address ? ` | آدرس: ${address}` : ''),
+          Date: new Date(txDate).toISOString()
+        }]);
+      }
 
-        function updateBrokerMeta() {
-            const b = cacheBrokers.find(x => String(x.broker_id) === String(activeBrokerId));
-            document.getElementById('infoBrokerId').innerText = activeBrokerId || '-';
-            document.getElementById('infoPhone').innerText = b ? (b.phone || '-') : '-';
-            document.getElementById('infoCity').innerText = b ? (b.city || '-') : '-';
-        }
+      // اعلان تلگرام
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(brokerId));
+      let msgText = `🏦 *معامله صرافی* (${editId ? 'ویرایش' : 'جدید'})\n\n` +
+                    `🏛️ صرافی: *${currentBroker ? currentBroker.name : ''}*\n` +
+                    `🔹 نوع: *${opType}* (${selectedDirection})\n` +
+                    `💰 مبلغ: *${amtFin.toLocaleString()} ${selectedCurrency}*\n` +
+                    `🔀 نرخ: *${rate}*\n` +
+                    `📅 تاریخ: ${txDate}\n` +
+                    `📝 شرح: ${desc || '-'}\n` +
+                    `📍 آدرس: ${address || '-'}`;
 
-        function populateAccountsDropdown() {
-            const select = document.getElementById('txAccountID');
-            select.innerHTML = '<option value="">انتخاب حساب امانی...</option>';
-            cacheAccounts.forEach(acc => {
-                select.innerHTML += `<option value="${acc.AccountID}">${acc.Name} (کد: ${acc.AccountID})</option>`;
-            });
-        }
+      sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
+      if (currentBroker && currentBroker.chatid) sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
+      if (targetCustChatId) sendTelegramMessage(MASTER_ADMIN_TOKEN, targetCustChatId, msgText);
 
-        function refreshUI() {
-            renderBalances();
-            renderLedger();
-            renderReports();
-        }
+      alert("✅ معامله با موفقیت ثبت شد!");
+      switchView('viewDashboard');
+      await loadBrokerTransactions();
+      showSync(false);
+    }
 
-        function setTxCurrency(curr) {
-            document.getElementById('txCurrencyVal').value = curr;
-            ['USD', 'AFN', 'IQD', 'تومان'].forEach(c => {
-                const btn = document.getElementById(`cur${c === 'تومان' ? 'TMN' : c}`);
-                if (btn) btn.className = "currency-btn py-2 rounded-lg text-[11px] font-black " + (c === curr ? "active" : "");
-            });
-        }
+    function renderBrokerTxList() {
+      const container = document.getElementById("brokerTxList");
+      document.getElementById("txCountBadge").innerText = `${brokerTxs.length} تراکنش`;
+      container.innerHTML = "";
 
-        async function handleCreateBroker(e) {
-            e.preventDefault();
-            const name = document.getElementById('newBrokerName').value;
-            const phone = document.getElementById('newBrokerPhone').value;
-            const city = document.getElementById('newBrokerCity').value;
-            const newId = 'BRK-' + Math.floor(1000 + Math.random() * 9000);
+      if (brokerTxs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ تراکنشی ثبت نشده است.</div>`;
+        return;
+      }
 
-            // ذخیره نام با ستون name
-            const { data, error } = await supabaseClient.from('brokers').insert([{
-                broker_id: newId,
-                name: name,
-                phone: phone,
-                city: city
-            }]).select();
+      brokerTxs.slice().reverse().forEach((tx, idx) => {
+        let txNum = brokerTxs.length - idx;
+        let dirColor = tx.direction === 'بستانکار' ? '#059669' : '#dc2626';
+        container.innerHTML += `
+          <div class="tx-item" onclick="selectBrokerTx('${tx.broker_tx_id}')">
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+              <span>تراکنش #${txNum} - ${tx.operation_type} (${tx.date})</span>
+              <span style="color:${dirColor};">${tx.direction}</span>
+            </div>
+            <div style="font-size:0.85rem; margin-top:4px;">
+              مبلغ: <b>${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}</b>
+            </div>
+            ${tx.description ? `<div style="font-size:0.78rem; color:#475569; margin-top:2px;">شرح: ${tx.description}</div>` : ''}
+          </div>
+        `;
+      });
+    }
 
-            if (error) {
-                alert("خطا در ثبت صرافی: " + error.message);
-                return;
-            }
+    function selectBrokerTx(txId) {
+      selectedBrokerTxId = txId;
+      const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(txId));
+      if (!tx) return;
 
-            closeModal('modalNewBroker');
-            document.getElementById('newBrokerName').value = '';
-            document.getElementById('newBrokerPhone').value = '';
-            document.getElementById('newBrokerCity').value = '';
-            await loadAllDataFromSupabase();
-            if (data && data.length > 0) {
-                activeBrokerId = data[0].broker_id;
-                document.getElementById('selectBroker').value = activeBrokerId;
-                onBrokerSelected();
-            }
-            alert("صرافی با موفقیت اضافه شد!");
-        }
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(tx.broker_id));
 
-        async function handleTransactionSubmit(e) {
-            e.preventDefault();
-            if (!activeBrokerId) return alert("لطفاً صرافی فعالی را انتخاب کنید!");
+      document.getElementById("txDetailCard").innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>کد تراکنش:</span><b>${tx.broker_tx_id}</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>تاریخ:</span><b>${tx.date}</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>صرافی:</span><b>${currentBroker ? currentBroker.name : ''}</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>نوع عملیات:</span><b>${tx.operation_type} (${tx.direction})</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>مبلغ اولیه:</span><b>${(tx.amount_initial || 0).toLocaleString()} ${tx.currency}</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>نرخ تبدیل:</span><b>${tx.exchange_rate}</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>مبلغ نهایی:</span><b>${(tx.amount_final || 0).toLocaleString()}</b></div>
+        <div style="margin-top:6px; background:#f1f5f9; padding:6px; border-radius:6px;"><b>توضیحات:</b> ${tx.description || 'بدون شرح'}</div>
+        ${tx.address_dashboard ? `<div style="margin-top:4px; color:#0284c7; font-size:0.85rem;"><b>آدرس:</b> ${tx.address_dashboard}</div>` : ''}
+      `;
 
-            const txIdEdit = document.getElementById('editingTxId').value;
-            const brokerObj = cacheBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
-            const bName = brokerObj ? (brokerObj.name || brokerObj.broker_name || 'صرافی') : 'صرافی';
+      switchView('viewTransactionDetail');
+    }
 
-            // ثبت مستقیم در جدول transactions با استفاده از نام صرافی در Description یا اطلاعات مربوطه
-            const payload = {
-                AccountID: document.getElementById('txAccountID').value || null,
-                Description: `[صرافی: ${bName}] ` + (document.getElementById('txDescription').value || ''),
-                Currency: document.getElementById('txCurrencyVal').value,
-                Amount: parseFloat(document.getElementById('txAmount').value) || 0,
-                Direction: document.getElementById('txDirection').value,
-                OperationType: document.getElementById('txOperationType').value,
-                AssignedUserEmail: loggedAdminEmail,
-                Date: document.getElementById('txDate').value
-            };
+    function openEditBrokerTx() {
+      const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
+      if (!tx) return;
 
-            let error;
-            if (txIdEdit) {
-                const res = await supabaseClient.from('transactions').update(payload).eq('TransID', txIdEdit);
-                error = res.error;
-            } else {
-                const res = await supabaseClient.from('transactions').insert([payload]);
-                error = res.error;
-            }
+      document.getElementById("editBrokerTxId").value = tx.broker_tx_id;
+      document.getElementById("formTitle").innerText = "✏️ ویرایش معامله صرافی";
+      document.getElementById("txDate").value = tx.date;
+      document.getElementById("txOpType").value = tx.operation_type;
+      document.getElementById("amtInitial").value = tx.amount_initial;
+      document.getElementById("exchangeRate").value = tx.exchange_rate;
+      document.getElementById("amtFinal").value = tx.amount_final;
+      document.getElementById("txDesc").value = tx.description || "";
+      document.getElementById("txAddress").value = tx.address_dashboard || "";
 
-            if (error) {
-                alert("خطا در ذخیره تراکنش: " + error.message);
-                return;
-            }
+      setDirection(tx.direction);
+      setCurrency(tx.currency);
+      document.getElementById("customerBox").style.display = "none";
 
-            resetTxForm();
-            await loadAllDataFromSupabase();
-            alert("تراکنش با موفقیت در جدول transactions ثبت شد!");
-        }
+      switchView('viewTransactionForm');
+    }
 
-        function resetTxForm() {
-            document.getElementById('editingTxId').value = '';
-            document.getElementById('txAmount').value = '';
-            document.getElementById('txDescription').value = '';
-            document.getElementById('formModeLabel').innerText = "ثبت جدید";
-            document.getElementById('btnCancelEdit').classList.add('hidden');
-            setTxCurrency('USD');
-        }
+    async function deleteBrokerTx() {
+      if (!confirm("آیا از حذف این تراکنش مطمئن هستید؟")) return;
+      showSync(true);
+      await _supabase.from('broker_transactions').delete().eq('broker_tx_id', selectedBrokerTxId);
+      await loadBrokerTransactions();
+      switchView('viewDashboard');
+      showSync(false);
+      alert("✅ تراکنش حذف شد.");
+    }
 
-        function renderBalances() {
-            const totals = { 'USD': 0, 'AFN': 0, 'IQD': 0, 'تومان': 0 };
-            const brokerObj = cacheBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
-            const bName = brokerObj ? (brokerObj.name || brokerObj.broker_name || '') : '';
+    function sendBrokerReceiptTelegram() {
+      const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(document.getElementById("selectedBrokerSelect").value));
+      if (!tx || !currentBroker || !currentBroker.chatid) {
+        alert("چت‌آیدی تلگرام برای این صرافی ثبت نشده است.");
+        return;
+      }
+      let receiptText = `📜 *رسید معامله صرافی*\n\nتاریخ: ${tx.date}\nنوع: ${tx.operation_type} (${tx.direction})\nمبلغ: ${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}\nشرح: ${tx.description || '-'}`;
+      sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, receiptText);
+      alert("✅ رسید با موفقیت به تلگرام صرافی ارسال شد!");
+    }
 
-            cacheTransactions.forEach(t => {
-                const desc = t.Description || '';
-                // فیلتر تراکنش‌های مربوط به این صرافی بر اساس نام آن در توضیحات
-                if (bName && desc.includes(`[صرافی: ${bName}]`)) {
-                    const curr = String(t.Currency || 'USD').toUpperCase();
-                    const amt = parseFloat(t.Amount) || 0;
-                    if (totals[curr] !== undefined) {
-                        if (t.Direction === 'In') totals[curr] += amt;
-                        else if (t.Direction === 'Out') totals[curr] -= amt;
-                        else totals[curr] += amt;
-                    }
-                }
-            });
+    function openBrokerModal() { document.getElementById("brokerModal").style.display = "flex"; }
+    function closeBrokerModal() { document.getElementById("brokerModal").style.display = "none"; }
+    async function saveBrokerInfo() {
+      const name = document.getElementById("brokerName").value.trim();
+      if (!name) { alert("نام صرافی الزامی است"); return; }
+      const brokerObj = {
+        broker_id: "BRK-" + Math.floor(1000 + Math.random() * 9000),
+        name: name,
+        phone: document.getElementById("brokerPhone").value.trim(),
+        city: document.getElementById("brokerCity").value.trim(),
+        chatid: document.getElementById("brokerChatId").value.trim()
+      };
+      await _supabase.from('brokers').insert([brokerObj]);
+      closeBrokerModal();
+      await loadInitialData();
+    }
 
-            document.getElementById('balUSD').innerText = totals['USD'].toLocaleString();
-            document.getElementById('balAFN').innerText = totals['AFN'].toLocaleString();
-            document.getElementById('balIQD').innerText = totals['IQD'].toLocaleString();
-            document.getElementById('balTMN').innerText = totals['تومان'].toLocaleString();
-        }
+    function populateOpTypeSelect() {
+      const select = document.getElementById("txOpType");
+      select.innerHTML = "";
+      customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
+    }
+    function openOpTypeManagerModal() { renderOpTypesList(); document.getElementById("opTypeManagerModal").style.display = "flex"; }
+    function closeOpTypeManagerModal() { document.getElementById("opTypeManagerModal").style.display = "none"; }
+    function renderOpTypesList() {
+      const container = document.getElementById("opTypesListContainer");
+      container.innerHTML = "";
+      customOpTypes.forEach(op => {
+        container.innerHTML += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #eee;"><span>${op}</span><button class="btn btn-danger btn-sm" onclick="removeOpType('${op}')">حذف</button></div>`;
+      });
+    }
+    async function addNewOperationType() {
+      const val = document.getElementById("newOpTypeInput").value.trim();
+      if (!val || customOpTypes.includes(val)) return;
+      customOpTypes.push(val);
+      populateOpTypeSelect();
+      renderOpTypesList();
+      document.getElementById("newOpTypeInput").value = "";
+      await _supabase.from('operation_types').insert([{ title: val }]);
+    }
+    async function removeOpType(op) {
+      customOpTypes = customOpTypes.filter(o => o !== op);
+      populateOpTypeSelect();
+      renderOpTypesList();
+      await _supabase.from('operation_types').delete().eq('title', op);
+    }
 
-        function renderLedger() {
-            const tbody = document.getElementById('ledgerTableBody');
-            tbody.innerHTML = '';
-            const query = (document.getElementById('searchLedger').value || '').toLowerCase().trim();
-            const brokerObj = cacheBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
-            const bName = brokerObj ? (brokerObj.name || brokerObj.broker_name || '') : '';
+    function loadSavedAddressesFromLocal() {
+      let saved = localStorage.getItem("savedBrokerAddresses");
+      savedAddresses = saved ? JSON.parse(saved) : ["آدرس پیش‌فرض صرافی مرکزی", "کیف پول تتر TRC20"];
+    }
+    function saveAddressesToLocal() {
+      localStorage.setItem("savedBrokerAddresses", JSON.stringify(savedAddresses));
+    }
+    function openAddressDashboardModal() { renderSavedAddresses(); document.getElementById("addressDashboardModal").style.display = "flex"; }
+    function closeAddressDashboardModal() { document.getElementById("addressDashboardModal").style.display = "none"; }
+    function renderSavedAddresses() {
+      const q = document.getElementById("searchAddressInput").value.trim().toLowerCase();
+      const container = document.getElementById("savedAddressesList");
+      container.innerHTML = "";
+      let filtered = savedAddresses.filter(a => a.toLowerCase().includes(q));
+      if (filtered.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; font-size:0.85rem;">آدرسی یافت نشد</div>`; return; }
+      filtered.forEach(addr => {
+        container.innerHTML += `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:6px 8px; border-radius:6px; margin-bottom:4px;">
+            <span style="cursor:pointer; flex:1;" onclick="selectAddress('${addr}')">${addr}</span>
+            <button class="btn btn-danger btn-sm" onclick="deleteAddress('${addr}')">حذف</button>
+          </div>
+        `;
+      });
+    }
+    function selectAddress(addr) {
+      document.getElementById("txAddress").value = addr;
+      closeAddressDashboardModal();
+    }
+    function saveNewAddress() {
+      const val = document.getElementById("newAddressInput").value.trim();
+      if (!val || savedAddresses.includes(val)) return;
+      savedAddresses.push(val);
+      saveAddressesToLocal();
+      document.getElementById("newAddressInput").value = "";
+      renderSavedAddresses();
+    }
+    function deleteAddress(addr) {
+      savedAddresses = savedAddresses.filter(a => a !== addr);
+      saveAddressesToLocal();
+      renderSavedAddresses();
+    }
 
-            const txs = cacheTransactions.filter(t => {
-                const desc = t.Description || '';
-                if (!bName || !desc.includes(`[صرافی: ${bName}]`)) return false;
-                if (!query) return true;
-                return desc.toLowerCase().includes(query);
-            }).slice().reverse();
+    async function sendTelegramMessage(botToken, chatId, messageText) {
+      if (!botToken || !chatId) return;
+      try {
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: 'Markdown' })
+        });
+      } catch (err) { console.log("خطا تلگرام:", err); }
+    }
 
-            document.getElementById('ledgerCount').innerText = txs.length;
-            if (txs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">تراکنشی یافت نشد.</td></tr>';
-                return;
-            }
-
-            txs.forEach(t => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold">${t.Date || '-'}</td>
-                        <td class="p-3 font-black text-emerald-700">${(parseFloat(t.Amount)||0).toLocaleString()}</td>
-                        <td class="p-3 font-bold text-indigo-700">${t.Currency || ''}</td>
-                        <td class="p-3">${t.Direction || '-'}</td>
-                        <td class="p-3 text-slate-600">${t.Description || '-'}</td>
-                        <td class="p-3 text-center space-x-1">
-                            <button onclick="editTx('${t.TransID}')" class="bg-amber-50 text-amber-700 p-1.5 rounded-lg"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                            <button onclick="deleteTx('${t.TransID}')" class="bg-red-50 text-red-700 p-1.5 rounded-lg"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function editTx(id) {
-            const t = cacheTransactions.find(x => String(x.TransID) === String(id));
-            if (!t) return;
-            document.getElementById('editingTxId').value = t.TransID;
-            document.getElementById('txDate').value = t.Date || '';
-            document.getElementById('txAmount').value = t.Amount || '';
-            document.getElementById('txDirection').value = t.Direction || 'In';
-            document.getElementById('txOperationType').value = t.OperationType || 'BrokerExchange';
-            document.getElementById('txDescription').value = t.Description || '';
-            document.getElementById('txAccountID').value = t.AccountID || '';
-            setTxCurrency(t.Currency || 'USD');
-            document.getElementById('formModeLabel').innerText = "ویرایش";
-            document.getElementById('btnCancelEdit').classList.remove('hidden');
-            switchTab('form');
-        }
-
-        async function deleteTx(id) {
-            if (!confirm("آیا از حذف این تراکنش مطمئن هستید؟")) return;
-            const { error } = await supabaseClient.from('transactions').delete().eq('TransID', id);
-            if (error) {
-                alert("خطا در حذف: " + error.message);
-                return;
-            }
-            await loadAllDataFromSupabase();
-        }
-
-        function renderReports() {
-            const container = document.getElementById('reportsList');
-            const brokerObj = cacheBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
-            const bName = brokerObj ? (brokerObj.name || brokerObj.broker_name || '') : '';
-
-            let count = 0;
-            let totalUSD = 0;
-
-            cacheTransactions.forEach(t => {
-                const desc = t.Description || '';
-                if (bName && desc.includes(`[صرافی: ${bName}]`)) {
-                    count++;
-                    if (String(t.Currency).toUpperCase() === 'USD') {
-                        totalUSD += parseFloat(t.Amount) || 0;
-                    }
-                }
-            });
-
-            container.innerHTML = `
-                <div class="flex justify-between bg-slate-50 p-2.5 rounded-xl border"><span>نام صرافی:</span> <b class="text-indigo-600">${bName || '-'}</b></div>
-                <div class="flex justify-between bg-slate-50 p-2.5 rounded-xl border"><span>تعداد کل تراکنش‌ها:</span> <b class="text-slate-800">${count}</b></div>
-                <div class="flex justify-between bg-slate-50 p-2.5 rounded-xl border"><span>مجموع دلاری:</span> <b class="text-emerald-700">${totalUSD.toLocaleString()} USD</b></div>
-            `;
-        }
-
-        function switchTab(tab) {
-            ['form', 'ledger', 'reports'].forEach(t => {
-                document.getElementById(`pane${t.charAt(0).toUpperCase() + t.slice(1)}`).className = "tab-pane " + (t === tab ? "active" : "");
-                document.getElementById(`btnTab${t.charAt(0).toUpperCase() + t.slice(1)}`).className = "tab-nav-btn py-2.5 px-4 flex items-center gap-1.5 " + (t === tab ? "active" : "");
-            });
-        }
-
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    </script>
+    function showSync(show) {
+      document.getElementById("syncIndicator").style.display = show ? "block" : "none";
+    }
+  </script>
 </body>
 </html>
