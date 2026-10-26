@@ -412,7 +412,6 @@
     let selectedBrokerTxId = null;
     let activeBrokerId = null;
 
-    // سیستم بازخورد صوتی و لرزشی (Audio & Haptic Feedback)
     function playBeep(type = 'click') {
       try {
         if ("vibrate" in navigator) {
@@ -749,6 +748,7 @@
       switchView('viewTransactionForm');
     }
 
+    // طراحی فوق‌العاده زیبا و بولد شده برای تلگرام (با استفاده صحیح از Markdown برای خوانایی عالی)
     function generateVerticalBalanceReport() {
       let currencyTotals = {};
       brokerTxs.forEach(tx => {
@@ -761,18 +761,18 @@
         if (dir === 'بدهکار') currencyTotals[curr].debtor += amt;
       });
 
-      let reportLines = ["\nگزارش عمودی مانده حساب‌ها:"];
+      let reportLines = ["\n📊 *گزارش عمودی مانده حساب‌ها:*"];
       for (let curr in currencyTotals) {
         let cred = currencyTotals[curr].creditor;
         let debt = currencyTotals[curr].debtor;
         let net = cred - debt;
         let statusText = net >= 0 ? "بستانکار" : "بدهکار";
         
-        reportLines.push(`ارز ${curr}:`);
-        reportLines.push(`  • کل بستانکار: ${cred.toLocaleString()}`);
-        reportLines.push(`  • کل بدهکار: ${debt.toLocaleString()}`);
-        reportLines.push(`  • مانده نهایی: ${Math.abs(net).toLocaleString()} ${curr} (${statusText})`);
-        reportLines.push(`---------------------------`);
+        reportLines.push(`🔹 *ارز ${curr}:*`);
+        reportLines.push(`  • کل بستانکار: \`${cred.toLocaleString()}\``);
+        reportLines.push(`  • کل بدهکار: \`${debt.toLocaleString()}\``);
+        reportLines.push(`  • مانده نهایی: *${Math.abs(net).toLocaleString()} ${curr} (${statusText})*`);
+        reportLines.push(`-----------------------------------`);
       }
 
       return reportLines.join("\n");
@@ -782,20 +782,23 @@
       let verticalReport = generateVerticalBalanceReport();
       let brokerTitle = currentBroker ? currentBroker.name : 'صرافی';
 
-      let msgText = `${actionHeader}
-حساب با صرافی: ${brokerTitle}
-شماره تراکنش: ${txObj.broker_tx_id}
-${diffText ? `تغییرات انجام شده:\n${diffText}\n` : ''}
-اطلاعات کامل تراکنش:
-• نوع عملیات: ${txObj.operation_type} (${txObj.direction})
-• مبلغ نهایی: ${(txObj.amount_final || txObj.amount_initial || 0).toLocaleString()} ${txObj.currency}${txObj.exchange_rate && txObj.exchange_rate !== 1 ? `\n• مبلغ اولیه: ${(txObj.amount_initial || 0).toLocaleString()} (نرخ: ${txObj.exchange_rate})` : ''}
-• تاریخ: ${txObj.date}
-• شرح: ${txObj.description || '-'}
-• آدرس مقصد: ${txObj.address_dashboard || '-'}
+      // استفاده از قالب‌بندی کاملاً بولد و برجسته (Markdown استاندارد تلگرام)
+      let msgText = `🔔 *${actionHeader}*
+🏛️ حساب با صرافی: *${brokerTitle}*
+🆔 شماره تراکنش: \`${txObj.broker_tx_id}\`
+${diffText ? `\n📝 *تغییرات انجام شده:*\n_${diffText}_\n` : ''}
+📌 *اطلاعات کامل تراکنش:*
+• نوع عملیات: *${txObj.operation_type} (${txObj.direction})*
+• مبلغ نهایی: *${(txObj.amount_final || txObj.amount_initial || 0).toLocaleString()} ${txObj.currency}*${txObj.exchange_rate && txObj.exchange_rate !== 1 ? `\n• مبلغ اولیه: ${(txObj.amount_initial || 0).toLocaleString()} (نرخ: ${txObj.exchange_rate})` : ''}
+• تاریخ: \`${txObj.date}\`
+• شرح: _${txObj.description || '-'}_
+• آدرس مقصد: _${txObj.address_dashboard || '-'}_
 ${verticalReport}`;
 
+      // ارسال برای مدیریت کل با حالت Markdown
       await sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
 
+      // ارسال اختصاصی برای صرافی (گروه، کانال یا شخصی)
       if (currentBroker && currentBroker.chatid) {
         await sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
       }
@@ -856,11 +859,7 @@ ${verticalReport}`;
 
           let currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
           if (currentBroker && currentBroker.chatid) {
-            let openAccMsg = `حساب شما افتتاح شد
-حساب با صرافی: ${currentBroker.name}
-نام مشتری: ${custName}
-تاریخ افتتاح: ${new Date().toISOString().split('T')[0]}
-تراکنش‌های ثبت‌شده از زمان افتتاح حساب و مانده حساب فعال شد.`;
+            let openAccMsg = `🎉 *حساب شما افتتاح شد*\n🏛️ صرافی: *${currentBroker.name}*\n👤 نام مشتری: *${custName}*\n📅 تاریخ افتتاح: \`${new Date().toISOString().split('T')[0]}\`\n_تراکنش‌های ثبت‌شده از زمان افتتاح حساب و مانده حساب فعال شد._`;
             sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, openAccMsg);
           }
         }
@@ -898,15 +897,15 @@ ${verticalReport}`;
       
       if (editId && oldTx) {
         let diffs = [];
-        if (oldTx.operation_type !== opType) diffs.push(`نوع عملیات از (${oldTx.operation_type}) به (${opType}) تبدیل شد`);
-        if (oldTx.direction !== selectedDirection) diffs.push(`جهت از (${oldTx.direction}) به (${selectedDirection}) تبدیل شد`);
+        if (oldTx.operation_type !== opType) diffs.push(`نوع عملیات از (${oldTx.operation_type}) به (${opType}) تغییر کرد`);
+        if (oldTx.direction !== selectedDirection) diffs.push(`جهت از (${oldTx.direction}) به (${selectedDirection}) تغییر کرد`);
         if (parseFloat(oldTx.amount_final || oldTx.amount_initial) !== amtFin) diffs.push(`مبلغ از (${oldTx.amount_final || oldTx.amount_initial}) به (${amtFin}) تغییر کرد`);
         if (oldTx.description !== desc) diffs.push(`توضیحات ویرایش شد`);
         if (oldTx.address_dashboard !== address) diffs.push(`آدرس مقصد ویرایش شد`);
         
-        await notifyTelegramSmart("✏️ تراکنش ویرایش شد", brokerTxObj, currentBroker, diffs.join("، "));
+        await notifyTelegramSmart("تراکنش ویرایش شد ✏️", brokerTxObj, currentBroker, diffs.join("، "));
       } else {
-        await notifyTelegramSmart("🏦 تراکنش جدید اضافه شد", brokerTxObj, currentBroker);
+        await notifyTelegramSmart("تراکنش جدید اضافه شد 🏦", brokerTxObj, currentBroker);
       }
 
       playBeep('success');
@@ -967,7 +966,7 @@ ${verticalReport}`;
 
       if (tx) {
         const currentBroker = allBrokers.find(b => String(b.broker_id) === String(tx.broker_id));
-        await notifyTelegramSmart("🗑️ تراکنش حذف شد", tx, currentBroker, `تراکنش شماره ${tx.broker_tx_id} به مبلغ ${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency} حذف گردید.`);
+        await notifyTelegramSmart("تراکنش حذف شد 🗑️", tx, currentBroker, `تراکنش شماره ${tx.broker_tx_id} به مبلغ ${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency} حذف گردید.`);
       }
 
       playBeep('success');
@@ -1155,7 +1154,7 @@ ${verticalReport}`;
         await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: messageText })
+          body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: 'Markdown' })
         });
       } catch (err) { console.log(err); }
     }
