@@ -19,58 +19,62 @@
       --warning-color: #f59e0b;
       --info-color: #0284c7;
       --radius-md: 12px;
-      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      --shadow-card: 0 8px 20px -4px rgba(0, 0, 0, 0.06);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; direction: rtl; }
-    body { background: var(--bg-main); color: var(--text-main); padding: 10px; font-size: 14px; min-height: 100vh; padding-bottom: 60px; }
+    body { background: var(--bg-main); color: var(--text-main); padding: 8px; font-size: 14px; min-height: 100vh; padding-bottom: 70px; }
 
     .container { max-width: 900px; margin: 0 auto; }
-    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 14px; border: 1px solid rgba(226, 232, 240, 0.8); margin-bottom: 14px; box-shadow: var(--shadow-card); }
-    .card-header { background: var(--primary-gradient); color: #fff; padding: 12px 16px; border-radius: 10px; margin: -14px -14px 14px -14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); }
+    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 12px; border: 1px solid rgba(226, 232, 240, 0.8); margin-bottom: 12px; box-shadow: var(--shadow-card); }
+    .card-header { background: var(--primary-gradient); color: #fff; padding: 10px 14px; border-radius: 10px; margin: -12px -12px 12px -12px; display: flex; justify-content: space-between; align-items: center; }
     
-    h3 { font-size: 1.05rem; font-weight: 800; }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 5px; color: #334155; }
-    input, select, textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; outline: none; background: #fff; transition: all 0.2s; }
+    h3 { font-size: 1rem; font-weight: 800; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; color: #334155; }
+    input, select, textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; outline: none; background: #fff; transition: all 0.2s; }
     input:focus, select:focus, textarea:focus { border-color: var(--accent-green-dark); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
     
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
-    .btn { padding: 10px 14px; background: var(--accent-green-dark); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; text-align: center; font-size: 0.88rem; display: inline-flex; justify-content: center; align-items: center; gap: 6px; width: 100%; text-decoration: none; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2); }
+    .btn { padding: 9px 12px; background: var(--accent-green-dark); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; text-align: center; font-size: 0.85rem; display: inline-flex; justify-content: center; align-items: center; gap: 5px; width: 100%; text-decoration: none; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2); }
     .btn-secondary { background: #475569; box-shadow: 0 4px 10px rgba(71, 85, 105, 0.2); }
     .btn-warning { background: var(--warning-color); color: #fff; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); }
     .btn-danger { background: var(--danger-color); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
     .btn-info { background: var(--info-color); box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2); }
-    .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; }
+    
+    .btn-xs { padding: 4px 8px; font-size: 0.72rem; width: auto; border-radius: 6px; }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; width: auto; }
+
+    .btn-narrow-action { padding: 8px 14px; font-size: 0.85rem; font-weight: 800; border-radius: 20px; background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 
     .radio-group { display: flex; gap: 6px; }
-    .btn-opt { flex: 1; padding: 10px; text-align: center; background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.88rem; user-select: none; color: #475569; transition: all 0.2s; }
-    .btn-opt.active-creditor { background: #10b981 !important; border-color: #059669 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
-    .btn-opt.active-debtor { background: #ef4444 !important; border-color: #dc2626 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
-    .btn-opt.active-currency { background: #0284c7 !important; border-color: #0369a1 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
-    .btn-opt.active-mode { background: #f59e0b !important; border-color: #d97706 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+    .btn-opt { flex: 1; padding: 9px; text-align: center; background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.85rem; user-select: none; color: #475569; transition: all 0.2s; }
+    .btn-opt.active-creditor { background: #10b981 !important; border-color: #059669 !important; color: #ffffff !important; }
+    .btn-opt.active-debtor { background: #ef4444 !important; border-color: #dc2626 !important; color: #ffffff !important; }
+    .btn-opt.active-currency { background: #0284c7 !important; border-color: #0369a1 !important; color: #ffffff !important; }
+    .btn-opt.active-mode { background: #f59e0b !important; border-color: #d97706 !important; color: #ffffff !important; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 10px; }
-    .stat-card { background: linear-gradient(145deg, #ffffff, #f8fafc); border: 1.5px solid var(--border-color); border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-top: 8px; }
+    .stat-card { background: linear-gradient(145deg, #ffffff, #f8fafc); border: 1.5px solid var(--border-color); border-radius: 10px; padding: 8px; text-align: center; }
 
-    .customer-box { background: #f0f9ff; border: 1.5px dashed var(--info-color); padding: 12px; border-radius: 10px; margin-top: 12px; display: none; position: relative; }
-    .tx-item { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; transform: translateY(-1px); }
+    .customer-box { background: #f0f9ff; border: 1.5px dashed var(--info-color); padding: 10px; border-radius: 10px; margin-top: 10px; display: none; position: relative; }
+    .tx-item { background: #fff; border: 1px solid var(--border-color); padding: 10px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+    .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; }
     
-    .highlight-amount { color: #059669 !important; font-size: 1.25rem !important; font-weight: 900 !important; }
+    .highlight-amount { color: #059669 !important; font-size: 1.2rem !important; font-weight: 900 !important; }
 
-    .search-results { background: #fff; border: 1px solid var(--border-color); max-height: 150px; overflow-y: auto; border-radius: 6px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .search-results { background: #fff; border: 1px solid var(--border-color); max-height: 150px; overflow-y: auto; border-radius: 6px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; }
     .search-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
     .search-item:hover { background: #f1f5f9; }
 
     .view-section { display: none; }
     .view-section.active { display: block; }
 
-    .filter-box { background: #f8fafc; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    
-    #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: 800; z-index: 9999; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .filter-collapsible { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: none; }
+
+    #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: var(--accent-green-dark); color: white; padding: 6px 14px; border-radius: 30px; font-size: 0.78rem; font-weight: 800; z-index: 9999; display: none; }
   </style>
 </head>
 <body>
@@ -89,23 +93,17 @@
 
   <div class="container" id="appContent">
     
-    <!-- هدر بالای صفحه (بسیار خلوت و مرتب) -->
-    <div class="card">
-      <div class="card-header">
-        <h3 id="mainHeaderTitle">🏦 مدیریت صرافی</h3>
-        <div style="display:flex; gap:6px;">
-          <a href="admin.html" class="btn btn-secondary btn-sm">👥 مشتریان</a>
-          <button class="btn btn-danger btn-sm" onclick="handleLogout()">خروج</button>
+    <!-- هدر بسیار خلوت -->
+    <div class="card" style="padding: 10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3 id="mainHeaderTitle" style="color:var(--primary-dark);">🏛️ صرافی فعال</h3>
+          <span id="activeBrokerSubTitle" style="font-size:0.8rem; color:#64748b; font-weight:bold;">انتخاب نشده</span>
         </div>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 0; display:flex; gap:8px; align-items:center; margin-top:4px;">
-        <div style="flex:1;">
-          <label>صرافی فعال:</label>
-          <select id="selectedBrokerSelect" onchange="onBrokerChange()"></select>
-        </div>
-        <div style="padding-top:20px;">
-          <button class="btn btn-info btn-sm" onclick="openBrokersListModal()">⚙️ انتخاب / مدیریت صرافی‌ها</button>
+        <div style="display:flex; gap:4px; align-items:center;">
+          <button class="btn btn-info btn-xs" onclick="openBrokersListModal()">🏛️ تغییر / مدیریت صرافی</button>
+          <a href="admin.html" class="btn btn-secondary btn-xs">👥 مشتریان</a>
+          <button class="btn btn-danger btn-xs" onclick="handleLogout()">خروج</button>
         </div>
       </div>
     </div>
@@ -115,35 +113,45 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <h3>📊 آمار و مانده حساب</h3>
+          <button class="btn btn-secondary btn-xs" onclick="toggleFilterDrawer()">🔍 فیلتر تاریخ ⚙️</button>
         </div>
         
-        <!-- فیلتر پیشرفته بر اساس بازه تاریخی دقیق -->
-        <div class="filter-box">
-          <div style="flex:1; min-width:120px;">
-            <label style="font-size:0.75rem;">از تاریخ:</label>
-            <input type="date" id="filterDateFrom" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.8rem;">
+        <!-- کشوی باریک فیلتر تاریخ -->
+        <div class="filter-collapsible" id="filterDrawer">
+          <div class="grid-2">
+            <div>
+              <label style="font-size:0.75rem;">از تاریخ:</label>
+              <input type="date" id="filterDateFrom" onchange="renderBrokerStatsAndTxs()" style="padding:5px; font-size:0.8rem;">
+            </div>
+            <div>
+              <label style="font-size:0.75rem;">تا تاریخ:</label>
+              <input type="date" id="filterDateTo" onchange="renderBrokerStatsAndTxs()" style="padding:5px; font-size:0.8rem;">
+            </div>
           </div>
-          <div style="flex:1; min-width:120px;">
-            <label style="font-size:0.75rem;">تا تاریخ:</label>
-            <input type="date" id="filterDateTo" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.8rem;">
-          </div>
-          <div style="padding-top:16px;">
-            <button class="btn btn-secondary btn-sm" onclick="clearDateFilter()">🔄 پاک کردن فیلتر</button>
+          <div style="text-align:left; margin-top:6px;">
+            <button class="btn btn-danger btn-xs" onclick="clearDateFilter()">🔄 پاک کردن فیلتر</button>
           </div>
         </div>
 
         <div class="stats-grid" id="brokerStatsGrid"></div>
-        <div style="margin-top: 12px; display:flex; gap:8px;">
-          <button class="btn" style="padding:12px;" onclick="openAddTransactionView()">➕ ثبت معامله جدید صرافی</button>
-          <a href="admin.html" class="btn btn-secondary" style="width:auto; text-decoration:none;">↩️ بازگشت به منو</a>
+        
+        <div style="margin-top: 12px; display:flex; justify-content:space-between; align-items:center;">
+          <button class="btn btn-narrow-action" onclick="openAddTransactionView()">➕ ثبت معامله جدید صرافی</button>
+          <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;">↩️ منو</a>
         </div>
       </div>
 
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <h3>📜 تراکنش‌های صرافی</h3>
-          <span id="txCountBadge" style="font-size:0.78rem; color:#64748b; font-weight:bold;"></span>
+          <span id="txCountBadge" style="font-size:0.75rem; color:#64748b; font-weight:bold;"></span>
         </div>
+        
+        <!-- کادر جستجوی پیشرفته -->
+        <div class="form-group">
+          <input type="text" id="txSearchInput" placeholder="🔍 جستجوی پیشرفته (مبلغ، شرح، آیدی، نوع)..." oninput="renderBrokerStatsAndTxs()" style="padding:7px 10px; font-size:0.82rem;">
+        </div>
+
         <div id="brokerTxList"></div>
       </div>
     </div>
@@ -153,9 +161,9 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
           <h3 id="formTitle">📝 ثبت معامله جدید</h3>
-          <a href="admin.html" class="btn btn-secondary btn-sm" style="text-decoration:none;">↩️ بازگشت به منو</a>
+          <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;">↩️ منو</a>
         </div>
-        <hr style="margin: 8px 0 12px 0; border:0; border-top:1px solid #e2e8f0;">
+        <hr style="margin: 6px 0 10px 0; border:0; border-top:1px solid #e2e8f0;">
 
         <input type="hidden" id="editBrokerTxId">
 
@@ -168,7 +176,7 @@
             <label>نوع عملیات:</label>
             <div style="display:flex; gap:4px;">
               <select id="txOpType" style="flex:1;"></select>
-              <button class="btn btn-info btn-sm" onclick="openOpTypeManagerModal()">⚙️</button>
+              <button class="btn btn-info btn-xs" onclick="openOpTypeManagerModal()">⚙️</button>
             </div>
           </div>
         </div>
@@ -190,9 +198,9 @@
           </div>
         </div>
 
-        <div style="background:#f8fafc; border:1px solid var(--border-color); padding:12px; border-radius:10px; margin-bottom:12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <div class="radio-group" style="width:120px;">
+        <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div class="radio-group" style="width:110px;">
               <div class="btn-opt btn-calc active-mode" id="btnModeMultiply" onclick="setCalcMode('multiply')">×</div>
               <div class="btn-opt btn-calc" id="btnModeDivide" onclick="setCalcMode('divide')">÷</div>
             </div>
@@ -222,19 +230,19 @@
           <label>آدرس مقصد:</label>
           <div style="display:flex; gap:4px;">
             <input type="text" id="txAddress" placeholder="انتخاب یا تایپ آدرس...">
-            <button class="btn btn-secondary btn-sm" style="width:auto;" onclick="openAddressDashboardModal()">📂 آدرس‌ها</button>
+            <button class="btn btn-secondary btn-xs" style="width:auto;" onclick="openAddressDashboardModal()">📂 آدرس‌ها</button>
           </div>
         </div>
 
-        <div style="margin: 14px 0;">
-          <button type="button" class="btn btn-warning" onclick="toggleCustomerSection()">
+        <div style="margin: 10px 0;">
+          <button type="button" class="btn btn-warning btn-sm" onclick="toggleCustomerSection()">
             🔗 اتصال / ثبت هم‌زمان برای مشتری (اختیاری)
           </button>
         </div>
 
         <div class="customer-box" id="customerBox">
-          <button type="button" class="btn btn-danger btn-sm" style="position:absolute; top:8px; left:8px; width:auto;" onclick="toggleCustomerSection()">✕ انصراف</button>
-          <h4 style="margin-bottom: 8px; color: var(--info-color);">👤 ثبت هم‌زمان برای مشتری</h4>
+          <button type="button" class="btn btn-danger btn-xs" style="position:absolute; top:6px; left:6px;" onclick="toggleCustomerSection()">✕ انصراف</button>
+          <h4 style="margin-bottom: 6px; color: var(--info-color); font-size:0.85rem;">👤 ثبت هم‌زمان برای مشتری</h4>
           
           <div class="form-group" style="position:relative;">
             <label>جستجو یا ساخت مشتری:</label>
@@ -275,17 +283,17 @@
             </div>
             <div class="form-group">
               <label>مبلغ مشتری:</label>
-              <input type="number" id="custAmount" placeholder="مبلغ" class="highlight-amount" style="font-size:1rem !important;">
+              <input type="number" id="custAmount" placeholder="مبلغ" class="highlight-amount" style="font-size:0.95rem !important;">
             </div>
           </div>
         </div>
 
-        <div style="margin-top: 16px; display:flex; gap:8px;">
-          <button class="btn" style="padding: 12px; font-size: 1rem; flex:2;" onclick="saveBrokerTransaction()">
+        <div style="margin-top: 14px; display:flex; gap:6px;">
+          <button class="btn" style="padding: 10px; font-size: 0.9rem; flex:2;" onclick="saveBrokerTransaction()">
             💾 ذخیره کامل معامله
           </button>
-          <a href="admin.html" class="btn btn-secondary" style="padding: 12px; flex:1; text-decoration:none;">
-            ↩️ بازگشت به منو
+          <a href="admin.html" class="btn btn-secondary btn-xs" style="padding: 10px; flex:1; text-decoration:none;">
+            ↩️ منو
           </a>
         </div>
       </div>
@@ -296,14 +304,14 @@
       <div class="card">
         <div class="card-header">
           <h3>🔍 جزئیات تراکنش</h3>
-          <a href="admin.html" class="btn btn-secondary btn-sm" style="text-decoration:none;">↩️ بازگشت به منو</a>
+          <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;">↩️ منو</a>
         </div>
         <div id="txDetailCard" style="margin-top: 10px;"></div>
-        <div style="margin-top: 14px; display:flex; gap:8px; flex-wrap:wrap;">
+        <div style="margin-top: 12px; display:flex; gap:6px; flex-wrap:wrap;">
           <button class="btn btn-warning" style="flex:1;" onclick="openEditBrokerTx()">✏️ ویرایش</button>
           <button class="btn btn-danger" style="flex:1;" onclick="deleteBrokerTx()">🗑️ حذف</button>
         </div>
-        <div style="margin-top:8px; display:flex; gap:8px;">
+        <div style="margin-top:6px; display:flex; gap:6px;">
           <button class="btn btn-info" style="flex:1;" onclick="sendBrokerReceiptTelegram()">📤 ارسال تلگرام</button>
           <button class="btn" style="flex:1; background:#25D366;" onclick="sendBrokerReceiptWhatsApp()">💬 ارسال واتساپ</button>
         </div>
@@ -311,19 +319,25 @@
     </div>
 
   </div>
-  <!-- مدال مدیریت کامل لیست صرافی‌ها (انتخاب، ایجاد، ویرایش، حذف) -->
+  <!-- مدال مدیریت صرافی‌ها -->
   <div id="brokersListModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:8px;">
     <div class="card" style="width:100%; max-width:480px; margin:0; max-height:85vh; overflow-y:auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h3>⚙️ مدیریت صرافی‌ها و کارگزاران</h3>
+        <h3>⚙️ مدیریت و انتخاب صرافی‌ها</h3>
         <button class="btn btn-sm" onclick="openBrokerModal(false)">➕ صرافی جدید</button>
       </div>
+      
+      <div class="form-group" style="background:#f1f5f9; padding:8px; border-radius:8px;">
+        <label>صرافی فعال فعلی:</label>
+        <select id="modalBrokerSelect" onchange="changeActiveBrokerFromModal()" style="font-weight:bold; color:var(--info-color);"></select>
+      </div>
+
       <div id="brokersListContainer" style="margin-top:10px;"></div>
       <div style="text-align:right; margin-top:14px;"><button class="btn btn-secondary btn-sm" onclick="closeBrokersListModal()">بستن</button></div>
     </div>
   </div>
 
-  <!-- مدال ویرایش / افزودن صرافی تکی -->
+  <!-- مدال ویرایش/افزودن صرافی -->
   <div id="brokerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:8px;">
     <div class="card" style="width:100%; max-width:400px; margin:0;">
       <h3 id="brokerModalTitle">افزودن صرافی جدید</h3>
@@ -395,6 +409,7 @@
     let selectedCurrency = null;
     let currentCalcMode = 'multiply';
     let selectedBrokerTxId = null;
+    let activeBrokerId = null;
 
     window.onload = async function() {
       checkAuth();
@@ -471,10 +486,16 @@
           customOpTypes = opRes.data.map(o => o.title);
         }
 
-        renderBrokerSelect();
+        let savedBroker = localStorage.getItem("lastActiveBrokerId");
+        if (savedBroker && allBrokers.some(b => String(b.broker_id) === String(savedBroker))) {
+          activeBrokerId = savedBroker;
+        } else if (allBrokers.length > 0) {
+          activeBrokerId = allBrokers[0].broker_id;
+        }
+
         populateOpTypeSelect();
 
-        if (allBrokers.length > 0) {
+        if (activeBrokerId) {
           await loadBrokerTransactions();
         }
       } catch (e) { console.error(e); }
@@ -490,53 +511,49 @@
       }
     }
 
-    function goBack() {
-      window.location.href = "admin.html";
-    }
-
-    function renderBrokerSelect() {
-      const select = document.getElementById("selectedBrokerSelect");
-      select.innerHTML = "";
-      if (allBrokers.length === 0) {
-        select.innerHTML = "<option value=''>هیچ صرافی یافت نشد</option>";
-        return;
-      }
-      allBrokers.forEach(b => {
-        select.innerHTML += `<option value="${b.broker_id}">${b.name} (${b.city || ''})</option>`;
-      });
+    function toggleFilterDrawer() {
+      const el = document.getElementById("filterDrawer");
+      el.style.display = (el.style.display === "none" || !el.style.display) ? "block" : "none";
     }
 
     async function loadBrokerTransactions() {
-      const brokerId = document.getElementById("selectedBrokerSelect").value;
-      if (!brokerId) return;
+      if (!activeBrokerId) return;
 
-      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(brokerId));
-      document.getElementById("mainHeaderTitle").innerText = `🏦 صرافی: ${currentBroker ? currentBroker.name : ''}`;
+      localStorage.setItem("lastActiveBrokerId", activeBrokerId);
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
+      
+      document.getElementById("mainHeaderTitle").innerText = `🏛️ ${currentBroker ? currentBroker.name : 'انتخاب صرافی'}`;
+      document.getElementById("activeBrokerSubTitle").innerText = currentBroker ? `${currentBroker.city || 'بدون شهر'} | تلفن: ${currentBroker.phone || '-'}` : '';
 
-      const { data } = await _supabase.from('broker_transactions').select('*').eq('broker_id', brokerId);
+      const { data } = await _supabase.from('broker_transactions').select('*').eq('broker_id', activeBrokerId);
       brokerTxs = data || [];
       
       renderBrokerStatsAndTxs();
     }
 
-    function onBrokerChange() {
-      loadBrokerTransactions();
-    }
-
     function clearDateFilter() {
       document.getElementById("filterDateFrom").value = "";
       document.getElementById("filterDateTo").value = "";
+      document.getElementById("txSearchInput").value = "";
       renderBrokerStatsAndTxs();
     }
 
     function getFilteredTxs() {
       let dateFrom = document.getElementById("filterDateFrom").value;
       let dateTo = document.getElementById("filterDateTo").value;
+      let query = (document.getElementById("txSearchInput").value || "").trim().toLowerCase();
 
       return brokerTxs.filter(tx => {
-        if (!tx.date) return true;
         if (dateFrom && tx.date < dateFrom) return false;
         if (dateTo && tx.date > dateTo) return false;
+        if (query) {
+          let matchId = String(tx.broker_tx_id || "").toLowerCase().includes(query);
+          let matchDesc = String(tx.description || "").toLowerCase().includes(query);
+          let matchOp = String(tx.operation_type || "").toLowerCase().includes(query);
+          let matchAmt = String(tx.amount_final || tx.amount_initial || "").includes(query);
+          let matchAddr = String(tx.address_dashboard || "").toLowerCase().includes(query);
+          if (!matchId && !matchDesc && !matchOp && !matchAmt && !matchAddr) return false;
+        }
         return true;
       });
     }
@@ -677,6 +694,7 @@
     }
 
     function openAddTransactionView() {
+      if (!activeBrokerId) { alert("لطفاً ابتدا یک صرافی انتخاب کنید."); return; }
       document.getElementById("editBrokerTxId").value = "";
       document.getElementById("editCustomerTxId").value = "";
       document.getElementById("formTitle").innerText = "📝 ثبت معامله جدید";
@@ -700,7 +718,6 @@
       switchView('viewTransactionForm');
     }
 
-    // ساخت گزارش عمودی مانده حساب‌ها برای تلگرام
     function generateVerticalBalanceReport() {
       let currencyTotals = {};
       brokerTxs.forEach(tx => {
@@ -713,7 +730,7 @@
         if (dir === 'بدهکار') currencyTotals[curr].debtor += amt;
       });
 
-      let reportLines = ["\n📊 *گزارش مانده حساب‌ها:*"];
+      let reportLines = ["\n📊 *گزارش عمودی مانده حساب‌ها:*"];
       for (let curr in currencyTotals) {
         let cred = currencyTotals[curr].creditor;
         let debt = currencyTotals[curr].debtor;
@@ -731,9 +748,8 @@
     }
 
     async function saveBrokerTransaction() {
-      const brokerId = document.getElementById("selectedBrokerSelect").value;
-      if (!brokerId) { alert("لطفاً صرافی را انتخاب کنید"); return; }
-      if (!selectedDirection) { alert("جهت معامله صرافی مشخص نشده است!"); return; }
+      if (!activeBrokerId) { alert("لطفاً صرافی را انتخاب کنید"); return; }
+      if (!selectedDirection) { alert("جهت معامله مشخص نشده است!"); return; }
       if (!selectedCurrency) { alert("ارز معامله انتخاب نشده است!"); return; }
 
       const amtInit = parseFloat(document.getElementById("amtInitial").value) || 0;
@@ -752,7 +768,7 @@
 
       const brokerTxObj = {
         broker_tx_id: editId ? editId : ("BTX-" + Math.floor(10000000 + Math.random() * 90000000)),
-        broker_id: brokerId,
+        broker_id: activeBrokerId,
         date: txDate,
         operation_type: opType,
         direction: selectedDirection,
@@ -811,7 +827,7 @@
 
       await loadBrokerTransactions();
 
-      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(brokerId));
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
       let verticalReport = generateVerticalBalanceReport();
       let actionTitle = editId ? "✏️ *ویرایش معامله صرافی*" : "🏦 *معامله جدید صرافی*";
 
@@ -886,30 +902,29 @@
 
       switchView('viewDashboard');
       showSync(false);
-      alert("✅ معامله با موفقیت حذف شد و گزارش به‌روزرسانی به تلگرام ارسال گردید.");
+      alert("✅ معامله حذف شد و گزارش جدید به تلگرام ارسال گردید.");
     }
 
     function sendBrokerReceiptTelegram() {
       const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
-      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(document.getElementById("selectedBrokerSelect").value));
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
       if (!tx || !currentBroker || !currentBroker.chatid) { alert("چت‌آیدی تلگرام برای این صرافی ثبت نشده است."); return; }
       
       let verticalReport = generateVerticalBalanceReport();
       let txt = `📜 *رسید معامله صرافی*\n🏛️ صرافی: ${currentBroker.name}\n📅 تاریخ: ${tx.date}\n🔹 نوع: ${tx.operation_type} (${tx.direction})\n💰 مبلغ: ${(tx.amount_final || 0).toLocaleString()} ${tx.currency}\n📝 شرح: ${tx.description || '-'}\n${verticalReport}`;
       
       sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, txt);
-      alert("✅ رسید عمودی به تلگرام ارسال شد!");
+      alert("✅ رسید به تلگرام ارسال شد!");
     }
 
     function sendBrokerReceiptWhatsApp() {
       const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
-      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(document.getElementById("selectedBrokerSelect").value));
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
       if (!tx || !currentBroker || !currentBroker.phone) { alert("شماره واتساپ صرافی ثبت نشده است."); return; }
       let txt = encodeURIComponent(`📜 *رسید صرافی*\nتاریخ: ${tx.date}\nنوع: ${tx.operation_type} (${tx.direction})\nمبلغ: ${(tx.amount_final || 0).toLocaleString()} ${tx.currency}\nشرح: ${tx.description || '-'}`);
       window.open(`https://wa.me/${currentBroker.phone}?text=${txt}`, '_blank');
     }
 
-    // مدیریت لیست صرافی‌ها در مدال جداگانه و خلوت شدن صفحه اصلی
     function openBrokersListModal() {
       renderBrokersListModalContent();
       document.getElementById("brokersListModal").style.display = "flex";
@@ -917,6 +932,13 @@
     function closeBrokersListModal() { document.getElementById("brokersListModal").style.display = "none"; }
 
     function renderBrokersListModalContent() {
+      const select = document.getElementById("modalBrokerSelect");
+      select.innerHTML = "";
+      allBrokers.forEach(b => {
+        let isSel = String(b.broker_id) === String(activeBrokerId) ? "selected" : "";
+        select.innerHTML += `<option value="${b.broker_id}" ${isSel}>${b.name} (${b.city || ''})</option>`;
+      });
+
       const container = document.getElementById("brokersListContainer");
       container.innerHTML = "";
       if (allBrokers.length === 0) {
@@ -927,16 +949,21 @@
         container.innerHTML += `
           <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <div style="font-weight:bold; font-size:0.95rem; color:#0f172a;">${b.name} (${b.city || 'بدون شهر'})</div>
+              <div style="font-weight:bold; font-size:0.9rem; color:#0f172a;">${b.name} (${b.city || 'بدون شهر'})</div>
               <div style="font-size:0.75rem; color:#64748b;">تلفن: ${b.phone || '-'} | چت‌آیدی: ${b.chatid || '-'}</div>
             </div>
             <div style="display:flex; gap:4px;">
-              <button class="btn btn-warning btn-sm" onclick="openBrokerModal(true, '${b.broker_id}')">✏️ ویرایش</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteSpecificBroker('${b.broker_id}')">🗑️ حذف</button>
+              <button class="btn btn-warning btn-xs" onclick="openBrokerModal(true, '${b.broker_id}')">✏️ ویرایش</button>
+              <button class="btn btn-danger btn-xs" onclick="deleteSpecificBroker('${b.broker_id}')">🗑️ حذف</button>
             </div>
           </div>
         `;
       });
+    }
+
+    async function changeActiveBrokerFromModal() {
+      activeBrokerId = document.getElementById("modalBrokerSelect").value;
+      await loadBrokerTransactions();
     }
 
     function openBrokerModal(isEdit = false, brokerId = null) {
@@ -951,7 +978,7 @@
         document.getElementById("brokerCity").value = b.city || "";
         document.getElementById("brokerChatId").value = b.chatid || "";
       } else {
-        document.getElementById("brokerModalTitle").innerText = "➕ افزودن صرافی / کارگزار جدید";
+        document.getElementById("brokerModalTitle").innerText = "➕ افزودن صرافی جدید";
         document.getElementById("editBrokerModalId").value = "";
         document.getElementById("brokerName").value = "";
         document.getElementById("brokerPhone").value = "";
@@ -981,6 +1008,7 @@
       } else {
         bObj.broker_id = "BRK-" + Math.floor(1000 + Math.random() * 9000);
         await _supabase.from('brokers').insert([bObj]);
+        activeBrokerId = bObj.broker_id;
       }
 
       closeBrokerModal();
@@ -995,6 +1023,7 @@
 
       showSync(true);
       await _supabase.from('brokers').delete().eq('broker_id', brokerId);
+      if (activeBrokerId === brokerId) activeBrokerId = null;
       await loadInitialData();
       renderBrokersListModalContent();
       showSync(false);
@@ -1012,7 +1041,7 @@
       const container = document.getElementById("opTypesListContainer");
       container.innerHTML = "";
       customOpTypes.forEach(op => {
-        container.innerHTML += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #eee;"><span>${op}</span><button class="btn btn-danger btn-sm" onclick="removeOpType('${op}')">حذف</button></div>`;
+        container.innerHTML += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #eee;"><span>${op}</span><button class="btn btn-danger btn-xs" onclick="removeOpType('${op}')">حذف</button></div>`;
       });
     }
     async function addNewOperationType() {
@@ -1045,7 +1074,7 @@
       let filtered = savedAddresses.filter(a => a.toLowerCase().includes(q));
       if (filtered.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; font-size:0.85rem;">یافت نشد</div>`; return; }
       filtered.forEach(addr => {
-        container.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:6px 8px; border-radius:6px; margin-bottom:4px;"><span style="cursor:pointer; flex:1;" onclick="selectAddress('${addr}')">${addr}</span><button class="btn btn-danger btn-sm" onclick="deleteAddress('${addr}')">حذف</button></div>`;
+        container.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:6px 8px; border-radius:6px; margin-bottom:4px;"><span style="cursor:pointer; flex:1;" onclick="selectAddress('${addr}')">${addr}</span><button class="btn btn-danger btn-xs" onclick="deleteAddress('${addr}')">حذف</button></div>`;
       });
     }
     function selectAddress(addr) { document.getElementById("txAddress").value = addr; closeAddressDashboardModal(); }
