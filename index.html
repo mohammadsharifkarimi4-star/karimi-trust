@@ -28,8 +28,8 @@
       --accent-glow: #38bdf8;
       --text-dark: #0f172a;
       --text-muted: #64748b;
-      --shadow-3d: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.05);
-      --shadow-hover: 0 15px 35px -5px rgba(99, 102, 241, 0.35);
+      --shadow-3d: 0 15px 35px -5px rgba(0, 0, 0, 0.25), 0 5px 15px -3px rgba(56, 189, 248, 0.2);
+      --shadow-hover: 0 20px 40px -5px rgba(99, 102, 241, 0.4);
     }
 
     * {
@@ -42,8 +42,8 @@
     }
 
     body {
-      background: #060913;
-      background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #060913 80%);
+      background: #040711;
+      background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #040711 85%);
       color: var(--text-dark);
       min-height: 100vh;
       display: flex;
@@ -56,13 +56,13 @@
       width: 100vw;
       max-width: 450px;
       min-height: 100vh;
-      background: linear-gradient(160deg, #f8fafc 0%, #e2e8f0 100%);
+      background: linear-gradient(160deg, #f8fafc 0%, #cbd5e1 100%);
       padding: 14px 16px 24px 16px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
       gap: 14px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
     }
 
     @media (min-width: 451px) {
@@ -70,7 +70,7 @@
         min-height: 96vh;
         margin: 2vh auto;
         border-radius: 32px;
-        border: 3px solid rgba(255, 255, 255, 0.4);
+        border: 3.5px solid rgba(56, 189, 248, 0.6);
       }
     }
 
@@ -79,11 +79,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 6px;
+      padding: 6px 8px;
       flex-shrink: 0;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 2px solid #cbd5e1;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.06);
     }
 
-    /* بخش خوش‌آمدگویی همراه با لینک مخفی ادمین */
     .welcome-box {
       display: flex;
       flex-direction: column;
@@ -92,31 +95,31 @@
     }
 
     .welcome-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       color: #1e1b4b;
       line-height: 1.1;
     }
 
     .welcome-subtitle {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
       font-weight: 700;
-      margin-top: 3px;
+      margin-top: 2px;
     }
 
     .status-badge {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: #ffffff;
+      background: #ecfdf5;
       padding: 6px 12px;
       border-radius: 20px;
-      border: 1.5px solid #cbd5e1;
+      border: 1.5px solid #10b981;
       font-size: 11.5px;
       font-weight: 800;
-      color: #059669;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      color: #047857;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
     }
 
     .dot-pulse {
@@ -133,14 +136,14 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* کارت بزرگ اصلی تقویم، ساعت‌ها و احادیث */
+    /* کارت بزرگ اصلی تقویم، ساعت‌ها و احادیث با ظاهر بسیار برجسته و لوکس */
     .hero-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #047857 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #064e3b 100%);
       border-radius: 24px;
       padding: 16px;
       color: #ffffff;
-      box-shadow: 0 12px 28px -4px rgba(30, 27, 75, 0.4);
-      border: 2px solid #38bdf8;
+      box-shadow: var(--shadow-3d);
+      border: 2.5px solid #38bdf8;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -159,31 +162,33 @@
       font-size: 16px;
       font-weight: 900;
       color: #38bdf8;
-      text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
     }
 
     .day-time-badge-box {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(6px);
-      padding: 4px 12px;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(8px);
+      padding: 5px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1.5px solid rgba(56, 189, 248, 0.4);
       cursor: pointer;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
     }
 
     .day-badge {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 800;
       color: #ffffff;
     }
 
     .top-live-clock {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 900;
       color: #4ade80;
+      text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
     }
 
     .dates-grid-3 {
@@ -193,121 +198,130 @@
     }
 
     .date-box-item {
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 12px;
-      padding: 8px 6px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1.5px solid #38bdf8;
+      border-radius: 14px;
+      padding: 9px 6px;
       text-align: center;
       display: flex;
       flex-direction: column;
       gap: 2px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
     }
 
     .date-box-title {
-      font-size: 10px;
+      font-size: 10.5px;
       color: #38bdf8;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     .date-box-val {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 900;
       color: #ffffff;
+      text-shadow: 0 0 8px rgba(255,255,255,0.4);
     }
 
     .date-box-sub {
-      font-size: 9px;
-      color: #cbd5e1;
+      font-size: 9.5px;
+      color: #a7f3d0;
       font-weight: 700;
     }
 
-    /* ساعت‌های جهانی */
+    /* ساعت‌های جهانی با ظاهر برجسته */
     .world-clocks-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 6px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 12px;
-      padding: 8px 10px;
-      font-size: 11px;
+      background: rgba(15, 23, 42, 0.65);
+      border-radius: 14px;
+      padding: 9px 10px;
+      font-size: 11.5px;
       font-weight: 800;
       text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1.5px solid rgba(56, 189, 248, 0.4);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
     }
 
     .world-clock-item {
       display: flex;
       flex-direction: column;
-      gap: 1px;
+      gap: 2px;
     }
 
     .world-clock-item span:first-child {
-      font-size: 9.5px;
+      font-size: 10px;
       color: #38bdf8;
     }
 
-    /* کادر زنده احادیث و پندها (دارای بیش از ۶۰ مورد و قابلیت لمس برای تغییر) */
-    .hadith-display-box {
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 14px;
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      position: relative;
-      z-index: 1;
-      border: 1.5px solid transparent;
-      background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), linear-gradient(90deg, #f59e0b, #10b981, #3b82f6, #ec4899, #f59e0b);
-      background-origin: border-box;
-      background-clip: padding-box, border-box;
-      background-size: 300% 100%;
-      animation: horizontalGlow 6s linear infinite;
-      cursor: pointer;
-      user-select: none;
+    .world-clock-item span:last-child {
+      color: #f8fafc;
+      font-weight: 900;
     }
 
-    @keyframes horizontalGlow {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
+    /* کادر زنده احادیث و پندها با حاشیه نورانی و برجسته */
+    .hadith-display-box {
+      background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,27,75,0.95) 100%);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      position: relative;
+      z-index: 1;
+      border: 2px solid #f59e0b;
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.25);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+
+    .hadith-display-box:active {
+      transform: scale(0.98);
     }
 
     .hadith-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 11.5px;
+      font-size: 12px;
       color: #fde047;
       font-weight: 900;
+      border-bottom: 1px dashed rgba(255,255,255,0.2);
+      padding-bottom: 5px;
     }
 
     .hadith-text {
-      font-size: 12px;
+      font-size: 13px;
       color: #ffffff;
-      font-weight: 800;
-      line-height: 1.45;
+      font-weight: 900;
+      line-height: 1.5;
       text-align: center;
+      text-shadow: 0 0 10px rgba(255,255,255,0.3);
     }
 
     .hadith-translation {
-      font-size: 10.5px;
+      font-size: 11px;
       color: #a7f3d0;
       font-weight: 700;
-      line-height: 1.35;
-      border-top: 1px dashed rgba(255, 255, 255, 0.25);
-      padding-top: 5px;
-      margin-top: 2px;
+      line-height: 1.4;
       text-align: center;
     }
 
     .hadith-source {
-      font-size: 9.5px;
+      font-size: 10px;
       color: #93c5fd;
-      font-weight: 700;
+      font-weight: 800;
       text-align: center;
+      background: rgba(0,0,0,0.3);
+      padding: 3px 8px;
+      border-radius: 8px;
+      width: fit-content;
+      margin: 0 auto;
     }
 
     .section-label {
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 900;
       color: #1e1b4b;
       display: flex;
@@ -317,7 +331,7 @@
       margin-top: 6px;
     }
 
-    /* کارت بزرگ منوی امانت‌داری کریمی */
+    /* کارت بزرگ منوی امانت‌داری کریمی با استایل کاملاً برجسته و سه‌بعدی */
     .menu-container {
       display: flex;
       flex-direction: column;
@@ -333,7 +347,7 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      border: 2.5px solid #cbd5e1;
+      border: 3px solid #cbd5e1;
       box-shadow: var(--shadow-3d);
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       cursor: pointer;
@@ -363,13 +377,13 @@
     }
 
     .card-title-huge {
-      font-size: 17px;
+      font-size: 17.5px;
       font-weight: 900;
       color: #1e1b4b;
     }
 
     .card-desc-huge {
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--text-muted);
       font-weight: 700;
       margin-top: 4px;
@@ -378,7 +392,7 @@
 
     .card-arrow {
       margin-right: auto;
-      font-size: 18px;
+      font-size: 20px;
       color: var(--primary);
       font-weight: 900;
     }
@@ -407,13 +421,13 @@
       </div>
     </div>
 
-    <!-- بنر اصلی تقویم، ساعت‌ها و احادیث -->
+    <!-- بنر اصلی تقویم، ساعت‌ها و احادیث با ظاهر برجسته -->
     <div class="hero-card">
       <div class="hero-top-info">
         <span class="hero-main-title">حساب‌کتاب من</span>
         <!-- ورود مخفی به بخش صرافی با ۳ بار کلیک -->
         <div class="day-time-badge-box" onclick="handleSecretBrokerClick()">
-          <span class="day-badge" id="dayNameDisplay">شنبه</span>
+          <span class="day-badge" id="dayNameDisplay">پنج‌شنبه</span>
           <span class="top-live-clock eng-num" id="liveClock">00:00:00</span>
         </div>
       </div>
@@ -421,20 +435,20 @@
       <div class="dates-grid-3">
         <div class="date-box-item">
           <span class="date-box-title">شمسی</span>
-          <span class="date-box-val" id="shamsiDayVal">۲۵</span>
-          <span class="date-box-sub" id="shamsiMonthVal">میزان ۱۴۰۵</span>
+          <span class="date-box-val eng-num">۷</span>
+          <span class="date-box-sub">آبان ۱۴۰۵</span>
         </div>
 
         <div class="date-box-item">
           <span class="date-box-title">قمری</span>
-          <span class="date-box-val" id="hijriDayVal">۵</span>
-          <span class="date-box-sub" id="hijriMonthVal">جمادی الاول</span>
+          <span class="date-box-val eng-num">۱۸</span>
+          <span class="date-box-sub">جمادی‌الاول</span>
         </div>
 
         <div class="date-box-item">
           <span class="date-box-title">میلادی</span>
-          <span class="date-box-val eng-num" id="gregDayVal">17</span>
-          <span class="date-box-sub eng-num" id="gregMonthVal">Oct 2026</span>
+          <span class="date-box-val eng-num">29</span>
+          <span class="date-box-sub eng-num">Oct 2026</span>
         </div>
       </div>
 
@@ -454,15 +468,15 @@
         </div>
       </div>
 
-      <!-- کادر زنده احادیث و پندها (بیش از ۶۰ مورد با قابلیت کلیک برای تغییر) -->
+      <!-- کادر زنده احادیث و پندها (بیش از ۶۰ مورد با قابلیت کلیک برای تغییر آنی) -->
       <div class="hadith-display-box" id="hadithBox" onclick="nextHadith()" title="برای مشاهده حدیث بعدی لمس کنید">
         <div class="hadith-header-row">
-          <span>📖 حدیث و حکمت روز (لمس برای بعدی)</span>
           <span id="hadithAuthor">پیامبر اکرم (ص)</span>
+          <span>📖 لمس برای حدیث بعدی ➔</span>
         </div>
-        <div class="hadith-text" id="hadithText">«الْمُؤْمِنُ مِرْآةُ الْمُؤْمِنِ»</div>
-        <div class="hadith-translation" id="hadithTrans">مؤمن آینه مؤمن است (عیوب یکدیگر را با صمیمیت به هم نشان دهند).</div>
-        <div class="hadith-source" id="hadithSource">[ بحارالانوار ]</div>
+        <div class="hadith-text" id="hadithText">«خَیْرُ النَّاسِ مَنْ نَفَعَ النَّاسَ»</div>
+        <div class="hadith-translation" id="hadithTrans">بهترین مردم کسی است که به دیگران سود بیشتری برساند.</div>
+        <div class="hadith-source" id="hadithSource">[ نهج الفصاحه ]</div>
       </div>
     </div>
 
@@ -476,7 +490,7 @@
         <div class="icon-wrapper-huge">🛡️</div>
         <div>
           <div class="card-title-huge">امانت‌داری کریمی</div>
-          <div class="card-desc-huge">مخصوص کسانیکه با امانت‌داری کریمی حساب دارند؛ جهت مشاهده مانده زنده و جزئیات دقیق حساب.</div>
+          <div class="card-desc-huge">مخصوص کسانی که با امانت‌داری کریمی حساب دارند؛ جهت مشاهده مانده زنده و جزئیات دقیق حساب.</div>
         </div>
         <div class="card-arrow">➔</div>
       </a>
@@ -485,68 +499,68 @@
   </div>
 
   <script>
-    // بانک اطلاعاتی بیش از ۶۰ حدیث و پند ناب
+    // بانک اطلاعاتی بیش از ۶۰ حدیث نبوی (ص)، روایات اهل بیت (ع) و پندهای کاربردی
     const wisdomDatabase = [
-      { text: "«الْمُؤْمِنُ مِرْآةُ الْمُؤْمِنِ»", trans: "مؤمن آینه مؤمن است (عیوب یکدیگر را دوستانه اصلاح می‌کنند).", source: "[ بحارالانوار ]", author: "پیامبر اکرم (ص)" },
-      { text: "«خَیْرُ النَّاسِ مَنْ نَفَعَ النَّاسَ»", trans: "بهترین مردم کسی است که به دیگران سود بیشتری برساند.", source: "[ نهج الفصاحه ]", author: "پیامبر اکرم (ص)" },
-      { text: "«اُطْلُبُوا الْعِلْمَ مِنَ الْمَهْدِ إِلَى اللَّحْدِ»", trans: "ز گهواره تا گور دانش بجوی.", source: "[ بحارالانوار ]", author: "پیامبر اکرم (ص)" },
-      { text: "«حُبُّ الْوَطَنِ مِنَ الْإِيمَانِ»", trans: "دوست داشتن وطن و زادگاه از نشانه‌های ایمان است.", source: "[ سفينة البحار ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الدُّعَاءُ مُخُّ الْعِبَادَةِ»", trans: "دعا و نیایش، مغز و حقیقت عبادت است.", source: "[ اصول کافی ]", author: "پیامبر اکرم (ص)" },
-      { text: "«أَدَبُ الْمَرْءِ خَیْرٌ مِنْ ذَهَبِهِ»", trans: "ادب و تربیت انسان، از طلای او باارزش‌تر است.", source: "[ بحارالانوار ]", author: "امام علی (ع)" },
-      { text: "«قِیمَةُ كُلِّ امْرِئٍ مَا یُحْسِنُهُ»", trans: "ارزش هر انسانی به اندازه تخصص، هنر و نیکویی کار اوست.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«الصَّبْرُ مِفْتَاحُ الْفَرَجِ»", trans: "صبردست‌به‌دست‌دادن با استقامت، کلید گشایش هر سختی است.", source: "[ غرر الحكم ]", author: "امام علی (ع)" },
-      { text: "«الْعِلْمُ سُلْطَانٌ»", trans: "علم و دانش مایه اقتدار و سلطنت است.", source: "[ غرر الحكم ]", author: "امام علی (ع)" },
-      { text: "«رَحِمَ اللَّهُ امْرَءاً عَرَفَ قَدْرَ وَقَمَ فَلَمْ يَتَعَدَّ طَوْرَهُ»", trans: "رحمت خدا بر کسی که اندازه خود را بشناسد و از حد خود فراتر نرود.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«مَنْ عَذَبَ لِسَانُهُ كَثُرَ إِخْوَانُهُ»", trans: "کسی که کلامش شیرین و نیکو باشد، برادران و دوستان زیادی خواهد داشت.", source: "[ بحارالانوار ]", author: "امام صادق (ع)" },
-      { text: "«تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ صَدَقَةٌ»", trans: "لبخند زدن شما به روی برادر دینی‌تان صدقه محسوب می‌شود.", source: "[ وسائل الشيعة ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ»", trans: "عبادت هفتاد جزء است و بالاترین جزء آن کسب روزی حلال است.", source: "[ تحف العقول ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الصَّدَقَةُ تَدْفَعُ الْبَلَاءَ الْمُبْرَمَ»", trans: "صدقه دادن، بلای قطعی و حتمی را برطرف می‌کند.", source: "[ بحارالانوار ]", author: "پیامبر اکرم (ص)" },
-      { text: "«النَّدَمُ تَوْبَةٌ»", trans: "پشیمانی واقعی از گناه، خود نوعی توبه است.", source: "[ مستدرک الوسائل ]", author: "پیامبر اکرم (ص)" },
-      { text: "«رَأْسُ الْعَقْلِ مُدَارَاةُ النَّاسِ»", trans: "سرآمد خرد و عقل، مدارا و همزیستی مسالمت‌آمیز با مردم است.", source: "[ کافی ]", author: "پیامبر اکرم (ص)" },
-      { text: "«لَا فَقْرَ كَالْجَهْلِ وَلَا مِيرَاثَ كَالْأَدَبِ»", trans: "هیچ فقر و تهیدستی چون نادانی و هیچ ارثی چون ادب نیست.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«أَشْرَفُ الْغِنَى تَرْكُ الْمُنَى»", trans: "ارزشمندترین بی‌نیازی، چشم‌پوشی از آرزوهای دراز و پوچ است.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«صَدَقَةُ السِّرِّ تُطْفِئُ غَضَبَ الرَّبِّ»", trans: "صدقه پنهانی، خشم پروردگار را فرو می‌نشاند.", source: "[ بحارالانوار ]", author: "امام باقر (ع)" },
-      { text: "«الْمُؤْمِنُ بَشُورٌ فِي وَجْهِهِ وَحُزْنُهُ فِي قَلْبِهِ»", trans: "مؤمن شادی‌اش در چهره‌اش ظاهر است و اندوهش در دلش پنهان است.", source: "[ کافی ]", author: "امام علی (ع)" },
-      { text: "«سَلَامَةُ الْإِنْسَانِ فِي حِفْظِ اللِّسَانِ»", trans: "سلامت و آرامش انسان در گرو نگهداری و کنترل زبان است.", source: "[ غرر الحكم ]", author: "امام علی (ع)" },
-      { text: "«اَلصَّبْرُ صَبْرَانِ: صَبْرٌ عَلَى مَا تَكْرَهُ وَصَبْرٌ عَمَّا تُحِبُّ»", trans: "صبر دو گونه است: صبر بر آنچه ناخوش داری و صبر بر آنچه دوست داری.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«اِعْمَلْ لِدُنْيَاكَ كَأَنَّكَ تَعِيشُ أَبَداً وَاعْمَلْ لِآخِرَتِكَ كَأَنَّكَ تَمُوتُ غَداً»", trans: "برای دنیایت چنان کار کن که گویی جاودانه‌ای و برای آخرتت چنان تلاش کن که گویی فردا می‌میری.", source: "[ نهج الفصاحه ]", author: "پیامبر اکرم (ص)" },
-      { text: "«طُوبَى لِمَنْ شَغَلَهُ عَيْبُهُ عَنْ عُيُوبِ النَّاسِ»", trans: "خوشا به حال کسی که عیب خودش، او را از پرداختن به عیوب دیگران باز دارد.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«إِنَّ اللَّهَ جَمِيلٌ يُحِبُّ الْجَمَالَ»", trans: "خداوند زیباست و زیبایی را دوست دارد.", source: "[ صحیح مسلم ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْيَدُ الْعُلْيَا خَيْرٌ مِنَ الْيَدِ السُّفْلَى»", trans: "دستِ بخشنده (بالا) از دستِ گیرنده (پایین) بهتر و برتر است.", source: "[ صحیح بخاری ]", author: "پیامبر اکرم (ص)" },
-      { text: "«مَنْ لَا يَشْكُرِ النَّاسَ لَا يَشْكُرِ اللَّهَ»", trans: "کسی که از زحمات و نیکی‌های مردم قدردانی نکند، شکر خدا را هم به جا نیاورده است.", source: "[ اصول کافی ]", author: "امام رضا (ع)" },
-      { text: "«الْعِلْمُ نُورٌ يَقْذِفُهُ اللَّهُ فِي قَلْبِ مَنْ يَشَاءُ»", trans: "علم نوری است که خداوند در دل هر کس که بخواهد می‌تاباند.", source: "[ بحارالانوار ]", author: "پیامبر اکرم (ص)" },
-      { text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ»", trans: "محبوب‌ترین کارها نزد خداوند مداوم‌ترین آن‌هاست، هرچند اندک باشد.", source: "[ اصول کافی ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْمَسْتَشَارُ مُؤْتَمَنٌ»", trans: "کسی که با او مشورت می‌شود امین و مورد اعتماد است.", source: "[ نهج البلاغه ]", author: "پیامبر اکرم (ص)" },
-      { text: "«بَرُّ الْوَالِدَيْنِ أَفْضَلُ مِنَ الصَّلَاةِ وَالصِّيَامِ»", trans: "نیکی به پدر و مادر از نماز و روزه مستحب برتر است.", source: "[ بحارالانوار ]", author: "امام صادق (ع)" },
-      { text: "«الْوَحْدَةُ خَيْرٌ مِنْ جَلِيسِ السُّوءِ»", trans: "تنهایی و انزوا از همنشین بد و ناپاک بهتر است.", source: "[ امالی صدوق ]", author: "پیامبر اکرم (ص)" },
-      { text: "«مَنْ حَسُنَ خُلُقُهُ بَلَغَ دَرَجَةَ الصَّائِمِ الْقَائِمِ»", trans: "کسی که اخلاق نیکو داشته باشد به پاداش روزه‌دارِ شب‌زنده‌دار می‌رسد.", source: "[ اصول کافی ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْحِكْمَةُ ضَالَّةُ الْمُؤْمِنِ»", trans: "حکمت گمشده مؤمن است، آن را هر جا یافت فراگیرد.", source: "[ بحارالانوار ]", author: "امام علی (ع)" },
-      { text: "«أَكْرِمُوا أَوْلَادَكُمْ وَأَحْسِنُوا آدَابَهُمْ»", trans: "به فرزندان خود احترام بگذارید و آنان را نیکو تربیت کنید.", source: "[ وسائل الشيعة ]", author: "پیامبر اکرم (ص)" },
-      { text: "«اَلصِّدْقُ أَمَانَةٌ وَالْخِيَانَةُ خِيَانَةٌ»", trans: "راستگویی امانت‌داری و دروغ‌گویی و خیانت هم‌ارزش‌اند.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«مَنْ كَثُرَ كَلَامُهُ كَثُرَ خَطَاؤُهُ»", trans: "هر که سخنش بسیار شود، خطایش نیز فزونی می‌یابد.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«اَلْعَفْوُ تَاجُ الْمَكَارِمِ»", trans: "گذشت و عفو کردن، تاج صفات عالی انسانی است.", source: "[ غرر الحكم ]", author: "امام علی (ع)" },
-      { text: "«مَنْ صَدَقَ أَنْجَاهُ»", trans: "کسی که راست بگوید خداوند او را نجات می‌دهد.", source: "[ بحارالانوار ]", author: "امام علی (ع)" },
-      { text: "«اَلْقَنَاعَةُ مَالٌ لَا يَنْفَدُ»", trans: "قناعت ثروتی پایان‌ناپذیر است.", source: "[ بحارالانوار ]", author: "امام علی (ع)" },
-      { text: "«أَحْسَبُ النَّاسِ أَعْلَمُهُمْ بِأَمْرِ اللَّهِ»", trans: "آگاه‌ترین مردم کسی است که به احکام و تدبیر الهی آگاه‌تر باشد.", source: "[ اصول کافی ]", author: "امام رضا (ع)" },
-      { text: "«اَلْجَارُ ثُمَّ الدَّارُ»", trans: "نخست به همسایه برس، آن‌گاه خانه خویش.", source: "[ مستدرک الوسائل ]", author: "پیامبر اکرم (ص)" },
-      { text: "«مَنْ أَهَانَ مُؤْمِناً فَقَدْ بَارَزَ اللَّهَ بِالْمُحَارَبَةِ»", trans: "کسی که به مؤمنی اهانت کند با خداوند اعلام جنگ کرده است.", source: "[ کافی ]", author: "پیامبر اکرم (ص)" },
-      { text: "«إِنَّ مَعَ الْعُسْرِ يُسْراً»", trans: "بی‌تردید همراه با هر سختی، آسانی فراوانی است.", source: "[ سوره شرح، آیه ۶ ]", author: "قرآن کریم" },
-      { text: "«أَوْفُوا بِالْعُهُودِ إِنَّ الْعَهْدَ كَانَ مَسْؤُولاً»", trans: "به عهد و پیمان خود وفادار باشید که درباره آن بازخواست خواهید شد.", source: "[ سوره اسراء، آیه ۳۴ ]", author: "قرآن کریم" },
-      { text: "«خَيْرُ الْأُمُورِ أَوْسَطُهَا»", trans: "بهترین کارها حد وسط و اعتدال در آن‌هاست.", source: "[ بحارالانوار ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْإِيمَانُ نِصْفَانِ: نِصْفٌ صَبْرٌ وَنِصْفٌ شُكْرٌ»", trans: "ایمان دو نیمه است: نیمی صبر و استقامت، و نیمی شکرگزاری.", source: "[ تحف العقول ]", author: "پیامبر اکرم (ص)" },
-      { text: "«مَنْ تَوَاضَعَ لِلَّهِ رَفَعَهُ اللَّهُ»", trans: "کسی که برای خدا تواضع کند، خداوند او را سرافراز و بلندمرتبه می‌سازد.", source: "[ اصول کافی ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ»", trans: "مسلمان واقعی کسی است که دیگران از زبان و دست او در آسایش و امنیت باشند.", source: "[ صحیح بخاری ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْبَدْءُ بِالسَّلَامِ سُنَّةٌ حَسَنَةٌ»", trans: "سلام کردن پیش از سخن گفتن، سنت نیکو و پسندیده‌ای است.", source: "[ بحارالانوار ]", author: "پیامبر اکرم (ص)" },
-      { text: "«أَحَبُّ الْبِلَادِ إِلَى اللَّهِ مَسَاجِدُهَا»", trans: "محبوب‌ترین مکان‌ها نزد خداوند مساجد آن است.", source: "[ صحیح مسلم ]", author: "پیامبر اکرم (ص)" },
-      { text: "«مَنْ فَرَّجَ عَنْ مُؤْمِنٍ كُرْبَةً فَرَّجَ اللَّهُ عَنْهُ كُرَبَ يَوْمِ الْقِيَامَةِ»", trans: "هر که اندوه و سختی را از مؤمنی برطرف کند، خدا سختی‌های روز قیامت را از او دور سازد.", source: "[ اصول کافی ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْعِلْمُ خَيْرٌ مِنَ الْمَالِ، الْعِلْمُ يَحْرُسُكَ وَأَنْتَ تَحْرُسُ الْمَالَ»", trans: "علم از ثروت بهتر است؛ زیرا علم تو را حفظ می‌کند اما تو باید محافظ مال باشی.", source: "[ نهج البلاغه ]", author: "امام علی (ع)" },
-      { text: "«بَكِّرُوا فِي طَلَبِ الرِّزْقِ وَالْحَوَائِجِ»", trans: "صبح زود به دنبال روزی و کار و بار خود بروید.", source: "[ وسائل الشيعة ]", author: "پیامبر اکرم (ص)" },
-      { text: "«مَنْ كَذَبَ عَلَيَّ مُتَعَمِّداً فَلْيَتَبَوَّأْ مَقْعَدَهُ مِنَ النَّارِ»", trans: "هر کس به عمد به من دروغ ببندد جایگاهش در آتش است.", source: "[ متفق عليه ]", author: "پیامبر اکرم (ص)" },
-      { text: "«الْإِحْسَانُ يَقْطَعُ اللِّسَانَ»", trans: "نیکی کردن به دیگران، زبان طعنه و بدگویی را قطع می‌کند.", source: "[ بحارالانوار ]", author: "امام علی (ع)" },
-      { text: "«لا حَوْلَ وَلا قُوَّةَ إِلاّ بِاللَّهِ الْعَلِيِّ الْعَظِيمِ»", trans: "هیچ نیرو و حرکتی جز به اراده خداوند بلندمرتبه و بزرگ نیست.", source: "[ بحارالانوار ]", author: "پیامبر اکرم (ص)" },
-      { text: "«باران باش و ببار و نپرس که پیاله‌های خالی از آن کیست.»", trans: "نیکی کردن بدون چشم‌داشت، بزرگ‌ترین نشانه بزرگی روح است.", source: "[ منشور باستان ]", author: "کوروش کبیر" },
-      { text: "«اندیشه نیک، گفتار نیک و کردار نیک پایه خوشبختی انسان است.»", trans: "راه راستی و درستی همواره روشن و پیروزمند است.", source: "[ اوستا / پندهای کهن ]", author: "زرتشت" },
-      { text: "«خوشا به حال کسی که به جای انتقام، بخشش را سرلوحه زندگی خود قرار دهد.»", trans: "بخشندگی مایه آرامش و عظمت روح است.", source: "[ حکمت‌های شرق ]", author: "کنفوسیوس" }
+      { text: "«خَیْرُ النَّاسِ مَنْ نَفَعَ النَّاسَ»", trans: "بهترین مردم کسی است که به دیگران سود بیشتری برساند.", source: "نهج الفصاحه", author: "پیامبر اکرم (ص)" },
+      { text: "«الْمُؤْمِنُ مِرْآةُ الْمُؤْمِنِ»", trans: "مؤمن آینه مؤمن است (عیوب یکدیگر را دوستانه اصلاح می‌کنند).", source: "بحارالانوار", author: "پیامبر اکرم (ص)" },
+      { text: "«اُطْلُبُوا الْعِلْمَ مِنَ الْمَهْدِ إِلَى اللَّحْدِ»", trans: "ز گهواره تا گور دانش بجوی.", source: "بحارالانوار", author: "پیامبر اکرم (ص)" },
+      { text: "«حُبُّ الْوَطَنِ مِنَ الْإِيمَانِ»", trans: "دوست داشتن وطن و زادگاه از نشانه‌های ایمان است.", source: "سفينة البحار", author: "پیامبر اکرم (ص)" },
+      { text: "«الدُّعَاءُ مُخُّ الْعِبَادَةِ»", trans: "دعا و نیایش، مغز و حقیقت عبادت است.", source: "اصول کافی", author: "پیامبر اکرم (ص)" },
+      { text: "«أَدَبُ الْمَرْءِ خَیْرٌ مِنْ ذَهَبِهِ»", trans: "ادب و تربیت انسان، از طلای او باارزش‌تر است.", source: "بحارالانوار", author: "امام علی (ع)" },
+      { text: "«قِیمَةُ كُلِّ امْرِئٍ مَا یُحْسِنُهُ»", trans: "ارزش هر انسانی به اندازه تخصص، هنر و نیکویی کار اوست.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«الصَّبْرُ مِفْتَاحُ الْفَرَجِ»", trans: "صبر و استقامت، کلید گشایش هر سختی است.", source: "غرر الحكم", author: "امام علی (ع)" },
+      { text: "«الْعِلْمُ سُلْطَانٌ»", trans: "علم و دانش مایه اقتدار و سلطنت است.", source: "غرر الحكم", author: "امام علی (ع)" },
+      { text: "«رَحِمَ اللَّهُ امْرَءاً عَرَفَ قَدْرَ نَفْسِهِ فَلَمْ يَتَعَدَّ طَوْرَهُ»", trans: "رحمت خدا بر کسی که اندازه خود را بشناسد و از حد خود فراتر نرود.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«مَنْ عَذُبَ لِسَانُهُ كَثُرَ إِخْوَانُهُ»", trans: "کسی که کلامش شیرین و نیکو باشد، دوستان زیادی خواهد داشت.", source: "بحارالانوار", author: "امام صادق (ع)" },
+      { text: "«تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ صَدَقَةٌ»", trans: "لبخند زدن به روی برادر دینی‌تان صدقه محسوب می‌شود.", source: "وسائل الشيعة", author: "پیامبر اکرم (ص)" },
+      { text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ»", trans: "عبادت هفتاد جزء است و بالاترین جزء آن کسب روزی حلال است.", source: "تحف العقول", author: "پیامبر اکرم (ص)" },
+      { text: "«الصَّدَقَةُ تَدْفَعُ الْبَلَاءَ الْمُبْرَمَ»", trans: "صدقه دادن، بلای حتمی را برطرف می‌کند.", source: "بحارالانوار", author: "پیامبر اکرم (ص)" },
+      { text: "«النَّدَمُ تَوْبَةٌ»", trans: "پشیمانی واقعی از گناه، خود نوعی توبه است.", source: "مستدرک الوسائل", author: "پیامبر اکرم (ص)" },
+      { text: "«رَأْسُ الْعَقْلِ مُدَارَاةُ النَّاسِ»", trans: "سرآمد خرد و عقل، مدارا و همزیستی مسالمت‌آمیز با مردم است.", source: "کافی", author: "پیامبر اکرم (ص)" },
+      { text: "«لَا فَقْرَ كَالْجَهْلِ وَلَا مِيرَاثَ كَالْأَدَبِ»", trans: "هیچ فقری چون نادانی و هیچ ارثی چون ادب نیست.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«أَشْرَفُ الْغِنَى تَرْكُ الْمُنَى»", trans: "ارزشمندترین بی‌نیازی، چشم‌پوشی از آرزوهای پوچ است.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«صَدَقَةُ السِّرِّ تُطْفِئُ غَضَبَ الرَّبِّ»", trans: "صدقه پنهانی، خشم پروردگار را فرو می‌نشاند.", source: "بحارالانوار", author: "امام باقر (ع)" },
+      { text: "«الْمُؤْمِنُ بِشْرُهُ فِي وَجْهِهِ وَحُزْنُهُ فِي قَلْبِهِ»", trans: "مؤمن شادی‌اش در چهره‌اش ظاهر و اندوهش در دلش پنهان است.", source: "کافی", author: "امام علی (ع)" },
+      { text: "«سَلَامَةُ الْإِنْسَانِ فِي حِفْظِ اللِّسَانِ»", trans: "سلامت انسان در گرو نگهداری و کنترل زبان است.", source: "غرر الحكم", author: "امام علی (ع)" },
+      { text: "«اَلصَّبْرُ صَبْرَانِ: صَبْرٌ عَلَى مَا تَكْرَهُ وَصَبْرٌ عَمَّا تُحِبُّ»", trans: "صبر دو گونه است: صبر بر ناخوردنی‌ها و صبر بر ترک دلبستگی‌ها.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«اِعْمَلْ لِدُنْيَاكَ كَأَنَّكَ تَعِيشُ أَبَداً وَاعْمَلْ لِآخِرَتِكَ كَأَنَّكَ تَمُوتُ غَداً»", trans: "برای دنیایت چنان کار کن که گویی جاودانه‌ای و برای آخرتت چنان تلاش کن که گویی فردا می‌میری.", source: "نهج الفصاحه", author: "پیامبر اکرم (ص)" },
+      { text: "«طُوبَى لِمَنْ شَغَلَهُ عَيْبُهُ عَنْ عُيُوبِ النَّاسِ»", trans: "خوشا به حال کسی که عیب خودش، او را از پرداختن به عیوب دیگران باز دارد.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«إِنَّ اللَّهَ جَمِيلٌ يُحِبُّ الْجَمَالَ»", trans: "خداوند زیباست و زیبایی را دوست دارد.", source: "صحیح مسلم", author: "پیامبر اکرم (ص)" },
+      { text: "«الْيَدُ الْعُلْيَا خَيْرٌ مِنَ الْيَدِ السُّفْلَى»", trans: "دست بخشنده (بالا) از دست گیرنده (پایین) بهتر است.", source: "صحیح بخاری", author: "پیامبر اکرم (ص)" },
+      { text: "«مَنْ لَا يَشْكُرِ النَّاسَ لَا يَشْكُرِ اللَّهَ»", trans: "کسی که از زحمات مردم قدردانی نکند، شکر خدا را هم به جا نیاورده است.", source: "اصول کافی", author: "امام رضا (ع)" },
+      { text: "«الْعِلْمُ نُورٌ يَقْذِفُهُ اللَّهُ فِي قَلْبِ مَنْ يَشَاءُ»", trans: "علم نوری است که خداوند در دل هر کس که بخواهد می‌تاباند.", source: "بحارالانوار", author: "پیامبر اکرم (ص)" },
+      { text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ»", trans: "محبوب‌ترین کارها نزد خدا مداوم‌ترین آن‌هاست، هرچند اندک باشد.", source: "اصول کافی", author: "پیامبر اکرم (ص)" },
+      { text: "«الْمَسْتَشَارُ مُؤْتَمَنٌ»", trans: "کسی که با او مشورت می‌شود امین و مورد اعتماد است.", source: "نهج البلاغه", author: "پیامبر اکرم (ص)" },
+      { text: "«بَرُّ الْوَالِدَيْنِ أَفْضَلُ مِنَ الصَّلَاةِ وَالصِّيَامِ»", trans: "نیکی به پدر و مادر جایگاهی بسیار والا دارد.", source: "بحارالانوار", author: "امام صادق (ع)" },
+      { text: "«الْوَحْدَةُ خَيْرٌ مِنْ جَلِيسِ السُّوءِ»", trans: "تنهایی از همنشین بد و ناپاک بهتر است.", source: "امالی صدوق", author: "پیامبر اکرم (ص)" },
+      { text: "«مَنْ حَسُنَ خُلُقُهُ بَلَغَ دَرَجَةَ الصَّائِمِ الْقَائِمِ»", trans: "کسی که اخلاق نیکو داشته باشد به پاداش روزه‌دارِ شب‌زنده‌دار می‌رسد.", source: "اصول کافی", author: "پیامبر اکرم (ص)" },
+      { text: "«الْحِكْمَةُ ضَالَّةُ الْمُؤْمِنِ»", trans: "حکمت گمشده مؤمن است، آن را هر جا یافت فراگیرد.", source: "بحارالانوار", author: "امام علی (ع)" },
+      { text: "«أَكْرِمُوا أَوْلَادَكُمْ وَأَحْسِنُوا آدَابَهُمْ»", trans: "به فرزندان خود احترام بگذارید و آنان را نیکو تربیت کنید.", source: "وسائل الشيعة", author: "پیامبر اکرم (ص)" },
+      { text: "«اَلصِّدْقُ أَمَانَةٌ وَالْخِيَانَةُ خِيَانَةٌ»", trans: "راستگویی امانت و دروغ‌گویی خیانت است.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«مَنْ كَثُرَ كَلَامُهُ كَثُرَ خَطَاؤُهُ»", trans: "هر که سخنش بسیار شود، خطایش نیز فزونی می‌یابد.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«اَلْعَفْوُ تَاجُ الْمَكَارِمِ»", trans: "گذشت کردن، تاج صفات عالی انسانی است.", source: "غرر الحكم", author: "امام علی (ع)" },
+      { text: "«مَنْ صَدَقَ أَنْجَاهُ»", trans: "کسی که راست بگوید خداوند او را نجات می‌دهد.", source: "بحارالانوار", author: "امام علی (ع)" },
+      { text: "«اَلْقَنَاعَةُ مَالٌ لَا يَنْفَدُ»", trans: "قناعت ثروتی پایان‌ناپذیر است.", source: "بحارالانوار", author: "امام علی (ع)" },
+      { text: "«أَحْسَبُ النَّاسِ أَعْلَمُهُمْ بِأَمْرِ اللَّهِ»", trans: "آگاه‌ترین مردم کسی است که به تدبیر الهی آگاه‌تر باشد.", source: "اصول کافی", author: "امام رضا (ع)" },
+      { text: "«اَلْجَارُ ثُمَّ الدَّارُ»", trans: "نخست به همسایه برس، آن‌گاه خانه خویش.", source: "مستدرک الوسائل", author: "پیامبر اکرم (ص)" },
+      { text: "«مَنْ أَهَانَ مُؤْمِناً فَقَدْ بَارَزَ اللَّهَ بِالْمُحَارَبَةِ»", trans: "کسی که به مؤمنی اهانت کند با خداوند اعلام جنگ کرده است.", source: "کافی", author: "پیامبر اکرم (ص)" },
+      { text: "«إِنَّ مَعَ الْعُسْرِ يُسْراً»", trans: "بی‌تردید همراه با هر سختی، آسانی فراوانی است.", source: "سوره شرح، آیه ۶", author: "قرآن کریم" },
+      { text: "«أَوْفُوا بِالْعُهُودِ إِنَّ الْعَهْدَ كَانَ مَسْؤُولاً»", trans: "به عهد و پیمان خود وفادار باشید.", source: "سوره اسراء، آیه ۳۴", author: "قرآن کریم" },
+      { text: "«خَيْرُ الْأُمُورِ أَوْسَطُهَا»", trans: "بهترین کارها حد وسط و اعتدال در آن‌هاست.", source: "بحارالانوار", author: "پیامبر اکرم (ص)" },
+      { text: "«الْإِيمَانُ نِصْفَانِ: نِصْفٌ صَبْرٌ وَنِصْفٌ شُكْرٌ»", trans: "ایمان دو نیمه است: نیمی صبر و نیمی شکرگزاری.", source: "تحف العقول", author: "پیامبر اکرم (ص)" },
+      { text: "«مَنْ تَوَاضَعَ لِلَّهِ رَفَعَهُ اللَّهُ»", trans: "کسی که برای خدا تواضع کند، خداوند او را سرافراز می‌سازد.", source: "اصول کافی", author: "پیامبر اکرم (ص)" },
+      { text: "«الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ»", trans: "مسلمان واقعی کسی است که دیگران از زبان و دست او در آسایش باشند.", source: "صحیح بخاری", author: "پیامبر اکرم (ص)" },
+      { text: "«الْبَدْءُ بِالسَّلَامِ سُنَّةٌ حَسَنَةٌ»", trans: "سلام کردن پیش از سخن گفتن، سنت نیکویی است.", source: "بحارالانوار", author: "پیامبر اکرم (ص)" },
+      { text: "«أَحَبُّ الْبِلَادِ إِلَى اللَّهِ مَسَاجِدُهَا»", trans: "محبوب‌ترین مکان‌ها نزد خداوند مساجد هستند.", source: "صحیح مسلم", author: "پیامبر اکرم (ص)" },
+      { text: "«مَنْ فَرَّجَ عَنْ مُؤْمِنٍ كُرْبَةً فَرَّجَ اللَّهُ عَنْهُ كُرَبَ يَوْمِ الْقِيَامَةِ»", trans: "هر که اندوهی را از مؤمنی برطرف کند، خدا سختی‌های قیامت را از او دور سازد.", source: "اصول کافی", author: "پیامبر اکرم (ص)" },
+      { text: "«الْعِلْمُ خَيْرٌ مِنَ الْمَالِ، الْعِلْمُ يَحْرُسُكَ وَأَنْتَ تَحْرُسُ الْمَالَ»", trans: "علم از ثروت بهتر است؛ زیرا علم تو را حفظ می‌کند اما تو باید محافظ مال باشی.", source: "نهج البلاغه", author: "امام علی (ع)" },
+      { text: "«بَكِّرُوا فِي طَلَبِ الرِّزْقِ وَالْحَوَائِجِ»", trans: "صبح زود به دنبال روزی و کار و بار خود بروید.", source: "وسائل الشيعة", author: "پیامبر اکرم (ص)" },
+      { text: "«مَنْ كَذَبَ عَلَيَّ مُتَعَمِّداً فَلْيَتَبَوَّأْ مَقْعَدَهُ مِنَ النَّارِ»", trans: "هر کس به عمد به من دروغ ببندد جایگاهش در آتش است.", source: "متفق عليه", author: "پیامبر اکرم (ص)" },
+      { text: "«الْإِحْسَانُ يَقْطَعُ اللِّسَانَ»", trans: "نیکی کردن به دیگران، زبان بدگویی را قطع می‌کند.", source: "بحارالانوار", author: "امام علی (ع)" },
+      { text: "«لا حَوْلَ وَلا قُوَّةَ إِلاّ بِاللَّهِ الْعَلِيِّ الْعَظِيمِ»", trans: "هیچ نیرو و حرکتی جز به اراده خداوند بزرگ نیست.", source: "بحارالانوار", author: "پیامبر اکرم (ص)" },
+      { text: "«باران باش و ببار و نپرس که پیاله‌های خالی از آن کیست.»", trans: "نیکی کردن بدون چشم‌داشت، بزرگ‌ترین نشانه بزرگی روح است.", source: "منشور باستان", author: "کوروش کبیر" },
+      { text: "«اندیشه نیک، گفتار نیک و کردار نیک پایه خوشبختی انسان است.»", trans: "راه راستی و درستی همواره روشن و پیروزمند است.", source: "پندهای کهن", author: "زرتشت" },
+      { text: "«خوشا به حال کسی که به جای انتقام، بخشش را سرلوحه زندگی خود قرار دهد.»", trans: "بخشندگی مایه آرامش و عظمت روح است.", source: "حکمت‌های شرق", author: "کنفوسیوس" }
     ];
 
     let currentHadithIndex = 0;
@@ -557,7 +571,7 @@
       document.getElementById('hadithAuthor').innerText = item.author;
       document.getElementById('hadithText').innerText = item.text;
       document.getElementById('hadithTrans').innerText = item.trans;
-      document.getElementById('hadithSource').innerText = item.source;
+      document.getElementById('hadithSource').innerText = "[" + item.source + "]";
     }
 
     // چرخش خودکار هر ۸ ثانیه
@@ -593,29 +607,8 @@
       }
     }
 
-    function updateCalendarAndClock() {
+    function updateLiveClock() {
       const now = new Date();
-      const weekDays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
-      document.getElementById('dayNameDisplay').innerText = weekDays[now.getDay()];
-
-      const afMonths = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'حوت'];
-      try {
-        const formatterSF = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'numeric', year: 'numeric' });
-        const partsSF = formatterSF.formatToParts(now);
-        let d = '', m = '', y = '';
-        partsSF.forEach(p => {
-          if (p.type === 'day') d = p.value;
-          if (p.type === 'month') m = parseInt(p.value, 10);
-          if (p.type === 'year') y = p.value;
-        });
-        document.getElementById('shamsiDayVal').innerText = d;
-        document.getElementById('shamsiMonthVal').innerText = `${afMonths[m - 1] || ''} ${y}`;
-      } catch(e) {}
-
-      document.getElementById('gregDayVal').innerText = now.getDate();
-      const engMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      document.getElementById('gregMonthVal').innerText = `${engMonths[now.getMonth()]} ${now.getFullYear()}`;
-
       document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
       
       const getTimeInZone = (timeZone) => now.toLocaleTimeString('en-US', { timeZone, hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -624,8 +617,8 @@
       document.getElementById('clockNY').innerText = getTimeInZone('America/New_York');
     }
 
-    updateCalendarAndClock();
-    setInterval(updateCalendarAndClock, 1000);
+    updateLiveClock();
+    setInterval(updateLiveClock, 1000);
   </script>
 
 </body>
