@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>امانت‌داری کریمی - سامانه ویژه مشتریان</title>
 
-  <!-- فونت‌های Vazirmatn و Farhang -->
+  <!-- فونت‌های اختصاصی Vazirmatn و Farhang -->
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     @font-face {
@@ -22,7 +22,7 @@
     }
   </style>
 
-  <!-- کتابخانه‌ها -->
+  <!-- کتابخانه‌های ابزاری -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -37,11 +37,9 @@
       --danger: #f43f5e;
       --danger-dark: #be123c;
       --warning: #f59e0b;
-      --bg-gradient: linear-gradient(145deg, #0f172a 0%, #1e1b4b 40%, #0f2d4a 100%);
+      --bg-gradient: linear-gradient(145deg, #090d16 0%, #1e1b4b 40%, #0f172a 100%);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --card-border: rgba(255, 255, 255, 0.8);
       --radius-xl: 24px;
       --radius-lg: 16px;
     }
@@ -58,8 +56,8 @@
     }
 
     body {
-      background: #0b0f19;
-      background-image: radial-gradient(circle at 50% 0%, #312e81 0%, #0b0f19 70%);
+      background: #060913;
+      background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #060913 75%);
       color: #0f172a;
       min-height: 100vh;
       display: flex;
@@ -69,10 +67,10 @@
       overflow: hidden;
     }
 
-    @keyframes glowPulse {
-      0% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); border-color: #818cf8; }
-      50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.5); border-color: #38bdf8; }
-      100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); border-color: #818cf8; }
+    @keyframes glowNeon {
+      0% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.2); border-color: #818cf8; }
+      50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.7), inset 0 0 25px rgba(99, 102, 241, 0.4); border-color: #38bdf8; }
+      100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.2); border-color: #818cf8; }
     }
 
     @keyframes tabAction {
@@ -86,19 +84,19 @@
       height: 100vh;
       max-width: 450px;
       max-height: 940px;
-      background: linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 100%);
+      background: linear-gradient(160deg, #f8fafc 0%, #e2e8f0 100%);
       display: flex;
       flex-direction: column;
       position: relative;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
       overflow: hidden;
     }
 
     @media (min-width: 451px) {
       .app-viewport {
         height: 96vh;
-        border-radius: 30px;
-        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 32px;
+        border: 3px solid rgba(255, 255, 255, 0.4);
       }
     }
 
@@ -172,82 +170,50 @@
 
     button:active { transform: scale(0.97); }
 
-    .user-profile-card {
-      background: #ffffff;
+    /* کارت نام نمایشی لوکس بدون عکس پروفایل (نوردهی و متحرک) */
+    .user-profile-neon-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
       border-radius: var(--radius-xl);
-      padding: 14px 16px;
-      border: 2px solid #cbd5e1;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-      animation: glowPulse 4s infinite alternate;
+      padding: 16px 20px;
+      border: 2.5px solid #38bdf8;
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.25);
+      animation: glowNeon 4s infinite alternate;
       flex-shrink: 0;
-    }
-
-    .profile-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .profile-avatar-wrapper {
-      position: relative;
-      width: 68px;
-      height: 68px;
-      flex-shrink: 0;
-    }
-
-    .profile-avatar-img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--primary);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-      background: #f1f5f9;
-    }
-
-    .profile-upload-icon {
-      position: absolute;
-      bottom: -2px;
-      right: -2px;
-      background: #0284c7;
-      color: white;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      border: 2px solid white;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-
-    .profile-info {
-      flex: 1;
+      color: #ffffff;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 10px;
     }
 
-    .profile-name {
+    .profile-neon-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .profile-neon-name {
+      font-size: 18px;
       font-weight: 900;
-      font-size: 16.5px;
-      color: #1e1b4b;
+      color: #38bdf8;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
     }
 
-    .profile-sub {
-      font-size: 12px;
-      color: #475569;
-      font-weight: 700;
+    .profile-neon-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #cbd5e1;
+      border-top: 1px dashed rgba(255,255,255,0.2);
+      padding-top: 8px;
     }
 
     .profile-actions {
       display: flex;
       gap: 8px;
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px dashed #cbd5e1;
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
 
     .btn-pill {
@@ -260,13 +226,13 @@
       box-shadow: none;
     }
 
-    /* کارت اصلی آمار - وسط قرار گرفته با افکت گرافیکی برجسته */
+    /* کارت اصلی آمار - وسط صفحه، بزرگ‌تر و برجسته */
     .dashboard-main-card {
-      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-      border: 2px solid #94a3b8;
+      background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+      border: 2.5px solid #64748b;
       border-radius: var(--radius-xl);
       padding: 16px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.12);
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -274,7 +240,7 @@
       margin: 10px 0;
     }
 
-    /* تب‌های ارز متحرک و اکشنی در بالای بخش آمار */
+    /* تب‌های انتخاب ارز متحرک در بالاترین بخش آمار */
     .currency-tabs {
       display: flex;
       gap: 6px;
@@ -288,7 +254,7 @@
       flex: 1;
       padding: 10px;
       text-align: center;
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 900;
       cursor: pointer;
       border-radius: 10px;
@@ -307,26 +273,26 @@
       animation: tabAction 0.3s ease;
     }
 
-    /* کادر مانده حساب کیلومتری بزرگ و زیبا */
+    /* کادر مانده حساب بسیار بزرگ، شیک و دیجیتالی در وسط آمار */
     .odometer-card-bright {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      background: linear-gradient(135deg, #090d16 0%, #1e1b4b 100%);
       color: #ffffff;
-      border: 2px solid #38bdf8;
+      border: 2.5px solid #38bdf8;
       border-radius: 18px;
-      padding: 18px 14px;
+      padding: 20px 14px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(56, 189, 248, 0.25);
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.3);
       position: relative;
       margin: 8px 0;
     }
 
     .odometer-value-large {
-      font-size: 32px;
+      font-size: 36px;
       font-weight: 900;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       color: #38bdf8;
-      text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
-      margin: 6px 0;
+      text-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
+      margin: 8px 0;
     }
 
     /* کادر هشدار در پایین آمار */
@@ -343,6 +309,7 @@
     .psychology-box.negative { background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; }
     .psychology-box.neutral { background: #eff6ff; border: 1.5px solid #93c5fd; color: #1e40af; }
 
+    /* مودال عمومی و صفحات جدید بدون اسکرول و تمیز */
     .fullscreen-modal {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -366,7 +333,7 @@
 
     .modal-scroll-body { flex: 1; padding: 16px; overflow-y: auto; }
 
-    /* کارت تراکنش شیک، متحرک و برجسته */
+    /* کارت تراکنش */
     .tx-card {
       background: #ffffff;
       border: 2px solid #cbd5e1;
@@ -374,7 +341,7 @@
       padding: 14px;
       margin-bottom: 10px;
       box-shadow: 0 6px 16px rgba(0,0,0,0.04);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s ease;
     }
     .tx-card:active { transform: scale(0.98); }
 
@@ -422,18 +389,6 @@
       line-height: 1.7;
     }
 
-    .error-box {
-      background: #fef2f2;
-      border: 1.5px solid #fecaca;
-      color: var(--danger-dark);
-      padding: 12px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 12.5px;
-      margin-top: 10px;
-      font-weight: 800;
-    }
-
     .eng-num { font-family: 'Vazirmatn', Tahoma, sans-serif; direction: ltr; display: inline-block; }
     .hidden { display: none !important; }
   </style>
@@ -448,10 +403,7 @@
     </header>
 
     <main class="app-body">
-      <!-- ورودی مخفی عکس پروفایل -->
-      <input type="file" id="profileImageFileInput" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
-
-      <!-- ویرایش ۱: صفحه ورود شماره تلفن -->
+      <!-- صفحه ورود شماره تلفن -->
       <div id="phoneSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
         <div>
           <div class="info-card">
@@ -487,17 +439,10 @@
               <button onclick="loginWithBiometric()" style="background: var(--success-dark); font-size: 13px;">🔑 ورود سریع با اثر انگشت</button>
             </div>
           </div>
-
-          <div id="phoneError" class="hidden error-box">
-            شماره شما شناسایی نشد. اگر تمایل به ایجاد حساب دارید در واتساپ پیام دهید:
-            <a id="whatsappNoAccountBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-top:8px; font-size:12.5px;">
-              💬 پیام به واتساپ امانت‌داری کریمی
-            </a>
-          </div>
         </div>
       </div>
 
-      <!-- ویرایش ۲: ورود کُد حساب -->
+      <!-- صفحه ورود کُد حساب -->
       <div id="accountSection" class="hidden" style="margin: auto 0;">
         <div class="info-card" style="text-align:center;">
           <div style="font-size:36px; margin-bottom:6px;">🔐</div>
@@ -507,28 +452,20 @@
           </div>
           <button id="btnVerifyAcc" onclick="verifyAccount()">ورود به سیستم 🚀</button>
           <button onclick="backToPhone()" style="background:#64748b; margin-top:8px;">← تغییر شماره</button>
-          
-          <div id="accountError" class="hidden error-box">
-            کد حساب اشتباه است.
-            <a id="whatsappWrongAccBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-top:8px; font-size:12.5px;">💬 پشتیبانی واتساپ</a>
-          </div>
         </div>
       </div>
 
-      <!-- داشبورد اصلی یک‌صفحه‌ای (بدون اسکرول) -->
+      <!-- داشبورد اصلی یک‌صفحه‌ای (بدون اسکرول - بدون عکس پروفایل) -->
       <div id="dashboardSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
-        <!-- پروفایل مشتری -->
-        <div class="user-profile-card">
-          <div class="profile-row">
-            <div class="profile-avatar-wrapper">
-              <img id="dashAvatarImg" src="https://via.placeholder.com/150/cbd5e1/64748b?text=User" class="profile-avatar-img">
-              <div class="profile-upload-icon" onclick="triggerProfilePhotoPick()">📷</div>
-            </div>
-            <div class="profile-info">
-              <div id="dashName" class="profile-name">---</div>
-              <div class="profile-sub">تلفن: <span id="dashPhone" class="eng-num">---</span></div>
-              <div class="profile-sub">کُد حساب: <span id="dashAccountId" class="eng-num" style="color:var(--primary); font-weight:800;">---</span></div>
-            </div>
+        <!-- نام نمایشی لوکس نوری و برجسته (بدون عکس) -->
+        <div class="user-profile-neon-card">
+          <div class="profile-neon-header">
+            <span id="dashName" class="profile-neon-name">---</span>
+            <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#38bdf8; padding:3px 8px; border-radius:6px; font-weight:800;">حساب معتبر</span>
+          </div>
+          <div class="profile-neon-details">
+            <span>تلفن: <b id="dashPhone" class="eng-num" style="color:#ffffff;">---</b></span>
+            <span>کُد حساب: <b id="dashAccountId" class="eng-num" style="color:#38bdf8;">---</b></span>
           </div>
           <div class="profile-actions">
             <button onclick="toggleBiometricSetting()" id="bioToggleBtn" class="btn-pill" style="background:var(--success-dark);">🔑 اثرانگشت</button>
@@ -537,10 +474,10 @@
           </div>
         </div>
 
-        <!-- کارت آمار زنده - چیدمان جدید: بالاترین قسمت تب‌های ارز، وسط کادر مانده، پایین هشدار -->
+        <!-- کارت آمار زنده - چیدمان اصلاح‌شده: تب‌های ارز بالا، مانده بسیار بزرگ در وسط، هشدار پایین -->
         <div class="dashboard-main-card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:13.5px; font-weight:900; color:#1e293b;">📊 آمار زنده موجودی حساب</span>
+            <span style="font-size:14px; font-weight:900; color:#1e293b;">📊 آمار زنده موجودی حساب</span>
             <button id="refreshAccountBtn" onclick="refreshAccountData()" style="width:auto; padding:5px 10px; font-size:11px; background:#0284c7; margin-top:0; box-shadow:none; border-radius:8px;">
               🔄 به‌روزرسانی
             </button>
@@ -549,11 +486,11 @@
           <!-- ۱. بالاترین بخش: انتخاب ارزها با اکشن متحرک -->
           <div class="currency-tabs" id="currencyTabs"></div>
 
-          <!-- ۲. وسط: کادر مانده حساب (عبارت مانده واقعی حذف شد) -->
+          <!-- ۲. وسط: کادر مانده حساب بسیار بزرگ (بدون عبارت شک‌برانگیز) -->
           <div class="odometer-card-bright">
-            <div style="font-size:12.5px; font-weight:800; color:#94a3b8;">مانده حساب (<span id="odometerCurrencyLabel">AFN</span>)</div>
+            <div style="font-size:13px; font-weight:800; color:#94a3b8;">مانده حساب (<span id="odometerCurrencyLabel">AFN</span>)</div>
             <div id="odometerValue" class="odometer-value-large eng-num">0</div>
-            <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:800; border-top:1px solid rgba(255,255,255,0.15); padding-top:8px; margin-top:6px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800; border-top:1px solid rgba(255,255,255,0.15); padding-top:8px; margin-top:6px;">
               <span>مجموع بستانکار (+): <b id="odometerCredit" class="eng-num" style="color:#4ade80;">0</b></span>
               <span>مجموع بدهکار (-): <b id="odometerDebit" class="eng-num" style="color:#f87171;">0</b></span>
             </div>
@@ -574,6 +511,21 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- مودال جدید و اختصاصی گزارش خطای شماره نامعتبر (جایگزین متن پایین صفحه) -->
+  <div id="errorModal" class="fullscreen-modal" style="background: rgba(15,23,42,0.85); backdrop-filter: blur(10px); display:flex; justify-content:center; align-items:center;">
+    <div style="background:#ffffff; width:90%; max-width:380px; border-radius:22px; padding:22px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.4); border:2.5px solid var(--danger);">
+      <div style="font-size:42px; margin-bottom:8px;">⚠️</div>
+      <h3 style="font-size:17px; font-weight:900; color:var(--danger-dark); margin-bottom:10px;">شماره شناسایی نشد</h3>
+      <p style="font-size:13px; color:#475569; line-height:1.7; margin-bottom:16px;">
+        شماره تماسی که وارد کرده‌اید در سیستم امانت‌داری کریمی ثبت نشده است. اگر تمایل به ایجاد حساب دارید، می‌توانید از طریق واتساپ با ما در ارتباط باشید:
+      </p>
+      <a id="modalWhatsAppErrorBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-bottom:10px; font-size:13.5px;">
+        💬 پیام به واتساپ امانت‌داری کریمی
+      </a>
+      <button onclick="closeErrorModal()" style="background:#64748b; margin-top:0;">تأیید و بازگشت ✕</button>
+    </div>
   </div>
 
   <!-- مودال لیست تراکنش‌ها -->
@@ -729,15 +681,12 @@
     function checkPhone() {
       playSound('click');
       const rawInput = document.getElementById('phoneInput').value.trim();
-      const errBox = document.getElementById('phoneError');
-      errBox.classList.add('hidden');
 
       if (!rawInput) return;
       const userLast9 = getLast9Digits(rawInput);
 
       if (userLast9.length < 9) {
-        errBox.innerText = "لطفاً شماره تلفن را کامل‌تر وارد کنید.";
-        errBox.classList.remove('hidden');
+        alert("لطفاً شماره تلفن را کامل‌تر وارد کنید.");
         return;
       }
 
@@ -753,46 +702,16 @@
         let nameVal = getVal(currentFoundUser, ['Name', 'name']) || 'مشتری گرامی';
         document.getElementById('greetingMsg').innerText = `خوش آمدید ${nameVal} عزیز!`;
       } else {
-        const whatsappBtn = document.getElementById('whatsappNoAccountBtn');
+        // باز کردن صفحه مودال جدید گزارش خطا به جای اسکرول پایین صفحه
         const encodedText = encodeURIComponent(`سلام کریمی عزیز، شماره تماس من ${rawInput} است. تمایل دارم حساب داشته باشم.`);
-        whatsappBtn.href = `https://wa.me/9647721878997?text=${encodedText}`;
-        errBox.classList.remove('hidden');
+        document.getElementById('modalWhatsAppErrorBtn').href = `https://wa.me/9647721878997?text=${encodedText}`;
+        document.getElementById('errorModal').style.transform = 'translateY(0)';
       }
     }
 
-    function triggerProfilePhotoPick() {
+    function closeErrorModal() {
       playSound('click');
-      document.getElementById('profileImageFileInput').click();
-    }
-
-    async function handleProfilePhotoUpload(e) {
-      const file = e.target.files[0];
-      if (!file || !currentFoundUser) return;
-
-      const accId = String(getVal(currentFoundUser, ['AccountID', 'accountid', 'ID'])).trim();
-      const fileExt = file.name.split('.').pop();
-      const fileName = `user_${accId}_${Date.now()}.${fileExt}`;
-
-      try {
-        const { error } = await _supabase.storage.from('Accounts_Images').upload(fileName, file);
-        if (error) {
-          alert("امکان بارگذاری تصویر وجود ندارد. لطفاً بعداً تلاش کنید.");
-          return;
-        }
-
-        const { data: publicUrlData } = _supabase.storage.from('Accounts_Images').getPublicUrl(fileName);
-        const uploadedUrl = publicUrlData.publicUrl;
-
-        // ذخیره لینک عکس در ستون جدید Accounts_Images و Photo
-        await _supabase.from('accounts').update({ Accounts_Images: uploadedUrl, Photo: uploadedUrl }).eq('AccountID', accId);
-
-        currentFoundUser.Accounts_Images = uploadedUrl;
-        currentFoundUser.Photo = uploadedUrl;
-        document.getElementById('dashAvatarImg').src = uploadedUrl;
-        alert("✅ عکس پروفایل با موفقیت به‌روزرسانی شد!");
-      } catch (err) {
-        alert("خطا در بارگذاری تصویر.");
-      }
+      document.getElementById('errorModal').style.transform = 'translateY(100%)';
     }
 
     async function loginWithBiometric() {
@@ -836,7 +755,7 @@
         localStorage.setItem('karimi_biometric_enabled', 'true');
         localStorage.setItem('karimi_biometric_phone', phoneVal);
         localStorage.setItem('karimi_biometric_accId', sheetAccId);
-        alert("ورود با اثر انگشت برای این دستگاه فعال گردید.");
+        alert("ورود با اثر انگشت فعال گردید.");
       }
       updateBioBtnText();
     }
@@ -853,9 +772,6 @@
     function verifyAccount() {
       playSound('click');
       const accIdInput = document.getElementById('accountIdInput').value.trim();
-      const accErr = document.getElementById('accountError');
-      accErr.classList.add('hidden');
-
       let sheetAccId = String(getVal(currentFoundUser, ['AccountID', 'accountid', 'ID'])).trim();
 
       if (sheetAccId === accIdInput) {
@@ -864,7 +780,7 @@
         localStorage.setItem('karimi_accId', sheetAccId);
         processDashboard(sheetAccId);
       } else {
-        accErr.classList.remove('hidden');
+        alert("کد حساب اشتباه است.");
       }
     }
 
@@ -910,15 +826,10 @@
 
       let nameVal = getVal(currentFoundUser, ['Name', 'name']) || '---';
       let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']) || '---';
-      let photoVal = getVal(currentFoundUser, ['Accounts_Images', 'Photo', 'photo', 'Avatar']);
 
       document.getElementById('dashName').innerText = nameVal;
       document.getElementById('dashPhone').innerText = phoneVal;
       document.getElementById('dashAccountId').innerText = sheetAccId;
-
-      if (photoVal) {
-        document.getElementById('dashAvatarImg').src = photoVal;
-      }
 
       const directWp = document.getElementById('directWhatsAppMsg');
       const wpText = encodeURIComponent(`سلام کریمی عزیز، من ${nameVal} هستم. درباره وضعیت حسابم پرسشی دارم.`);
@@ -996,7 +907,7 @@
         psychBox.innerHTML = `⚖️ <b>تسویه کامل:</b> موجودی حساب شما کاملاً صفر می‌باشد.`;
       }
 
-      let duration = 2500; // سرعت افزایش مناسب ۲.۵ ثانیه
+      let duration = 2500;
       let startTime = null;
       let targetNet = b.net;
       let targetCredit = b.credit;
