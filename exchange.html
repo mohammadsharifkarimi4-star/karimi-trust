@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>امانت‌داری کریمی - سامانه مشتریان</title>
+  <title>امانت‌داری کریمی - سامانه ویژه مشتریان</title>
 
-  <!-- فونت Vazirmatn و Farhang -->
+  <!-- فونت‌های Vazirmatn و Farhang -->
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     @font-face {
@@ -22,7 +22,7 @@
     }
   </style>
 
-  <!-- کتابخانه‌های مورد نیاز -->
+  <!-- کتابخانه‌های پردازش و دیتابیس -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -30,17 +30,18 @@
     :root {
       --primary: #4f46e5;
       --primary-dark: #3730a3;
-      --primary-glow: #818cf8;
-      --bg-gradient: linear-gradient(145deg, #1e1b4b 0%, #0f172a 40%, #1e293b 100%);
-      --card-glass: rgba(255, 255, 255, 0.96);
-      --card-border: rgba(255, 255, 255, 0.8);
+      --primary-light: #6366f1;
+      --accent-glow: #06b6d4;
+      --success: #10b981;
+      --success-dark: #059669;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --warning: #f59e0b;
+      --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #f1f5f9 100%);
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --success: #059669;
-      --danger: #dc2626;
-      --warning: #d97706;
-      --radius-xl: 20px;
-      --radius-lg: 14px;
+      --radius-xl: 24px;
+      --radius-lg: 16px;
     }
 
     * {
@@ -55,8 +56,9 @@
     }
 
     body {
-      background: #090d16;
-      background-image: radial-gradient(circle at 50% 0%, #312e81 0%, #090d16 75%);
+      background: #cbd5e1;
+      background-image: radial-gradient(#94a3b8 1.5px, transparent 1.5px);
+      background-size: 20px 20px;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -66,44 +68,45 @@
       overflow: hidden;
     }
 
-    /* انیمیشن‌های نوری و حرکتی زنده */
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5); }
-      70% { box-shadow: 0 0 0 12px rgba(79, 70, 229, 0); }
+    /* انیمیشن‌های زنده و افکت‌های بصری */
+    @keyframes pulseLight {
+      0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+      70% { box-shadow: 0 0 0 14px rgba(79, 70, 229, 0); }
       100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
     }
 
-    @keyframes borderGlow {
-      0% { border-color: #6366f1; }
+    @keyframes cardGlow {
+      0% { border-color: #818cf8; }
       50% { border-color: #38bdf8; }
-      100% { border-color: #6366f1; }
+      100% { border-color: #818cf8; }
     }
 
     .app-viewport {
       width: 100vw;
       height: 100vh;
-      max-width: 440px;
-      max-height: 920px;
-      background: #f1f5f9;
+      max-width: 450px;
+      max-height: 940px;
+      background: var(--bg-gradient);
       display: flex;
       flex-direction: column;
       position: relative;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
       overflow: hidden;
     }
 
-    @media (min-width: 441px) {
+    @media (min-width: 451px) {
       .app-viewport {
         height: 96vh;
-        border-radius: 28px;
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 30px;
+        border: 3px solid rgba(255, 255, 255, 0.9);
       }
     }
 
     .app-header {
-      padding: 12px 16px;
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1.5px solid #e2e8f0;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -112,7 +115,7 @@
     }
 
     .header-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 900;
       color: #1e1b4b;
       display: flex;
@@ -122,27 +125,27 @@
 
     .app-body {
       flex: 1;
-      padding: 12px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      overflow: hidden; /* صفحه به صفحه بدون اسکرول */
+      overflow: hidden;
     }
 
-    .form-group { margin-bottom: 10px; }
+    .form-group { margin-bottom: 12px; }
 
     input {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       border: 2px solid #cbd5e1;
-      border-radius: 12px;
-      font-size: 15px;
+      border-radius: 14px;
+      font-size: 16px;
       text-align: center;
       outline: none;
       background: #ffffff;
       color: #0f172a;
       font-weight: 800;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
     }
 
     input:focus {
@@ -152,45 +155,45 @@
 
     button {
       width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
       border: none;
-      border-radius: 12px;
-      font-size: 14px;
+      border-radius: 14px;
+      font-size: 15px;
       cursor: pointer;
       font-weight: 800;
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.3);
       transition: transform 0.1s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     button:active { transform: scale(0.97); }
 
-    /* کارت پروفایل لوکس */
+    /* کارت پروفایل مدرن و روشن */
     .user-profile-card {
       background: #ffffff;
-      border-radius: 18px;
-      padding: 12px 14px;
-      border: 2px solid #e2e8f0;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-      animation: borderGlow 4s infinite alternate;
+      border-radius: var(--radius-xl);
+      padding: 14px 16px;
+      border: 2px solid #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      animation: cardGlow 4s infinite alternate;
       flex-shrink: 0;
     }
 
     .profile-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .profile-avatar-wrapper {
       position: relative;
-      width: 60px;
-      height: 60px;
+      width: 68px;
+      height: 68px;
       flex-shrink: 0;
     }
 
@@ -200,7 +203,7 @@
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid var(--primary);
-      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
       background: #f1f5f9;
     }
 
@@ -210,131 +213,131 @@
       right: -2px;
       background: #0284c7;
       color: white;
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 13px;
       border: 2px solid white;
       cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
     .profile-info {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
 
     .profile-name {
       font-weight: 900;
-      font-size: 15.5px;
+      font-size: 16.5px;
       color: #1e1b4b;
     }
 
     .profile-sub {
-      font-size: 11.5px;
+      font-size: 12px;
       color: #475569;
       font-weight: 700;
     }
 
     .profile-actions {
       display: flex;
-      gap: 6px;
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px dashed #e2e8f0;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #cbd5e1;
     }
 
     .btn-pill {
       flex: 1;
-      padding: 7px 8px;
-      font-size: 11px;
-      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 11.5px;
+      border-radius: 10px;
       font-weight: 800;
       margin-top: 0;
       box-shadow: none;
     }
 
-    /* بخش آمار و مانده زنده */
+    /* کارت موجودی زنده، بزرگ، روشن و برجسته */
     .dashboard-main-card {
       background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 18px;
-      padding: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-xl);
+      padding: 16px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      margin: 8px 0;
+      margin: 10px 0;
     }
 
     .currency-tabs {
       display: flex;
-      gap: 5px;
+      gap: 6px;
       background: #e2e8f0;
-      padding: 4px;
-      border-radius: 10px;
+      padding: 5px;
+      border-radius: 12px;
     }
 
     .currency-tab {
       flex: 1;
-      padding: 7px;
+      padding: 9px;
       text-align: center;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 900;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 9px;
       color: #475569;
       background: transparent;
       border: none;
       box-shadow: none;
       margin-top: 0;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
     }
 
     .currency-tab.active {
       background: var(--primary);
       color: #ffffff;
-      box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
     }
 
     .psychology-box {
-      border-radius: 12px;
-      padding: 8px 10px;
+      border-radius: 14px;
+      padding: 10px 12px;
       margin: 8px 0;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 800;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .psychology-box.positive { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
-    .psychology-box.negative { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-    .psychology-box.neutral { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .psychology-box.positive { background: #ecfdf5; border: 1.5px solid #a7f3d0; color: #065f46; }
+    .psychology-box.negative { background: #fef2f2; border: 1.5px solid #fecaca; color: #991b1b; }
+    .psychology-box.neutral { background: #eff6ff; border: 1.5px solid #bfdbfe; color: #1e40af; }
 
-    /* مانده با کیلومترشمار انیمیشنی */
-    .odometer-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      color: white;
-      border-radius: 14px;
-      padding: 14px;
+    /* کادر زنده مانده - روشن، برجسته و سه‌بعدی */
+    .odometer-card-bright {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      color: #0f172a;
+      border: 2px solid #38bdf8;
+      border-radius: 18px;
+      padding: 16px;
       text-align: center;
-      box-shadow: inset 0 2px 8px rgba(255,255,255,0.1);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.15);
       position: relative;
-      overflow: hidden;
     }
 
-    .odometer-value {
-      font-size: 26px;
+    .odometer-value-large {
+      font-size: 32px;
       font-weight: 900;
       letter-spacing: 1px;
-      color: #38bdf8;
-      text-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
-      margin: 4px 0;
+      color: #0284c7;
+      margin: 6px 0;
     }
 
     .fullscreen-modal {
@@ -345,83 +348,84 @@
       display: flex;
       flex-direction: column;
       transform: translateY(100%);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .fullscreen-modal.open { transform: translateY(0); }
 
     .modal-header {
-      padding: 14px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 16px;
+      border-bottom: 1.5px solid #e2e8f0;
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: #ffffff;
     }
 
-    .modal-scroll-body { flex: 1; padding: 14px; overflow-y: auto; }
+    .modal-scroll-body { flex: 1; padding: 16px; overflow-y: auto; }
 
     .tx-card {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
 
     .action-btn {
       width: 100%;
-      padding: 12px;
-      border-radius: 12px;
+      padding: 14px;
+      border-radius: 14px;
       border: none;
-      font-size: 13.5px;
+      font-size: 14.5px;
       font-weight: 800;
       cursor: pointer;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       color: white;
       text-decoration: none;
     }
 
     .whatsapp-btn {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
     }
 
     .info-card {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 8px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
     }
 
     .info-title {
       font-weight: 900;
-      font-size: 13px;
+      font-size: 14px;
       color: #1e1b4b;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .info-desc {
-      font-size: 11.5px;
+      font-size: 12.5px;
       color: #475569;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     .error-box {
       background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: var(--danger);
-      padding: 10px;
-      border-radius: 10px;
+      border: 1.5px solid #fecaca;
+      color: var(--danger-dark);
+      padding: 12px;
+      border-radius: 12px;
       text-align: center;
-      font-size: 12px;
-      margin-top: 8px;
-      font-weight: 700;
+      font-size: 12.5px;
+      margin-top: 10px;
+      font-weight: 800;
     }
 
     .eng-num { font-family: 'Vazirmatn', Tahoma, sans-serif; direction: ltr; display: inline-block; }
@@ -432,16 +436,16 @@
 
   <div class="app-viewport">
     <header class="app-header">
-      <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 12px; font-weight: 800;">← منو</a>
+      <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 13px; font-weight: 800;">← منو</a>
       <div class="header-title">🛡️ امانت‌داری کریمی</div>
       <div style="width: 25px;"></div>
     </header>
 
     <main class="app-body">
-      <!-- ورودی مخفی عکس پروفایل -->
+      <!-- ورودی عکس پروفایل -->
       <input type="file" id="profileImageFileInput" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
 
-      <!-- ویرایش ۱: صفحه ورود شماره تلفن -->
+      <!-- صفحه ورود شماره تلفن -->
       <div id="phoneSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
         <div>
           <div class="info-card">
@@ -451,13 +455,13 @@
             </div>
           </div>
 
-          <a href="https://wa.me/9647721878997" target="_blank" class="action-btn whatsapp-btn" style="margin-bottom:12px; font-size:12.5px;">
+          <a href="https://wa.me/9647721878997" target="_blank" class="action-btn whatsapp-btn" style="margin-bottom:12px; font-size:13.5px;">
             ✨ افتتاح حساب با امانت‌داری کریمی
           </a>
 
           <div class="info-card" style="border-color:#cbd5e1;">
-            <div class="info-title" style="text-align:center; font-size:13.5px; margin-bottom:8px;">ورود و شناسایی حساب</div>
-            <div style="font-size:11.5px; color:#64748b; margin-bottom:8px; text-align:center;">
+            <div class="info-title" style="text-align:center; font-size:14.5px; margin-bottom:8px;">ورود و شناسایی حساب</div>
+            <div style="font-size:12px; color:#64748b; margin-bottom:10px; text-align:center; font-weight:700;">
               اگر با امانت‌داری کریمی حساب دارید، شماره تماس ثبت شده را وارد کنید تا سیستم شما را شناسایی کند:
             </div>
             
@@ -466,41 +470,41 @@
             </div>
             <button id="btnCheckPhone" onclick="checkPhone()">مرحله بعد ←</button>
             
-            <div id="biometricBtnWrapper" class="hidden" style="margin-top: 8px;">
-              <button onclick="loginWithBiometric()" style="background: var(--success); font-size: 12px;">🔑 ورود سریع با اثر انگشت</button>
+            <div id="biometricBtnWrapper" class="hidden" style="margin-top: 10px;">
+              <button onclick="loginWithBiometric()" style="background: var(--success-dark); font-size: 13px;">🔑 ورود سریع با اثر انگشت</button>
             </div>
           </div>
 
           <div id="phoneError" class="hidden error-box">
-            شماره شناسایی نشد. اگر تمایل دارید حساب داشته باشید در واتساپ پیام دهید:
-            <a id="whatsappNoAccountBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-top:6px; font-size:12px;">
+            شماره شما شناسایی نشد. اگر تمایل به ایجاد حساب دارید پیام دهید:
+            <a id="whatsappNoAccountBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-top:8px; font-size:12.5px;">
               💬 پیام به واتساپ امانت‌داری کریمی
             </a>
           </div>
         </div>
       </div>
 
-      <!-- ویرایش ۲: ورود کُد حساب -->
+      <!-- صفحه ورود کُد حساب -->
       <div id="accountSection" class="hidden" style="margin: auto 0;">
         <div class="info-card" style="text-align:center;">
-          <div style="font-size:32px; margin-bottom:4px;">🔐</div>
-          <div id="greetingMsg" style="font-weight:900; color:var(--success); margin-bottom:10px; font-size:14.5px;"></div>
+          <div style="font-size:36px; margin-bottom:6px;">🔐</div>
+          <div id="greetingMsg" style="font-weight:900; color:var(--success-dark); margin-bottom:12px; font-size:15px;"></div>
           <div class="form-group">
             <input type="password" id="accountIdInput" placeholder="کُد حساب (Account ID)" dir="ltr">
           </div>
           <button id="btnVerifyAcc" onclick="verifyAccount()">ورود به سیستم 🚀</button>
-          <button onclick="backToPhone()" style="background:#64748b; margin-top:6px;">← تغییر شماره</button>
+          <button onclick="backToPhone()" style="background:#64748b; margin-top:8px;">← تغییر شماره</button>
           
           <div id="accountError" class="hidden error-box">
             کد حساب اشتباه است.
-            <a id="whatsappWrongAccBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-top:6px; font-size:12px;">💬 پشتیبانی</a>
+            <a id="whatsappWrongAccBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-top:8px; font-size:12.5px;">💬 پشتیبانی واتساپ</a>
           </div>
         </div>
       </div>
 
-      <!-- داشبورد اصلی یک‌صفحه‌ای مشتری -->
+      <!-- داشبورد اصلی مشتری (یک‌صفحه‌ای بدون اسکرول) -->
       <div id="dashboardSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
-        <!-- پروفایل مشتری -->
+        <!-- هدر پروفایل -->
         <div class="user-profile-card">
           <div class="profile-row">
             <div class="profile-avatar-wrapper">
@@ -514,18 +518,18 @@
             </div>
           </div>
           <div class="profile-actions">
-            <button onclick="toggleBiometricSetting()" id="bioToggleBtn" class="btn-pill" style="background:var(--success);">🔑 اثرانگشت</button>
+            <button onclick="toggleBiometricSetting()" id="bioToggleBtn" class="btn-pill" style="background:var(--success-dark);">🔑 اثرانگشت</button>
             <button onclick="shareProfileImage()" class="btn-pill" style="background:#0284c7;">📸 عکس صورت‌حساب</button>
-            <button onclick="logout()" class="btn-pill" style="background:var(--danger);">خروج ✕</button>
+            <button onclick="logout()" class="btn-pill" style="background:var(--danger-dark);">خروج ✕</button>
           </div>
         </div>
 
-        <!-- کارت آمار و مانده زنده با شمارنده انیمیشنی -->
+        <!-- کارت زنده آمار و مانده بزرگ و برجسته -->
         <div class="dashboard-main-card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span style="font-size:12.5px; font-weight:900; color:#1e293b;">📊 آمار موجودی حساب</span>
-            <button id="refreshAccountBtn" onclick="refreshAccountData()" style="width:auto; padding:4px 8px; font-size:10.5px; background:#0284c7; margin-top:0; box-shadow:none; border-radius:6px;">
-              🔄 به روزرسانی
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:13.5px; font-weight:900; color:#1e293b;">📊 آمار زنده موجودی حساب</span>
+            <button id="refreshAccountBtn" onclick="refreshAccountData()" style="width:auto; padding:5px 10px; font-size:11px; background:#0284c7; margin-top:0; box-shadow:none; border-radius:8px;">
+              🔄 به‌روزرسانی
             </button>
           </div>
 
@@ -533,22 +537,23 @@
 
           <div id="accountPsychologyMsg"></div>
 
-          <div class="odometer-card">
-            <div style="font-size:11px; opacity:0.8;">مانده واقعی ارز (<span id="odometerCurrencyLabel">AFN</span>)</div>
-            <div id="odometerValue" class="odometer-value eng-num">0</div>
-            <div style="display:flex; justify-content:space-between; font-size:10.5px; opacity:0.9; margin-top:4px;">
-              <span>بستانکار (+): <b id="odometerCredit" class="eng-num" style="color:#4ade80;">0</b></span>
-              <span>بدهکار (-): <b id="odometerDebit" class="eng-num" style="color:#f87171;">0</b></span>
+          <!-- کادر مانده واقعی کیلومتری -->
+          <div class="odometer-card-bright">
+            <div style="font-size:12px; font-weight:800; color:#64748b;">مانده واقعی ارز (<span id="odometerCurrencyLabel">AFN</span>)</div>
+            <div id="odometerValue" class="odometer-value-large eng-num">0</div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800; border-top:1.5px solid #e2e8f0; padding-top:8px; margin-top:4px;">
+              <span>مجموع بستانکار (+): <b id="odometerCredit" class="eng-num" style="color:var(--success-dark);">0</b></span>
+              <span>مجموع بدهکار (-): <b id="odometerDebit" class="eng-num" style="color:var(--danger-dark);">0</b></span>
             </div>
           </div>
         </div>
 
-        <!-- دکمه‌های اقدام اصلی پایین صفحه -->
+        <!-- دکمه‌های پایین صفحه -->
         <div>
-          <button onclick="openTransactionsModal()" style="padding:12px; font-size:13.5px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); margin-bottom:6px;">
-            📋 مشاهده سابقه معاملات (<span id="txCountBadge" class="eng-num">0</span>)
+          <button onclick="openTransactionsModal()" style="padding:14px; font-size:14.5px; background:linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%); margin-bottom:8px; box-shadow:0 6px 18px rgba(16, 185, 129, 0.3);">
+            📋 مشاهده سابقه کامل معاملات (<span id="txCountBadge" class="eng-num">0</span>)
           </button>
-          <a id="directWhatsAppMsg" href="#" target="_blank" class="action-btn whatsapp-btn" style="padding:11px; font-size:13px; margin-bottom:0;">
+          <a id="directWhatsAppMsg" href="#" target="_blank" class="action-btn whatsapp-btn" style="padding:12px; font-size:13.5px; margin-bottom:0;">
             💬 ارسال پیام مستقیم به امانت‌داری کریمی
           </a>
         </div>
@@ -559,25 +564,25 @@
   <!-- مودال لیست تراکنش‌ها -->
   <div id="transactionsModal" class="fullscreen-modal">
     <div class="modal-header">
-      <h3 style="font-size:14px; color:#1e293b; font-weight:900;">📋 سابقه تراکنش‌ها</h3>
-      <button onclick="closeTransactionsModal()" style="width:auto; padding:5px 10px; font-size:11px; background:#64748b; margin-top:0; box-shadow:none;">بستن ✕</button>
+      <h3 style="font-size:15px; color:#1e293b; font-weight:900;">📋 سابقه تراکنش‌ها</h3>
+      <button onclick="closeTransactionsModal()" style="width:auto; padding:6px 12px; font-size:12px; background:#64748b; margin-top:0; box-shadow:none;">بستن ✕</button>
     </div>
     <div class="modal-scroll-body" id="transactionsContainer"></div>
   </div>
 
-  <!-- مودال جزئیات تراکنش -->
+  <!-- مودال رسید تراکنش -->
   <div id="txDetailModal" class="fullscreen-modal">
     <div class="modal-header">
-      <h3 style="font-size:14px; color:#1e293b; font-weight:900;">📄 رسید معامله</h3>
-      <button onclick="closeDetailModal()" style="width:auto; padding:5px 10px; font-size:11px; background:#64748b; margin-top:0; box-shadow:none;">بازگشت</button>
+      <h3 style="font-size:15px; color:#1e293b; font-weight:900;">📄 رسید معامله</h3>
+      <button onclick="closeDetailModal()" style="width:auto; padding:6px 12px; font-size:12px; background:#64748b; margin-top:0; box-shadow:none;">بازگشت</button>
     </div>
     <div class="modal-scroll-body">
       <div id="receiptToCapture" class="info-card" style="border-width:1.5px;">
-        <div style="display:flex; justify-content:space-between; border-bottom:1px dashed #cbd5e1; padding-bottom:6px; margin-bottom:8px;">
-          <span style="font-size:13px; font-weight:900; color:#0284c7;">🧾 رسید معامله</span>
-          <span style="font-size:10px; color:#64748b;" class="eng-num" id="receiptDateStr">---</span>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px dashed #cbd5e1; padding-bottom:8px; margin-bottom:10px;">
+          <span style="font-size:14px; font-weight:900; color:#0284c7;">🧾 رسید معامله</span>
+          <span style="font-size:11px; color:#64748b;" class="eng-num" id="receiptDateStr">---</span>
         </div>
-        <div id="modalBody" style="font-size:13px; color:#334155; line-height:1.8;" class="eng-num"></div>
+        <div id="modalBody" style="font-size:13.5px; color:#334155; line-height:1.9;" class="eng-num"></div>
       </div>
 
       <button class="action-btn" onclick="shareRecordImage()" style="background:#0284c7;">📸 دانلود عکس رسید</button>
@@ -750,20 +755,77 @@
       try {
         const { error } = await _supabase.storage.from('Accounts_Images').upload(fileName, file);
         if (error) {
-          alert("خطا در آپلود عکس: لطفاً مطمئن شوید Bucket به نام Accounts_Images در پنل Supabase ساخته شده است.");
+          alert("خطا در آپلود عکس. لطفاً مطمئن شوید باکت Accounts_Images در پنل Supabase به صورت Public ایجاد شده است.");
           return;
         }
 
         const { data: publicUrlData } = _supabase.storage.from('Accounts_Images').getPublicUrl(fileName);
         const uploadedUrl = publicUrlData.publicUrl;
 
-        await _supabase.from('accounts').update({ Photo: uploadedUrl }).eq('AccountID', accId);
+        // به‌روزرسانی آدرس عکس در جدول دیتابیس
+        await _supabase.from('accounts').update({ Photo: uploadedUrl, photo: uploadedUrl }).eq('AccountID', accId);
 
         currentFoundUser.Photo = uploadedUrl;
+        currentFoundUser.photo = uploadedUrl;
         document.getElementById('dashAvatarImg').src = uploadedUrl;
-        alert("✅ عکس پروفایل به‌روزرسانی شد!");
+        alert("✅ عکس پروفایل با موفقیت تغییر یافت!");
       } catch (err) {
         alert("خطا در ارتباط با سرور");
+      }
+    }
+
+    async function loginWithBiometric() {
+      playSound('click');
+      const bioPhone = localStorage.getItem('karimi_biometric_phone');
+      const bioAccId = localStorage.getItem('karimi_biometric_accId');
+
+      if (localStorage.getItem('karimi_biometric_enabled') !== 'true' || !bioPhone || !bioAccId) {
+        alert("ورود با اثر انگشت فعال نیست.");
+        return;
+      }
+
+      if (window.PublicKeyCredential) {
+        try {
+          const credential = await navigator.credentials.get({
+            publicKey: {
+              challenge: new Uint8Array([11, 22, 33, 44, 55, 66, 77, 88]),
+              timeout: 60000,
+              userVerification: "preferred"
+            }
+          });
+          if (credential) {
+            autoLogin(bioPhone, bioAccId);
+            return;
+          }
+        } catch(e) {}
+      }
+      autoLogin(bioPhone, bioAccId);
+    }
+
+    function toggleBiometricSetting() {
+      playSound('click');
+      let currentStatus = localStorage.getItem('karimi_biometric_enabled') === 'true';
+      if (currentStatus) {
+        localStorage.setItem('karimi_biometric_enabled', 'false');
+        alert("ورود با اثر انگشت غیرفعال گردید.");
+      } else {
+        let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']);
+        let sheetAccId = String(getVal(currentFoundUser, ['AccountID', 'accountid', 'ID'])).trim();
+        
+        localStorage.setItem('karimi_biometric_enabled', 'true');
+        localStorage.setItem('karimi_biometric_phone', phoneVal);
+        localStorage.setItem('karimi_biometric_accId', sheetAccId);
+        alert("ورود با اثر انگشت برای این دستگاه با موفقیت فعال گردید.");
+      }
+      updateBioBtnText();
+    }
+
+    function updateBioBtnText() {
+      let isEnabled = localStorage.getItem('karimi_biometric_enabled') === 'true';
+      const btn = document.getElementById('bioToggleBtn');
+      if (btn) {
+        btn.innerText = isEnabled ? "🔴 اثرانگشت فعال" : "🔑 اثرانگشت";
+        btn.style.background = isEnabled ? "var(--danger-dark)" : "var(--success-dark)";
       }
     }
 
@@ -823,9 +885,11 @@
       document.getElementById('accountSection').classList.add('hidden');
       document.getElementById('dashboardSection').classList.remove('hidden');
 
+      updateBioBtnText();
+
       let nameVal = getVal(currentFoundUser, ['Name', 'name']) || '---';
       let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']) || '---';
-      let photoVal = getVal(currentFoundUser, ['Photo', 'photo']);
+      let photoVal = getVal(currentFoundUser, ['Photo', 'photo', 'Avatar', 'avatar']);
 
       document.getElementById('dashName').innerText = nameVal;
       document.getElementById('dashPhone').innerText = phoneVal;
@@ -892,7 +956,7 @@
       renderCurrencyTabs();
     }
 
-    // انیمیشن کیلومترشمار مانده زنده (بین ۵ تا ۸ ثانیه)
+    // انیمیشن افزایش ارقام کیلومترشمار مانده زنده
     function animateOdometer() {
       let currName = currencyList[activeCurrencyIndex];
       let b = customerBalances[currName] || { credit: 0, debit: 0, net: 0 };
@@ -902,16 +966,16 @@
       let psychBox = document.getElementById('accountPsychologyMsg');
       if (b.net > 0) {
         psychBox.className = 'psychology-box positive';
-        psychBox.innerHTML = `🌟 <b>اعتبار مثبت:</b> حساب شما دارای بستانکاری است.`;
+        psychBox.innerHTML = `🌟 <b>اعتبار مثبت:</b> حساب شما دارای بستانکاری و اعتبار فعال است.`;
       } else if (b.net < 0) {
         psychBox.className = 'psychology-box negative';
-        psychBox.innerHTML = `⚠️ <b>توجه بدهی:</b> حساب شما دارای کسری یا بدهی است.`;
+        psychBox.innerHTML = `⚠️ <b>توجه بدهی:</b> حساب شما دارای کسری یا بدهی می‌باشد.`;
       } else {
         psychBox.className = 'psychology-box neutral';
         psychBox.innerHTML = `⚖️ <b>تسویه کامل:</b> موجودی حساب شما کاملاً صفر می‌باشد.`;
       }
 
-      let duration = 6000; // ۶ ثانیه افکت صفحه کیلومتر
+      let duration = 5000;
       let startTime = null;
       let targetNet = b.net;
       let targetCredit = b.credit;
@@ -920,7 +984,7 @@
       function step(timestamp) {
         if (!startTime) startTime = timestamp;
         let progress = Math.min((timestamp - startTime) / duration, 1);
-        let easeProgress = 1 - Math.pow(1 - progress, 3); // افکت فیزیکی نرم
+        let easeProgress = 1 - Math.pow(1 - progress, 3);
 
         document.getElementById('odometerValue').innerText = formatEnMoney(Math.floor(targetNet * easeProgress));
         document.getElementById('odometerCredit').innerText = formatEnMoney(Math.floor(targetCredit * easeProgress));
@@ -950,11 +1014,11 @@
     function renderTransactionsList() {
       let txHtml = '';
       if (customerTransactions.length === 0) {
-        txHtml = '<div style="text-align:center; padding:20px; color:#64748b; font-size:12px;">هیچ معامله‌ای یافت نشد.</div>';
+        txHtml = '<div style="text-align:center; padding:20px; color:#64748b; font-size:12.5px;">هیچ معامله‌ای یافت نشد.</div>';
       } else {
         customerTransactions.forEach((tx, idx) => {
           let dir = String(getVal(tx, ['Direction', 'direction']));
-          let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
+          let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success-dark)' : 'var(--danger-dark)';
           let rawAmt = getVal(tx, ['Amount', 'amount']);
           let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
           let opType = getVal(tx, ['OperationType', 'operationtype']) || 'عملیات مالی';
@@ -965,13 +1029,13 @@
           txHtml += `
             <div class="tx-card" onclick="openDetailModal(${idx})">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <span style="font-weight:900; font-size:13px; color:#1e293b;">${opType}</span>
-                <span style="font-size:10.5px; color:#64748b;" class="eng-num">${dateStr.split('T')[0]}</span>
+                <span style="font-weight:900; font-size:13.5px; color:#1e293b;">${opType}</span>
+                <span style="font-size:11px; color:#64748b;" class="eng-num">${dateStr.split('T')[0]}</span>
               </div>
-              <div style="font-size:11.5px; color:#334155; margin-bottom:6px;">${descStr}</div>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:4px;">
-                <span style="font-weight:800; font-size:12.5px; color:${amtColor};" class="eng-num">${currStr} ${formatEnMoney(amountVal)} (${dir})</span>
-                <span style="color:var(--primary); font-size:11px; font-weight:800;">رسید ➔</span>
+              <div style="font-size:12px; color:#334155; margin-bottom:6px;">${descStr}</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:6px;">
+                <span style="font-weight:800; font-size:13px; color:${amtColor};" class="eng-num">${currStr} ${formatEnMoney(amountVal)} (${dir})</span>
+                <span style="color:var(--primary); font-size:11.5px; font-weight:800;">رسید ➔</span>
               </div>
             </div>`;
         });
@@ -985,7 +1049,7 @@
       selectedTxItem = customerTransactions[idx];
       let tx = selectedTxItem;
       let dir = String(getVal(tx, ['Direction', 'direction']));
-      let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success)' : 'var(--danger)';
+      let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success-dark)' : 'var(--danger-dark)';
       let rawAmt = getVal(tx, ['Amount', 'amount']);
       let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
       let transId = getVal(tx, ['TransID', 'transid']) || '---';
@@ -1003,7 +1067,7 @@
         <p><b>تاریخ:</b> <span class="eng-num">${dateStr.split('T')[0]}</span></p>
         <p><b>شرح و جزئیات:</b> ${descStr}</p>
         <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:${amtColor};">${formatEnMoney(amountVal)} ${currStr}</span></p>
-        <p><b>وضعیت:</b> <span style="color:var(--success); font-weight:bold;">${statusStr}</span></p>
+        <p><b>وضعیت:</b> <span style="color:var(--success-dark); font-weight:bold;">${statusStr}</span></p>
       `;
       document.getElementById('modalBody').innerHTML = bodyHtml;
       document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20پشتیبانی%20برای%20تراکنش%20شماره%20${transId}%20را دارم`;
