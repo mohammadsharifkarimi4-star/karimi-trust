@@ -11,31 +11,33 @@
   <style>
     :root {
       --primary-dark: #0f172a;
-      --primary-gradient: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      --primary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       --accent-green: #10b981;
       --accent-green-dark: #059669;
-      --bg-main: #e2e8f0;
+      --bg-main: #f1f5f9;
       --card-bg: #ffffff;
       --text-main: #0f172a;
-      --border-color: #94a3b8;
+      --border-color: #cbd5e1;
       --danger-color: #ef4444;
       --warning-color: #f59e0b;
       --info-color: #0284c7;
+      --whatsapp-color: #25d366;
       --radius-md: 14px;
+      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.05);
       --shadow-card: 0 10px 25px rgba(15, 23, 42, 0.12);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', system-ui, sans-serif !important; direction: rtl; }
-    body { background: var(--bg-main); color: var(--text-main); padding: 10px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
+    body { background: #e2e8f0; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px; color: var(--text-main); padding: 10px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
 
     .container { max-width: 920px; margin: 0 auto; }
-    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 14px; border: 2px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow-card); }
+    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 14px; border: 1.5px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow-card); }
     .card-header { background: var(--primary-gradient); color: #fff; padding: 12px 16px; border-radius: 10px; margin: -14px -14px 14px -14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #38bdf8; }
     
-    h3 { font-size: 1.05rem; font-weight: 900; }
+    h3 { font-size: 1.05rem; font-weight: 900; color: #fff; }
     .form-group { margin-bottom: 10px; }
     label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 4px; color: #1e293b; }
-    input, select, textarea { width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; font-weight: 700; outline: none; background: #fff; transition: all 0.2s; }
+    input, select, textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; font-weight: 700; outline: none; background: #fff; transition: all 0.2s; }
     input:focus, select:focus, textarea:focus { border-color: #0284c7; box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2); }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -53,25 +55,25 @@
     .btn-narrow-action { padding: 10px 18px; font-size: 0.92rem; font-weight: 900; border-radius: 20px; background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); }
 
     .radio-container { display: flex; gap: 6px; }
-    .btn-opt { flex: 1; padding: 10px 6px; text-align: center; background: #f8fafc; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 900; font-size: 0.88rem; user-select: none; color: #334155; transition: all 0.15s; }
+    .btn-opt { flex: 1; padding: 10px 6px; text-align: center; background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 900; font-size: 0.88rem; user-select: none; color: #334155; transition: all 0.15s; }
     .btn-opt.active-creditor { background: #10b981 !important; border-color: #047857 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
     .btn-opt.active-debtor { background: #ef4444 !important; border-color: #b91c1c !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
     .btn-opt.active-currency { background: #0284c7 !important; border-color: #0369a1 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
     .btn-opt-sm { padding: 8px 4px; font-size: 0.82rem; }
 
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 8px; margin-top: 8px; }
-    .stat-card { background: #ffffff; border: 2px solid #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+    .stat-card { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
 
-    .customer-box { background: #f0f9ff; border: 2.5px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
-    .tx-item { background: #ffffff; border: 2px solid #cbd5e1; padding: 10px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+    .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
+    .tx-item { background: #ffffff; border: 1.5px solid #cbd5e1; padding: 10px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
     .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; }
     
     .highlight-amount { color: #059669 !important; font-size: 1.2rem !important; font-weight: 900 !important; background: #f0fdf4; border-color: #10b981 !important; }
-    .search-results { background: #fff; border: 2px solid var(--border-color); max-height: 160px; overflow-y: auto; border-radius: 8px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+    .search-results { background: #fff; border: 1.5px solid var(--border-color); max-height: 160px; overflow-y: auto; border-radius: 8px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
     .search-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; }
     .view-section { display: none; }
     .view-section.active { display: block; }
-    .filter-collapsible { background: #f8fafc; border: 2px solid var(--border-color); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: none; }
+    .filter-collapsible { background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: none; }
     #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: #0f172a; color: #38bdf8; border: 2px solid #38bdf8; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 900; z-index: 9999; display: none; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
   </style>
 </head>
@@ -91,7 +93,6 @@
         <div style="display:flex; gap:6px; align-items:center;">
           <button class="btn btn-info btn-xs" onclick="openBrokersListModal()">🏛️ صرافی‌ها</button>
           <a href="admin.html" class="btn btn-secondary btn-xs">👥 مشتریان</a>
-          <button id="superAdminMenuBtn" class="btn btn-warning btn-xs" style="display:none;" onclick="openAdminManagerModal()">🛡️ ادمین‌ها</button>
           <button class="btn btn-danger btn-xs" onclick="handleLogout()">خروج</button>
         </div>
       </div>
@@ -101,7 +102,7 @@
     <div id="viewDashboard" class="view-section active">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <h3 style="color:#0369a1;">📊 آمار و مانده حساب</h3>
+          <h3 style="color:#0369a1; font-size:1rem;">📊 آمار و مانده حساب</h3>
           <button class="btn btn-secondary btn-xs" onclick="toggleFilterDrawer()">🔍 فیلتر تاریخ ⚙️</button>
         </div>
         
@@ -131,7 +132,7 @@
 
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <h3 style="color:#1e1b4b;">📜 تراکنش‌های صرافی</h3>
+          <h3 style="color:#1e1b4b; font-size:1rem;">📜 تراکنش‌های صرافی</h3>
           <span id="txCountBadge" style="font-size:0.8rem; color:#0369a1; font-weight:bold;"></span>
         </div>
         
@@ -147,10 +148,10 @@
     <div id="viewTransactionForm" class="view-section">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-          <h3 id="formTitle" style="color:#0f172a;">📝 ثبت معامله جدید</h3>
+          <h3 id="formTitle" style="color:#0f172a; font-size:1rem;">📝 ثبت معامله جدید</h3>
           <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;">↩️ منو</a>
         </div>
-        <hr style="margin: 6px 0 10px 0; border:0; border-top:2px solid #cbd5e1;">
+        <hr style="margin: 6px 0 10px 0; border:0; border-top:1.5px solid #cbd5e1;">
 
         <input type="hidden" id="editBrokerTxId">
 
@@ -187,7 +188,7 @@
           </div>
         </div>
 
-        <div style="background:#f8fafc; border:2px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:10px;">
+        <div style="background:#f8fafc; border:1.5px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:10px;">
           <div class="grid-3">
             <div class="form-group" style="margin-bottom:0;">
               <label>مبلغ اولیه:</label>
@@ -302,46 +303,18 @@
           <button class="btn btn-danger" style="flex:1;" onclick="deleteBrokerTx()">🗑️ حذف</button>
         </div>
         <div style="margin-top:8px; display:flex; gap:8px;">
-          <button class="btn" style="flex:1; background:#25D366;" onclick="sendBrokerReceiptWhatsApp()">💬 ارسال رسید واتساپ</button>
+          <button class="btn" style="flex:1; background:var(--whatsapp-color);" onclick="sendBrokerReceiptWhatsApp()">💬 ارسال رسید واتساپ</button>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- مدال مدیریت ادمین‌های همکار -->
-  <div id="adminManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:10px;">
-    <div class="card" style="width: 100%; max-width:440px; margin: 0; max-height:90vh; overflow-y:auto;">
-      <h3 id="adminModalMainTitle">🛡️ مدیریت ادمین‌های همکار</h3>
-      <input type="hidden" id="editAdminId">
-      <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">در این بخش می‌توانید برای همکاران ایمیل، رمز ورود و توکن تلگرام بسازید.</p>
-      
-      <div class="form-group"><label>نام ادمین:</label><input type="text" id="newAdminName" placeholder="نام..."></div>
-      <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
-      <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز..."></div>
-      <div class="form-group"><label>توکن ربات تلگرام:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="Token..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="ChatID..."></div>
-      
-      <div class="flex-row" style="display:flex; gap:8px; margin-bottom:12px;">
-        <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="saveAdminAccount()">ثبت ادمین جدید</button>
-        <button class="btn btn-secondary btn-xs" style="flex:1; display:none;" id="adminCancelEditBtn" onclick="cancelEditAdmin()">انصراف</button>
-      </div>
-
-      <hr style="margin: 10px 0;">
-      <label><b>لیست همکاران فعال:</b></label>
-      <div id="adminsListContainer" style="margin-top:6px;"></div>
-
-      <div style="text-align:right; margin-top:10px;">
-        <button class="btn btn-secondary btn-sm" onclick="closeAdminManagerModal()">بستن</button>
-      </div>
-    </div>
-  </div>
-
   <!-- مدال مدیریت صرافی‌ها -->
   <div id="brokersListModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width:100%; max-width:480px; margin:0; max-height:85vh; overflow-y:auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h3>⚙️ مدیریت و انتخاب صرافی‌ها</h3>
+        <h3 style="color:#0f172a; font-size:1rem;">⚙️ مدیریت و انتخاب صرافی‌ها</h3>
         <button class="btn btn-sm" onclick="openBrokerModal(false)">➕ صرافی جدید</button>
       </div>
       
@@ -358,7 +331,7 @@
   <!-- مدال ویرایش/افزودن صرافی -->
   <div id="brokerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:10px;">
     <div class="card" style="width:100%; max-width:400px; margin:0;">
-      <h3 id="brokerModalTitle">افزودن صرافی جدید</h3>
+      <h3 id="brokerModalTitle" style="color:#0f172a; font-size:1rem;">افزودن صرافی جدید</h3>
       <input type="hidden" id="editBrokerModalId">
       <div class="form-group" style="margin-top:8px;"><label>نام صرافی:</label><input type="text" id="brokerName"></div>
       <div class="form-group"><label>تلفن تماس / واتساپ:</label><input type="text" id="brokerPhone" dir="ltr"></div>
@@ -377,7 +350,7 @@
   <!-- مدال مدیریت عملیات -->
   <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width:100%; max-width:380px; margin:0;">
-      <h3>⚙️ مدیریت عملیات</h3>
+      <h3 style="color:#0f172a; font-size:1rem;">⚙️ مدیریت عملیات</h3>
       <div class="form-group" style="margin-top:8px;">
         <label>عنوان جدید:</label>
         <div style="display:flex; gap:6px;">
@@ -393,7 +366,7 @@
   <!-- مدال مدیریت آدرس‌ها -->
   <div id="addressDashboardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
-      <h3>📂 لیست آدرس‌های صرافی فعال</h3>
+      <h3 style="color:#0f172a; font-size:1rem;">📂 لیست آدرس‌های صرافی فعال</h3>
       <div class="form-group" style="margin-top:8px;">
         <div style="display:flex; gap:6px;">
           <input type="text" id="newAddressInput" placeholder="آدرس جدید...">
@@ -414,7 +387,6 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
-    const MASTER_ADMIN_PIN = "77218731";
     const MASTER_ADMIN_ID = "master_owner";
     const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
     const MASTER_ADMIN_CHATID = "802655440";
@@ -463,23 +435,16 @@
     window.onload = async function() {
       let savedSession = localStorage.getItem("adminAuthSessionData");
       if (!savedSession) {
-        // اگر لاگین نکرده بود هدایت به صفحه اصلی ورود
-        window.location.href = "index.html";
+        window.location.href = "admin.html";
         return;
       }
       try {
         currentLoggedInAdmin = JSON.parse(savedSession);
-        
-        // اگر مالک کل بود دکمه مدیریت ادمین‌ها را نمایش بده
-        if (currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase()) {
-          document.getElementById("superAdminMenuBtn").style.display = "inline-flex";
-        }
-
         document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
         await loadInitialData();
       } catch(e) {
         localStorage.removeItem("adminAuthSessionData");
-        window.location.href = "index.html";
+        window.location.href = "admin.html";
       }
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
@@ -495,7 +460,7 @@
     function handleLogout() {
       playBeep('click');
       localStorage.removeItem("adminAuthSessionData");
-      window.location.href = "index.html";
+      window.location.href = "admin.html";
     }
 
     function getCurrentAdminTokenAndChat() {
@@ -556,120 +521,6 @@
         }
       } catch (e) { console.error(e); }
       finally { showSync(false); }
-    }
-
-    // بخش مدیریت ادمین‌های همکار دقیقاً مشابه بخش مشتریان
-    function openAdminManagerModal() {
-      cancelEditAdmin();
-      renderAdminsList();
-      document.getElementById("adminManagerModal").style.display = "flex";
-    }
-    function closeAdminManagerModal() {
-      document.getElementById("adminManagerModal").style.display = "none";
-    }
-
-    function renderAdminsList() {
-      const container = document.getElementById("adminsListContainer");
-      container.innerHTML = "";
-      if (allAdmins.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:8px;">هیچ ادمین همکاری ثبت نشده است</div>`;
-        return;
-      }
-      allAdmins.forEach(adm => {
-        let admId = toEnglishDigits(adm.AdminID || adm.adminid || adm.id);
-        let admName = String(adm.Name || adm.name || 'بدون نام');
-        let admEmail = String(adm.Email || adm.email || '');
-        let admPin = toEnglishDigits(adm.Pin || adm.pin || adm.Password || adm.password || '');
-        let admChatId = toEnglishDigits(adm.ChatID || adm.chatid || '');
-
-        container.innerHTML += `
-          <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:8px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-              <b style="color:var(--primary-dark); font-size:0.9rem;">${admName}</b><br>
-              <span style="font-size:0.78rem; color:#64748b;">ایمیل: ${admEmail} | رمز: ${admPin}</span><br>
-              <span style="font-size:0.75rem; color:#0284c7;">چت‌آیدی: ${admChatId || 'ثبت نشده'}</span>
-            </div>
-            <div style="display:flex; gap:4px;">
-              <button class="btn btn-warning btn-xs" onclick="editAdminAccount('${admId}')">ویرایش</button>
-              <button class="btn btn-danger btn-xs" onclick="deleteAdminAccount('${admId}')">حذف</button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function editAdminAccount(admId) {
-      let adm = allAdmins.find(a => String(a.AdminID || a.adminid || a.id) === String(admId));
-      if (!adm) return;
-      document.getElementById("editAdminId").value = admId;
-      document.getElementById("adminModalMainTitle").innerText = "✏️ ویرایش ادمین همکار";
-      document.getElementById("newAdminName").value = adm.Name || adm.name || "";
-      document.getElementById("newAdminEmail").value = adm.Email || adm.email || "";
-      document.getElementById("newAdminPin").value = toEnglishDigits(adm.Pin || adm.pin || adm.Password || adm.password || "");
-      document.getElementById("newAdminBotToken").value = adm.BotToken || adm.bottoken || adm.Token || adm.token || "";
-      document.getElementById("newAdminChatId").value = toEnglishDigits(adm.ChatID || adm.chatid || "");
-      
-      document.getElementById("adminSaveBtn").innerText = "ذخیره تغییرات";
-      document.getElementById("adminCancelEditBtn").style.display = "inline-flex";
-    }
-
-    function cancelEditAdmin() {
-      document.getElementById("editAdminId").value = "";
-      document.getElementById("adminModalMainTitle").innerText = "🛡️ مدیریت ادمین‌های همکار";
-      document.getElementById("newAdminName").value = "";
-      document.getElementById("newAdminEmail").value = "";
-      document.getElementById("newAdminPin").value = "";
-      document.getElementById("newAdminBotToken").value = "";
-      document.getElementById("newAdminChatId").value = "";
-      document.getElementById("adminSaveBtn").innerText = "ثبت ادمین جدید";
-      document.getElementById("adminCancelEditBtn").style.display = "none";
-    }
-
-    async function saveAdminAccount() {
-      let editId = document.getElementById("editAdminId").value;
-      let name = document.getElementById("newAdminName").value.trim();
-      let email = document.getElementById("newAdminEmail").value.trim().toLowerCase();
-      let pin = toEnglishDigits(document.getElementById("newAdminPin").value.trim());
-      let botToken = document.getElementById("newAdminBotToken").value.trim();
-      let chatId = toEnglishDigits(document.getElementById("newAdminChatId").value.trim());
-
-      if (!name || !email || !pin) {
-        alert("لطفاً نام، ایمیل و رمز عبور را کامل وارد کنید.");
-        return;
-      }
-
-      let adminId = editId ? editId : ("ADM-" + Math.floor(1000 + Math.random() * 9000));
-      const payload = {
-        AdminID: adminId,
-        Name: name,
-        Email: email,
-        Pin: pin,
-        BotToken: botToken,
-        ChatID: chatId
-      };
-
-      if (editId) {
-        const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
-        if (error) { alert("خطا: " + error.message); return; }
-        alert("✅ اطلاعات ادمین ویرایش شد!");
-      } else {
-        const { error } = await _supabase.from('admins').insert([payload]);
-        if (error) { alert("خطا: " + error.message); return; }
-        alert("✅ ادمین جدید ایجاد شد!");
-      }
-
-      cancelEditAdmin();
-      const { data } = await _supabase.from('admins').select('*');
-      if (data) allAdmins = data;
-      renderAdminsList();
-    }
-
-    async function deleteAdminAccount(admId) {
-      if (!confirm("آیا از حذف این دسترسی مطمئن هستید؟")) return;
-      await _supabase.from('admins').delete().eq('AdminID', admId);
-      const { data } = await _supabase.from('admins').select('*');
-      if (data) allAdmins = data;
-      renderAdminsList();
     }
 
     function switchView(viewId, pushHistory = true) {
@@ -1200,7 +1051,7 @@ ${verticalReport}`;
       }
       allBrokers.forEach(b => {
         container.innerHTML += `
-          <div style="background:#f8fafc; border:2px solid var(--border-color); padding:10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="background:#f8fafc; border:1.5px solid var(--border-color); padding:10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
             <div>
               <div style="font-weight:900; font-size:0.9rem; color:#0f172a;">${b.name} (${b.city || 'بدون شهر'})</div>
               <div style="font-size:0.78rem; color:#64748b; font-weight:700;">تلفن: ${b.phone || '-'} | چت‌آیدی: ${b.chatid || '-'}</div>
