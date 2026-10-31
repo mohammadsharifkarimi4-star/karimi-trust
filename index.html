@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>حساب‌کتاب من - امانت‌داری کریمی</title>
   
-  <!-- فونت‌های اختصاصی Vazirmatn و Farhang -->
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   <style>
     @font-face {
@@ -74,7 +73,6 @@
       }
     }
 
-    /* هدر اصلی بالا */
     .top-header {
       display: flex;
       justify-content: space-between;
@@ -136,7 +134,6 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* کارت بزرگ اصلی تقویم، ساعت‌ها و احادیث */
     .hero-card {
       background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #064e3b 100%);
       border-radius: 24px;
@@ -228,7 +225,6 @@
       font-weight: 700;
     }
 
-    /* ساعت‌های جهانی */
     .world-clocks-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -259,7 +255,6 @@
       font-weight: 900;
     }
 
-    /* کادر زنده احادیث نورانی پیامبر (ص) */
     .hadith-display-box {
       background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,27,75,0.95) 100%);
       border-radius: 16px;
@@ -319,7 +314,6 @@
       margin-top: 2px;
     }
 
-    /* منوها و کارت‌های ناوبری */
     .menu-container {
       display: flex;
       flex-direction: column;
@@ -385,6 +379,117 @@
       font-weight: 900;
     }
 
+    /* استایل مدال‌های ابزارها */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(4, 7, 17, 0.8);
+      backdrop-filter: blur(6px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      border: 3px solid var(--primary);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: modalScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalScale {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #1e1b4b;
+    }
+
+    .modal-close-btn {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #334155;
+    }
+
+    .form-group input {
+      padding: 10px 12px;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      outline: none;
+      background: #f8fafc;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+      transition: transform 0.15s;
+    }
+
+    .btn-action:active { transform: scale(0.97); }
+
+    .modal-result-box {
+      background: #f0fdf4;
+      border: 2px solid #10b981;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #047857;
+      text-align: center;
+      display: none;
+    }
+
     .eng-num {
       font-family: 'Vazirmatn', Tahoma, sans-serif;
       direction: ltr;
@@ -408,7 +513,7 @@
       </div>
     </div>
 
-    <!-- بنر اصلی تقویم، ساعت‌ها و احادیث با ظاهر برجسته -->
+    <!-- بنر اصلی تقویم، ساعت‌ها و احادیث -->
     <div class="hero-card">
       <div class="hero-top-info">
         <span class="hero-main-title">حساب‌کتاب من</span>
@@ -418,7 +523,7 @@
         </div>
       </div>
 
-      <!-- تقویم پویا با نام ماه‌های افغانستان (بدون قفل و کاملاً آپدیت‌شونده) -->
+      <!-- تقویم پویا با نام ماه‌های افغانستان (کاملاً آپدیت‌شونده و اصلاح‌شده بدون آبان) -->
       <div class="dates-grid-3">
         <div class="date-box-item">
           <span class="date-box-title">شمسی (افغانستان)</span>
@@ -439,7 +544,7 @@
         </div>
       </div>
 
-      <!-- ساعت‌های جهانی (کابل، لندن، آمریکا) -->
+      <!-- ساعت‌های جهانی -->
       <div class="world-clocks-grid">
         <div class="world-clock-item">
           <span>کابل</span>
@@ -455,7 +560,7 @@
         </div>
       </div>
 
-      <!-- کادر زنده احادیث مبارک پیامبر اکرم (ص) -->
+      <!-- کادر احادیث -->
       <div class="hadith-display-box" id="hadithBox" onclick="nextHadith()" title="برای مشاهده حدیث بعدی لمس کنید">
         <div class="hadith-header-row">
           <span id="hadithAuthor">پیامبر اکرم (ص)</span>
@@ -470,7 +575,7 @@
       <span>✨ گزینه‌ها و خدمات سامانه</span>
     </div>
 
-    <!-- منوی اصلی شامل امانت‌داری کریمی و ۳ گزینه جدید و عالی -->
+    <!-- منوی اصلی شامل امانت‌داری کریمی و ۳ ابزار کاملاً فعال -->
     <div class="menu-container">  
       <a href="exchange.html" class="menu-card-huge">
         <div class="icon-wrapper-huge">🛡️</div>
@@ -482,40 +587,92 @@
       </a>
 
       <!-- گزینه ۱: محاسبه سن -->
-      <a href="javascript:void(0)" onclick="alert('ابزار محاسبه سن: به زودی فعال می‌شود.')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border-color: #86efac;">
+      <div onclick="openModal('ageModal')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border-color: #86efac;">
         <div class="icon-wrapper-huge" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);">🎂</div>
         <div>
           <div class="card-title-huge">محاسبه سن</div>
-          <div class="card-desc-huge">محاسبه دقیق سن بر اساس تاریخ شمسی افغانستان، ماه‌ها و روزهای سپری‌شده.</div>
+          <div class="card-desc-huge">محاسبه دقیق سن بر اساس تاریخ شمسی، ماه‌ها و روزهای سپری‌شده.</div>
         </div>
         <div class="card-arrow" style="color: #10b981;">➔</div>
-      </a>
+      </div>
 
       <!-- گزینه ۲: فاصله دو تاریخ -->
-      <a href="javascript:void(0)" onclick="alert('ابزار فاصله دو تاریخ: به زودی فعال می‌شود.')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border-color: #93c5fd;">
+      <div onclick="openModal('diffModal')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border-color: #93c5fd;">
         <div class="icon-wrapper-huge" style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); box-shadow: 0 6px 15px rgba(56, 189, 248, 0.4);">⏳</div>
         <div>
           <div class="card-title-huge">فاصله دو تاریخ</div>
           <div class="card-desc-huge">محاسبه تعداد روزها، ماه‌ها و سال‌های بین دو تاریخ دلخواه با دقت بالا.</div>
         </div>
         <div class="card-arrow" style="color: #0284c7;">➔</div>
-      </a>
+      </div>
 
       <!-- گزینه ۳: تبدیل تاریخ -->
-      <a href="javascript:void(0)" onclick="alert('ابزار تبدیل تاریخ: به زودی فعال می‌شود.')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%); border-color: #fde68a;">
+      <div onclick="openModal('convertModal')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%); border-color: #fde68a;">
         <div class="icon-wrapper-huge" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);">🔄</div>
         <div>
           <div class="card-title-huge">تبدیل تاریخ</div>
-          <div class="card-desc-huge">تبدیل سریع و دقیق تاریخ‌های شمسی (افغانی)، قمری و میلادی به یکدیگر.</div>
+          <div class="card-desc-huge">تبدیل سریع و دقیق تاریخ میلادی به شمسی (افغانی) و قمری.</div>
         </div>
         <div class="card-arrow" style="color: #f59e0b;">➔</div>
-      </a>
+      </div>
     </div>
 
   </div>
 
+  <!-- مودال محاسبه سن -->
+  <div class="modal-overlay" id="ageModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">🎂 محاسبه سن</span>
+        <button class="modal-close-btn" onclick="closeModal('ageModal')">✕</button>
+      </div>
+      <div class="form-group">
+        <label>تاریخ تولد میلادی:</label>
+        <input type="date" id="birthDateInput">
+      </div>
+      <button class="btn-action" onclick="calculateAge()">محاسبه سن دقیق</button>
+      <div class="modal-result-box" id="ageResult"></div>
+    </div>
+  </div>
+
+  <!-- مودال فاصله دو تاریخ -->
+  <div class="modal-overlay" id="diffModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">⏳ فاصله دو تاریخ</span>
+        <button class="modal-close-btn" onclick="closeModal('diffModal')">✕</button>
+      </div>
+      <div class="form-group">
+        <label>از تاریخ:</label>
+        <input type="date" id="dateStart">
+      </div>
+      <div class="form-group">
+        <label>تا تاریخ:</label>
+        <input type="date" id="dateEnd">
+      </div>
+      <button class="btn-action" onclick="calculateDateDiff()">محاسبه فاصله</button>
+      <div class="modal-result-box" id="diffResult"></div>
+    </div>
+  </div>
+
+  <!-- مودال تبدیل تاریخ -->
+  <div class="modal-overlay" id="convertModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">🔄 تبدیل تاریخ</span>
+        <button class="modal-close-btn" onclick="closeModal('convertModal')">✕</button>
+      </div>
+      <div class="form-group">
+        <label>انتخاب تاریخ میلادی:</label>
+        <input type="date" id="convertDateInput" onchange="convertDateNow()">
+      </div>
+      <div class="modal-result-box" id="convertResult" style="display:block; background:#f8fafc; border-color:#cbd5e1; color:#0f172a;">
+        تاریخ میلادی را انتخاب کنید تا تبدیل شود.
+      </div>
+    </div>
+  </div>
+
   <script>
-    // بانک اطلاعاتی احادیث مبارک پیامبر اکرم (ص)
     const wisdomDatabase = [
       { text: "«خَیْرُ النَّاسِ مَنْ نَفَعَ النَّاسَ»", author: "پیامبر اکرم (ص)", trans: "بهترین مردم کسی است که به دیگران سود بیشتری برساند." },
       { text: "«اُطْلُبُوا الْعِلْمَ مِنَ الْمَهْدِ إِلَى اللَّحْدِ»", author: "پیامبر اکرم (ص)", trans: "ز گهواره تا گور دانش بجوی." },
@@ -525,17 +682,11 @@
       { text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ»", author: "پیامبر اکرم (ص)", trans: "عبادت هفتاد جزء است و بالاترین جزء آن کسب روزی حلال است." },
       { text: "«الصَّدَقَةُ تَدْفَعُ الْبَلَاءَ الْمُبْرَمَ»", author: "پیامبر اکرم (ص)", trans: "صدقه دادن، بلای حتمی را برطرف می‌کند." },
       { text: "«رَأْسُ الْعَقْلِ مُدَارَاةُ النَّاسِ»", author: "پیامبر اکرم (ص)", trans: "سرآمد خرد و عقل، مدارا و همزیستی مسالمت‌آمیز با مردم است." },
-      { text: "«اِعْمَلْ لِدُنْيَاكَ كَأَنَّكَ تَعِيشُ أَبَداً وَاعْمَلْ لِآخِرَتِكَ كَأَنَّكَ تَمُوتُ غَداً»", author: "پیامبر اکرم (ص)", trans: "برای دنیایت چنان کار کن که گویی جاودانه‌ای و برای آخرتت چنان تلاش کن که گویی فردا می‌میری." },
       { text: "«إِنَّ اللَّهَ جَمِيلٌ يُحِبُّ الْجَمَالَ»", author: "پیامبر اکرم (ص)", trans: "خداوند زیباست و زیبایی را دوست دارد." },
-      { text: "«الْعِلْمُ نُورٌ يَقْذِفُهُ اللَّهُ فِي قَلْبِ مَنْ يَشَاءُ»", author: "پیامبر اکرم (ص)", trans: "علم نوری است که خداوند در دل هر کس که بخواهد می‌تاباند." },
-      { text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ»", author: "پیامبر اکرم (ص)", trans: "محبوب‌ترین کارها نزد خداوند مداوم‌ترین آن‌هاست، هرچند اندک باشد." },
-      { text: "«خَيْرُ الْأُمُورِ أَوْسَطُهَا»", author: "پیامبر اکرم (ص)", trans: "بهترین کارها حد وسط و اعتدال در آن‌هاست." },
-      { text: "«مَنْ تَوَاضَعَ لِلَّهِ رَفَعَهُ اللَّهُ»", author: "پیامبر اکرم (ص)", trans: "کسی که برای خدا تواضع کند، خداوند او را سرافراز و بلندمرتبه می‌سازد." },
-      { text: "«مَنْ فَرَّجَ عَنْ مُؤْمِنٍ كُرْبَةً فَرَّجَ اللَّهُ عَنْهُ كُرَبَ يَوْمِ الْقِيَامَةِ»", author: "پیامبر اکرم (ص)", trans: "هر که اندوه و سختی را از مؤمنی برطرف کند، خدا سختی‌های روز قیامت را از او دور سازد." }
+      { text: "«الْعِلْمُ نُورٌ يَقْذِفُهُ اللَّهُ فِي قَلْبِ مَنْ يَشَاءُ»", author: "پیامبر اکرم (ص)", trans: "علم نوری است که خداوند در دل هر کس که بخواهد می‌تاباند." }
     ];
 
     let currentHadithIndex = 0;
-
     function nextHadith() {
       currentHadithIndex = (currentHadithIndex + 1) % wisdomDatabase.length;
       let item = wisdomDatabase[currentHadithIndex];
@@ -543,44 +694,26 @@
       document.getElementById('hadithText').innerText = item.text;
       document.getElementById('hadithTrans').innerText = item.trans;
     }
-
     setInterval(nextHadith, 8000);
 
-    // ورود به پنل ادمین اصلی (۳ بار کلیک روی «خوش آمدید»)
-    let secretClickCount = 0;
-    let secretClickTimer = null;
-
+    let secretClickCount = 0, secretClickTimer = null;
     function handleSecretAdminClick() {
       secretClickCount++;
       clearTimeout(secretClickTimer);
-      if (secretClickCount >= 3) {
-        secretClickCount = 0;
-        window.location.href = "admin.html";
-      } else {
-        secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 1200);
-      }
+      if (secretClickCount >= 3) { secretClickCount = 0; window.location.href = "admin.html"; }
+      else { secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 1200); }
     }
 
-    // ورود مخفیانه به بخش صرافی (۳ بار کلیک روی بخش ساعت و روز در بنر بالا)
-    let brokerClickCount = 0;
-    let brokerClickTimer = null;
-
+    let brokerClickCount = 0, brokerClickTimer = null;
     function handleSecretBrokerClick() {
       brokerClickCount++;
       clearTimeout(brokerClickTimer);
-      if (brokerClickCount >= 3) {
-        brokerClickCount = 0;
-        window.location.href = "broker.html";
-      } else {
-        brokerClickTimer = setTimeout(() => { brokerClickCount = 0; }, 1200);
-      }
+      if (brokerClickCount >= 3) { brokerClickCount = 0; window.location.href = "broker.html"; }
+      else { brokerClickTimer = setTimeout(() => { brokerClickCount = 0; }, 1200); }
     }
 
-    // سیستم به‌روزرسانی زنده تاریخ‌ها و ساعت‌ها (مبتنی بر افغانستان و کاملاً پویا بدون قفل)
     function updateLiveDateTime() {
       const now = new Date();
-
-      // ساعت محلی و ساعت‌های جهانی
       document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
       
       const getTimeInZone = (timeZone) => now.toLocaleTimeString('en-US', { timeZone, hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -588,14 +721,12 @@
       document.getElementById('clockLondon').innerText = getTimeInZone('Europe/London');
       document.getElementById('clockNY').innerText = getTimeInZone('America/New_York');
 
-      // نام روز هفته به فارسی
       const optionsDay = { weekday: 'long', timeZone: 'Asia/Kabul' };
       document.getElementById('dayNameDisplay').innerText = new Intl.DateTimeFormat('fa-AF', optionsDay).format(now);
 
-      // تاریخ شمسی افغانستان (با استفاده از تقویم persian و اسامی افغانی ماه‌ها مثل عقرب)
+      // تاریخ شمسی افغانستان (کاملاً پویا)
       const optionsShamsi = { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Kabul' };
       const shamsiParts = new Intl.DateTimeFormat('fa-AF', optionsShamsi).formatToParts(now);
-      
       let sDay = '', sMonth = '', sYear = '';
       for (let p of shamsiParts) {
         if (p.type === 'day') sDay = p.value;
@@ -605,7 +736,6 @@
       document.getElementById('shamsiDay').innerText = sDay;
       document.getElementById('shamsiMonthYear').innerText = `${sMonth} ${sYear}`;
 
-      // تاریخ قمری
       const optionsQamari = { calendar: 'islamic-civil', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Kabul' };
       const qamariParts = new Intl.DateTimeFormat('fa-AF', optionsQamari).formatToParts(now);
       let qDay = '', qMonth = '', qYear = '';
@@ -617,7 +747,6 @@
       document.getElementById('qamariDay').innerText = qDay;
       document.getElementById('qamariMonthYear').innerText = `${qMonth} ${qYear}`;
 
-      // تاریخ میلادی
       const optionsMiladiDay = { day: 'numeric', timeZone: 'Asia/Kabul' };
       const optionsMiladiMY = { year: 'numeric', month: 'short', timeZone: 'Asia/Kabul' };
       document.getElementById('miladiDay').innerText = new Intl.DateTimeFormat('en-US', optionsMiladiDay).format(now);
@@ -626,6 +755,44 @@
 
     updateLiveDateTime();
     setInterval(updateLiveDateTime, 1000);
+
+    // توابع مودال‌ها و ابزارها
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function calculateAge() {
+      const val = document.getElementById('birthDateInput').value;
+      const resBox = document.getElementById('ageResult');
+      if (!val) { alert("لطفاً تاریخ تولد را وارد کنید"); return; }
+      const birth = new Date(val);
+      const today = new Date();
+      let diff = today - birth;
+      let ageYears = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+      resBox.style.display = 'block';
+      resBox.innerHTML = `سن تقریبی شما: <b>${ageYears} سال</b>`;
+    }
+
+    function calculateDateDiff() {
+      const start = document.getElementById('dateStart').value;
+      const end = document.getElementById('dateEnd').value;
+      const resBox = document.getElementById('diffResult');
+      if (!start || !end) { alert("لطفاً هر دو تاریخ را انتخاب کنید"); return; }
+      const d1 = new Date(start);
+      const d2 = new Date(end);
+      let diffDays = Math.abs(Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
+      resBox.style.display = 'block';
+      resBox.innerHTML = `فاصله زمانی: <b>${diffDays} روز</b>`;
+    }
+
+    function convertDateNow() {
+      const val = document.getElementById('convertDateInput').value;
+      const resBox = document.getElementById('convertResult');
+      if (!val) return;
+      const d = new Date(val);
+      const shamsi = new Intl.DateTimeFormat('fa-AF', { calendar: 'persian', dateStyle: 'full', timeZone: 'Asia/Kabul' }).format(d);
+      const qamari = new Intl.DateTimeFormat('fa-AF', { calendar: 'islamic-civil', dateStyle: 'full', timeZone: 'Asia/Kabul' }).format(d);
+      resBox.innerHTML = `☀️ شمسی: <b>${shamsi}</b><br>🌙 قمری: <b>${qamari}</b>`;
+    }
   </script>
 
 </body>
