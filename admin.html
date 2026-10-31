@@ -418,7 +418,7 @@
             <span class="title">مدیریت ادمین‌های همکار</span>
           </div>
 
-          <div class="floating-glass-btn" id="ownerBrokerMenuBtn" style="display:none; grid-column: span 2;" onclick="playInteractionEffect(); handleBrokerNavigation()">
+          <div class="floating-glass-btn" id="ownerBrokerMenuBtn" style="grid-column: span 2;" onclick="playInteractionEffect(); handleBrokerNavigation()">
             <span class="icon">🏢</span>
             <span class="title">مدیریت کارگزاری‌ها و دفاتر همکار</span>
           </div>
@@ -871,11 +871,11 @@
           
           if (currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase()) {
             document.getElementById("superAdminMenuBtn").style.display = "flex";
-            document.getElementById("ownerBrokerMenuBtn").style.display = "flex";
           } else {
             document.getElementById("superAdminMenuBtn").style.display = "none";
-            document.getElementById("ownerBrokerMenuBtn").style.display = "none";
           }
+          // بخش کارگزاری و دفاتر همکار برای همه ادمین‌ها و همکاران فعال قابل مشاهده و استفاده خواهد بود.
+          document.getElementById("ownerBrokerMenuBtn").style.display = "flex";
 
           await loadDataFromSupabase(true);
         } catch(e) {
@@ -939,7 +939,7 @@
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("adminContainer").style.display = "block";
             document.getElementById("superAdminMenuBtn").style.display = "none";
-            document.getElementById("ownerBrokerMenuBtn").style.display = "none";
+            document.getElementById("ownerBrokerMenuBtn").style.display = "flex";
             await loadDataFromSupabase(true);
             return;
           }
@@ -1803,7 +1803,6 @@
 
           let receiptHtml = receiptUrl ? `<div style="margin-top:6px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
           
-          // اگر نوع عملیات حواله یا انتقال باشد، دو دکمه جداگانه نمایش داده می‌شود
           let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
           let transferBtn = isTransferOrRemittance ? `<button class="btn btn-info btn-sm" style="margin-top:6px; flex:1;" onclick="event.stopPropagation(); playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 رسید انتقال</button>` : '';
 
@@ -2095,7 +2094,6 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    // ارسال فقط رسید انتقال بدون کلمات نامناسب
     function shareTransferReceiptWhatsApp(targetTxId) {
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
@@ -2116,7 +2114,6 @@
       window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
     }
 
-    // ارسال مشخصات تراکنش در واتساپ (بدون تکرار توضیحات در صورت حواله/انتقال)
     function sendSingleTxWhatsApp(targetTxId) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
@@ -2142,7 +2139,6 @@
         `📌 *جزئیات تراکنش:*`,
         `💰 مبلغ: *${amtVal} ${currVal}* (${dirVal})`,
         `📅 تاریخ: ${txDate}`,
-        // اگر تراکنش از نوع حواله یا انتقال بود، توضیحات را حذف می‌کنیم چون در رسید انتقال فرستاده می‌شود
         ...(isTransferOrRemittance ? [] : [`📝 شرح: ${desc || '-'}`]),
         ``,
         `🌐 بررسی آنلاین حساب:`,
