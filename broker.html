@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مدیریت صرافی و کارگزاران - کریمی</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary-dark: #0f172a;
@@ -22,7 +25,7 @@
       --shadow-card: 0 10px 25px rgba(15, 23, 42, 0.12);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; direction: rtl; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', system-ui, sans-serif !important; direction: rtl; }
     body { background: var(--bg-main); color: var(--text-main); padding: 10px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
 
     .container { max-width: 920px; margin: 0 auto; }
@@ -47,7 +50,6 @@
     
     .btn-xs { padding: 5px 9px; font-size: 0.78rem; width: auto; border-radius: 6px; }
     .btn-sm { padding: 7px 11px; font-size: 0.82rem; width: auto; }
-
     .btn-narrow-action { padding: 10px 18px; font-size: 0.92rem; font-weight: 900; border-radius: 20px; background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); }
 
     .radio-container { display: flex; gap: 6px; }
@@ -65,31 +67,17 @@
     .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; }
     
     .highlight-amount { color: #059669 !important; font-size: 1.2rem !important; font-weight: 900 !important; background: #f0fdf4; border-color: #10b981 !important; }
-
     .search-results { background: #fff; border: 2px solid var(--border-color); max-height: 160px; overflow-y: auto; border-radius: 8px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
     .search-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; }
-
     .view-section { display: none; }
     .view-section.active { display: block; }
-
     .filter-collapsible { background: #f8fafc; border: 2px solid var(--border-color); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: none; }
-
     #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: #0f172a; color: #38bdf8; border: 2px solid #38bdf8; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 900; z-index: 9999; display: none; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
   </style>
 </head>
 <body>
 
   <div id="syncIndicator">🔄 در حال به‌روزرسانی...</div>
-
-  <!-- صفحه احراز هویت ادمین -->
-  <div id="authScreen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:99999; padding:16px; justify-content:center; align-items:center;">
-    <div class="card" style="width:100%; max-width:340px; text-align:center;">
-      <h3 style="margin-bottom:12px; color:#0f172a; font-weight:900;">🔐 مدیریت امانت‌داری کریمی</h3>
-      <div class="form-group"><input type="email" id="authEmail" value="" placeholder="ایمیل مدیریت..." dir="ltr"></div>
-      <div class="form-group"><input type="password" id="authPin" value="" placeholder="کد عبور (PIN)..." dir="ltr"></div>
-      <button class="btn" style="padding:10px;" onclick="handleLogin()">ورود به پنل مدیریت</button>
-    </div>
-  </div>
 
   <div class="container" id="appContent">
     
@@ -103,6 +91,7 @@
         <div style="display:flex; gap:6px; align-items:center;">
           <button class="btn btn-info btn-xs" onclick="openBrokersListModal()">🏛️ صرافی‌ها</button>
           <a href="admin.html" class="btn btn-secondary btn-xs">👥 مشتریان</a>
+          <button id="superAdminMenuBtn" class="btn btn-warning btn-xs" style="display:none;" onclick="openAdminManagerModal()">🛡️ ادمین‌ها</button>
           <button class="btn btn-danger btn-xs" onclick="handleLogout()">خروج</button>
         </div>
       </div>
@@ -116,7 +105,6 @@
           <button class="btn btn-secondary btn-xs" onclick="toggleFilterDrawer()">🔍 فیلتر تاریخ ⚙️</button>
         </div>
         
-        <!-- کشوی فیلتر تاریخ -->
         <div class="filter-collapsible" id="filterDrawer">
           <div class="grid-2">
             <div>
@@ -180,7 +168,6 @@
           </div>
         </div>
 
-        <!-- بدهکار/بستانکار و ارزها کنار هم -->
         <div class="grid-2">
           <div class="form-group">
             <label>جهت معامله:</label>
@@ -200,7 +187,6 @@
           </div>
         </div>
 
-        <!-- بخش محاسبات (پیش‌فرض تقسیم) -->
         <div style="background:#f8fafc; border:2px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:10px;">
           <div class="grid-3">
             <div class="form-group" style="margin-bottom:0;">
@@ -243,7 +229,6 @@
           </button>
         </div>
 
-        <!-- بخش بزرگ‌شده مشتری با دکمه‌های بدهکار/بستانکار اجباری بدون پیش‌فرض -->
         <div class="customer-box" id="customerBox">
           <button type="button" class="btn btn-danger btn-xs" style="position:absolute; top:8px; left:8px;" onclick="toggleCustomerSection()">✕ انصراف</button>
           <h4 style="margin-bottom: 8px; color: var(--info-color); font-size:0.95rem; font-weight:900;">👤 ثبت هم‌زمان برای مشتری</h4>
@@ -324,6 +309,34 @@
 
   </div>
 
+  <!-- مدال مدیریت ادمین‌های همکار -->
+  <div id="adminManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:10px;">
+    <div class="card" style="width: 100%; max-width:440px; margin: 0; max-height:90vh; overflow-y:auto;">
+      <h3 id="adminModalMainTitle">🛡️ مدیریت ادمین‌های همکار</h3>
+      <input type="hidden" id="editAdminId">
+      <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">در این بخش می‌توانید برای همکاران ایمیل، رمز ورود و توکن تلگرام بسازید.</p>
+      
+      <div class="form-group"><label>نام ادمین:</label><input type="text" id="newAdminName" placeholder="نام..."></div>
+      <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
+      <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز..."></div>
+      <div class="form-group"><label>توکن ربات تلگرام:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="Token..."></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="ChatID..."></div>
+      
+      <div class="flex-row" style="display:flex; gap:8px; margin-bottom:12px;">
+        <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="saveAdminAccount()">ثبت ادمین جدید</button>
+        <button class="btn btn-secondary btn-xs" style="flex:1; display:none;" id="adminCancelEditBtn" onclick="cancelEditAdmin()">انصراف</button>
+      </div>
+
+      <hr style="margin: 10px 0;">
+      <label><b>لیست همکاران فعال:</b></label>
+      <div id="adminsListContainer" style="margin-top:6px;"></div>
+
+      <div style="text-align:right; margin-top:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="closeAdminManagerModal()">بستن</button>
+      </div>
+    </div>
+  </div>
+
   <!-- مدال مدیریت صرافی‌ها -->
   <div id="brokersListModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width:100%; max-width:480px; margin:0; max-height:85vh; overflow-y:auto;">
@@ -351,8 +364,8 @@
       <div class="form-group"><label>تلفن تماس / واتساپ:</label><input type="text" id="brokerPhone" dir="ltr"></div>
       <div class="form-group"><label>شهر:</label><input type="text" id="brokerCity"></div>
       <div class="form-group">
-        <label>چت‌آیدی تلگرام (شخصی، گروه یا کانال):</label>
-        <input type="text" id="brokerChatId" dir="ltr" placeholder="مثال: 123456789 یا -100123456789">
+        <label>چت‌آیدی تلگرام:</label>
+        <input type="text" id="brokerChatId" dir="ltr" placeholder="ChatID...">
       </div>
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button class="btn btn-secondary btn-sm" onclick="closeBrokerModal()">انصراف</button>
@@ -361,6 +374,7 @@
     </div>
   </div>
 
+  <!-- مدال مدیریت عملیات -->
   <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width:100%; max-width:380px; margin:0;">
       <h3>⚙️ مدیریت عملیات</h3>
@@ -376,13 +390,14 @@
     </div>
   </div>
 
+  <!-- مدال مدیریت آدرس‌ها -->
   <div id="addressDashboardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
       <h3>📂 لیست آدرس‌های صرافی فعال</h3>
       <div class="form-group" style="margin-top:8px;">
         <div style="display:flex; gap:6px;">
           <input type="text" id="newAddressInput" placeholder="آدرس جدید...">
-          <button class="btn btn-sm" style="width:auto;" onclick="saveNewAddress()">+ ذخیره در دیتابیس</button>
+          <button class="btn btn-sm" style="width:auto;" onclick="saveNewAddress()">+ ذخیره</button>
         </div>
       </div>
       <div class="form-group">
@@ -398,24 +413,26 @@
     const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
+    const MASTER_ADMIN_PIN = "77218731";
+    const MASTER_ADMIN_ID = "master_owner";
     const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
     const MASTER_ADMIN_CHATID = "802655440";
 
-    const SUPER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
-    const SUPER_ADMIN_PIN = "77218731";
-
     let allBrokers = [];
     let allAccounts = [];
+    let allAdmins = [];
     let brokerTxs = [];
     let customOpTypes = ["معامله", "حواله", "دریافت", "پرداخت", "تسویه"];
     let savedAddresses = [];
 
     let selectedDirection = "بستانکار";
     let selectedCurrency = "USD";
-    let currentCalcMode = 'divide'; // پیش‌فرض روی تقسیم
-    let selectedCustomerDirection = null; // بدون پیش‌فرض برای مشتری
+    let currentCalcMode = 'divide';
+    let selectedCustomerDirection = null;
     let selectedBrokerTxId = null;
     let activeBrokerId = null;
+    let currentLoggedInAdmin = null;
 
     function toEnglishDigits(str) {
       if (str === null || str === undefined) return '';
@@ -444,9 +461,26 @@
     }
 
     window.onload = async function() {
-      checkAuth();
-      document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
-      await loadInitialData();
+      let savedSession = localStorage.getItem("adminAuthSessionData");
+      if (!savedSession) {
+        // اگر لاگین نکرده بود هدایت به صفحه اصلی ورود
+        window.location.href = "index.html";
+        return;
+      }
+      try {
+        currentLoggedInAdmin = JSON.parse(savedSession);
+        
+        // اگر مالک کل بود دکمه مدیریت ادمین‌ها را نمایش بده
+        if (currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase()) {
+          document.getElementById("superAdminMenuBtn").style.display = "inline-flex";
+        }
+
+        document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
+        await loadInitialData();
+      } catch(e) {
+        localStorage.removeItem("adminAuthSessionData");
+        window.location.href = "index.html";
+      }
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
@@ -458,63 +492,52 @@
       };
     };
 
-    function checkAuth() {
-      let isLogged = localStorage.getItem("admin_logged_in");
-      if (!isLogged) {
-        document.getElementById("authScreen").style.display = "flex";
-      } else {
-        document.getElementById("authScreen").style.display = "none";
-      }
-    }
-
-    async function handleLogin() {
-      playBeep('click');
-      let email = document.getElementById("authEmail").value.trim().toLowerCase();
-      let pin = document.getElementById("authPin").value.trim();
-      if (!email || !pin) { alert("لطفاً ایمیل و رمز را وارد کنید"); return; }
-      
-      if (email === SUPER_ADMIN_EMAIL.toLowerCase() && pin === SUPER_ADMIN_PIN) {
-        localStorage.setItem("admin_logged_in", "true");
-        document.getElementById("authScreen").style.display = "none";
-        playBeep('success');
-        await loadInitialData();
-        return;
-      }
-
-      try {
-        const { data, error } = await _supabase.from('admins').select('*').eq('email', email);
-        if (data && data.length > 0) {
-          let foundAdmin = data.find(a => String(a.pin) === pin || String(a.password) === pin);
-          if (foundAdmin) {
-            localStorage.setItem("admin_logged_in", "true");
-            document.getElementById("authScreen").style.display = "none";
-            playBeep('success');
-            await loadInitialData();
-            return;
-          }
-        }
-      } catch (e) { console.error(e); }
-
-      alert("اطلاعات ورود اشتباه است!");
-    }
-
     function handleLogout() {
       playBeep('click');
-      localStorage.removeItem("admin_logged_in");
-      document.getElementById("authScreen").style.display = "flex";
+      localStorage.removeItem("adminAuthSessionData");
+      window.location.href = "index.html";
+    }
+
+    function getCurrentAdminTokenAndChat() {
+      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
+        return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      }
+      let found = allAdmins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
+      let token = found ? String(found.BotToken || found.bottoken || found.Token || found.token || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
+      let chatId = found ? String(found.ChatID || found.chatid || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
+      return { token, chatId };
     }
 
     async function loadInitialData() {
-      if (!localStorage.getItem("admin_logged_in")) return;
+      if (!currentLoggedInAdmin) return;
       showSync(true);
       try {
-        const [bRes, aRes, opRes] = await Promise.all([
+        const [bRes, aRes, opRes, admRes] = await Promise.all([
           _supabase.from('brokers').select('*'),
           _supabase.from('accounts').select('*'),
-          _supabase.from('operation_types').select('*')
+          _supabase.from('operation_types').select('*'),
+          _supabase.from('admins').select('*')
         ]);
         allBrokers = bRes.data || [];
         allAccounts = aRes.data || [];
+        if (admRes.data) allAdmins = admRes.data;
+
+        let isMaster = currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+        let currentAdminId = currentLoggedInAdmin.id;
+
+        if (isMaster) {
+          allAccounts = allAccounts.filter(acc => {
+            let creator = String(acc.CreatedBy || acc.createdby || acc.AdminID || acc.adminid || '').trim();
+            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner";
+          });
+        } else {
+          allAccounts = allAccounts.filter(acc => {
+            let creator = String(acc.CreatedBy || acc.createdby || acc.AdminID || acc.adminid || '').trim();
+            return creator === String(currentAdminId);
+          });
+        }
+
         if (opRes.data && opRes.data.length > 0) {
           customOpTypes = opRes.data.map(o => o.title);
         }
@@ -533,6 +556,120 @@
         }
       } catch (e) { console.error(e); }
       finally { showSync(false); }
+    }
+
+    // بخش مدیریت ادمین‌های همکار دقیقاً مشابه بخش مشتریان
+    function openAdminManagerModal() {
+      cancelEditAdmin();
+      renderAdminsList();
+      document.getElementById("adminManagerModal").style.display = "flex";
+    }
+    function closeAdminManagerModal() {
+      document.getElementById("adminManagerModal").style.display = "none";
+    }
+
+    function renderAdminsList() {
+      const container = document.getElementById("adminsListContainer");
+      container.innerHTML = "";
+      if (allAdmins.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:8px;">هیچ ادمین همکاری ثبت نشده است</div>`;
+        return;
+      }
+      allAdmins.forEach(adm => {
+        let admId = toEnglishDigits(adm.AdminID || adm.adminid || adm.id);
+        let admName = String(adm.Name || adm.name || 'بدون نام');
+        let admEmail = String(adm.Email || adm.email || '');
+        let admPin = toEnglishDigits(adm.Pin || adm.pin || adm.Password || adm.password || '');
+        let admChatId = toEnglishDigits(adm.ChatID || adm.chatid || '');
+
+        container.innerHTML += `
+          <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:8px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <b style="color:var(--primary-dark); font-size:0.9rem;">${admName}</b><br>
+              <span style="font-size:0.78rem; color:#64748b;">ایمیل: ${admEmail} | رمز: ${admPin}</span><br>
+              <span style="font-size:0.75rem; color:#0284c7;">چت‌آیدی: ${admChatId || 'ثبت نشده'}</span>
+            </div>
+            <div style="display:flex; gap:4px;">
+              <button class="btn btn-warning btn-xs" onclick="editAdminAccount('${admId}')">ویرایش</button>
+              <button class="btn btn-danger btn-xs" onclick="deleteAdminAccount('${admId}')">حذف</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function editAdminAccount(admId) {
+      let adm = allAdmins.find(a => String(a.AdminID || a.adminid || a.id) === String(admId));
+      if (!adm) return;
+      document.getElementById("editAdminId").value = admId;
+      document.getElementById("adminModalMainTitle").innerText = "✏️ ویرایش ادمین همکار";
+      document.getElementById("newAdminName").value = adm.Name || adm.name || "";
+      document.getElementById("newAdminEmail").value = adm.Email || adm.email || "";
+      document.getElementById("newAdminPin").value = toEnglishDigits(adm.Pin || adm.pin || adm.Password || adm.password || "");
+      document.getElementById("newAdminBotToken").value = adm.BotToken || adm.bottoken || adm.Token || adm.token || "";
+      document.getElementById("newAdminChatId").value = toEnglishDigits(adm.ChatID || adm.chatid || "");
+      
+      document.getElementById("adminSaveBtn").innerText = "ذخیره تغییرات";
+      document.getElementById("adminCancelEditBtn").style.display = "inline-flex";
+    }
+
+    function cancelEditAdmin() {
+      document.getElementById("editAdminId").value = "";
+      document.getElementById("adminModalMainTitle").innerText = "🛡️ مدیریت ادمین‌های همکار";
+      document.getElementById("newAdminName").value = "";
+      document.getElementById("newAdminEmail").value = "";
+      document.getElementById("newAdminPin").value = "";
+      document.getElementById("newAdminBotToken").value = "";
+      document.getElementById("newAdminChatId").value = "";
+      document.getElementById("adminSaveBtn").innerText = "ثبت ادمین جدید";
+      document.getElementById("adminCancelEditBtn").style.display = "none";
+    }
+
+    async function saveAdminAccount() {
+      let editId = document.getElementById("editAdminId").value;
+      let name = document.getElementById("newAdminName").value.trim();
+      let email = document.getElementById("newAdminEmail").value.trim().toLowerCase();
+      let pin = toEnglishDigits(document.getElementById("newAdminPin").value.trim());
+      let botToken = document.getElementById("newAdminBotToken").value.trim();
+      let chatId = toEnglishDigits(document.getElementById("newAdminChatId").value.trim());
+
+      if (!name || !email || !pin) {
+        alert("لطفاً نام، ایمیل و رمز عبور را کامل وارد کنید.");
+        return;
+      }
+
+      let adminId = editId ? editId : ("ADM-" + Math.floor(1000 + Math.random() * 9000));
+      const payload = {
+        AdminID: adminId,
+        Name: name,
+        Email: email,
+        Pin: pin,
+        BotToken: botToken,
+        ChatID: chatId
+      };
+
+      if (editId) {
+        const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
+        if (error) { alert("خطا: " + error.message); return; }
+        alert("✅ اطلاعات ادمین ویرایش شد!");
+      } else {
+        const { error } = await _supabase.from('admins').insert([payload]);
+        if (error) { alert("خطا: " + error.message); return; }
+        alert("✅ ادمین جدید ایجاد شد!");
+      }
+
+      cancelEditAdmin();
+      const { data } = await _supabase.from('admins').select('*');
+      if (data) allAdmins = data;
+      renderAdminsList();
+    }
+
+    async function deleteAdminAccount(admId) {
+      if (!confirm("آیا از حذف این دسترسی مطمئن هستید؟")) return;
+      await _supabase.from('admins').delete().eq('AdminID', admId);
+      const { data } = await _supabase.from('admins').select('*');
+      if (data) allAdmins = data;
+      renderAdminsList();
     }
 
     function switchView(viewId, pushHistory = true) {
@@ -740,7 +877,7 @@
 
       resContainer.style.display = "block";
       filtered.forEach(acc => {
-        resContainer.innerHTML += `<div class="search-item" onclick="selectCustomer('${acc.AccountID}', '${acc.Name}', '${acc.Phone || ''}')"><b>${acc.Name}</b> (${acc.Phone || ''})</div>`;
+        resContainer.innerHTML += `<div class="search-item" onclick="selectCustomer('${acc.AccountID || acc.accountid}', '${acc.Name || acc.name}', '${acc.Phone || acc.phone || ''}')"><b>${acc.Name || acc.name}</b> (${acc.Phone || acc.phone || ''})</div>`;
       });
     }
 
@@ -760,7 +897,6 @@
       document.getElementById("formTitle").innerText = "📝 ثبت معامله جدید";
       document.getElementById("amtInitial").value = "";
       
-      // تنظیم آخرین نرخ ثبت شده صرافی در صورت وجود، در غیر این صورت خالی
       let lastRate = "";
       if (brokerTxs.length > 0) {
         let lastTxWithRate = brokerTxs.slice().reverse().find(t => t.exchange_rate);
@@ -779,12 +915,10 @@
       document.getElementById("selectedCustId").value = "";
       document.getElementById("customerBox").style.display = "none";
       
-      // تنظیم پیش‌فرض‌ها: بستانکار، USD و تقسیم
       setDirection('بستانکار');
       setCurrency('USD');
       setCalcMode('divide');
 
-      // پاک کردن جهت مشتری (بدون پیش‌فرض)
       selectedCustomerDirection = null;
       document.getElementById("btnCustCreditor").className = "btn-opt";
       document.getElementById("btnCustDebtor").className = "btn-opt";
@@ -847,10 +981,11 @@ ${diffText ? `\n📝 *تغییرات انجام شده:*\n_${diffText}_\n` : ''}
 • آدرس مقصد: _${txObj.address_dashboard || '-'}_
 ${verticalReport}`;
 
-      await sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
+      let { token, chatId } = getCurrentAdminTokenAndChat();
+      await sendTelegramMessage(token, chatId, msgText);
 
       if (currentBroker && currentBroker.chatid) {
-        await sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
+        await sendTelegramMessage(token, currentBroker.chatid, msgText);
       }
     }
 
@@ -906,18 +1041,20 @@ ${verticalReport}`;
       if (custBoxVisible && custName) {
         if (!targetCustId) {
           targetCustId = "ACC-" + Math.floor(100000 + Math.random() * 900000);
+          let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
           let newAccObj = {
             AccountID: targetCustId,
             Name: custName,
             Phone: document.getElementById("custPhoneInput").value.trim(),
-            CreatedBy: "master_owner"
+            CreatedBy: String(currentAdminId)
           };
           await _supabase.from('accounts').insert([newAccObj]);
 
           let currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
-          if (currentBroker && currentBroker.chatid) {
+          let { token } = getCurrentAdminTokenAndChat();
+          if (currentBroker && currentBroker.chatid && token) {
             let openAccMsg = `🎉 *حساب شما افتتاح شد*\n🏛️ صرافی: *${currentBroker.name}*\n👤 نام مشتری: *${custName}*\n📅 تاریخ افتتاح: \`${toEnglishDigits(new Date().toISOString().split('T')[0])}\`\n_تراکنش‌های ثبت‌شده از زمان افتتاح حساب و مانده حساب فعال شد._`;
-            sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, openAccMsg);
+            sendTelegramMessage(token, currentBroker.chatid, openAccMsg);
           }
         }
 
@@ -1037,7 +1174,6 @@ ${verticalReport}`;
       if (!tx) return;
 
       let msgBody = `رسید انتقال\n${tx.description || '-'}\nآدرس: ${tx.address_dashboard || '-'}\nداشتن اسناد برای گرفتن پول الزامی است`;
-      
       let encoded = encodeURIComponent(msgBody);
       window.open(`https://wa.me/?text=${encoded}`, '_blank');
     }
