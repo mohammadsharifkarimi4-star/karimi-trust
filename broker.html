@@ -485,21 +485,30 @@
           _supabase.from('admins').select('*')
         ]);
         allBrokers = bRes.data || [];
-        allAccounts = aRes.data || [];
+        let rawAccounts = aRes.data || [];
         if (admRes.data) allAdmins = admRes.data;
 
-        let isMaster = currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-        let currentAdminId = currentLoggedInAdmin.id;
+        let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+        let currentAdminId = String(currentLoggedInAdmin.id);
 
+        // 🔒 تفکیک حساب‌ها بر اساس ادمین سازنده
         if (isMaster) {
-          allAccounts = allAccounts.filter(acc => {
+          allAccounts = rawAccounts.filter(acc => {
             let creator = String(acc.CreatedBy || acc.createdby || acc.AdminID || acc.adminid || '').trim();
             return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner";
           });
         } else {
-          allAccounts = allAccounts.filter(acc => {
+          allAccounts = rawAccounts.filter(acc => {
             let creator = String(acc.CreatedBy || acc.createdby || acc.AdminID || acc.adminid || '').trim();
-            return creator === String(currentAdminId);
+            return creator === currentAdminId;
+          });
+        }
+
+        // 🔒 تفکیک صرافی‌ها بر اساس ادمین سازنده
+        if (!isMaster) {
+          allBrokers = allBrokers.filter(b => {
+            let creator = String(b.CreatedBy || b.createdby || b.AdminID || b.adminid || '').trim();
+            return creator === currentAdminId || creator === "";
           });
         }
 
@@ -897,7 +906,7 @@ ${verticalReport}`;
             AccountID: targetCustId,
             Name: custName,
             Phone: document.getElementById("custPhoneInput").value.trim(),
-            CreatedBy: String(currentAdminId)
+            CreatedBy: String(currentAdminId) // 🔒 ذخیره شناسه ادمین سازنده
           };
           await _supabase.from('accounts').insert([newAccObj]);
 
@@ -1103,7 +1112,8 @@ ${verticalReport}`;
         name: name,
         phone: document.getElementById("brokerPhone").value.trim(),
         city: document.getElementById("brokerCity").value.trim(),
-        chatid: document.getElementById("brokerChatId").value.trim()
+        chatid: document.getElementById("brokerChatId").value.trim(),
+        CreatedBy: String(currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID) // 🔒 ذخیره شناسه ادمین سازنده
       };
 
       showSync(true);
