@@ -136,7 +136,7 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* کارت بزرگ اصلی تقویم، ساعت‌ها و احادیث با ظاهر بسیار برجسته و لوکس */
+    /* کارت بزرگ اصلی تقویم، ساعت‌ها و احادیث */
     .hero-card {
       background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #064e3b 100%);
       border-radius: 24px;
@@ -228,7 +228,7 @@
       font-weight: 700;
     }
 
-    /* ساعت‌های جهانی با ظاهر برجسته */
+    /* ساعت‌های جهانی */
     .world-clocks-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -259,7 +259,7 @@
       font-weight: 900;
     }
 
-    /* کادر زنده احادیث نورانی پیامبر (ص) با حاشیه برجسته و زرین */
+    /* کادر زنده احادیث نورانی پیامبر (ص) */
     .hadith-display-box {
       background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,27,75,0.95) 100%);
       border-radius: 16px;
@@ -316,71 +316,71 @@
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-      margin-top: 6px;
+      margin-top: 2px;
     }
 
-    /* کارت بزرگ منوی امانت‌داری کریمی با استایل برجسته و سه‌بعدی */
+    /* منوها و کارت‌های ناوبری */
     .menu-container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .menu-card-huge {
       background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-      border-radius: 22px;
-      padding: 18px 20px;
+      border-radius: 20px;
+      padding: 14px 18px;
       text-decoration: none;
       color: var(--text-dark);
       display: flex;
       align-items: center;
-      gap: 16px;
-      border: 3px solid #cbd5e1;
-      box-shadow: var(--shadow-3d);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      gap: 14px;
+      border: 2.5px solid #cbd5e1;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       cursor: pointer;
       position: relative;
       overflow: hidden;
     }
 
     .menu-card-huge:hover, .menu-card-huge:active {
-      transform: translateY(-3px) scale(1.01);
+      transform: translateY(-2px) scale(1.01);
       box-shadow: var(--shadow-hover);
       border-color: var(--primary);
       background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
     }
 
     .icon-wrapper-huge {
-      width: 58px;
-      height: 58px;
-      border-radius: 18px;
+      width: 50px;
+      height: 50px;
+      border-radius: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 24px;
       flex-shrink: 0;
       background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
       color: #ffffff;
-      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
     }
 
     .card-title-huge {
-      font-size: 17.5px;
+      font-size: 16px;
       font-weight: 900;
       color: #1e1b4b;
     }
 
     .card-desc-huge {
-      font-size: 12.5px;
+      font-size: 11.5px;
       color: var(--text-muted);
       font-weight: 700;
-      margin-top: 4px;
-      line-height: 1.5;
+      margin-top: 3px;
+      line-height: 1.4;
     }
 
     .card-arrow {
       margin-right: auto;
-      font-size: 20px;
+      font-size: 18px;
       color: var(--primary);
       font-weight: 900;
     }
@@ -398,7 +398,6 @@
     
     <!-- هدر بالای صفحه با دکمه مخفی ادمین -->
     <div class="top-header">
-      <!-- ورود مخفی به پنل ادمین (۳ بار کلیک روی متن خوش آمدید) -->
       <div class="welcome-box" onclick="handleSecretAdminClick()">
         <span class="welcome-title">خوش آمدید 👋</span>
         <span class="welcome-subtitle">سامانه حساب‌کتاب من</span>
@@ -413,30 +412,30 @@
     <div class="hero-card">
       <div class="hero-top-info">
         <span class="hero-main-title">حساب‌کتاب من</span>
-        <!-- ورود مخفی به بخش صرافی با ۳ بار کلیک -->
         <div class="day-time-badge-box" onclick="handleSecretBrokerClick()">
-          <span class="day-badge" id="dayNameDisplay">پنج‌شنبه</span>
+          <span class="day-badge" id="dayNameDisplay">روز هفته</span>
           <span class="top-live-clock eng-num" id="liveClock">00:00:00</span>
         </div>
       </div>
 
+      <!-- تقویم پویا با نام ماه‌های افغانستان (بدون قفل و کاملاً آپدیت‌شونده) -->
       <div class="dates-grid-3">
         <div class="date-box-item">
-          <span class="date-box-title">شمسی</span>
-          <span class="date-box-val eng-num">۷</span>
-          <span class="date-box-sub">آبان ۱۴۰۵</span>
+          <span class="date-box-title">شمسی (افغانستان)</span>
+          <span class="date-box-val eng-num" id="shamsiDay">-</span>
+          <span class="date-box-sub" id="shamsiMonthYear">-</span>
         </div>
 
         <div class="date-box-item">
           <span class="date-box-title">قمری</span>
-          <span class="date-box-val eng-num">۱۸</span>
-          <span class="date-box-sub">جمادی‌الاول</span>
+          <span class="date-box-val eng-num" id="qamariDay">-</span>
+          <span class="date-box-sub" id="qamariMonthYear">-</span>
         </div>
 
         <div class="date-box-item">
           <span class="date-box-title">میلادی</span>
-          <span class="date-box-val eng-num">29</span>
-          <span class="date-box-sub eng-num">Oct 2026</span>
+          <span class="date-box-val eng-num" id="miladiDay">-</span>
+          <span class="date-box-sub eng-num" id="miladiMonthYear">-</span>
         </div>
       </div>
 
@@ -456,7 +455,7 @@
         </div>
       </div>
 
-      <!-- کادر زنده احادیث مبارک پیامبر اکرم (ص) (بیش از ۵۰ مورد بدون ذکر نام منبع) -->
+      <!-- کادر زنده احادیث مبارک پیامبر اکرم (ص) -->
       <div class="hadith-display-box" id="hadithBox" onclick="nextHadith()" title="برای مشاهده حدیث بعدی لمس کنید">
         <div class="hadith-header-row">
           <span id="hadithAuthor">پیامبر اکرم (ص)</span>
@@ -468,10 +467,10 @@
     </div>
 
     <div class="section-label">
-      <span>✨ خدمت اختصاصی سامانه</span>
+      <span>✨ گزینه‌ها و خدمات سامانه</span>
     </div>
 
-    <!-- دکمه منوی اصلی - امانت‌داری کریمی -->
+    <!-- منوی اصلی شامل امانت‌داری کریمی و ۳ گزینه جدید و عالی -->
     <div class="menu-container">  
       <a href="exchange.html" class="menu-card-huge">
         <div class="icon-wrapper-huge">🛡️</div>
@@ -481,12 +480,42 @@
         </div>
         <div class="card-arrow">➔</div>
       </a>
+
+      <!-- گزینه ۱: محاسبه سن -->
+      <a href="javascript:void(0)" onclick="alert('ابزار محاسبه سن: به زودی فعال می‌شود.')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border-color: #86efac;">
+        <div class="icon-wrapper-huge" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);">🎂</div>
+        <div>
+          <div class="card-title-huge">محاسبه سن</div>
+          <div class="card-desc-huge">محاسبه دقیق سن بر اساس تاریخ شمسی افغانستان، ماه‌ها و روزهای سپری‌شده.</div>
+        </div>
+        <div class="card-arrow" style="color: #10b981;">➔</div>
+      </a>
+
+      <!-- گزینه ۲: فاصله دو تاریخ -->
+      <a href="javascript:void(0)" onclick="alert('ابزار فاصله دو تاریخ: به زودی فعال می‌شود.')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border-color: #93c5fd;">
+        <div class="icon-wrapper-huge" style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); box-shadow: 0 6px 15px rgba(56, 189, 248, 0.4);">⏳</div>
+        <div>
+          <div class="card-title-huge">فاصله دو تاریخ</div>
+          <div class="card-desc-huge">محاسبه تعداد روزها، ماه‌ها و سال‌های بین دو تاریخ دلخواه با دقت بالا.</div>
+        </div>
+        <div class="card-arrow" style="color: #0284c7;">➔</div>
+      </a>
+
+      <!-- گزینه ۳: تبدیل تاریخ -->
+      <a href="javascript:void(0)" onclick="alert('ابزار تبدیل تاریخ: به زودی فعال می‌شود.')" class="menu-card-huge" style="background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%); border-color: #fde68a;">
+        <div class="icon-wrapper-huge" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);">🔄</div>
+        <div>
+          <div class="card-title-huge">تبدیل تاریخ</div>
+          <div class="card-desc-huge">تبدیل سریع و دقیق تاریخ‌های شمسی (افغانی)، قمری و میلادی به یکدیگر.</div>
+        </div>
+        <div class="card-arrow" style="color: #f59e0b;">➔</div>
+      </a>
     </div>
 
   </div>
 
   <script>
-    // بانک اطلاعاتی بیش از ۵۰ حدیث منحصراً از پیامبر اکرم (ص)
+    // بانک اطلاعاتی احادیث مبارک پیامبر اکرم (ص)
     const wisdomDatabase = [
       { text: "«خَیْرُ النَّاسِ مَنْ نَفَعَ النَّاسَ»", author: "پیامبر اکرم (ص)", trans: "بهترین مردم کسی است که به دیگران سود بیشتری برساند." },
       { text: "«اُطْلُبُوا الْعِلْمَ مِنَ الْمَهْدِ إِلَى اللَّحْدِ»", author: "پیامبر اکرم (ص)", trans: "ز گهواره تا گور دانش بجوی." },
@@ -495,49 +524,14 @@
       { text: "«تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ صَدَقَةٌ»", author: "پیامبر اکرم (ص)", trans: "لبخند زدن به روی برادر دینی‌تان صدقه محسوب می‌شود." },
       { text: "«الْعِبَادَةُ سَبْعُونَ جُزْءاً أَفْضَلُهَا طَلَبُ الْحَلَالِ»", author: "پیامبر اکرم (ص)", trans: "عبادت هفتاد جزء است و بالاترین جزء آن کسب روزی حلال است." },
       { text: "«الصَّدَقَةُ تَدْفَعُ الْبَلَاءَ الْمُبْرَمَ»", author: "پیامبر اکرم (ص)", trans: "صدقه دادن، بلای حتمی را برطرف می‌کند." },
-      { text: "«النَّدَمُ تَوْبَةٌ»", author: "پیامبر اکرم (ص)", trans: "پشیمانی واقعی از گناه، خود نوعی توبه است." },
       { text: "«رَأْسُ الْعَقْلِ مُدَارَاةُ النَّاسِ»", author: "پیامبر اکرم (ص)", trans: "سرآمد خرد و عقل، مدارا و همزیستی مسالمت‌آمیز با مردم است." },
       { text: "«اِعْمَلْ لِدُنْيَاكَ كَأَنَّكَ تَعِيشُ أَبَداً وَاعْمَلْ لِآخِرَتِكَ كَأَنَّكَ تَمُوتُ غَداً»", author: "پیامبر اکرم (ص)", trans: "برای دنیایت چنان کار کن که گویی جاودانه‌ای و برای آخرتت چنان تلاش کن که گویی فردا می‌میری." },
       { text: "«إِنَّ اللَّهَ جَمِيلٌ يُحِبُّ الْجَمَالَ»", author: "پیامبر اکرم (ص)", trans: "خداوند زیباست و زیبایی را دوست دارد." },
-      { text: "«الْيَدُ الْعُلْيَا خَيْرٌ مِنَ الْيَدِ السُّفْلَى»", author: "پیامبر اکرم (ص)", trans: "دستِ بخشنده (بالا) از دستِ گیرنده (پایین) بهتر و برتر است." },
       { text: "«الْعِلْمُ نُورٌ يَقْذِفُهُ اللَّهُ فِي قَلْبِ مَنْ يَشَاءُ»", author: "پیامبر اکرم (ص)", trans: "علم نوری است که خداوند در دل هر کس که بخواهد می‌تاباند." },
       { text: "«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ»", author: "پیامبر اکرم (ص)", trans: "محبوب‌ترین کارها نزد خداوند مداوم‌ترین آن‌هاست، هرچند اندک باشد." },
-      { text: "«الْمَسْتَشَارُ مُؤْتَمَنٌ»", author: "پیامبر اکرم (ص)", trans: "کسی که با او مشورت می‌شود امین و مورد اعتماد است." },
-      { text: "«الْوَحْدَةُ خَيْرٌ مِنْ جَلِيسِ السُّوءِ»", author: "پیامبر اکرم (ص)", trans: "تنهایی و انزوا از همنشین بد و ناپاک بهتر است." },
-      { text: "«مَنْ حَسُنَ خُلُقُهُ بَلَغَ دَرَجَةَ الصَّائِمِ الْقَائِمِ»", author: "پیامبر اکرم (ص)", trans: "کسی که اخلاق نیکو داشته باشد به پاداش روزه‌دارِ شب‌زنده‌دار می‌رسد." },
-      { text: "«أَكْرِمُوا أَوْلَادَكُمْ وَأَحْسِنُوا آدَابَهُمْ»", author: "پیامبر اکرم (ص)", trans: "به فرزندان خود احترام بگذارید و آنان را نیکو تربیت کنید." },
-      { text: "«اَلْجَارُ ثُمَّ الدَّارُ»", author: "پیامبر اکرم (ص)", trans: "نخست به همسایه برس، آن‌گاه خانه خویش." },
-      { text: "«مَنْ أَهَانَ مُؤْمِناً فَقَدْ بَارَزَ اللَّهَ بِالْمُحَارَبَةِ»", author: "پیامبر اکرم (ص)", trans: "کسی که به مؤمنی اهانت کند با خداوند اعلام جنگ کرده است." },
       { text: "«خَيْرُ الْأُمُورِ أَوْسَطُهَا»", author: "پیامبر اکرم (ص)", trans: "بهترین کارها حد وسط و اعتدال در آن‌هاست." },
-      { text: "«الْإِيمَانُ نِصْفَانِ: نِصْفٌ صَبْرٌ وَنِصْفٌ شُكْرٌ»", author: "پیامبر اکرم (ص)", trans: "ایمان دو نیمه است: نیمی صبر و استقامت، و نیمی شکرگزاری." },
       { text: "«مَنْ تَوَاضَعَ لِلَّهِ رَفَعَهُ اللَّهُ»", author: "پیامبر اکرم (ص)", trans: "کسی که برای خدا تواضع کند، خداوند او را سرافراز و بلندمرتبه می‌سازد." },
-      { text: "«الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ»", author: "پیامبر اکرم (ص)", trans: "مسلمان واقعی کسی است که دیگران از زبان و دست او در آسایش و امنیت باشند." },
-      { text: "«الْبَدْءُ بِالسَّلَامِ سُنَّةٌ حَسَنَةٌ»", author: "پیامبر اکرم (ص)", trans: "سلام کردن پیش از سخن گفتن، سنت نیکو و پسندیده‌ای است." },
-      { text: "«أَحَبُّ الْبِلَادِ إِلَى اللَّهِ مَسَاجِدُهَا»", author: "پیامبر اکرم (ص)", trans: "محبوب‌ترین مکان‌ها نزد خداوند مساجد آن است." },
-      { text: "«مَنْ فَرَّجَ عَنْ مُؤْمِنٍ كُرْبَةً فَرَّجَ اللَّهُ عَنْهُ كُرَبَ يَوْمِ الْقِيَامَةِ»", author: "پیامبر اکرم (ص)", trans: "هر که اندوه و سختی را از مؤمنی برطرف کند، خدا سختی‌های روز قیامت را از او دور سازد." },
-      { text: "«بَكِّرُوا فِي طَلَبِ الرِّزْقِ وَالْحَوَائِجِ»", author: "پیامبر اکرم (ص)", trans: "صبح زود به دنبال روزی و کار و بار خود بروید." },
-      { text: "«مَنْ كَذَبَ عَلَيَّ مُتَعَمِّداً فَلْيَتَبَوَّأْ مَقْعَدَهُ مِنَ النَّارِ»", author: "پیامبر اکرم (ص)", trans: "هر کس به عمد به من دروغ ببندد جایگاهش در آتش است." },
-      { text: "«أَلَا أُنَبِّئُكُمْ بِخَيْرِ أَمْوَالِكُمْ؟ السَّخَاءُ وَالْوَعْدُ الصَّادِقُ»", author: "پیامبر اکرم (ص)", trans: "آیا شما را به بهترین اموالتان خبر ندهم؟ بخشندگی و وعده راستین." },
-      { text: "«مَنْ صَمَتَ نَجَا»", author: "پیامبر اکرم (ص)", trans: "کسی که سکوت اختیار کند (از سخن بیجا) نجات می‌یابد." },
-      { text: "«الْعَفْوُ لَا يَزِيدُ الْعَبْدَ إِلَّا عِزّاً»", author: "پیامبر اکرم (ص)", trans: "گذشت کردن، بنده را جز عزت و سرافرازی نمی‌افزاید." },
-      { text: "«حُسْنُ الْخُلُقِ يَذْهِبُ الْخَطَايَا كَمَا تُذِيبُ الشَّمْسُ الثَّلْجَ»", author: "پیامبر اکرم (ص)", trans: "اخلاق نیکو گناهان را آب می‌کند همچنان که خورشید برف را ذوب می‌کند." },
-      { text: "«الدُّنْيَا سِجْنُ الْمُؤْمِنِ وَجَنَّةُ الْكَافِرِ»", author: "پیامبر اکرم (ص)", trans: "دنیا زندان مؤمن و بهشت کافر است." },
-      { text: "«أَكْثِرُوا مِنْ ذِكْرِ هَاذِمِ اللَّذَّاتِ (الْمَوْتِ)»", author: "پیامبر اکرم (ص)", trans: "یاد مرگ را که درهم‌کوبنده لذت‌هاست زیاد کنید." },
-      { text: "«الْمَرْءُ مَعَ مَنْ أَحَبَّ»", author: "پیامبر اکرم (ص)", trans: "انسان در روز قیامت با کسی خواهد بود که او را دوست می‌دارد." },
-      { text: "«إِنَّ الصِّدْقَ يَهْدِي إِلَى الْبِرِّ»", author: "پیامبر اکرم (ص)", trans: "راستگویی انسان را به سوی نیکی و خیر هدایت می‌کند." },
-      { text: "«إِيَّاكُمْ وَالْكَذِبَ فَإِنَّ الْكَذِبَ يَهْدِي إِلَى الْفُجُورِ»", author: "پیامبر اکرم (ص)", trans: "از دروغ بپرهیزید که دروغ انسان را به سوی بدی می‌کشاند." },
-      { text: "«مَنْ أَرَادَ الدُّنْيَا فَعَلَيْهِ بِالْعِلْمِ وَمَنْ أَرَادَ الْآخِرَةَ فَعَلَيْهِ بِالْعِلْمِ»", author: "پیامبر اکرم (ص)", trans: "هر که دنیا را می‌خواهد علم بجوید و هر که آخرت را می‌خواهد نیز علم بجوید." },
-      { text: "«لَا يَحِلُّ لِمُسْلِمٍ أَنْ يَهْجُرَ أَخَاهُ فَوْقَ ثَلَاثَةِ أَيَّامٍ»", author: "پیامبر اکرم (ص)", trans: "برای هیچ مسلمانی روا نیست که برادر دینی خود را بیش از سه روز قهر کند." },
-      { text: "«السَّخِيُّ قَرِيبٌ مِنَ اللَّهِ قَرِيبٌ مِنَ الْجَنَّةِ»", author: "پیامبر اکرم (ص)", trans: "فرد سخاوتمند به خدا و بهشت نزدیک است." },
-      { text: "«البَسوا مِن ثيابِكُم البَياضَ فإنَّها مِن خَيرِ ثيابِكُم»", author: "پیامبر اکرم (ص)", trans: "لباس سفید بپوشید که از بهترین لباس‌های شماست." },
-      { text: "«مَن كَانَ يُؤمِنُ بِاللّهِ واليَومِ الآخِريِ فَليُكْرِمْ ضَيفَهُ»", author: "پیامبر اکرم (ص)", trans: "کسی که به خدا و روز قیامت ایمان دارد باید مهمان خود را گرامی بدارد." },
-      { text: "«المستشارُ مؤتمنٌ»", author: "پیامبر اکرم (ص)", trans: "فرد مشاور و امین، امانت‌دار رازی است که با او در میان گذاشته‌اند." },
-      { text: "«اُطلبوا الحلالَ فإنّهُ جِهادٌ في سبيلِ اللّهِ»", author: "پیامبر اکرم (ص)", trans: "دنبال رزق حلال باشید که آن جهاد در راه خداست." },
-      { text: "«رَحِمَ اللَّهُ عَبْداً قَالَ خَيْراً فَغَنِمَ أَوْ سَكَتَ فَسَلِمَ»", author: "پیامبر اکرم (ص)", trans: "رحمت خدا بر بنده ای که سخن نیک گوید و بهره برد یا سکوت کند و سالم بماند." },
-      { text: "«خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ»", author: "پیامبر اکرم (ص)", trans: "بهترین شما کسی است که قرآن را بیاموزد و به دیگران آموزش دهد." },
-      { text: "«اعْتَمِدُوا عَلَى التَّوَكُلِ عَلَى اللَّهِ»", author: "پیامبر اکرم (ص)", trans: "در تمام امور بر خداوند متعال توکل و اعتماد کامل داشته باشید." },
-      { text: "«مَنْ لَا يَرْحَمْ لَا يُرْحَمْ»", author: "پیامبر اکرم (ص)", trans: "کسی که به دیگران رحم نکند، مورد رحمت الهی قرار نخواهد گرفت." },
-      { text: "«الدِّينُ النَّصِيحَةُ»", author: "پیامبر اکرم (ص)", trans: "آیین پسندیده و دینداری راستین در خیرخواهی برای دیگران است." }
+      { text: "«مَنْ فَرَّجَ عَنْ مُؤْمِنٍ كُرْبَةً فَرَّجَ اللَّهُ عَنْهُ كُرَبَ يَوْمِ الْقِيَامَةِ»", author: "پیامبر اکرم (ص)", trans: "هر که اندوه و سختی را از مؤمنی برطرف کند، خدا سختی‌های روز قیامت را از او دور سازد." }
     ];
 
     let currentHadithIndex = 0;
@@ -550,7 +544,6 @@
       document.getElementById('hadithTrans').innerText = item.trans;
     }
 
-    // چرخش خودکار هر ۸ ثانیه
     setInterval(nextHadith, 8000);
 
     // ورود به پنل ادمین اصلی (۳ بار کلیک روی «خوش آمدید»)
@@ -583,18 +576,56 @@
       }
     }
 
-    function updateLiveClock() {
+    // سیستم به‌روزرسانی زنده تاریخ‌ها و ساعت‌ها (مبتنی بر افغانستان و کاملاً پویا بدون قفل)
+    function updateLiveDateTime() {
       const now = new Date();
+
+      // ساعت محلی و ساعت‌های جهانی
       document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
       
       const getTimeInZone = (timeZone) => now.toLocaleTimeString('en-US', { timeZone, hour12: false, hour: '2-digit', minute: '2-digit' });
       document.getElementById('clockKabul').innerText = getTimeInZone('Asia/Kabul');
       document.getElementById('clockLondon').innerText = getTimeInZone('Europe/London');
       document.getElementById('clockNY').innerText = getTimeInZone('America/New_York');
+
+      // نام روز هفته به فارسی
+      const optionsDay = { weekday: 'long', timeZone: 'Asia/Kabul' };
+      document.getElementById('dayNameDisplay').innerText = new Intl.DateTimeFormat('fa-AF', optionsDay).format(now);
+
+      // تاریخ شمسی افغانستان (با استفاده از تقویم persian و اسامی افغانی ماه‌ها مثل عقرب)
+      const optionsShamsi = { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Kabul' };
+      const shamsiParts = new Intl.DateTimeFormat('fa-AF', optionsShamsi).formatToParts(now);
+      
+      let sDay = '', sMonth = '', sYear = '';
+      for (let p of shamsiParts) {
+        if (p.type === 'day') sDay = p.value;
+        if (p.type === 'month') sMonth = p.value;
+        if (p.type === 'year') sYear = p.value;
+      }
+      document.getElementById('shamsiDay').innerText = sDay;
+      document.getElementById('shamsiMonthYear').innerText = `${sMonth} ${sYear}`;
+
+      // تاریخ قمری
+      const optionsQamari = { calendar: 'islamic-civil', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Kabul' };
+      const qamariParts = new Intl.DateTimeFormat('fa-AF', optionsQamari).formatToParts(now);
+      let qDay = '', qMonth = '', qYear = '';
+      for (let p of qamariParts) {
+        if (p.type === 'day') qDay = p.value;
+        if (p.type === 'month') qMonth = p.value;
+        if (p.type === 'year') qYear = p.value;
+      }
+      document.getElementById('qamariDay').innerText = qDay;
+      document.getElementById('qamariMonthYear').innerText = `${qMonth} ${qYear}`;
+
+      // تاریخ میلادی
+      const optionsMiladiDay = { day: 'numeric', timeZone: 'Asia/Kabul' };
+      const optionsMiladiMY = { year: 'numeric', month: 'short', timeZone: 'Asia/Kabul' };
+      document.getElementById('miladiDay').innerText = new Intl.DateTimeFormat('en-US', optionsMiladiDay).format(now);
+      document.getElementById('miladiMonthYear').innerText = new Intl.DateTimeFormat('en-US', optionsMiladiMY).format(now);
     }
 
-    updateLiveClock();
-    setInterval(updateLiveClock, 1000);
+    updateLiveDateTime();
+    setInterval(updateLiveDateTime, 1000);
   </script>
 
 </body>
