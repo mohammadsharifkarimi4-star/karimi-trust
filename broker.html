@@ -484,7 +484,7 @@
           _supabase.from('operation_types').select('*'),
           _supabase.from('admins').select('*')
         ]);
-        allBrokers = bRes.data || [];
+        let rawBrokers = bRes.data || [];
         let rawAccounts = aRes.data || [];
         if (admRes.data) allAdmins = admRes.data;
 
@@ -504,11 +504,16 @@
           });
         }
 
-        // 🔒 تفکیک صرافی‌ها بر اساس ادمین سازنده
-        if (!isMaster) {
-          allBrokers = allBrokers.filter(b => {
+        // 🔒 تفکیک صرافی‌ها بر اساس ادمین سازنده (صرافی‌های بدون CreatedBy به مالک اصلی تعلق دارند)
+        if (isMaster) {
+          allBrokers = rawBrokers.filter(b => {
             let creator = String(b.CreatedBy || b.createdby || b.AdminID || b.adminid || '').trim();
-            return creator === currentAdminId || creator === "";
+            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner" || creator === "null";
+          });
+        } else {
+          allBrokers = rawBrokers.filter(b => {
+            let creator = String(b.CreatedBy || b.createdby || b.AdminID || b.adminid || '').trim();
+            return creator === currentAdminId;
           });
         }
 
@@ -521,12 +526,19 @@
           activeBrokerId = savedBroker;
         } else if (allBrokers.length > 0) {
           activeBrokerId = allBrokers[0].broker_id;
+        } else {
+          activeBrokerId = null;
         }
 
         populateOpTypeSelect();
 
         if (activeBrokerId) {
           await loadBrokerTransactions();
+        } else {
+          document.getElementById("mainHeaderTitle").innerText = `🏛️ صرافی فعال`;
+          document.getElementById("activeBrokerSubTitle").innerText = `هیچ صرافی‌ای یافت نشد`;
+          brokerTxs = [];
+          renderBrokerStatsAndTxs();
         }
       } catch (e) { console.error(e); }
       finally { showSync(false); }
