@@ -51,7 +51,7 @@
     .btn-narrow-action { padding: 10px 18px; font-size: 0.92rem; font-weight: 900; border-radius: 20px; background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); }
 
     .radio-container { display: flex; gap: 6px; }
-    .btn-opt { flex: 1; padding: 9px 6px; text-align: center; background: #f8fafc; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 900; font-size: 0.88rem; user-select: none; color: #334155; transition: all 0.15s; }
+    .btn-opt { flex: 1; padding: 10px 6px; text-align: center; background: #f8fafc; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 900; font-size: 0.88rem; user-select: none; color: #334155; transition: all 0.15s; }
     .btn-opt.active-creditor { background: #10b981 !important; border-color: #047857 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
     .btn-opt.active-debtor { background: #ef4444 !important; border-color: #b91c1c !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
     .btn-opt.active-currency { background: #0284c7 !important; border-color: #0369a1 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
@@ -60,7 +60,7 @@
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 8px; margin-top: 8px; }
     .stat-card { background: #ffffff; border: 2px solid #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
 
-    .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 10px; border-radius: 10px; margin-top: 10px; display: none; position: relative; }
+    .customer-box { background: #f0f9ff; border: 2.5px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
     .tx-item { background: #ffffff; border: 2px solid #cbd5e1; padding: 10px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
     .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; }
     
@@ -93,7 +93,7 @@
 
   <div class="container" id="appContent">
     
-    <!-- هدر بسیار خلوت -->
+    <!-- هدر صرافی فعال -->
     <div class="card" style="padding: 10px; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
@@ -200,7 +200,7 @@
           </div>
         </div>
 
-        <!-- بخش محاسبات -->
+        <!-- بخش محاسبات (پیش‌فرض تقسیم) -->
         <div style="background:#f8fafc; border:2px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:10px;">
           <div class="grid-3">
             <div class="form-group" style="margin-bottom:0;">
@@ -211,8 +211,8 @@
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <label>نرخ تبدیل:</label>
                 <div style="display:flex; gap:3px;">
-                  <button type="button" class="btn btn-xs" id="btnModeMultiply" style="padding:2px 6px; background:#f59e0b;" onclick="setCalcMode('multiply')">×</button>
-                  <button type="button" class="btn btn-xs" id="btnModeDivide" style="padding:2px 6px; background:#64748b;" onclick="setCalcMode('divide')">÷</button>
+                  <button type="button" class="btn btn-xs" id="btnModeMultiply" style="padding:2px 6px; background:#64748b;" onclick="setCalcMode('multiply')">×</button>
+                  <button type="button" class="btn btn-xs" id="btnModeDivide" style="padding:2px 6px; background:#f59e0b;" onclick="setCalcMode('divide')">÷</button>
                 </div>
               </div>
               <input type="number" id="exchangeRate" placeholder="نرخ..." oninput="calculateFinal()">
@@ -243,59 +243,61 @@
           </button>
         </div>
 
+        <!-- بخش بزرگ‌شده مشتری با دکمه‌های بدهکار/بستانکار اجباری بدون پیش‌فرض -->
         <div class="customer-box" id="customerBox">
-          <button type="button" class="btn btn-danger btn-xs" style="position:absolute; top:6px; left:6px;" onclick="toggleCustomerSection()">✕ انصراف</button>
-          <h4 style="margin-bottom: 6px; color: var(--info-color); font-size:0.85rem;">👤 ثبت هم‌زمان برای مشتری</h4>
+          <button type="button" class="btn btn-danger btn-xs" style="position:absolute; top:8px; left:8px;" onclick="toggleCustomerSection()">✕ انصراف</button>
+          <h4 style="margin-bottom: 8px; color: var(--info-color); font-size:0.95rem; font-weight:900;">👤 ثبت هم‌زمان برای مشتری</h4>
           
           <div class="form-group" style="position:relative;">
             <label>جستجو یا ساخت مشتری:</label>
-            <input type="text" id="custSearchInput" placeholder="نام یا شماره..." oninput="searchCustomers()">
+            <input type="text" id="custSearchInput" placeholder="نام یا شماره..." oninput="searchCustomers()" style="font-size:0.95rem; padding:10px;">
             <div class="search-results" id="custSearchResults" style="display:none;"></div>
           </div>
 
           <input type="hidden" id="selectedCustId">
           <input type="hidden" id="editCustomerTxId">
           
-          <div class="grid-2">
+          <div class="grid-2" style="margin-top:8px;">
             <div class="form-group">
               <label>نام مشتری:</label>
-              <input type="text" id="custNameInput" placeholder="نام و فامیلی">
+              <input type="text" id="custNameInput" placeholder="نام و فامیلی" style="padding:10px;">
             </div>
             <div class="form-group">
               <label>شماره تماس:</label>
-              <input type="text" id="custPhoneInput" placeholder="07...">
+              <input type="text" id="custPhoneInput" placeholder="07..." style="padding:10px;">
             </div>
           </div>
 
-          <div class="grid-3">
+          <div class="grid-2" style="margin-top:8px;">
             <div class="form-group">
-              <label>جهت مشتری:</label>
-              <select id="custDirection">
-                <option value="بدهکار">بدهکار (-)</option>
-                <option value="بستانکار">بستانکار (+)</option>
-              </select>
+              <label>جهت مشتری <span style="color:#ef4444;">* (الزامی)</span>:</label>
+              <div class="radio-container">
+                <div class="btn-opt" id="btnCustCreditor" onclick="setCustDirection('بستانکار')">بستانکار (+)</div>
+                <div class="btn-opt" id="btnCustDebtor" onclick="setCustDirection('بدهکار')">بدهکار (-)</div>
+              </div>
             </div>
             <div class="form-group">
               <label>ارز مشتری:</label>
-              <select id="custCurrency">
+              <select id="custCurrency" style="padding:10px; font-weight:bold;">
                 <option value="USD">USD</option>
                 <option value="AFN">AFN</option>
                 <option value="تومان">تومان</option>
                 <option value="IQD">IQD</option>
               </select>
             </div>
-            <div class="form-group">
-              <label>مبلغ مشتری:</label>
-              <input type="number" id="custAmount" placeholder="مبلغ" class="highlight-amount" style="font-size:0.95rem !important;">
-            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:8px;">
+            <label>مبلغ مشتری:</label>
+            <input type="number" id="custAmount" placeholder="مبلغ" class="highlight-amount" style="font-size:1.05rem !important; padding:10px;">
           </div>
         </div>
 
-        <div style="margin-top: 12px; display:flex; gap:8px;">
-          <button class="btn" style="padding: 10px; font-size: 0.92rem; flex:2;" onclick="saveBrokerTransaction()">
+        <div style="margin-top: 14px; display:flex; gap:8px;">
+          <button class="btn" style="padding: 12px; font-size: 0.98rem; flex:2;" onclick="saveBrokerTransaction()">
             💾 ذخیره کامل معامله
           </button>
-          <a href="admin.html" class="btn btn-secondary btn-xs" style="padding: 10px; flex:1; text-decoration:none; text-align:center;">
+          <a href="admin.html" class="btn btn-secondary btn-xs" style="padding: 12px; flex:1; text-decoration:none; text-align:center;">
             ↩️ منو
           </a>
         </div>
@@ -410,11 +412,11 @@
 
     let selectedDirection = "بستانکار";
     let selectedCurrency = "USD";
-    let currentCalcMode = 'multiply';
+    let currentCalcMode = 'divide'; // پیش‌فرض روی تقسیم
+    let selectedCustomerDirection = null; // بدون پیش‌فرض برای مشتری
     let selectedBrokerTxId = null;
     let activeBrokerId = null;
 
-    // تابع قدرتمند تبدیل تمامی اعداد فارسی/عربی به اعداد انگلیسی جهت سازگاری کامل با تلگرام
     function toEnglishDigits(str) {
       if (str === null || str === undefined) return '';
       return String(str).replace(/[۰-۹٠-٩]/g, function (d) {
@@ -558,7 +560,6 @@
       document.getElementById("mainHeaderTitle").innerText = `🏛️ ${currentBroker ? currentBroker.name : 'انتخاب صرافی'}`;
       document.getElementById("activeBrokerSubTitle").innerText = currentBroker ? `${currentBroker.city || 'بدون شهر'} | تلفن: ${currentBroker.phone || '-'}` : '';
 
-      // بارگذاری آدرس‌های صرافی فعال از دیتابیس Supabase
       loadBrokerAddressesFromDatabase(currentBroker);
 
       const { data } = await _supabase.from('broker_transactions').select('*').eq('broker_id', activeBrokerId);
@@ -675,6 +676,13 @@
       document.getElementById("btnDirDebtor").className = "btn-opt" + (dir === 'بدهکار' ? " active-debtor" : "");
     }
 
+    function setCustDirection(dir) {
+      playBeep('click');
+      selectedCustomerDirection = dir;
+      document.getElementById("btnCustCreditor").className = "btn-opt" + (dir === 'بستانکار' ? " active-creditor" : "");
+      document.getElementById("btnCustDebtor").className = "btn-opt" + (dir === 'بدهکار' ? " active-debtor" : "");
+    }
+
     function setCurrency(curr) {
       playBeep('click');
       selectedCurrency = curr;
@@ -751,7 +759,17 @@
       document.getElementById("editCustomerTxId").value = "";
       document.getElementById("formTitle").innerText = "📝 ثبت معامله جدید";
       document.getElementById("amtInitial").value = "";
-      document.getElementById("exchangeRate").value = ""; // کاملاً خالی بدون هیج پیش‌فرض
+      
+      // تنظیم آخرین نرخ ثبت شده صرافی در صورت وجود، در غیر این صورت خالی
+      let lastRate = "";
+      if (brokerTxs.length > 0) {
+        let lastTxWithRate = brokerTxs.slice().reverse().find(t => t.exchange_rate);
+        if (lastTxWithRate && lastTxWithRate.exchange_rate) {
+          lastRate = lastTxWithRate.exchange_rate;
+        }
+      }
+      document.getElementById("exchangeRate").value = lastRate;
+      
       document.getElementById("amtFinal").value = "";
       document.getElementById("txDesc").value = "";
       document.getElementById("txAddress").value = "";
@@ -761,14 +779,19 @@
       document.getElementById("selectedCustId").value = "";
       document.getElementById("customerBox").style.display = "none";
       
-      // پیش‌فرض‌های اصلی: بستانکار و USD
+      // تنظیم پیش‌فرض‌ها: بستانکار، USD و تقسیم
       setDirection('بستانکار');
       setCurrency('USD');
+      setCalcMode('divide');
+
+      // پاک کردن جهت مشتری (بدون پیش‌فرض)
+      selectedCustomerDirection = null;
+      document.getElementById("btnCustCreditor").className = "btn-opt";
+      document.getElementById("btnCustDebtor").className = "btn-opt";
 
       switchView('viewTransactionForm');
     }
 
-    // تولید گزارش عمودی کاملاً انگلیسی و برجسته برای تلگرام
     function generateVerticalBalanceReport() {
       let currencyTotals = {};
       brokerTxs.forEach(tx => {
@@ -812,7 +835,6 @@
       let rateEng = toEnglishDigits(txObj.exchange_rate || '-');
       let amtInitEng = toEnglishDigits((txObj.amount_initial || 0).toLocaleString());
 
-      // ساخت فاکتور تلگرامی شیک با رعایت دقیق علامت‌های Markdown
       let msgText = `🔔 *${actionHeader}*
 🏛️ حساب با صرافی: *${brokerTitle}*
 🆔 شماره تراکنش: \`${txIdEng}\`
@@ -825,10 +847,8 @@ ${diffText ? `\n📝 *تغییرات انجام شده:*\n_${diffText}_\n` : ''}
 • آدرس مقصد: _${txObj.address_dashboard || '-'}_
 ${verticalReport}`;
 
-      // ارسال برای مدیریت کل
       await sendTelegramMessage(MASTER_ADMIN_TOKEN, MASTER_ADMIN_CHATID, msgText);
 
-      // ارسال اختصاصی برای چت‌آیدی صرافی فعال
       if (currentBroker && currentBroker.chatid) {
         await sendTelegramMessage(MASTER_ADMIN_TOKEN, currentBroker.chatid, msgText);
       }
@@ -852,6 +872,14 @@ ${verticalReport}`;
       const editId = document.getElementById("editBrokerTxId").value;
       const editCustTxId = document.getElementById("editCustomerTxId").value;
 
+      const custBoxVisible = document.getElementById("customerBox").style.display === "block";
+      const custName = document.getElementById("custNameInput").value.trim();
+
+      if (custBoxVisible && custName && !selectedCustomerDirection) {
+        alert("لطفاً جهت مشتری (بدهکار یا بستانکار) را انتخاب کنید!");
+        return;
+      }
+
       showSync(true);
 
       let oldTx = editId ? brokerTxs.find(t => String(t.broker_tx_id) === String(editId)) : null;
@@ -873,8 +901,6 @@ ${verticalReport}`;
       let qRes = editId ? await _supabase.from('broker_transactions').update(brokerTxObj).eq('broker_tx_id', editId) : await _supabase.from('broker_transactions').insert([brokerTxObj]);
       if (qRes.error) { alert("خطا: " + qRes.error.message); showSync(false); return; }
 
-      const custBoxVisible = document.getElementById("customerBox").style.display === "block";
-      const custName = document.getElementById("custNameInput").value.trim();
       let targetCustId = document.getElementById("selectedCustId").value;
 
       if (custBoxVisible && custName) {
@@ -896,7 +922,6 @@ ${verticalReport}`;
         }
 
         const custAmt = parseFloat(document.getElementById("custAmount").value) || amtFin;
-        const custDir = document.getElementById("custDirection").value;
         const custCurr = document.getElementById("custCurrency").value;
 
         let combinedDesc = desc;
@@ -906,7 +931,7 @@ ${verticalReport}`;
 
         const custTxObj = {
           AccountID: targetCustId,
-          Direction: custDir,
+          Direction: selectedCustomerDirection,
           Amount: custAmt,
           Currency: custCurr,
           OperationType: opType,
@@ -981,6 +1006,7 @@ ${verticalReport}`;
 
       setDirection(tx.direction);
       setCurrency(tx.currency);
+      setCalcMode('divide');
       document.getElementById("customerBox").style.display = "none";
 
       switchView('viewTransactionForm');
@@ -1151,7 +1177,6 @@ ${verticalReport}`;
       await _supabase.from('operation_types').delete().eq('title', op);
     }
 
-    // بارگذاری آدرس‌های صرافی فعال از دیتابیس Supabase
     function loadBrokerAddressesFromDatabase(currentBroker) {
       if (!currentBroker || !currentBroker.addresses) {
         savedAddresses = ["صرافی مرکزی", "کیف پول تتر"];
@@ -1207,7 +1232,6 @@ ${verticalReport}`;
       renderSavedAddresses();
     }
 
-    // تابع ارسال پیام به تلگرام با پشتیبانی کامل از متن‌های طولانی و کدگذاری متون
     async function sendTelegramMessage(botToken, chatId, messageText) {
       if (!botToken || !chatId) return;
       try {
