@@ -418,6 +418,12 @@
             <span class="title">مدیریت ادمین‌های همکار</span>
           </div>
 
+          <!-- دکمه تنظیمات اختصاصی مالک -->
+          <div class="floating-glass-btn" id="masterSettingsMenuBtn" style="display:none; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;" onclick="playInteractionEffect(); openMasterSettingsModal()">
+            <span class="icon">⚙️</span>
+            <span class="title" style="color: #92400e;">تنظیمات و توکن مالک</span>
+          </div>
+
           <div class="floating-glass-btn" id="ownerBrokerMenuBtn" style="grid-column: span 2;" onclick="playInteractionEffect(); handleBrokerNavigation()">
             <span class="icon">🏢</span>
             <span class="title">مدیریت کارگزاری‌ها و دفاتر همکار</span>
@@ -602,6 +608,24 @@
     </div>
   </div>
 
+  <!-- مودال تنظیمات و توکن مالک (جدید و امن) -->
+  <div id="masterSettingsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9650; padding:10px;">
+    <div class="card" style="width: 100%; margin: 0; max-width: 420px; max-height:90vh; overflow-y:auto;">
+      <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
+      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را ویرایش و به‌روزرسانی کنید.</p>
+      
+      <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
+      <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
+      <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توتکن ربات..."></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
+      
+      <div class="flex-row" style="justify-content: flex-end; gap:8px; margin-top: 14px;">
+        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
+        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
+      </div>
+    </div>
+  </div>
+
   <!-- مودال ثبت / ویرایش تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width: 100%; margin: 0; max-height:94vh; overflow-y:auto; position:relative;">
@@ -714,11 +738,11 @@
     const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
-    const MASTER_ADMIN_PIN = "77218731";
+    let MASTER_ADMIN_EMAIL = localStorage.getItem("masterEmail") || "mohammadsharifkarimi4@gmail.com";
+    let MASTER_ADMIN_PIN = localStorage.getItem("masterPin") || "77218731";
+    let MASTER_ADMIN_TOKEN = localStorage.getItem("masterToken") || "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
+    let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || "802655440";
     const MASTER_ADMIN_ID = "master_owner";
-    const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
-    const MASTER_ADMIN_CHATID = "802655440";
 
     let allAccounts = [];
     let allTransactions = [];
@@ -799,6 +823,43 @@
       return { token, chatId };
     }
 
+    function openMasterSettingsModal() {
+      document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
+      document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
+      document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
+      document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
+      document.getElementById("masterSettingsModal").style.display = "flex";
+    }
+
+    function closeMasterSettingsModal() {
+      document.getElementById("masterSettingsModal").style.display = "none";
+    }
+
+    function saveMasterSettings() {
+      let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
+      let pin = document.getElementById("masterPinInput").value.trim();
+      let token = document.getElementById("masterTokenInput").value.trim();
+      let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
+
+      if (!email || !pin) {
+        alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
+        return;
+      }
+
+      MASTER_ADMIN_EMAIL = email;
+      MASTER_ADMIN_PIN = pin;
+      MASTER_ADMIN_TOKEN = token;
+      MASTER_ADMIN_CHATID = chatId;
+
+      localStorage.setItem("masterEmail", email);
+      localStorage.setItem("masterPin", pin);
+      localStorage.setItem("masterToken", token);
+      localStorage.setItem("masterChatId", chatId);
+
+      closeMasterSettingsModal();
+      alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
+    }
+
     function getSystemGlobalBalanceText() {
       let totalsByCurrency = {};
       allAccounts.forEach(acc => {
@@ -871,10 +932,11 @@
           
           if (currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase()) {
             document.getElementById("superAdminMenuBtn").style.display = "flex";
+            document.getElementById("masterSettingsMenuBtn").style.display = "flex";
           } else {
             document.getElementById("superAdminMenuBtn").style.display = "none";
+            document.getElementById("masterSettingsMenuBtn").style.display = "none";
           }
-          // بخش کارگزاری و دفاتر همکار برای همه ادمین‌ها و همکاران فعال قابل مشاهده و استفاده خواهد بود.
           document.getElementById("ownerBrokerMenuBtn").style.display = "flex";
 
           await loadDataFromSupabase(true);
@@ -889,6 +951,7 @@
           if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
           if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
           if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
+          if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
           if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
           if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
           if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
@@ -914,6 +977,7 @@
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
         document.getElementById("superAdminMenuBtn").style.display = "flex";
+        document.getElementById("masterSettingsMenuBtn").style.display = "flex";
         document.getElementById("ownerBrokerMenuBtn").style.display = "flex";
         await loadDataFromSupabase(true);
         return;
@@ -939,6 +1003,7 @@
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("adminContainer").style.display = "block";
             document.getElementById("superAdminMenuBtn").style.display = "none";
+            document.getElementById("masterSettingsMenuBtn").style.display = "none";
             document.getElementById("ownerBrokerMenuBtn").style.display = "flex";
             await loadDataFromSupabase(true);
             return;
@@ -1064,7 +1129,7 @@
         if (isMaster) {
           allAccounts = rawAccounts.filter(acc => {
             let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner";
+            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner" || creator === "null";
           });
         } else {
           allAccounts = rawAccounts.filter(acc => {
