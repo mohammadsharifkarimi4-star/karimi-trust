@@ -311,11 +311,11 @@
 
   </div>
 
-  <!-- مدال اختصاصی مدیریت مستقل توکن و تنظیمات ربات -->
+  <!-- مدال اختصاصی مدیریت مستقل توکن و تنظیمات ربات (تفکیک‌شده بر اساس ادمین/مالک) -->
   <div id="standaloneTokenModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9800; padding:10px;">
     <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="color:#0f172a; font-size:1.05rem;">⚙️ مدیریت مستقل توکن و تنظیمات</h3>
+        <h3 style="color:#0f172a; font-size:1.05rem;" id="standaloneModalTitle">⚙️ مدیریت مستقل توکن و تنظیمات</h3>
         <button class="btn btn-danger btn-xs" onclick="closeStandaloneTokenModal()">✕</button>
       </div>
       
@@ -494,10 +494,25 @@
       window.location.href = "admin.html";
     }
 
-    // مدیریت مستقل توکن و چت‌آیدی برای صرافی
+    // دریافت کلیدهای ذخیره‌سازی مجزا بر اساس شناسه ادمین یا مالک
+    function getAdminStorageKeys() {
+      let adminKey = "master_owner";
+      if (currentLoggedInAdmin) {
+        let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+        adminKey = isMaster ? "master_owner" : String(currentLoggedInAdmin.id);
+      }
+      return {
+        tokenKey: `broker_standalone_token_${adminKey}`,
+        chatIdKey: `broker_standalone_chatid_${adminKey}`,
+        pinKey: `broker_standalone_pin_${adminKey}`
+      };
+    }
+
+    // بازگرداندن توکن و چت‌آیدی اختصاصی ادمین یا مالک فعلی
     function getCurrentAdminTokenAndChat() {
-      let independentToken = localStorage.getItem("broker_standalone_token");
-      let independentChatId = localStorage.getItem("broker_standalone_chatid");
+      let keys = getAdminStorageKeys();
+      let independentToken = localStorage.getItem(keys.tokenKey);
+      let independentChatId = localStorage.getItem(keys.chatIdKey);
 
       let token = independentToken ? independentToken.trim() : MASTER_ADMIN_TOKEN;
       let chatId = independentChatId ? independentChatId.trim() : MASTER_ADMIN_CHATID;
@@ -507,9 +522,13 @@
 
     function openStandaloneTokenModal() {
       playBeep('click');
-      document.getElementById("standaloneTokenInput").value = localStorage.getItem("broker_standalone_token") || MASTER_ADMIN_TOKEN;
-      document.getElementById("standaloneChatIdInput").value = localStorage.getItem("broker_standalone_chatid") || MASTER_ADMIN_CHATID;
-      document.getElementById("standalonePinInput").value = localStorage.getItem("broker_standalone_pin") || "";
+      let keys = getAdminStorageKeys();
+      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      
+      document.getElementById("standaloneModalTitle").innerText = isMaster ? "⚙️ تنظیمات اختصاصی مالک سیستم" : `⚙️ تنظیمات اختصاصی ادمین (${currentLoggedInAdmin ? currentLoggedInAdmin.name || 'همکار' : ''})`;
+      document.getElementById("standaloneTokenInput").value = localStorage.getItem(keys.tokenKey) || MASTER_ADMIN_TOKEN;
+      document.getElementById("standaloneChatIdInput").value = localStorage.getItem(keys.chatIdKey) || MASTER_ADMIN_CHATID;
+      document.getElementById("standalonePinInput").value = localStorage.getItem(keys.pinKey) || "";
       document.getElementById("standaloneTokenModal").style.display = "flex";
     }
 
@@ -527,12 +546,13 @@
         return;
       }
 
-      localStorage.setItem("broker_standalone_token", t);
-      localStorage.setItem("broker_standalone_chatid", c);
-      localStorage.setItem("broker_standalone_pin", p);
+      let keys = getAdminStorageKeys();
+      localStorage.setItem(keys.tokenKey, t);
+      localStorage.setItem(keys.chatIdKey, c);
+      localStorage.setItem(keys.pinKey, p);
 
       playBeep('success');
-      alert("✅ تنظیمات مستقل توکن و ربات با موفقیت ذخیره شد!");
+      alert("✅ تنظیمات اختصاصی شما با موفقیت ذخیره شد!");
       closeStandaloneTokenModal();
     }
 
@@ -914,9 +934,12 @@ ${diffText ? `\n📝 *تغییرات انجام شده:*\n_${diffText}_\n` : ''}
 ${verticalReport}`;
 
       let { token, chatId } = getCurrentAdminTokenAndChat();
+      
+      // ارسال پیام به چت‌آیدی ادمین/مالک اصلی
       await sendTelegramMessage(token, chatId, msgText);
 
-      if (currentBroker && currentBroker.chatid) {
+      // ارسال پیام به چت‌آیدی صرافی در صورتی که مقدار داشته و با چت‌آیدی اصلی متفاوت باشد تا پیام تکرار نشود
+      if (currentBroker && currentBroker.chatid && String(currentBroker.chatid).trim() !== String(chatId).trim()) {
         await sendTelegramMessage(token, currentBroker.chatid, msgText);
       }
     }
