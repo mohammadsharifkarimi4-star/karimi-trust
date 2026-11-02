@@ -85,13 +85,14 @@
     
     <!-- هدر صرافی فعال -->
     <div class="card" style="padding: 10px; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
         <div>
           <h3 id="mainHeaderTitle" style="color:var(--primary-dark); font-size:1.05rem;">🏛️ صرافی فعال</h3>
           <span id="activeBrokerSubTitle" style="font-size:0.8rem; color:#64748b; font-weight:bold;">انتخاب نشده</span>
         </div>
-        <div style="display:flex; gap:6px; align-items:center;">
+        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-info btn-xs" onclick="openBrokersListModal()">🏛️ صرافی‌ها</button>
+          <button class="btn btn-warning btn-xs" style="color:#000; font-weight:900;" onclick="openStandaloneTokenModal()">⚙️ مدیریت توکن و تنظیمات</button>
           <a href="admin.html" class="btn btn-secondary btn-xs">👥 مشتریان</a>
           <button class="btn btn-danger btn-xs" onclick="handleLogout()">خروج</button>
         </div>
@@ -310,6 +311,36 @@
 
   </div>
 
+  <!-- مدال اختصاصی مدیریت مستقل توکن و تنظیمات ربات -->
+  <div id="standaloneTokenModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9800; padding:10px;">
+    <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="color:#0f172a; font-size:1.05rem;">⚙️ مدیریت مستقل توکن و تنظیمات</h3>
+        <button class="btn btn-danger btn-xs" onclick="closeStandaloneTokenModal()">✕</button>
+      </div>
+      
+      <div class="form-group">
+        <label>توکن ربات تلگرام:</label>
+        <input type="text" id="standaloneTokenInput" dir="ltr" placeholder="مثلا 8900776593:AAG...">
+      </div>
+
+      <div class="form-group">
+        <label>چت‌آیدی مقصد (شخصی/گروه/کانال):</label>
+        <input type="text" id="standaloneChatIdInput" dir="ltr" placeholder="مثلا 802655440">
+      </div>
+
+      <div class="form-group">
+        <label>رمز عبور اختصاصی (PIN):</label>
+        <input type="text" id="standalonePinInput" dir="ltr" placeholder="رمز عبور...">
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:14px;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="closeStandaloneTokenModal()">انصراف</button>
+        <button class="btn btn-sm" style="flex:2;" onclick="saveStandaloneTokenSettings()">💾 ذخیره تنظیمات مستقل</button>
+      </div>
+    </div>
+  </div>
+
   <!-- مدال مدیریت صرافی‌ها -->
   <div id="brokersListModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width:100%; max-width:480px; margin:0; max-height:85vh; overflow-y:auto;">
@@ -388,8 +419,8 @@
 
     const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
     const MASTER_ADMIN_ID = "master_owner";
-    const DEFAULT_MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
-    const DEFAULT_MASTER_ADMIN_CHATID = "802655440";
+    const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
+    const MASTER_ADMIN_CHATID = "802655440";
 
     let allBrokers = [];
     let allAccounts = [];
@@ -435,7 +466,7 @@
     window.onload = async function() {
       let savedSession = localStorage.getItem("adminAuthSessionData");
       if (!savedSession) {
-        window.location.href = "./admin.html";
+        window.location.href = "admin.html";
         return;
       }
       try {
@@ -444,7 +475,7 @@
         await loadInitialData();
       } catch(e) {
         localStorage.removeItem("adminAuthSessionData");
-        window.location.href = "./admin.html";
+        window.location.href = "admin.html";
       }
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
@@ -460,24 +491,49 @@
     function handleLogout() {
       playBeep('click');
       localStorage.removeItem("adminAuthSessionData");
-      window.location.href = "./admin.html";
+      window.location.href = "admin.html";
     }
 
+    // مدیریت مستقل توکن و چت‌آیدی برای صرافی
     function getCurrentAdminTokenAndChat() {
-      let activeMasterToken = localStorage.getItem("MASTER_ADMIN_BOTTOKEN") || DEFAULT_MASTER_ADMIN_TOKEN;
-      let activeMasterChatId = localStorage.getItem("MASTER_ADMIN_CHATID") || DEFAULT_MASTER_ADMIN_CHATID;
+      let independentToken = localStorage.getItem("broker_standalone_token");
+      let independentChatId = localStorage.getItem("broker_standalone_chatid");
 
-      if (!currentLoggedInAdmin) return { token: activeMasterToken, chatId: activeMasterChatId };
+      let token = independentToken ? independentToken.trim() : MASTER_ADMIN_TOKEN;
+      let chatId = independentChatId ? independentChatId.trim() : MASTER_ADMIN_CHATID;
 
-      let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-      if (isMaster || currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
-        return { token: activeMasterToken, chatId: activeMasterChatId };
+      return { token, chatId };
+    }
+
+    function openStandaloneTokenModal() {
+      playBeep('click');
+      document.getElementById("standaloneTokenInput").value = localStorage.getItem("broker_standalone_token") || MASTER_ADMIN_TOKEN;
+      document.getElementById("standaloneChatIdInput").value = localStorage.getItem("broker_standalone_chatid") || MASTER_ADMIN_CHATID;
+      document.getElementById("standalonePinInput").value = localStorage.getItem("broker_standalone_pin") || "";
+      document.getElementById("standaloneTokenModal").style.display = "flex";
+    }
+
+    function closeStandaloneTokenModal() {
+      document.getElementById("standaloneTokenModal").style.display = "none";
+    }
+
+    function saveStandaloneTokenSettings() {
+      let t = document.getElementById("standaloneTokenInput").value.trim();
+      let c = document.getElementById("standaloneChatIdInput").value.trim();
+      let p = document.getElementById("standalonePinInput").value.trim();
+
+      if (!t || !c) {
+        alert("لطفاً توکن و چت‌آیدی را وارد کنید.");
+        return;
       }
 
-      let found = allAdmins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
-      let token = found ? String(found.BotToken || found.bottoken || found.Token || found.token || activeMasterToken) : activeMasterToken;
-      let chatId = found ? String(found.ChatID || found.chatid || activeMasterChatId) : activeMasterChatId;
-      return { token, chatId };
+      localStorage.setItem("broker_standalone_token", t);
+      localStorage.setItem("broker_standalone_chatid", c);
+      localStorage.setItem("broker_standalone_pin", p);
+
+      playBeep('success');
+      alert("✅ تنظیمات مستقل توکن و ربات با موفقیت ذخیره شد!");
+      closeStandaloneTokenModal();
     }
 
     async function loadInitialData() {
@@ -497,7 +553,6 @@
         let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
         let currentAdminId = String(currentLoggedInAdmin.id);
 
-        // 🔒 تفکیک حساب‌ها بر اساس ادمین سازنده
         if (isMaster) {
           allAccounts = rawAccounts.filter(acc => {
             let creator = String(acc.CreatedBy || acc.createdby || acc.AdminID || acc.adminid || '').trim();
@@ -510,7 +565,6 @@
           });
         }
 
-        // 🔒 تفکیک صرافی‌ها بر اساس ادمین سازنده (صرافی‌های بدون CreatedBy به مالک اصلی تعلق دارند)
         if (isMaster) {
           allBrokers = rawBrokers.filter(b => {
             let creator = String(b.CreatedBy || b.createdby || b.AdminID || b.adminid || '').trim();
@@ -924,7 +978,7 @@ ${verticalReport}`;
             AccountID: targetCustId,
             Name: custName,
             Phone: document.getElementById("custPhoneInput").value.trim(),
-            CreatedBy: String(currentAdminId) // 🔒 ذخیره شناسه ادمین سازنده
+            CreatedBy: String(currentAdminId)
           };
           await _supabase.from('accounts').insert([newAccObj]);
 
@@ -1131,7 +1185,7 @@ ${verticalReport}`;
         phone: document.getElementById("brokerPhone").value.trim(),
         city: document.getElementById("brokerCity").value.trim(),
         chatid: document.getElementById("brokerChatId").value.trim(),
-        CreatedBy: String(currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID) // 🔒 ذخیره شناسه ادمین سازنده
+        CreatedBy: String(currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID)
       };
 
       showSync(true);
