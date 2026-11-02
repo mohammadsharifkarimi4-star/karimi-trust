@@ -311,7 +311,7 @@
 
   </div>
 
-  <!-- مدال اختصاصی مدیریت مستقل توکن و تنظیمات ربات (تفکیک‌شده بر اساس ادمین/مالک) -->
+  <!-- مدال اختصاصی مدیریت مستقل توکن و تنظیمات ربات (کاملاً تفکیک‌شده بر اساس ادمین) -->
   <div id="standaloneTokenModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9800; padding:10px;">
     <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -336,7 +336,7 @@
 
       <div style="display:flex; gap:8px; margin-top:14px;">
         <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="closeStandaloneTokenModal()">انصراف</button>
-        <button class="btn btn-sm" style="flex:2;" onclick="saveStandaloneTokenSettings()">💾 ذخیره تنظیمات مستقل</button>
+        <button class="btn btn-sm" style="flex:2;" onclick="saveStandaloneTokenSettings()">💾 ذخیره تنظیمات</button>
       </div>
     </div>
   </div>
@@ -472,6 +472,10 @@
       try {
         currentLoggedInAdmin = JSON.parse(savedSession);
         document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
+        
+        // همگام‌سازی توکن اختصاصی ثبت‌شده در دیتابیس ادمین‌ها با حافظه محلی برای ادمین‌های همکار
+        await syncAdminTokenFromDatabase();
+
         await loadInitialData();
       } catch(e) {
         localStorage.removeItem("adminAuthSessionData");
@@ -494,7 +498,7 @@
       window.location.href = "admin.html";
     }
 
-    // دریافت کلیدهای ذخیره‌سازی مجزا بر اساس شناسه ادمین یا مالک
+    // دریافت کلیدهای ذخیره‌سازی کاملاً تفکیک‌شده بر اساس شناسه ادمین یا مالک
     function getAdminStorageKeys() {
       let adminKey = "master_owner";
       if (currentLoggedInAdmin) {
@@ -508,16 +512,50 @@
       };
     }
 
-    // بازگرداندن توکن و چت‌آیدی اختصاصی ادمین یا مالک فعلی
-    function getCurrentAdminTokenAndChat() {
+    // بارگیری خودکار توکن ادمین همکار از جدول admins (در صورت وجود)
+    async function syncAdminTokenFromDatabase() {
+      if (!currentLoggedInAdmin) return;
+      let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      if (isMaster) return; // مالک از متغیرهای اصلی استفاده می‌کند
+
       let keys = getAdminStorageKeys();
+      if (!localStorage.getItem(keys.tokenKey)) {
+        try {
+          const { data: admins } = await _supabase.from('admins').select('*');
+          if (admins) {
+            let found = admins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
+            if (found) {
+              let botToken = found.BotToken || found.bottoken || found.Token || found.token;
+              let chatId = found.ChatID || found.chatid;
+              if (botToken) localStorage.setItem(keys.tokenKey, botToken);
+              if (chatId) localStorage.setItem(keys.chatIdKey, chatId);
+            }
+          }
+        } catch(e) {}
+      }
+    }
+
+    // بازگرداندن توکن و چت‌آیدی اختصاصی ادمین یا مالک فعلی (کاملاً ایزوله)
+    function getCurrentAdminTokenAndChat() {
+      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      
+      let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let keys = getAdminStorageKeys();
+      
       let independentToken = localStorage.getItem(keys.tokenKey);
       let independentChatId = localStorage.getItem(keys.chatIdKey);
 
-      let token = independentToken ? independentToken.trim() : MASTER_ADMIN_TOKEN;
-      let chatId = independentChatId ? independentChatId.trim() : MASTER_ADMIN_CHATID;
-
-      return { token, chatId };
+      if (isMaster) {
+        return {
+          token: independentToken ? independentToken.trim() : MASTER_ADMIN_TOKEN,
+          chatId: independentChatId ? independentChatId.trim() : MASTER_ADMIN_CHATID
+        };
+      } else {
+        // برای ادمین همکار: اگر در تنظیمات مستقل مقدار نداشت، از اطلاعات ادمین استفاده می‌کند
+        let token = independentToken ? independentToken.trim() : (currentLoggedInAdmin.BotToken || MASTER_ADMIN_TOKEN);
+        let chatId = independentChatId ? independentChatId.trim() : (currentLoggedInAdmin.ChatID || MASTER_ADMIN_CHATID);
+        return { token, chatId };
+      }
     }
 
     function openStandaloneTokenModal() {
@@ -526,8 +564,8 @@
       let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
       
       document.getElementById("standaloneModalTitle").innerText = isMaster ? "⚙️ تنظیمات اختصاصی مالک سیستم" : `⚙️ تنظیمات اختصاصی ادمین (${currentLoggedInAdmin ? currentLoggedInAdmin.name || 'همکار' : ''})`;
-      document.getElementById("standaloneTokenInput").value = localStorage.getItem(keys.tokenKey) || MASTER_ADMIN_TOKEN;
-      document.getElementById("standaloneChatIdInput").value = localStorage.getItem(keys.chatIdKey) || MASTER_ADMIN_CHATID;
+      document.getElementById("standaloneTokenInput").value = localStorage.getItem(keys.tokenKey) || (isMaster ? MASTER_ADMIN_TOKEN : (currentLoggedInAdmin.BotToken || ""));
+      document.getElementById("standaloneChatIdInput").value = localStorage.getItem(keys.chatIdKey) || (isMaster ? MASTER_ADMIN_CHATID : (currentLoggedInAdmin.ChatID || ""));
       document.getElementById("standalonePinInput").value = localStorage.getItem(keys.pinKey) || "";
       document.getElementById("standaloneTokenModal").style.display = "flex";
     }
@@ -536,7 +574,7 @@
       document.getElementById("standaloneTokenModal").style.display = "none";
     }
 
-    function saveStandaloneTokenSettings() {
+    async function saveStandaloneTokenSettings() {
       let t = document.getElementById("standaloneTokenInput").value.trim();
       let c = document.getElementById("standaloneChatIdInput").value.trim();
       let p = document.getElementById("standalonePinInput").value.trim();
@@ -552,7 +590,7 @@
       localStorage.setItem(keys.pinKey, p);
 
       playBeep('success');
-      alert("✅ تنظیمات اختصاصی شما با موفقیت ذخیره شد!");
+      alert("✅ تنظیمات اختصاصی شما با موفقیت ذخیره شد و در تمام بخش‌های صرافی اعمال گردید!");
       closeStandaloneTokenModal();
     }
 
@@ -935,10 +973,10 @@ ${verticalReport}`;
 
       let { token, chatId } = getCurrentAdminTokenAndChat();
       
-      // ارسال پیام به چت‌آیدی ادمین/مالک اصلی
+      // ارسال پیام به چت‌آیدی اختصاصی ادمین یا مالک
       await sendTelegramMessage(token, chatId, msgText);
 
-      // ارسال پیام به چت‌آیدی صرافی در صورتی که مقدار داشته و با چت‌آیدی اصلی متفاوت باشد تا پیام تکرار نشود
+      // ارسال پیام به چت‌آیدی صرافی در صورتی که متفاوت باشد تا تکرار نشود
       if (currentBroker && currentBroker.chatid && String(currentBroker.chatid).trim() !== String(chatId).trim()) {
         await sendTelegramMessage(token, currentBroker.chatid, msgText);
       }
