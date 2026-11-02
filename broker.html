@@ -388,8 +388,8 @@
 
     const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
     const MASTER_ADMIN_ID = "master_owner";
-    const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
-    const MASTER_ADMIN_CHATID = "802655440";
+    const DEFAULT_MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
+    const DEFAULT_MASTER_ADMIN_CHATID = "802655440";
 
     let allBrokers = [];
     let allAccounts = [];
@@ -435,7 +435,7 @@
     window.onload = async function() {
       let savedSession = localStorage.getItem("adminAuthSessionData");
       if (!savedSession) {
-        window.location.href = "admin.html";
+        window.location.href = "./admin.html";
         return;
       }
       try {
@@ -444,7 +444,7 @@
         await loadInitialData();
       } catch(e) {
         localStorage.removeItem("adminAuthSessionData");
-        window.location.href = "admin.html";
+        window.location.href = "./admin.html";
       }
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
@@ -460,23 +460,23 @@
     function handleLogout() {
       playBeep('click');
       localStorage.removeItem("adminAuthSessionData");
-      window.location.href = "admin.html";
+      window.location.href = "./admin.html";
     }
 
     function getCurrentAdminTokenAndChat() {
-      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
-      
-      // اگر کاربر لاگین شده مالک اصلی است، بررسی توکن ذخیره‌شده پویا در حافظه یا متغیر اصلی
+      let activeMasterToken = localStorage.getItem("MASTER_ADMIN_BOTTOKEN") || DEFAULT_MASTER_ADMIN_TOKEN;
+      let activeMasterChatId = localStorage.getItem("MASTER_ADMIN_CHATID") || DEFAULT_MASTER_ADMIN_CHATID;
+
+      if (!currentLoggedInAdmin) return { token: activeMasterToken, chatId: activeMasterChatId };
+
       let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
       if (isMaster || currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
-        let masterToken = localStorage.getItem("MASTER_ADMIN_BOTTOKEN") || MASTER_ADMIN_TOKEN;
-        let masterChatId = localStorage.getItem("MASTER_ADMIN_CHATID") || MASTER_ADMIN_CHATID;
-        return { token: masterToken, chatId: masterChatId };
+        return { token: activeMasterToken, chatId: activeMasterChatId };
       }
-      
+
       let found = allAdmins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
-      let token = found ? String(found.BotToken || found.bottoken || found.Token || found.token || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
-      let chatId = found ? String(found.ChatID || found.chatid || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
+      let token = found ? String(found.BotToken || found.bottoken || found.Token || found.token || activeMasterToken) : activeMasterToken;
+      let chatId = found ? String(found.ChatID || found.chatid || activeMasterChatId) : activeMasterChatId;
       return { token, chatId };
     }
 
