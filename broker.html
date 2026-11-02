@@ -311,11 +311,11 @@
 
   </div>
 
-  <!-- مدال اختصاصی مدیریت مستقل توکن و تنظیمات ربات (کاملاً تفکیک‌شده بر اساس ادمین) -->
+  <!-- مدال مدیریت توکن و تنظیمات (تفکیک‌شده و هماهنگ با اطلاعات ثبت‌شده ادمین در admin.html) -->
   <div id="standaloneTokenModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9800; padding:10px;">
     <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="color:#0f172a; font-size:1.05rem;" id="standaloneModalTitle">⚙️ مدیریت مستقل توکن و تنظیمات</h3>
+        <h3 style="color:#0f172a; font-size:1.05rem;" id="standaloneModalTitle">⚙️ مدیریت توکن و تنظیمات ربات</h3>
         <button class="btn btn-danger btn-xs" onclick="closeStandaloneTokenModal()">✕</button>
       </div>
       
@@ -473,7 +473,8 @@
         currentLoggedInAdmin = JSON.parse(savedSession);
         document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
         
-        // همگام‌سازی توکن اختصاصی ثبت‌شده در دیتابیس ادمین‌ها با حافظه محلی برای ادمین‌های همکار
+        // همگام‌سازی اطلاعات ادمین از دیتابیس برای دریافت توکن و چت‌آیدی اختصاصی همکار
+        await fetchLatestAdminInfo();
         await syncAdminTokenFromDatabase();
 
         await loadInitialData();
@@ -498,12 +499,29 @@
       window.location.href = "admin.html";
     }
 
-    // دریافت کلیدهای ذخیره‌سازی کاملاً تفکیک‌شده بر اساس شناسه ادمین یا مالک
+    // دریافت به‌روزترین اطلاعات ادمین از جدول admins
+    async function fetchLatestAdminInfo() {
+      if (!currentLoggedInAdmin) return;
+      let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      if (isMaster) return;
+
+      try {
+        const { data: admins } = await _supabase.from('admins').select('*');
+        if (admins) {
+          let found = admins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
+          if (found) {
+            currentLoggedInAdmin = found; // جایگزینی با اطلاعات دقیق و به‌روز همان ادمین
+          }
+        }
+      } catch(e) {}
+    }
+
+    // کلیدهای اختصاصی حافظه محلی کاملاً مجزا به ازای هر ادمین (جلوگیری از هم‌پوشانی با مالک یا دیگران)
     function getAdminStorageKeys() {
       let adminKey = "master_owner";
       if (currentLoggedInAdmin) {
         let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-        adminKey = isMaster ? "master_owner" : String(currentLoggedInAdmin.id);
+        adminKey = isMaster ? "master_owner" : String(currentLoggedInAdmin.AdminID || currentLoggedInAdmin.adminid || currentLoggedInAdmin.id);
       }
       return {
         tokenKey: `broker_standalone_token_${adminKey}`,
@@ -512,30 +530,22 @@
       };
     }
 
-    // بارگیری خودکار توکن ادمین همکار از جدول admins (در صورت وجود)
+    // سینک توکن ثبت‌شده در دیتابیس ادمین با تنظیمات صرافی
     async function syncAdminTokenFromDatabase() {
       if (!currentLoggedInAdmin) return;
       let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-      if (isMaster) return; // مالک از متغیرهای اصلی استفاده می‌کند
+      if (isMaster) return;
 
       let keys = getAdminStorageKeys();
       if (!localStorage.getItem(keys.tokenKey)) {
-        try {
-          const { data: admins } = await _supabase.from('admins').select('*');
-          if (admins) {
-            let found = admins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
-            if (found) {
-              let botToken = found.BotToken || found.bottoken || found.Token || found.token;
-              let chatId = found.ChatID || found.chatid;
-              if (botToken) localStorage.setItem(keys.tokenKey, botToken);
-              if (chatId) localStorage.setItem(keys.chatIdKey, chatId);
-            }
-          }
-        } catch(e) {}
+        let botToken = currentLoggedInAdmin.BotToken || currentLoggedInAdmin.bottoken || currentLoggedInAdmin.Token || currentLoggedInAdmin.token;
+        let chatId = currentLoggedInAdmin.ChatID || currentLoggedInAdmin.chatid;
+        if (botToken) localStorage.setItem(keys.tokenKey, botToken);
+        if (chatId) localStorage.setItem(keys.chatIdKey, chatId);
       }
     }
 
-    // بازگرداندن توکن و چت‌آیدی اختصاصی ادمین یا مالک فعلی (کاملاً ایزوله)
+    // دریافت توکن و چت‌آیدی اختصاصی ادمین یا مالک جاری
     function getCurrentAdminTokenAndChat() {
       if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
       
@@ -551,9 +561,11 @@
           chatId: independentChatId ? independentChatId.trim() : MASTER_ADMIN_CHATID
         };
       } else {
-        // برای ادمین همکار: اگر در تنظیمات مستقل مقدار نداشت، از اطلاعات ادمین استفاده می‌کند
-        let token = independentToken ? independentToken.trim() : (currentLoggedInAdmin.BotToken || MASTER_ADMIN_TOKEN);
-        let chatId = independentChatId ? independentChatId.trim() : (currentLoggedInAdmin.ChatID || MASTER_ADMIN_CHATID);
+        let dbToken = currentLoggedInAdmin.BotToken || currentLoggedInAdmin.bottoken || currentLoggedInAdmin.Token || currentLoggedInAdmin.token || MASTER_ADMIN_TOKEN;
+        let dbChatId = currentLoggedInAdmin.ChatID || currentLoggedInAdmin.chatid || MASTER_ADMIN_CHATID;
+
+        let token = independentToken ? independentToken.trim() : dbToken;
+        let chatId = independentChatId ? independentChatId.trim() : dbChatId;
         return { token, chatId };
       }
     }
@@ -563,9 +575,13 @@
       let keys = getAdminStorageKeys();
       let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
       
-      document.getElementById("standaloneModalTitle").innerText = isMaster ? "⚙️ تنظیمات اختصاصی مالک سیستم" : `⚙️ تنظیمات اختصاصی ادمین (${currentLoggedInAdmin ? currentLoggedInAdmin.name || 'همکار' : ''})`;
-      document.getElementById("standaloneTokenInput").value = localStorage.getItem(keys.tokenKey) || (isMaster ? MASTER_ADMIN_TOKEN : (currentLoggedInAdmin.BotToken || ""));
-      document.getElementById("standaloneChatIdInput").value = localStorage.getItem(keys.chatIdKey) || (isMaster ? MASTER_ADMIN_CHATID : (currentLoggedInAdmin.ChatID || ""));
+      document.getElementById("standaloneModalTitle").innerText = isMaster ? "⚙️ تنظیمات توکن مالک سیستم" : `⚙️ تنظیمات توکن ادمین (${currentLoggedInAdmin ? currentLoggedInAdmin.Name || currentLoggedInAdmin.name || 'همکار' : ''})`;
+      
+      let defaultToken = isMaster ? MASTER_ADMIN_TOKEN : (currentLoggedInAdmin.BotToken || currentLoggedInAdmin.bottoken || currentLoggedInAdmin.Token || currentLoggedInAdmin.token || "");
+      let defaultChatId = isMaster ? MASTER_ADMIN_CHATID : (currentLoggedInAdmin.ChatID || currentLoggedInAdmin.chatid || "");
+
+      document.getElementById("standaloneTokenInput").value = localStorage.getItem(keys.tokenKey) || defaultToken;
+      document.getElementById("standaloneChatIdInput").value = localStorage.getItem(keys.chatIdKey) || defaultChatId;
       document.getElementById("standalonePinInput").value = localStorage.getItem(keys.pinKey) || "";
       document.getElementById("standaloneTokenModal").style.display = "flex";
     }
@@ -590,7 +606,7 @@
       localStorage.setItem(keys.pinKey, p);
 
       playBeep('success');
-      alert("✅ تنظیمات اختصاصی شما با موفقیت ذخیره شد و در تمام بخش‌های صرافی اعمال گردید!");
+      alert("✅ تنظیمات اختصاصی شما با موفقیت ذخیره شد و در تمامی تراکنش‌ها و ارسال پیام‌ها اعمال گردید!");
       closeStandaloneTokenModal();
     }
 
@@ -609,7 +625,7 @@
         if (admRes.data) allAdmins = admRes.data;
 
         let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-        let currentAdminId = String(currentLoggedInAdmin.id);
+        let currentAdminId = String(currentLoggedInAdmin.AdminID || currentLoggedInAdmin.adminid || currentLoggedInAdmin.id);
 
         if (isMaster) {
           allAccounts = rawAccounts.filter(acc => {
@@ -973,10 +989,10 @@ ${verticalReport}`;
 
       let { token, chatId } = getCurrentAdminTokenAndChat();
       
-      // ارسال پیام به چت‌آیدی اختصاصی ادمین یا مالک
+      // ارسال پیام به چت‌آیدی اختصاصی ادمین یا مالک جاری
       await sendTelegramMessage(token, chatId, msgText);
 
-      // ارسال پیام به چت‌آیدی صرافی در صورتی که متفاوت باشد تا تکرار نشود
+      // ارسال به چت‌آیدی صرافی در صورت متفاوت بودن برای جلوگیری از تکرار
       if (currentBroker && currentBroker.chatid && String(currentBroker.chatid).trim() !== String(chatId).trim()) {
         await sendTelegramMessage(token, currentBroker.chatid, msgText);
       }
@@ -1034,12 +1050,12 @@ ${verticalReport}`;
       if (custBoxVisible && custName) {
         if (!targetCustId) {
           targetCustId = "ACC-" + Math.floor(100000 + Math.random() * 900000);
-          let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
+          let currentAdminId = currentLoggedInAdmin ? String(currentLoggedInAdmin.AdminID || currentLoggedInAdmin.adminid || currentLoggedInAdmin.id) : MASTER_ADMIN_ID;
           let newAccObj = {
             AccountID: targetCustId,
             Name: custName,
             Phone: document.getElementById("custPhoneInput").value.trim(),
-            CreatedBy: String(currentAdminId)
+            CreatedBy: currentAdminId
           };
           await _supabase.from('accounts').insert([newAccObj]);
 
@@ -1241,12 +1257,14 @@ ${verticalReport}`;
       if (!name) { alert("نام صرافی الزامی است"); return; }
       
       const editId = document.getElementById("editBrokerModalId").value;
+      const currentAdminId = currentLoggedInAdmin ? String(currentLoggedInAdmin.AdminID || currentLoggedInAdmin.adminid || currentLoggedInAdmin.id) : MASTER_ADMIN_ID;
+
       const bObj = {
         name: name,
         phone: document.getElementById("brokerPhone").value.trim(),
         city: document.getElementById("brokerCity").value.trim(),
         chatid: document.getElementById("brokerChatId").value.trim(),
-        CreatedBy: String(currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID)
+        CreatedBy: currentAdminId
       };
 
       showSync(true);
