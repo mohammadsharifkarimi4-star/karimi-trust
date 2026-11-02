@@ -465,9 +465,15 @@
 
     function getCurrentAdminTokenAndChat() {
       if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
-      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
-        return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      
+      // اگر کاربر لاگین شده مالک اصلی است، بررسی توکن ذخیره‌شده پویا در حافظه یا متغیر اصلی
+      let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      if (isMaster || currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
+        let masterToken = localStorage.getItem("MASTER_ADMIN_BOTTOKEN") || MASTER_ADMIN_TOKEN;
+        let masterChatId = localStorage.getItem("MASTER_ADMIN_CHATID") || MASTER_ADMIN_CHATID;
+        return { token: masterToken, chatId: masterChatId };
       }
+      
       let found = allAdmins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
       let token = found ? String(found.BotToken || found.bottoken || found.Token || found.token || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
       let chatId = found ? String(found.ChatID || found.chatid || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
