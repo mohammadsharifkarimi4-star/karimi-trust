@@ -138,9 +138,9 @@
       text-align: center;
       user-select: none;
     }
-    .floating-glass-btn:nth-child(2) { animation-delay: 1s; }
-    .floating-glass-btn:nth-child(3) { animation-delay: 2s; }
-    .floating-glass-btn:nth-child(4) { animation-delay: 3s; }
+    .floating-glass-btn:nth-child(2) { animation-delay: 0.8s; }
+    .floating-glass-btn:nth-child(3) { animation-delay: 1.6s; }
+    .floating-glass-btn:nth-child(4) { animation-delay: 2.4s; }
 
     .floating-glass-btn:active {
       transform: scale(0.94);
@@ -339,6 +339,38 @@
       background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px);
       z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
     }
+
+    /* استایل‌های اختصاصی قابلیت‌های جدید (فیلتر چندتایی و دفتر کل) */
+    .multi-select-box {
+      background: #f8fafc;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+    .multi-select-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-bottom: 1px solid #e2e8f0;
+      font-weight: 700;
+    }
+    .multi-select-item:last-child { border-bottom: none; }
+    .multi-select-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-green-dark);
+      cursor: pointer;
+    }
+    .batch-summary-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+    }
   </style>
 </head>
 <body>
@@ -408,6 +440,11 @@
             <span class="title">لیست کامل حساب‌ها</span>
           </div>
 
+          <div class="floating-glass-btn" onclick="playInteractionEffect(); openAllTransactionsPage()">
+            <span class="icon">📜</span>
+            <span class="title">دفتر کل تراکنش‌های سیستم</span>
+          </div>
+
           <div class="floating-glass-btn" onclick="playInteractionEffect(); openOpTypeManagerModal()">
             <span class="icon">⚙️</span>
             <span class="title">مدیریت انواع عملیات</span>
@@ -446,9 +483,29 @@
         <h3>🚀 منوی گزارشات تفکیکی</h3>
         <div class="flex-row" style="gap: 8px; flex-direction: column;">
           <button class="btn btn-info" onclick="playInteractionEffect(); openTransfersReport()">📜 آمار و لیست حواله‌ها / انتقال‌ها</button>
-          <button class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های بدهکار</button>
-          <button class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های بستانکار</button>
+          <button class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های بدهکار (انتخاب چندتایی)</button>
+          <button class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های بستانکار (انتخاب چندتایی)</button>
         </div>
+      </div>
+    </div>
+
+    <!-- گزارش دفتر کل تراکنش‌ها (یکجا و مستقل) -->
+    <div id="viewAllTransactionsPage" class="view-section">
+      <div class="card">
+        <div class="card-header-styled">
+          <h3>📜 دفتر کل تمامی تراکنش‌ها</h3>
+          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+        </div>
+
+        <div class="flex-row" style="justify-content: space-between; margin-bottom: 12px; background: #f8fafc; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color);">
+          <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 800; margin: 0;">
+            <input type="checkbox" id="selectAllGlobalTxsCb" onchange="toggleSelectAllGlobalTxs(this)" style="width:18px; height:18px; accent-color:var(--accent-green-dark);">
+            انتخاب همه تراکنش‌ها
+          </label>
+          <button class="btn btn-danger btn-sm" onclick="deleteSelectedGlobalTxsBatch()">🗑️ حذف موارد انتخاب‌شده</button>
+        </div>
+
+        <div id="globalTransactionsListContainer"></div>
       </div>
     </div>
 
@@ -488,25 +545,39 @@
       </div>
     </div>
 
-    <!-- گزارش بدهکاران -->
+    <!-- گزارش بدهکاران با قابلیت انتخاب چندتایی -->
     <div id="viewDebtorsReport" class="view-section">
       <div class="card">
         <div class="card-header-styled">
-          <h3>🔴 لیست حساب‌های بدهکار</h3>
+          <h3>🔴 لیست و فیلتر بدهکاران (انتخاب چندتایی)</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
+
+        <!-- باکس جمع کل موارد انتخاب شده -->
+        <div id="debtorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
+          <h4 style="margin-bottom:6px; font-size:0.95rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
+          <div id="debtorsBatchSummaryContent"></div>
+        </div>
+
         <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:var(--danger-color); margin-bottom:8px;"></div>
         <div id="debtorsContainer"></div>
       </div>
     </div>
 
-    <!-- گزارش بستانکاران -->
+    <!-- گزارش بستانکاران با قابلیت انتخاب چندتایی -->
     <div id="viewCreditorsReport" class="view-section">
       <div class="card">
         <div class="card-header-styled">
-          <h3>🟢 لیست حساب‌های بستانکار</h3>
+          <h3>🟢 لیست و فیلتر بستانکاران (انتخاب چندتایی)</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
+
+        <!-- باکس جمع کل موارد انتخاب شده -->
+        <div id="creditorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
+          <h4 style="margin-bottom:6px; font-size:0.95rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
+          <div id="creditorsBatchSummaryContent"></div>
+        </div>
+
         <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:var(--accent-green-dark); margin-bottom:8px;"></div>
         <div id="creditorsContainer"></div>
       </div>
@@ -608,7 +679,7 @@
     </div>
   </div>
 
-  <!-- مودال تنظیمات و توکن مالک (جدید و امن) -->
+  <!-- مودال تنظیمات و توکن مالک -->
   <div id="masterSettingsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9650; padding:10px;">
     <div class="card" style="width: 100%; margin: 0; max-width: 420px; max-height:90vh; overflow-y:auto;">
       <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
@@ -616,7 +687,7 @@
       
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
-      <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توتکن ربات..."></div>
+      <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توکن ربات..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
       
       <div class="flex-row" style="justify-content: flex-end; gap:8px; margin-top: 14px;">
@@ -755,6 +826,9 @@
     let selectedDirectionValue = null;
     let selectedCurrencyValue = null;
     let currentLoggedInAdmin = null;
+
+    let selectedDebtorsMap = {};
+    let selectedCreditorsMap = {};
 
     function formatEnNum(str) {
       if (str === null || str === undefined) return '';
@@ -1392,6 +1466,97 @@
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
     }
 
+    /* ==============================================================================
+     * صفحه مستقل دفتر کل تراکنش‌ها (مشاهده و حذف یکجای کل تراکنش‌ها)
+     * ============================================================================== */
+
+    function openAllTransactionsPage() {
+      switchView('viewAllTransactionsPage');
+      renderGlobalTransactionsList();
+    }
+
+    function renderGlobalTransactionsList() {
+      const container = document.getElementById("globalTransactionsListContainer");
+      container.innerHTML = "";
+
+      if (allTransactions.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ تراکنشی در سیستم ثبت نشده است</div>`;
+        return;
+      }
+
+      let totalCount = allTransactions.length;
+      allTransactions.slice().reverse().forEach((tx, idx) => {
+        let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+        let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
+        let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
+        let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
+        
+        let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+        let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+        let date = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+
+        let isCreditor = dir.includes('بستانکار');
+        let cardClass = isCreditor ? 'tx-creditor' : 'tx-debtor';
+
+        container.innerHTML += `
+          <div class="tx-item-card ${cardClass}" style="flex-direction:row; align-items:center; gap:10px;">
+            <input type="checkbox" class="global-tx-cb" value="${txId}" style="width:18px; height:18px; accent-color:var(--accent-green-dark); cursor:pointer;" onclick="event.stopPropagation()">
+            <div style="flex:1;" onclick="selectAccount('${accId}', '${accName}')">
+              <div class="stat-row">
+                <span style="font-weight:900; color:var(--primary-dark);">👤 ${accName}</span>
+                <span style="font-size:0.8rem; color:#64748b;">${date}</span>
+              </div>
+              <div class="stat-row" style="margin-top:2px;">
+                <span style="font-weight:800; color:${isCreditor ? '#059669' : '#dc2626'};">${amt} ${curr} (${dir})</span>
+                <span style="font-size:0.8rem; color:#475569;">کد: ${txId}</span>
+              </div>
+              <div style="font-size:0.82rem; color:#64748b; margin-top:2px;">شرح: ${desc || 'بدون شرح'}</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteGlobalSingleTx('${txId}', '${accId}')">🗑️ حذف</button>
+          </div>
+        `;
+      });
+    }
+
+    function toggleSelectAllGlobalTxs(masterCb) {
+      const cbs = document.querySelectorAll('.global-tx-cb');
+      cbs.forEach(cb => cb.checked = masterCb.checked);
+    }
+
+    async function deleteGlobalSingleTx(txId, accId) {
+      if (!confirm("آیا از حذف این تراکنش اطمینان دارید؟")) return;
+      selectedTxId = txId;
+      currentAccountId = accId;
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
+      if (acc) currentAccountName = getVal(acc, ['Name', 'name']);
+      await deleteSingleTransaction();
+      renderGlobalTransactionsList();
+    }
+
+    async function deleteSelectedGlobalTxsBatch() {
+      const selectedCbs = document.querySelectorAll('.global-tx-cb:checked');
+      if (selectedCbs.length === 0) {
+        alert("لطفاً حداقل یک تراکنش را انتخاب کنید.");
+        return;
+      }
+
+      if (!confirm(`آیا از حذف دسته جمعی ${selectedCbs.length} تراکنش انتخاب‌شده اطمینان دارید؟`)) return;
+
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) { indicator.innerText = "🔄 در حال حذف تراکنش‌ها..."; indicator.style.display = "block"; }
+
+      let ids = Array.from(selectedCbs).map(cb => cb.value);
+      for (let txId of ids) {
+        await _supabase.from('transactions').delete().eq('TransID', txId);
+      }
+
+      await loadDataFromSupabase(false);
+      renderGlobalTransactionsList();
+      alert("تراکنش‌های انتخاب‌شده با موفقیت حذف گردیدند.");
+    }
+
     function openTransfersReport() { switchView('viewTransfersReport'); renderTransfersReport(); }
 
     function toggleCustomDateFilter() {
@@ -1477,8 +1642,15 @@
       });
     }
 
+    /* ==============================================================================
+     * گزارش بدهکاران و بستانکاران با قابلیت انتخاب و فیلتر چندتایی (Multi-Select)
+     * ============================================================================== */
+
     function openDebtorsReport() {
       switchView('viewDebtorsReport');
+      selectedDebtorsMap = {};
+      document.getElementById("debtorsBatchSummaryBox").style.display = "none";
+
       const container = document.getElementById("debtorsContainer");
       const headerContainer = document.getElementById("debtorsSummaryHeader");
       container.innerHTML = ""; headerContainer.innerHTML = "";
@@ -1514,13 +1686,60 @@
       headerContainer.innerHTML = summaryHtml;
 
       if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
-      debtors.forEach(d => {
-        container.innerHTML += `<div class="tx-item-card tx-debtor" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')"><div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">بدهکار: ${formatEnMoney(d.amount)} ${d.currency}</span></div></div>`;
+      
+      debtors.forEach((d, i) => {
+        container.innerHTML += `
+          <div class="tx-item-card tx-debtor" style="flex-direction:row; align-items:center; gap:10px;">
+            <input type="checkbox" onchange="toggleDebtorSelection('${d.id}', '${d.currency}', ${d.amount}, this.checked)" style="width:20px; height:20px; accent-color:var(--danger-color); cursor:pointer;">
+            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')">
+              <div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">بدهکار: ${formatEnMoney(d.amount)} ${d.currency}</span></div>
+            </div>
+          </div>
+        `;
       });
+    }
+
+    function toggleDebtorSelection(accId, curr, amt, isChecked) {
+      let key = `${accId}_${curr}`;
+      if (isChecked) {
+        selectedDebtorsMap[key] = { curr, amt };
+      } else {
+        delete selectedDebtorsMap[key];
+      }
+      updateDebtorsBatchSummary();
+    }
+
+    function updateDebtorsBatchSummary() {
+      const box = document.getElementById("debtorsBatchSummaryBox");
+      const content = document.getElementById("debtorsBatchSummaryContent");
+      
+      let currs = {};
+      let count = 0;
+      for (let k in selectedDebtorsMap) {
+        let item = selectedDebtorsMap[k];
+        if (!currs[item.curr]) currs[item.curr] = 0;
+        currs[item.curr] += item.amt;
+        count++;
+      }
+
+      if (count === 0) {
+        box.style.display = "none";
+        return;
+      }
+
+      let html = `<div style="font-size:0.85rem; margin-bottom:4px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
+      for (let c in currs) {
+        html += `<div style="font-weight:800; font-size:1rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      }
+      content.innerHTML = html;
+      box.style.display = "block";
     }
 
     function openCreditorsReport() {
       switchView('viewCreditorsReport');
+      selectedCreditorsMap = {};
+      document.getElementById("creditorsBatchSummaryBox").style.display = "none";
+
       const container = document.getElementById("creditorsContainer");
       const headerContainer = document.getElementById("creditorsSummaryHeader");
       container.innerHTML = ""; headerContainer.innerHTML = "";
@@ -1555,9 +1774,53 @@
       headerContainer.innerHTML = summaryHtml;
 
       if(creditors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب بستانکاری وجود ندارد</div>`; return; }
+      
       creditors.forEach(c => {
-        container.innerHTML += `<div class="tx-item-card tx-creditor" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')"><div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">بستانکار: ${formatEnMoney(c.amount)} ${c.currency}</span></div></div>`;
+        container.innerHTML += `
+          <div class="tx-item-card tx-creditor" style="flex-direction:row; align-items:center; gap:10px;">
+            <input type="checkbox" onchange="toggleCreditorSelection('${c.id}', '${c.currency}', ${c.amount}, this.checked)" style="width:20px; height:20px; accent-color:var(--accent-green-dark); cursor:pointer;">
+            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')">
+              <div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">بستانکار: ${formatEnMoney(c.amount)} ${c.currency}</span></div>
+            </div>
+          </div>
+        `;
       });
+    }
+
+    function toggleCreditorSelection(accId, curr, amt, isChecked) {
+      let key = `${accId}_${curr}`;
+      if (isChecked) {
+        selectedCreditorsMap[key] = { curr, amt };
+      } else {
+        delete selectedCreditorsMap[key];
+      }
+      updateCreditorsBatchSummary();
+    }
+
+    function updateCreditorsBatchSummary() {
+      const box = document.getElementById("creditorsBatchSummaryBox");
+      const content = document.getElementById("creditorsBatchSummaryContent");
+      
+      let currs = {};
+      let count = 0;
+      for (let k in selectedCreditorsMap) {
+        let item = selectedCreditorsMap[k];
+        if (!currs[item.curr]) currs[item.curr] = 0;
+        currs[item.curr] += item.amt;
+        count++;
+      }
+
+      if (count === 0) {
+        box.style.display = "none";
+        return;
+      }
+
+      let html = `<div style="font-size:0.85rem; margin-bottom:4px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
+      for (let c in currs) {
+        html += `<div style="font-weight:800; font-size:1rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      }
+      content.innerHTML = html;
+      box.style.display = "block";
     }
 
     function renderAccountsList(accounts) {
@@ -2123,7 +2386,11 @@
       let txIdToDelete = selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txIdToDelete));
       
-      await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
+      const { error } = await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
+      if (error) {
+        await _supabase.from('transactions').delete().eq('transid', txIdToDelete);
+      }
+
       await loadDataFromSupabase(false);
 
       let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
@@ -2156,7 +2423,9 @@
         }
       }
 
-      selectAccount(currentAccountId, currentAccountName);
+      if (currentAccountId) {
+        selectAccount(currentAccountId, currentAccountName);
+      }
     }
 
     function shareTransferReceiptWhatsApp(targetTxId) {
