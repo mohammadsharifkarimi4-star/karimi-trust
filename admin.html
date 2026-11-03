@@ -126,29 +126,30 @@
       border: 1.5px solid rgba(255, 255, 255, 0.9);
       box-shadow: var(--glass-shadow);
       border-radius: 18px;
-      padding: 20px 12px;
+      padding: 18px 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       cursor: pointer;
       transition: all 0.25s ease;
       animation: floatAnim 4s ease-in-out infinite;
       text-align: center;
       user-select: none;
     }
-    .floating-glass-btn:nth-child(2) { animation-delay: 0.8s; }
-    .floating-glass-btn:nth-child(3) { animation-delay: 1.6s; }
-    .floating-glass-btn:nth-child(4) { animation-delay: 2.4s; }
+    .floating-glass-btn:nth-child(2) { animation-delay: 0.6s; }
+    .floating-glass-btn:nth-child(3) { animation-delay: 1.2s; }
+    .floating-glass-btn:nth-child(4) { animation-delay: 1.8s; }
+    .floating-glass-btn:nth-child(5) { animation-delay: 2.4s; }
 
     .floating-glass-btn:active {
       transform: scale(0.94);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .floating-glass-btn .icon { font-size: 2rem; }
-    .floating-glass-btn .title { font-weight: 800; font-size: 0.92rem; color: var(--primary-dark); }
+    .floating-glass-btn .icon { font-size: 1.8rem; }
+    .floating-glass-btn .title { font-weight: 800; font-size: 0.88rem; color: var(--primary-dark); }
 
     .nokia-nav-container {
       position: relative;
@@ -293,12 +294,12 @@
     .stat-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 3px; align-items: center; }
     .stat-badge { text-align: center; padding: 6px 10px; border-radius: 8px; font-weight: 800; font-size: 0.92rem; margin-top: 6px; }
 
-    .account-item-card, .tx-item-card {
+    .account-item-card, .tx-item-card, .phone-item-card {
       background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;
       margin-bottom: 10px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 6px;
       cursor: pointer; user-select: none; transition: all 0.15s ease; width: 100%;
     }
-    .account-item-card:active, .tx-item-card:active { border-color: var(--accent-green-dark); background: #f8fafc; }
+    .account-item-card:active, .tx-item-card:active, .phone-item-card:active { border-color: var(--accent-green-dark); background: #f8fafc; }
 
     .tx-item-card.tx-creditor { background: #f0fdf4; border-color: #a7f3d0; }
     .tx-item-card.tx-debtor { background: #fef2f2; border-color: #fecaca; }
@@ -340,29 +341,6 @@
       z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
     }
 
-    /* استایل‌های اختصاصی قابلیت‌های جدید (فیلتر چندتایی و دفتر کل) */
-    .multi-select-box {
-      background: #f8fafc;
-      border: 1.5px solid var(--border-color);
-      border-radius: 12px;
-      padding: 10px;
-      margin-bottom: 12px;
-    }
-    .multi-select-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 8px;
-      border-bottom: 1px solid #e2e8f0;
-      font-weight: 700;
-    }
-    .multi-select-item:last-child { border-bottom: none; }
-    .multi-select-item input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--accent-green-dark);
-      cursor: pointer;
-    }
     .batch-summary-card {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: #ffffff;
@@ -370,6 +348,17 @@
       border-radius: 12px;
       margin-bottom: 12px;
       box-shadow: var(--shadow-sm);
+    }
+
+    .deleted-account-badge {
+      display: inline-block;
+      background: #fef2f2;
+      color: #ef4444;
+      border: 1px solid #fecaca;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 800;
     }
   </style>
 </head>
@@ -445,6 +434,11 @@
             <span class="title">دفتر کل تراکنش‌های سیستم</span>
           </div>
 
+          <div class="floating-glass-btn" onclick="playInteractionEffect(); openPhoneDirectoryPage()">
+            <span class="icon">📞</span>
+            <span class="title">دفترچه و بانک شماره‌ها</span>
+          </div>
+
           <div class="floating-glass-btn" onclick="playInteractionEffect(); openOpTypeManagerModal()">
             <span class="icon">⚙️</span>
             <span class="title">مدیریت انواع عملیات</span>
@@ -489,7 +483,25 @@
       </div>
     </div>
 
-    <!-- گزارش دفتر کل تراکنش‌ها (یکجا و مستقل) -->
+    <!-- دفترچه و بانک شماره‌ها -->
+    <div id="viewPhoneDirectoryPage" class="view-section">
+      <div class="card">
+        <div class="card-header-styled">
+          <h3>📞 بانک کامل شماره‌ها و مخاطبین</h3>
+          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+        </div>
+
+        <div class="form-group" style="position: relative; margin-bottom: 10px;">
+          <input type="text" id="searchPhoneInput" placeholder="🔍 جستجو در شماره‌ها، اسامی یا کُد حساب..." oninput="filterPhonesDirectory()" style="padding-left: 35px;">
+          <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.9rem; cursor: pointer; color: #64748b; display: none;">✕</button>
+        </div>
+
+        <div id="phoneDirectorySummary" class="stat-card" style="background:#f0f9ff; border-color:var(--info-color); margin-bottom:10px;"></div>
+        <div id="phoneDirectoryContainer"></div>
+      </div>
+    </div>
+
+    <!-- گزارش دفتر کل تراکنش‌ها -->
     <div id="viewAllTransactionsPage" class="view-section">
       <div class="card">
         <div class="card-header-styled">
@@ -553,7 +565,6 @@
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
 
-        <!-- باکس جمع کل موارد انتخاب شده -->
         <div id="debtorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
           <h4 style="margin-bottom:6px; font-size:0.95rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
           <div id="debtorsBatchSummaryContent"></div>
@@ -572,7 +583,6 @@
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
 
-        <!-- باکس جمع کل موارد انتخاب شده -->
         <div id="creditorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
           <h4 style="margin-bottom:6px; font-size:0.95rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
           <div id="creditorsBatchSummaryContent"></div>
@@ -818,6 +828,7 @@
     let allAccounts = [];
     let allTransactions = [];
     let allAdmins = [];
+    let phoneArchiveList = []; // ذخیره آرشیو کل شماره‌های ثبت‌شده
     let customOpTypes = ["امانت", "حواله", "انتقال", "دریافت", "پرداخت", "تسویه"];
     let currentAccountId = null;
     let currentAccountName = "";
@@ -903,6 +914,7 @@
       document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
       document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
       document.getElementById("masterSettingsModal").style.display = "flex";
+      pushModalHistory("masterSettingsModal");
     }
 
     function closeMasterSettingsModal() {
@@ -996,8 +1008,18 @@
       return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
 
+    // مدیریت دکمه بازگشت (Back Button)
+    function pushModalHistory(modalId) {
+      window.history.pushState({ modal: modalId }, '');
+    }
+
     window.onload = async function() {
       let savedSession = localStorage.getItem("adminAuthSessionData");
+      let savedArchive = localStorage.getItem("phoneArchiveData");
+      if (savedArchive) {
+        try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {}
+      }
+
       if (savedSession) {
         try {
           currentLoggedInAdmin = JSON.parse(savedSession);
@@ -1021,16 +1043,20 @@
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
+        // ابتدا بررسی مودال‌های باز
+        if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
+        if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
+        if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
+        if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
+        if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
+        if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
+        if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
+        if (document.getElementById('deleteConfirmModal').style.display === 'flex') { closeDeleteConfirmModal(); return; }
+
         if (event.state && event.state.view) {
-          if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
-          if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
-          if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
-          if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
-          if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
-          if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
-          if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
-          if (document.getElementById('deleteConfirmModal').style.display === 'flex') { closeDeleteConfirmModal(); return; }
           switchView(event.state.view, false);
+        } else {
+          switchView('viewDashboard', false);
         }
       };
     };
@@ -1105,6 +1131,7 @@
     function openSearchDrawer() {
       document.getElementById("searchDrawerModal").style.display = "flex";
       document.getElementById("drawerSearchInput").focus();
+      pushModalHistory("searchDrawerModal");
     }
 
     function closeSearchDrawer() {
@@ -1212,6 +1239,9 @@
           });
         }
 
+        // همگام‌سازی و آپدیت آرشیو شماره‌ها بدون حذف شماره‌های قبلی
+        updatePhoneDirectoryArchive();
+
         let rawTransactions = txRes.data || [];
         let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
         
@@ -1232,6 +1262,38 @@
         }
       } catch (e) { console.log("خطا:", e); }
       finally { if (indicator) indicator.style.display = "none"; }
+    }
+
+    function updatePhoneDirectoryArchive() {
+      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
+      allAccounts.forEach(acc => {
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
+        let name = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
+        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
+        let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
+
+        if (phone) {
+          let existing = phoneArchiveList.find(p => p.accId === accId || p.phone === phone);
+          if (existing) {
+            existing.name = name;
+            existing.phone = phone;
+            existing.isDeleted = false;
+            existing.creator = creator;
+          } else {
+            phoneArchiveList.push({
+              accId: accId,
+              name: name,
+              phone: phone,
+              isDeleted: false,
+              creator: creator
+            });
+          }
+        }
+      });
+
+      localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
     }
 
     function getVal(obj, keys) {
@@ -1263,7 +1325,11 @@
       customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
     }
 
-    function openOpTypeManagerModal() { renderOpTypesList(); document.getElementById("opTypeManagerModal").style.display = "flex"; }
+    function openOpTypeManagerModal() { 
+      renderOpTypesList(); 
+      document.getElementById("opTypeManagerModal").style.display = "flex"; 
+      pushModalHistory("opTypeManagerModal");
+    }
     function closeOpTypeManagerModal() { document.getElementById("opTypeManagerModal").style.display = "none"; }
 
     function renderOpTypesList() {
@@ -1298,6 +1364,7 @@
       cancelEditAdmin();
       renderAdminsList();
       document.getElementById("adminManagerModal").style.display = "flex";
+      pushModalHistory("adminManagerModal");
     }
     function closeAdminManagerModal() {
       document.getElementById("adminManagerModal").style.display = "none";
@@ -1467,7 +1534,128 @@
     }
 
     /* ==============================================================================
-     * صفحه مستقل دفتر کل تراکنش‌ها (مشاهده و حذف یکجای کل تراکنش‌ها)
+     * صفحه دفترچه و بانک شماره‌ها (Phone Directory)
+     * ============================================================================== */
+
+    function openPhoneDirectoryPage() {
+      switchView('viewPhoneDirectoryPage');
+      renderPhoneDirectoryList(phoneArchiveList);
+    }
+
+    function renderPhoneDirectoryList(list) {
+      const container = document.getElementById("phoneDirectoryContainer");
+      const summaryBox = document.getElementById("phoneDirectorySummary");
+      container.innerHTML = "";
+
+      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
+      // فیلتر بر اساس ادمین / مالک
+      let filteredList = list.filter(item => {
+        if (isMaster) return true;
+        let creator = String(item.creator || '').trim();
+        return creator === String(currentAdminId);
+      });
+
+      summaryBox.innerHTML = `
+        <div class="stat-row">
+          <span><b>تعداد کل شماره‌های ثبت‌شده:</b></span>
+          <b style="color:var(--info-color); font-size:1rem;">${formatEnNum(filteredList.length)} شماره</b>
+        </div>
+      `;
+
+      if (filteredList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ شماره‌ای در بانک اطلاعاتی موجود نیست</div>`;
+        return;
+      }
+
+      filteredList.forEach(item => {
+        let cleanPhone = item.phone.replace(/\D/g, '');
+        let liveAcc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(item.accId));
+        
+        let statusHtml = '';
+        let balanceBadges = '';
+
+        if (liveAcc && !item.isDeleted) {
+          let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === item.accId);
+          let accCurrencies = {};
+          accTxs.forEach(tx => {
+            let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+            let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+            let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+            if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+            if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+            if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+          });
+
+          for(let curr in accCurrencies) {
+            let val = accCurrencies[curr];
+            let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
+            let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
+            balanceBadges += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
+          }
+
+          statusHtml = `<span style="color:#059669; font-weight:800; font-size:0.8rem;">🟢 حساب فعال (کُد: ${formatEnNum(item.accId)})</span>`;
+        } else {
+          statusHtml = `<span class="deleted-account-badge">❌ حساب این مشتری حذف شده است</span>`;
+          balanceBadges = `<span style="font-size:0.8rem; color:#94a3b8;">اطلاعات مانده حساب در دسترس نیست</span>`;
+        }
+
+        container.innerHTML += `
+          <div class="phone-item-card">
+            <div class="stat-row">
+              <span style="font-weight:900; font-size:1rem; color:var(--primary-dark);">${item.name}</span>
+              ${statusHtml}
+            </div>
+            <div class="stat-row" style="margin-top:2px;">
+              <span style="font-weight:800; color:#0284c7; font-size:0.95rem;" dir="ltr">${item.phone}</span>
+              <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">
+                📲 واتساپ (چت خالی)
+              </button>
+            </div>
+            <div style="margin-top:4px;">${balanceBadges || '<span style="font-size:0.8rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
+          </div>
+        `;
+      });
+    }
+
+    function openWhatsAppBlank(phone) {
+      if (!phone) { alert("شماره تلفن موجود نیست."); return; }
+      window.open(`https://wa.me/${phone}`, '_blank');
+    }
+
+    function filterPhonesDirectory() {
+      playInteractionEffect();
+      const inputEl = document.getElementById("searchPhoneInput");
+      const clearBtn = document.getElementById("clearPhoneSearchBtn");
+      const q = formatEnNum(inputEl.value.trim().toLowerCase());
+
+      if (q.length > 0) clearBtn.style.display = "block";
+      else clearBtn.style.display = "none";
+
+      if (!q) { renderPhoneDirectoryList(phoneArchiveList); return; }
+
+      const filtered = phoneArchiveList.filter(item => {
+        let name = item.name.toLowerCase();
+        let phone = item.phone.toLowerCase();
+        let accId = item.accId.toLowerCase();
+        return name.includes(q) || phone.includes(q) || accId.includes(q);
+      });
+
+      renderPhoneDirectoryList(filtered);
+    }
+
+    function clearPhoneSearch() {
+      playInteractionEffect();
+      const inputEl = document.getElementById("searchPhoneInput");
+      inputEl.value = "";
+      document.getElementById("clearPhoneSearchBtn").style.display = "none";
+      renderPhoneDirectoryList(phoneArchiveList);
+      inputEl.focus();
+    }
+
+    /* ==============================================================================
+     * دفتر کل تراکنش‌ها
      * ============================================================================== */
 
     function openAllTransactionsPage() {
@@ -1643,7 +1831,7 @@
     }
 
     /* ==============================================================================
-     * گزارش بدهکاران و بستانکاران با قابلیت انتخاب و فیلتر چندتایی (Multi-Select)
+     * گزارش بدهکاران و بستانکاران با انتخاب چندتایی (Multi-Select)
      * ============================================================================== */
 
     function openDebtorsReport() {
@@ -1925,6 +2113,7 @@
       document.getElementById("modalAccountPhotoInput").value = "";
       document.getElementById("existingAccountPhotoUrl").value = "";
       document.getElementById("accountModal").style.display = "flex";
+      pushModalHistory("accountModal");
     }
 
     function selectAccountForEditQuick(accId) {
@@ -1942,6 +2131,7 @@
       document.getElementById("modalAccountChatId").value = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || "");
       document.getElementById("existingAccountPhotoUrl").value = getVal(acc, ['Photo', 'photo']) || "";
       document.getElementById("accountModal").style.display = "flex";
+      pushModalHistory("accountModal");
     }
 
     function closeAccountModal() { document.getElementById("accountModal").style.display = "none"; }
@@ -1951,6 +2141,7 @@
       document.getElementById("deleteConfirmText").innerText = msg;
       pendingDeleteCallback = callback;
       document.getElementById("deleteConfirmModal").style.display = "flex";
+      pushModalHistory("deleteConfirmModal");
       document.getElementById("confirmDeleteYesBtn").onclick = function() {
         closeDeleteConfirmModal();
         if (pendingDeleteCallback) pendingDeleteCallback();
@@ -1962,14 +2153,14 @@
     }
 
     function confirmDeleteAccountModal() {
-      showDeleteConfirmModal("آیا از حذف این حساب و تمام اطلاعات آن اطمینان دارید؟", function() {
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
         deleteCurrentAccount();
       });
     }
 
     function confirmDeleteAccount(accId) {
       currentAccountId = accId;
-      showDeleteConfirmModal("آیا از حذف این حساب و تمام اطلاعات آن اطمینان دارید؟", function() {
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
         deleteCurrentAccount();
       });
     }
@@ -2066,6 +2257,14 @@
 
     async function deleteCurrentAccount() {
       let accIdToDelete = currentAccountId;
+      
+      // علامت زدن به عنوان حساب حذف شده در آرشیو شماره‌ها
+      let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
+      if (archiveItem) {
+        archiveItem.isDeleted = true;
+        localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
+      }
+
       currentAccountId = null;
       switchView('viewAccounts');
       await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
@@ -2244,6 +2443,7 @@
       document.querySelectorAll('.btn-curr-opt').forEach(el => el.className = "btn-select-option btn-curr-opt");
 
       document.getElementById("transactionModal").style.display = "flex";
+      pushModalHistory("transactionModal");
     }
 
     function openEditTransactionModal() {
@@ -2263,6 +2463,7 @@
       document.getElementById("txDesc").value = (getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       document.getElementById("existingReceiptUrl").value = getVal(tx, ['receipt_url', 'Receipt_URL']) || "";
       document.getElementById("transactionModal").style.display = "flex";
+      pushModalHistory("transactionModal");
     }
 
     function closeTransactionModal() { document.getElementById("transactionModal").style.display = "none"; }
@@ -2270,6 +2471,7 @@
     function openCustomMessageModal() {
       document.getElementById("customWhatsAppMessageText").value = "";
       document.getElementById("customMessageModal").style.display = "flex";
+      pushModalHistory("customMessageModal");
     }
     function closeCustomMessageModal() {
       document.getElementById("customMessageModal").style.display = "none";
@@ -2375,7 +2577,7 @@
                          `📅 تاریخ: ${formatEnNum(txDate)}\n` +
                          `📝 شرح: ${desc || '-'}\n\n` +
                          `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
-          await sendTelegramMessage(token, adminChatId, adminMsg);
+          sendTelegramMessage(token, adminChatId, adminMsg);
         }
       }
 
