@@ -1205,6 +1205,7 @@
       if (map[curr]) document.getElementById(map[curr]).classList.add('selected-currency');
     }
 
+    // دریافت داده‌ها و مرتب‌سازی تمامی تراکنش‌ها بر اساس جدیدترین زمان و تاریخ
     async function loadDataFromSupabase(showLoader = true) {
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
@@ -1249,6 +1250,8 @@
           let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
           return authorizedAccountIds.includes(txAccId);
         });
+
+        // مرتب‌سازی تراکنش‌ها به صورت نزولی (جدیدترین در بالا) بر اساس Timestamp کامل
         allTransactions.sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
@@ -1679,13 +1682,16 @@
         return;
       }
 
-      let totalCount = allTransactions.length;
-      let sortedGlobalTxs = [...allTransactions].sort((a, b) => {
+      // مرتب‌سازی مجدد تراکنش‌ها بر اساس جدیدترین زمان به قدیمی‌ترین
+      let sortedTxs = allTransactions.slice().sort((a, b) => {
         let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
         let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        return (isNaN(db) ? 0 : db) - (isNaN(da) ? 0 : da);
+        if (isNaN(da)) da = 0;
+        if (isNaN(db)) db = 0;
+        return db - da;
       });
-      sortedGlobalTxs.forEach((tx, idx) => {
+
+      sortedTxs.forEach((tx) => {
         let txId = String(getVal(tx, ['TransID', 'transid']) || '');
         let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
@@ -1695,7 +1701,11 @@
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-        let date = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+        let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+        let dateObj = rawDate ? new Date(rawDate) : null;
+        let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
+          `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+          formatEnNum(String(rawDate).split('T')[0]);
 
         let isCreditor = dir.includes('بستانکار');
         let cardClass = isCreditor ? 'tx-creditor' : 'tx-debtor';
@@ -1706,7 +1716,7 @@
             <div style="flex:1;" onclick="selectAccount('${accId}', '${accName}')">
               <div class="stat-row">
                 <span style="font-weight:900; color:var(--primary-dark);">👤 ${accName}</span>
-                <span style="font-size:0.8rem; color:#64748b;">${date}</span>
+                <span style="font-size:0.8rem; color:#64748b;">⏰ ${formattedTime}</span>
               </div>
               <div class="stat-row" style="margin-top:2px;">
                 <span style="font-weight:800; color:${isCreditor ? '#059669' : '#dc2626'};">${amt} ${curr} (${dir})</span>
@@ -1807,6 +1817,15 @@
         return false;
       });
 
+      // مرتب‌سازی نزولی (جدیدترین در بالا)
+      filteredTxs.sort((a, b) => {
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        if (isNaN(da)) da = 0;
+        if (isNaN(db)) db = 0;
+        return db - da;
+      });
+
       let currencyTotals = {};
       filteredTxs.forEach(tx => {
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -1821,25 +1840,22 @@
 
       if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">موردی یافت نشد</div>`; return; }
 
-      let totalCount = filteredTxs.length;
-      filteredTxs.sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        return (isNaN(db) ? 0 : db) - (isNaN(da) ? 0 : da);
-      });
       filteredTxs.forEach((tx, idx) => {
-        let txNum = formatEnNum(totalCount - idx);
         let accId = formatEnNum(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
         let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "نامشخص";
         let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
         let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-        let date = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+        let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+        let dateObj = rawDate ? new Date(rawDate) : null;
+        let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
+          `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+          formatEnNum(String(rawDate).split('T')[0]);
 
         container.innerHTML += `
           <div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
-            <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">مورد #${txNum} - مشتری: ${accName}</span><span style="font-size:0.8rem; color:#64748b;">${date}</span></div>
+            <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">مشتری: ${accName}</span><span style="font-size:0.8rem; color:#64748b;">⏰ ${formattedTime}</span></div>
             <div class="stat-row"><span>مبلغ:</span><b style="color:var(--primary-dark); font-size:1rem;">${amt} ${curr}</b></div>
             <div style="font-size:0.85rem; color:#475569; margin-top:4px; background:#f1f5f9; padding:6px; border-radius:6px;"><b>شرح:</b> ${desc}</div>
           </div>
@@ -2313,11 +2329,18 @@
     }
 
     function renderAccountDetailTransactions(accId) {
-      const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        return (isNaN(db) ? 0 : db) - (isNaN(da) ? 0 : da);
-      });
+      // دریافت تراکنش‌های حساب و مرتب‌سازی دقیق نزولی بر اساس Timestamp کامل
+      const txs = allTransactions
+        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
+        .slice()
+        .sort((a, b) => {
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
+          return db - da;
+        });
+
       const container = document.getElementById("transactionsListContainer");
       container.innerHTML = "";
       let accCurrencies = {};
@@ -2340,7 +2363,13 @@
           let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
           let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
           let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
-          let cleanDate = formatEnNum(getVal(tx, ['Date', 'date']) || new Date().toISOString()).split('T')[0];
+          
+          let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+          let dateObj = rawDate ? new Date(rawDate) : null;
+          let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
+            `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+            formatEnNum(String(rawDate).split('T')[0]);
+
           let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
           let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
           
@@ -2357,7 +2386,7 @@
           container.innerHTML += `
             <div class="tx-item-card ${cardClass}" onclick="toggleTxAccordion('accBody_${txId}')">
               <div class="stat-row">
-                <span><b>تراکنش شماره #${txNumber}</b> (${cleanDate})</span>
+                <span><b>تراکنش شماره #${txNumber}</b> (⏰ ${formattedTime})</span>
                 <span style="color:${dirColor}; font-weight:900;">${dir}</span>
               </div>
               <div class="stat-row">
@@ -2417,14 +2446,20 @@
       let curr = String(getVal(tx, ['Currency', 'currency']) || '');
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-      let date = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+      
+      let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+      let dateObj = rawDate ? new Date(rawDate) : null;
+      let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
+        `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+        formatEnNum(String(rawDate).split('T')[0]);
+
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
 
       let receiptHtml = receiptUrl ? `<div style="margin-top:6px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
       document.getElementById("txDetailCard").innerHTML = `
         <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
-        <div class="stat-row"><span>تاریخ:</span><b>${date}</b></div>
+        <div class="stat-row"><span>تاریخ و زمان ثبت:</span><b>${formattedTime}</b></div>
         <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
         <div class="stat-row"><span>مبلغ:</span><b style="font-size:1.05rem;">${amt} ${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
@@ -2523,7 +2558,7 @@
 
       let opType = document.getElementById("txOpType").value;
       let desc = document.getElementById("txDesc").value;
-      let txDate = document.getElementById("txDateInput").value || new Date().toISOString().split('T')[0];
+      let txDateInputVal = document.getElementById("txDateInput").value;
       let editTransId = document.getElementById("editTransId").value;
       let fileInput = document.getElementById("txReceiptInput");
       let receiptUrl = document.getElementById("existingReceiptUrl").value;
@@ -2537,6 +2572,21 @@
         if (uploadedUrl) receiptUrl = uploadedUrl;
       }
 
+      let dateIsoString;
+      if (editTransId) {
+        let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
+        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || new Date().toISOString()) : new Date().toISOString();
+      } else {
+        let now = new Date();
+        if (txDateInputVal) {
+          let selectedDate = new Date(txDateInputVal);
+          selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+          dateIsoString = selectedDate.toISOString();
+        } else {
+          dateIsoString = now.toISOString();
+        }
+      }
+
       let transIdToSave = editTransId || ("TX-" + formatEnNum(Math.floor(10000000 + Math.random() * 90000000)));
       const payload = {
         TransID: transIdToSave,
@@ -2547,7 +2597,7 @@
         OperationType: opType,
         Description: desc,
         receipt_url: receiptUrl,
-        Date: new Date(txDate).toISOString()
+        Date: dateIsoString
       };
 
       if (editTransId) {
@@ -2566,13 +2616,14 @@
         let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
         let liveBalance = getAccountLiveBalanceText(currentAccountId);
         let globalSystemBalance = getSystemGlobalBalanceText();
+        let displayDateFormatted = formatEnNum(dateIsoString.split('T')[0]);
 
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
           if (customerChatId) {
             let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
             if (isTransferOrRemittance) {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${formatEnNum(txDate)}`;
+              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
               let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
               let msg3 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
               
@@ -2580,7 +2631,7 @@
               await sendTelegramMessage(token, customerChatId, msg2);
               await sendTelegramMessage(token, customerChatId, msg3);
             } else {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n🔹 نوع: *${opType}* (${selectedDirectionValue})\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n📅 تاریخ: ${formatEnNum(txDate)}`;
+              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n🔹 نوع: *${opType}* (${selectedDirectionValue})\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n📅 تاریخ: ${displayDateFormatted}`;
               let msg2 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
 
               await sendTelegramMessage(token, customerChatId, msg1);
@@ -2595,7 +2646,7 @@
                          `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})\n` +
                          `${actionTitle} (${opType} - ${selectedDirectionValue})\n` +
                          `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n` +
-                         `📅 تاریخ: ${formatEnNum(txDate)}\n` +
+                         `📅 تاریخ: ${displayDateFormatted}\n` +
                          `📝 شرح: ${desc || '-'}\n\n` +
                          `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminMsg);
