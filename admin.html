@@ -1249,6 +1249,13 @@
           let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
           return authorizedAccountIds.includes(txAccId);
         });
+        allTransactions.sort((a, b) => {
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
+          return db - da;
+        });
 
         if (opRes.data && opRes.data.length > 0) customOpTypes = opRes.data.map(o => o.title);
 
@@ -1673,7 +1680,12 @@
       }
 
       let totalCount = allTransactions.length;
-      allTransactions.slice().reverse().forEach((tx, idx) => {
+      let sortedGlobalTxs = [...allTransactions].sort((a, b) => {
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        return (isNaN(db) ? 0 : db) - (isNaN(da) ? 0 : da);
+      });
+      sortedGlobalTxs.forEach((tx, idx) => {
         let txId = String(getVal(tx, ['TransID', 'transid']) || '');
         let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
@@ -1810,7 +1822,12 @@
       if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">موردی یافت نشد</div>`; return; }
 
       let totalCount = filteredTxs.length;
-      filteredTxs.slice().reverse().forEach((tx, idx) => {
+      filteredTxs.sort((a, b) => {
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        return (isNaN(db) ? 0 : db) - (isNaN(da) ? 0 : da);
+      });
+      filteredTxs.forEach((tx, idx) => {
         let txNum = formatEnNum(totalCount - idx);
         let accId = formatEnNum(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
@@ -2296,7 +2313,11 @@
     }
 
     function renderAccountDetailTransactions(accId) {
-      const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).slice().reverse();
+      const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).sort((a, b) => {
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        return (isNaN(db) ? 0 : db) - (isNaN(da) ? 0 : da);
+      });
       const container = document.getElementById("transactionsListContainer");
       container.innerHTML = "";
       let accCurrencies = {};
