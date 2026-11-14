@@ -61,8 +61,10 @@
     .btn-opt.active-currency { background: #0284c7 !important; border-color: #0369a1 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
     .btn-opt-sm { padding: 8px 4px; font-size: 0.82rem; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 8px; margin-top: 8px; }
-    .stat-card { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+    .stats-grid { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .stat-row-item { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.04); font-size: 0.82rem; }
+    .stat-row-left { font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 6px; }
+    .stat-row-right { display: flex; gap: 12px; align-items: center; font-size: 0.78rem; flex-wrap: wrap; }
 
     .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
     .tx-table-wrapper {
@@ -993,7 +995,7 @@
       grid.innerHTML = "";
 
       if (Object.keys(currencyTotals).length === 0) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b; font-size:0.85rem; font-weight:bold;">بدون آمار فعال</div>`;
+        grid.innerHTML = `<div style="text-align:center; color:#64748b; font-size:0.85rem; font-weight:bold; padding:8px;">بدون آمار فعال</div>`;
         return;
       }
 
@@ -1002,14 +1004,17 @@
         let debt = currencyTotals[curr].debtor;
         let net = cred - debt;
         let netColor = net > 0 ? '#059669' : (net < 0 ? '#dc2626' : '#475569');
+        let statusSign = net > 0 ? '+' : (net < 0 ? '-' : '');
 
         grid.innerHTML += `
-          <div class="stat-card">
-            <div style="font-size:0.9rem; font-weight:900; color:#0f172a; margin-bottom:4px; border-bottom:1px solid #e2e8f0; padding-bottom:2px;">${curr}</div>
-            <div style="font-size:0.75rem; color:#059669; font-weight:bold;">بستانکار: ${cred.toLocaleString()}</div>
-            <div style="font-size:0.75rem; color:#dc2626; font-weight:bold; margin-bottom:4px;">بدهکار: ${debt.toLocaleString()}</div>
-            <div style="border-top:2px dashed #e2e8f0; padding-top:4px; font-size:0.88rem; font-weight:900; color:${netColor};">
-              مانده: ${Math.abs(net).toLocaleString()} ${net >= 0 ? '+' : '-'}
+          <div class="stat-row-item">
+            <div class="stat-row-left">
+              <span style="background:#0f172a; color:#fff; padding:2px 8px; border-radius:6px; font-size:0.78rem;">${curr}</span>
+            </div>
+            <div class="stat-row-right">
+              <span style="color:#059669; font-weight:800;">بستانکار: ${toEnglishDigits(cred.toLocaleString())}</span>
+              <span style="color:#dc2626; font-weight:800;">بدهکار: ${toEnglishDigits(debt.toLocaleString())}</span>
+              <span style="color:${netColor}; font-weight:900; background:${net >= 0 ? '#f0fdf4' : '#fef2f2'}; padding:2px 6px; border-radius:6px;">مانده: ${toEnglishDigits(Math.abs(net).toLocaleString())} ${statusSign}</span>
             </div>
           </div>
         `;
@@ -1093,10 +1098,35 @@
           `;
         });
 
+        // محاسبه مجموع بدهکاری و بستانکاری به تفکیک ارز برای این روز خاص
+        let dayTotals = {};
+        group.items.forEach(tx => {
+          let c = (tx.currency || 'USD').toUpperCase();
+          let d = tx.direction || '';
+          let a = parseFloat(tx.amount_final || tx.amount_initial) || 0;
+          if (!dayTotals[c]) dayTotals[c] = { creditor: 0, debtor: 0 };
+          if (d === 'بستانکار') dayTotals[c].creditor += a;
+          if (d === 'بدهکار') dayTotals[c].debtor += a;
+        });
+
+        let summaryParts = [];
+        for (let c in dayTotals) {
+          let cred = dayTotals[c].creditor;
+          let debt = dayTotals[c].debtor;
+          if (cred > 0) summaryParts.push(`<span style="color:#10b981;">بستانکار: ${toEnglishDigits(cred.toLocaleString())} ${c}</span>`);
+          if (debt > 0) summaryParts.push(`<span style="color:#f87171;">بدهکار: ${toEnglishDigits(debt.toLocaleString())} ${c}</span>`);
+        }
+        let daySummaryStr = summaryParts.length > 0 ? summaryParts.join(' | ') : 'بدون مبلغ';
+
         let groupHtml = `
-          <div class="day-group-header">
-            <span>📅 ${dayTitle}</span>
-            <span class="day-group-badge">${toEnglishDigits(group.items.length)} تراکنش</span>
+          <div class="day-group-header" style="flex-wrap:wrap; gap:4px; padding:8px 12px;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span>📅 ${dayTitle}</span>
+              <span class="day-group-badge">${toEnglishDigits(group.items.length)} تراکنش</span>
+            </div>
+            <div style="font-size:0.75rem; font-weight:800; background:rgba(15,23,42,0.6); padding:2px 8px; border-radius:6px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              ${daySummaryStr}
+            </div>
           </div>
           <div class="tx-table-wrapper">
             <table class="tx-table">
@@ -1405,6 +1435,18 @@ ${verticalReport}`;
           combinedDesc = combinedDesc ? `${combinedDesc} | آدرس: ${address}` : `آدرس: ${address}`;
         }
 
+        // حفظ ساعت دقیق معامله اصلی برای تراکنش مشتری تا به ترتیب در بالای لیست قرار گیرد
+        let custTimestampISO = finalTimestampISO; 
+        if (editId && oldTx && oldTx.date) {
+          // در حالت ویرایش اگر تاریخ تغییر کرده باشد، تاریخ جدید با ساعت فعلی یا ساعت قبلی
+          let oldDatePart = extractDateOnly(oldTx.date);
+          if (oldDatePart !== txDate) {
+            custTimestampISO = new Date(`${txDate}T${timePartISO}`).toISOString();
+          } else {
+            custTimestampISO = oldTx.date;
+          }
+        }
+
         const custTxObj = {
           AccountID: targetCustId,
           Direction: selectedCustomerDirection,
@@ -1412,7 +1454,7 @@ ${verticalReport}`;
           Currency: custCurr,
           OperationType: opType,
           Description: combinedDesc,
-          Date: new Date(txDate).toISOString()
+          Date: custTimestampISO
         };
 
         if (editCustTxId) {
