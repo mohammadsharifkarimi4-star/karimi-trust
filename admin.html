@@ -1171,8 +1171,7 @@
         let status = finalNet > 0 ? `بستانکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}` : `بدهکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}`;
         parts.push(`🔹 ${curr} ➔ کل بستانکاری: ${formatEnMoney(cred)} | کل بدهکاری: ${formatEnMoney(deb)} | *مانده: ${status}*`);
       }
-      return parts.join('
-') || 'بدون مانده فعال';
+      return parts.join('\n') || 'بدون مانده فعال';
     }
 
     function getAccountLiveBalanceText(accId) {
@@ -1198,9 +1197,7 @@
   ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}
   📌 *وضعیت مانده: ${status}*`);
       }
-      return textParts.join('
-
-') || 'تراکنشی ثبت نشده است';
+      return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
 
     function pushModalHistory(modalId) {
@@ -3110,7 +3107,6 @@
       };
 
       if (editTransId) {
-        // برای تضمین به‌روزرسانی بدون خطا بر روی هر نوع ستون کلید اصلی (TransID یا id)
         await _supabase.from('transactions').update(payload).or(`TransID.eq.${editTransId},transid.eq.${editTransId},id.eq.${editTransId}`);
       } else {
         await _supabase.from('transactions').insert([payload]);
@@ -3170,7 +3166,6 @@
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
-      // حذف قطعی از دیتابیس Supabase با پوشش کامل تمامی نام‌های ستون کلید اصلی (TransID, transid, id)
       await _supabase.from('transactions').delete().eq('TransID', targetId);
       await _supabase.from('transactions').delete().eq('transid', targetId);
       await _supabase.from('transactions').delete().eq('id', targetId);
@@ -3435,20 +3430,6 @@
         window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
       }
     }
-
-</body>
-</html>
-
-    /* ---------------------------------------------------------
-     * Architectural ledger caching, multi-currency conversion buffer,
-     * offline state persistence, and security verification stubs
-     * --------------------------------------------------------- */
-
-    /* ---------------------------------------------------------
-     * Architectural ledger caching, multi-currency conversion buffer,
-     * offline state persistence, and security verification stubs
-     * --------------------------------------------------------- */
-
   </script>
 </body>
 </html>
