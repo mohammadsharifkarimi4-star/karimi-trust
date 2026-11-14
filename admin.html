@@ -1116,6 +1116,38 @@
       return { token, chatId };
     }
 
+    function getSystemGlobalBalanceText() {
+      let totalsByCurrency = {};
+      allAccounts.forEach(acc => {
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
+        if (!accId) return;
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        let accCurrencies = {};
+        accTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+          if (!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if (dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if (dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+        for (let curr in accCurrencies) {
+          let net = accCurrencies[curr];
+          if (net !== 0) {
+            if (!totalsByCurrency[curr]) totalsByCurrency[curr] = 0;
+            totalsByCurrency[curr] += net;
+          }
+        }
+      });
+      let parts = [];
+      for (let c in totalsByCurrency) {
+        let val = totalsByCurrency[c];
+        let status = val > 0 ? `بستانکار کل: ${formatEnMoney(Math.abs(val))} ${c}` : (val < 0 ? `بدهکار کل: ${formatEnMoney(Math.abs(val))} ${c}` : `تسویه`);
+        parts.push(`▫️ *${c}*: ${status}`);
+      }
+      return parts.join('\n') || 'هیچ حساب فعالی نیست';
+    }
+
     function openMasterSettingsModal() {
       document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
       document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
@@ -3149,6 +3181,10 @@
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
+      let txAccId = tx ? String(getVal(tx, ['AccountID', 'accountid']) || currentAccountId) : currentAccountId;
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(txAccId));
+      let accNameForDel = acc ? String(getVal(acc, ['Name', 'name'])) : (currentAccountName || "مشتری");
+
       await _supabase.from('transactions').delete().eq('TransID', targetId);
 
       allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
@@ -3156,20 +3192,21 @@
       await loadDataFromSupabase(false);
 
       let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
-      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
 
       if (token && tx) {
-        let liveBalance = getAccountLiveBalanceText(currentAccountId);
+        let liveBalance = getAccountLiveBalanceText(txAccId);
         let globalSystemBalance = getSystemGlobalBalanceText();
         let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
         let tCurr = getVal(tx, ['Currency', 'currency']);
+        let tDir = getVal(tx, ['Direction', 'direction']);
+        let tOpType = getVal(tx, ['OperationType', 'operationtype']) || 'امانت';
 
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
           if (customerChatId) {
             let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*\n\n` +
-                         `محترم *${currentAccountName}*،\n` +
-                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.\n\n` +
+                         `محترم *${accNameForDel}*،\n` +
+                         `تراکنش ${tOpType} (${tDir}) به مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.\n\n` +
                          `📊 *بیلان جدید حساب شما:*\n${liveBalance}`;
             sendTelegramMessage(token, customerChatId, delMsg);
           }
@@ -3178,8 +3215,8 @@
         if (adminChatId) {
           let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*\n\n` +
                             `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
-                            `👥 مشتری: *${currentAccountName}*\n` +
-                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*\n\n` +
+                            `👥 مشتری: *${accNameForDel}* (کُد: ${formatEnNum(txAccId)})\n` +
+                            `تراکنش حذف‌شده: ${tOpType} (${tDir}) - مبلغ: *${tAmt} ${tCurr}*\n\n` +
                             `📊 *موجودی کل سیستم:*\n${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminDelMsg);
         }
