@@ -63,8 +63,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 0;
-      overflow: hidden;
+      padding: 10px;
+      overflow-y: auto;
     }
 
     @keyframes glowNeon {
@@ -80,23 +80,26 @@
     }
 
     .app-viewport {
-      width: 100vw;
-      height: 100vh;
-      max-width: 450px;
-      max-height: 940px;
+      width: 100%;
+      max-width: 600px;
+      min-height: 92vh;
       background: linear-gradient(160deg, #f8fafc 0%, #e2e8f0 100%);
       display: flex;
       flex-direction: column;
       position: relative;
       box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      border-radius: 24px;
       overflow: hidden;
+      margin: auto;
     }
 
-    @media (min-width: 451px) {
+    @media (max-width: 450px) {
       .app-viewport {
-        height: 96vh;
-        border-radius: 32px;
-        border: 3px solid rgba(255, 255, 255, 0.4);
+        width: 100vw;
+        height: 100vh;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
       }
     }
 
@@ -564,6 +567,69 @@
   </div>
 
   <script>
+    function toEnglishDigits(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/[۰-۹٠-٩]/g, function (d) {
+        return d.charCodeAt(0) >= 1776 ? d.charCodeAt(0) - 1776 : d.charCodeAt(0) - 1632;
+      });
+    }
+
+    function extractDateOnly(rawDate) {
+      if (!rawDate) return 'بدون تاریخ';
+      let s = toEnglishDigits(String(rawDate)).trim();
+      if (s.includes('T')) return s.split('T')[0];
+      if (s.includes(' ')) return s.split(' ')[0];
+      return s.slice(0, 10);
+    }
+
+    function extractTimeOnly(rawDate) {
+      if (!rawDate) return '';
+      let s = String(rawDate).trim();
+      if (!s.includes('T') && !s.includes(' ')) return '';
+      let d = new Date(s);
+      if (isNaN(d.getTime())) return '';
+      let hh = String(d.getHours()).padStart(2, '0');
+      let mm = String(d.getMinutes()).padStart(2, '0');
+      let ss = String(d.getSeconds()).padStart(2, '0');
+      if (hh === '00' && mm === '00' && ss === '00') return '';
+      return `${hh}:${mm}:${ss}`;
+    }
+
+    function getTxTimestamp(tx) {
+      let raw = tx.Date || tx.date || tx.created_at || '';
+      if (!raw) return 0;
+      let s = toEnglishDigits(String(raw)).trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+        let t = new Date(s + 'T00:00:00').getTime();
+        return isNaN(t) ? 0 : t;
+      }
+      let t = new Date(s).getTime();
+      return isNaN(t) ? 0 : t;
+    }
+
+    function sortChronologically(list, ascending = false) {
+      return list.slice().sort((a, b) => {
+        let ta = getTxTimestamp(a);
+        let tb = getTxTimestamp(b);
+        if (ta !== tb) return ascending ? (ta - tb) : (tb - ta);
+        let ca = a.created_at ? new Date(a.created_at).getTime() : 0;
+        let cb = b.created_at ? new Date(b.created_at).getTime() : 0;
+        if (!isNaN(ca) && !isNaN(cb) && ca !== cb) return ascending ? (ca - cb) : (cb - ca);
+        let ida = String(a.TransID || a.transid || '');
+        let idb = String(b.TransID || b.transid || '');
+        return ascending ? ida.localeCompare(idb) : idb.localeCompare(ida);
+      });
+    }
+
+    function getPersianDayName(dateStr) {
+      try {
+        let d = new Date(dateStr + 'T12:00:00');
+        if (isNaN(d.getTime())) return '';
+        const days = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+        return days[d.getDay()];
+      } catch (e) { return ''; }
+    }
+
     const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
     const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -835,10 +901,12 @@
       const wpText = encodeURIComponent(`سلام کریمی عزیز، من ${nameVal} هستم. درباره وضعیت حسابم پرسشی دارم.`);
       directWp.href = `https://wa.me/9647721878997?text=${wpText}`;
 
-      customerTransactions = transactionsList.filter(tx => {
+      let rawUserTxs = transactionsList.filter(tx => {
         let rowAccId = String(getVal(tx, ['AccountID', 'accountid', 'ID'])).trim();
         return rowAccId === sheetAccId;
-      }).reverse();
+      });
+      // مرتب‌سازی دقیق زمانی (جدیدترین به قدیمی‌ترین برای نمایش در داشبورد)
+      customerTransactions = sortChronologically(rawUserTxs, false);
 
       customerBalances = {};
       customerTransactions.forEach(tx => {
@@ -950,11 +1018,70 @@
     }
 
     function renderTransactionsList() {
-      let txHtml = '';
+      const container = document.getElementById('transactionsContainer');
+      document.getElementById('txCountBadge').innerText = toEnglishDigits(customerTransactions.length);
+      container.innerHTML = "";
+
       if (customerTransactions.length === 0) {
-        txHtml = '<div style="text-align:center; padding:20px; color:#64748b; font-size:12.5px;">هیچ معامله‌ای یافت نشد.</div>';
-      } else {
-        customerTransactions.forEach((tx, idx) => {
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; font-size:12.5px;">هیچ معامله‌ای یافت نشد.</div>';
+        return;
+      }
+
+      // مرتب‌سازی دقیق صعودی/نزولی بر اساس زمان دقیق (سال، ماه، روز، ساعت، دقیقه، ثانیه)
+      let chronologicalAll = sortChronologically(customerTransactions, true); // قدیمی به جدید برای شماره‌گذاری ردیف‌ها
+      let rowNumMap = {};
+      chronologicalAll.forEach((t, i) => {
+        let tid = String(getVal(t, ['TransID', 'transid']) || i);
+        rowNumMap[tid] = i + 1;
+      });
+
+      // نمایش جدیدترین به قدیمی‌ترین در لیست
+      let sortedList = sortChronologically(customerTransactions, false);
+
+      // دسته‌بندی بر اساس روز
+      let groups = [];
+      let groupMap = {};
+
+      sortedList.forEach(tx => {
+        let rawDate = getVal(tx, ['Date', 'date']) || '';
+        let dayKey = extractDateOnly(rawDate);
+        if (!groupMap[dayKey]) {
+          groupMap[dayKey] = { date: dayKey, items: [] };
+          groups.push(groupMap[dayKey]);
+        }
+        groupMap[dayKey].items.push(tx);
+      });
+
+      let finalHtml = "";
+
+      groups.forEach(group => {
+        let dayName = getPersianDayName(group.date);
+        let dayTitle = dayName ? `${dayName} — ${toEnglishDigits(group.date)}` : toEnglishDigits(group.date);
+
+        // محاسبه مجموع بستانکار و بدهکار به تفکیک ارز برای این روز
+        let dayTotals = {};
+        group.items.forEach(tx => {
+          let c = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let d = String(getVal(tx, ['Direction', 'direction']));
+          let a = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+          if (!dayTotals[c]) dayTotals[c] = { creditor: 0, debtor: 0 };
+          if (d.includes('بستانکار') || d.includes('دریافت')) dayTotals[c].creditor += a;
+          if (d.includes('بدهکار') || d.includes('پرداخت')) dayTotals[c].debtor += a;
+        });
+
+        let summaryParts = [];
+        for (let c in dayTotals) {
+          let cred = dayTotals[c].creditor;
+          let debt = dayTotals[c].debtor;
+          if (cred > 0) summaryParts.push(`<span style="color:#10b981;">بستانکار: ${toEnglishDigits(formatEnMoney(cred))} ${c}</span>`);
+          if (debt > 0) summaryParts.push(`<span style="color:#f87171;">بدهکار: ${toEnglishDigits(formatEnMoney(debt))} ${c}</span>`);
+        }
+        let daySummaryStr = summaryParts.length > 0 ? summaryParts.join(' | ') : 'بدون مبلغ';
+
+        let cardsHtml = "";
+        group.items.forEach((tx) => {
+          let tid = String(getVal(tx, ['TransID', 'transid']) || '');
+          let txNum = rowNumMap[tid] || '-';
           let dir = String(getVal(tx, ['Direction', 'direction']));
           let isCredit = (dir.includes('بستانکار') || dir.includes('دریافت'));
           let amtColor = isCredit ? 'var(--success-dark)' : 'var(--danger-dark)';
@@ -962,26 +1089,50 @@
           let rawAmt = getVal(tx, ['Amount', 'amount']);
           let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
           let opType = getVal(tx, ['OperationType', 'operationtype']) || 'عملیات مالی';
-          let dateStr = getVal(tx, ['Date', 'date']) || '---';
-          let descStr = (getVal(tx, ['Description', 'description']) || 'بدون شرح').replaceAll('+', ' ');
+          let rawDate = getVal(tx, ['Date', 'date']) || '';
+          let timeStr = extractTimeOnly(rawDate);
+          let descStr = (getVal(tx, ['Description', 'description']) || 'بدون شرح مطلق').replaceAll('+', ' ');
           let currStr = getVal(tx, ['Currency', 'currency']) || 'AFN';
 
-          txHtml += `
-            <div class="tx-card" onclick="openDetailModal(${idx})" style="border-right: 5px solid ${amtColor};">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="font-weight:900; font-size:14px; color:#1e293b;">${opType}</span>
-                <span style="font-size:11px; background:${badgeBg}; color:${amtColor}; padding:2px 8px; border-radius:6px; font-weight:800;" class="eng-num">${dateStr.split('T')[0]}</span>
+          // پیدا کردن ایندکس اصلی در customerTransactions برای کلیک
+          let originalIdx = customerTransactions.findIndex(item => String(getVal(item, ['TransID', 'transid'])) === tid);
+
+          cardsHtml += `
+            <div class="tx-card" onclick="openDetailModal(${originalIdx})" style="border-right: 5px solid ${amtColor}; margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="background:#0f172a; color:#fff; padding:1px 6px; border-radius:5px; font-size:11px; font-weight:800;" class="eng-num">#${toEnglishDigits(txNum)}</span>
+                  <span style="font-weight:900; font-size:13.5px; color:#1e293b;">${opType}</span>
+                </div>
+                <span style="font-size:11px; background:${badgeBg}; color:${amtColor}; padding:2px 8px; border-radius:6px; font-weight:800;" class="eng-num">${dir}</span>
               </div>
-              <div style="font-size:12px; color:#475569; margin-bottom:8px; line-height:1.6;">${descStr}</div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-bottom:4px;">
+                <span class="eng-num"> شناسه: ${tid}</span>
+                ${timeStr ? `<span class="eng-num">🕒 ${timeStr}</span>` : ''}
+              </div>
+              <div style="font-size:12px; color:#475569; margin-bottom:6px; line-height:1.5;">${descStr}</div>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #e2e8f0; padding-top:6px;">
-                <span style="font-weight:900; font-size:13.5px; color:${amtColor};" class="eng-num">${currStr} ${formatEnMoney(amountVal)} (${dir})</span>
-                <span style="color:var(--primary); font-size:12px; font-weight:800;">رسید ➔</span>
+                <span style="font-weight:900; font-size:13.5px; color:${amtColor};" class="eng-num">${currStr} ${formatEnMoney(amountVal)}</span>
+                <span style="color:var(--primary); font-size:12px; font-weight:800;">مشاهده رسید ➔</span>
               </div>
             </div>`;
         });
-      }
-      document.getElementById('transactionsContainer').innerHTML = txHtml;
-      document.getElementById('txCountBadge').innerText = customerTransactions.length;
+
+        finalHtml += `
+          <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 6px 12px; border-radius: 8px 8px 0 0; margin: 12px 0 6px 0; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 800; border-right: 4px solid #38bdf8; flex-wrap:wrap; gap:4px;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span>📅 ${dayTitle}</span>
+              <span style="background: rgba(56, 189, 248, 0.2); color: #7dd3fc; padding: 1px 6px; border-radius: 10px; font-size: 11px;" class="eng-num">${toEnglishDigits(group.items.length)} تراکنش</span>
+            </div>
+            <div style="font-size:11px; background:rgba(15,23,42,0.6); padding:2px 6px; border-radius:6px; display:flex; gap:6px; flex-wrap:wrap;" class="eng-num">
+              ${daySummaryStr}
+            </div>
+          </div>
+          <div>${cardsHtml}</div>
+        `;
+      });
+
+      container.innerHTML = finalHtml;
     }
 
     function openDetailModal(idx) {
