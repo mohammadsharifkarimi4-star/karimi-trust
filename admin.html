@@ -2091,7 +2091,7 @@
           const rowNum = formatEnNum(totalCount - globalCounter);
           globalCounter++;
 
-          let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+          let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
           let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
           let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
           let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
@@ -2111,7 +2111,7 @@
               if (isNaN(db)) db = 0;
               return db - da;
             });
-          let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === txId);
+          let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === txId);
           let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
 
           let sameCurrBalance = 0;
@@ -2614,8 +2614,9 @@
     }
 
     function confirmDeleteTransaction() {
+      let txIdToDel = selectedTxId;
       showDeleteConfirmModal("آیا از حذف این تراکنش اطمینان دارید؟", function() {
-        deleteSingleTransaction();
+        deleteSingleTransaction(txIdToDel);
       });
     }
 
@@ -2798,7 +2799,7 @@
             const currentIdxInTxs = globalCounter;
             globalCounter++;
 
-            let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+            let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
             let dir = String(getVal(tx, ['Direction', 'direction']) || '');
             let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
             let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -2898,7 +2899,7 @@
 
     function selectTransaction(txId) {
       selectedTxId = txId;
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
       if(!tx) return;
 
       let accId = String(getVal(tx, ['AccountID', 'accountid']) || currentAccountId);
@@ -2933,7 +2934,7 @@
           return db - da;
         });
 
-      let txIndex = accountTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
+      let txIndex = accountTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
       let subTxsAfter = txIndex !== -1 ? accountTxs.slice(txIndex) : accountTxs;
       
       let balanceAfter = 0;
@@ -3010,7 +3011,7 @@
     }
 
     function openEditTransactionModal() {
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(selectedTxId));
       if (!tx) return;
       document.getElementById("editTransId").value = selectedTxId;
       document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
@@ -3081,7 +3082,7 @@
 
       let dateIsoString;
       if (editTransId) {
-        let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
+        let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(editTransId));
         dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || new Date().toISOString()) : new Date().toISOString();
       } else {
         let now = new Date();
@@ -3108,7 +3109,7 @@
       };
 
       if (editTransId) {
-        await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
+        await _supabase.from('transactions').update(payload).or(`TransID.eq.${editTransId},id.eq.${editTransId}`);
       } else {
         await _supabase.from('transactions').insert([payload]);
       }
@@ -3163,13 +3164,17 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    async function deleteSingleTransaction() {
-      let txIdToDelete = selectedTxId;
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txIdToDelete));
+    async function deleteSingleTransaction(txIdToDelete) {
+      let targetId = txIdToDelete || selectedTxId;
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
-      await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
-      await _supabase.from('transactions').delete().eq('transid', txIdToDelete);
-      await _supabase.from('transactions').delete().eq('id', txIdToDelete);
+      // حذف قطعی از دیتابیس Supabase با پوشش دادن هر دو نام ستون احتمالی (TransID یا id)
+      await _supabase.from('transactions').delete().eq('TransID', targetId);
+      await _supabase.from('transactions').delete().eq('transid', targetId);
+      await _supabase.from('transactions').delete().eq('id', targetId);
+
+      // آپدیت آنی آرایه محلی برای جلوگیری از باقی ماندن در حافظه
+      allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
 
       await loadDataFromSupabase(false);
 
@@ -3212,7 +3217,7 @@
     }
 
     function shareTransferReceiptWhatsApp(targetTxId) {
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId || selectedTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
 
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
@@ -3232,7 +3237,7 @@
     function sendSingleTxWhatsApp(targetTxId) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId));
       if(!tx) return;
 
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
@@ -3280,6 +3285,7 @@
       if (!acc) { alert("حسابی انتخاب نشده است."); return; }
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
 
+      // مرتب‌سازی از قدیم به جدید (صعودی بر اساس تاریخ)
       let accTxs = allTransactions
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId))
         .slice()
@@ -3288,7 +3294,7 @@
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
-          return a - b; // صعودی
+          return da - db; // صعودی: قدیمی در ابتدا، جدید در انتها
         });
 
       let now = new Date();
@@ -3317,7 +3323,7 @@
         return;
       }
 
-      // Find the last settlement transaction if any
+      // پیدا کردن آخرین تسویه برای اینکه تراکنش‌های بعد از آن نمایش داده شوند
       let lastSettlementIdx = -1;
       for (let i = accTxs.length - 1; i >= 0; i--) {
         let op = String(getVal(accTxs[i], ['OperationType', 'operationtype']) || '').trim();
@@ -3328,17 +3334,25 @@
         }
       }
 
+      // اگر کاربر بازه خاصی مثل روزانه یا هفتگی نخواسته باشد و آخرین تسویه موجود باشد، فقط از بعد از تسویه فیلتر می‌کنیم
+      let finalTransactions = filtered;
+      if (period === 'all' && lastSettlementIdx !== -1) {
+        finalTransactions = accTxs.slice(lastSettlementIdx + 1);
+        if (finalTransactions.length === 0) {
+          finalTransactions = [accTxs[lastSettlementIdx]]; // حداقل نمایش تسویه
+        }
+      }
+
       let settlementSummaryLine = "";
-      if (lastSettlementIdx !== -1) {
+      if (lastSettlementIdx !== -1 && period === 'all') {
         let sTx = accTxs[lastSettlementIdx];
         let sDate = formatEnNum(String(getVal(sTx, ['Date', 'date']) || '').split('T')[0]);
         let sAmt = formatEnMoney(getVal(sTx, ['Amount', 'amount']));
         let sCurr = String(getVal(sTx, ['Currency', 'currency']) || 'AFN').toUpperCase();
         let sDir = String(getVal(sTx, ['Direction', 'direction']) || '');
-        let roleText = sDir.includes('بستانکار') ? 'بستانکار بودید و مبلغ تسویه شد' : 'بدهکار بودید و تسویه شد';
-        settlementSummaryLine = `📌 آخرین تسویه در تاریخ ${sDate} انجام شد (مبلغ ${sAmt} ${sCurr} - ${roleText}). تراکنش‌های زیر مربوط به بعد از آخرین تسویه است:`;
+        settlementSummaryLine = `📌 آخرین تسویه در تاریخ ${sDate} (مبلغ ${sAmt} ${sCurr} - ${sDir}) انجام شد. تراکنش‌های جدید پس از آن:`;
       } else {
-        settlementSummaryLine = `📌 تراکنش‌های ثبت‌شده (از ابتدا تا کنون):`;
+        settlementSummaryLine = `📌 لیست تراکنش‌ها (به ترتیب از قدیم به جدید):`;
       }
 
       let lines = [
@@ -3351,7 +3365,7 @@
       ];
 
       let runningBalances = {};
-      filtered.forEach((tx, idx) => {
+      finalTransactions.forEach((tx, idx) => {
         let date = formatEnNum(String(getVal(tx, ['Date', 'date']) || '').split('T')[0]);
         let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
@@ -3366,7 +3380,7 @@
         let balVal = runningBalances[curr];
         let balText = balVal === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balVal))} ${curr} (${balVal > 0 ? 'بستانکار' : 'بدهکار'})`;
 
-        // Concise single-line transaction format for WhatsApp
+        // فرمت شفاف و غیرگیج‌کننده تراکنش‌ها
         let lineItem = `${formatEnNum(idx + 1)}. [${date}] *${opType}* (${dir}) | ${formatEnMoney(amt)} ${curr} | مانده: ${balText}`;
         if (desc && desc !== '-') {
           lineItem += ` | ${desc}`;
