@@ -17,6 +17,9 @@
     :root {
       --primary-dark: #0f172a;
       --primary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(255, 255, 255, 0.8);
+      --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       --accent-green: #10b981;
       --accent-green-dark: #059669;
       --bg-main: #f1f5f9;
@@ -29,7 +32,8 @@
       --whatsapp-color: #25d366;
       --whatsapp-dark: #128c7e;
       --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.05);
-      --radius-md: 14px;
+      --shadow-md: 0 8px 20px rgba(15, 23, 42, 0.08);
+      --radius-md: 16px;
     }
 
     * {
@@ -45,18 +49,24 @@
 
     body {
       background: #e2e8f0;
-      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-      background-size: 16px 16px;
+      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+      background-size: 18px 18px;
       color: var(--text-main);
-      padding: 6px;
+      padding: 8px;
       font-size: 14px;
       min-height: 100vh;
-      padding-bottom: 85px;
+      padding-bottom: 90px;
     }
 
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatAnim {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+      100% { transform: translateY(0px); }
     }
 
     @keyframes pulseGlow {
@@ -67,25 +77,25 @@
 
     #authOverlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(10px);
-      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 12px;
+      background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px);
+      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 16px;
     }
     .auth-card {
-      background: #ffffff; width: 100%; max-width: 380px; padding: 22px; border-radius: 18px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
+      background: #ffffff; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 16px;
       animation: fadeInUp 0.3s ease-out;
     }
-    .auth-title { font-size: 1.2rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
+    .auth-title { font-size: 1.25rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
 
     .container { max-width: 100%; width: 100%; display: none; margin: 0; padding: 0; }
 
     .card {
       background: var(--card-bg);
       border-radius: var(--radius-md);
-      padding: 14px;
+      padding: 16px;
       box-shadow: var(--shadow-sm);
-      border: 1px solid #e2e8f0;
-      margin-bottom: 10px;
+      border: 1.5px solid #e2e8f0;
+      margin-bottom: 12px;
       width: 100%;
       animation: fadeInUp 0.25s ease-out;
     }
@@ -93,59 +103,54 @@
     .card-header-styled {
       background: var(--primary-gradient);
       color: #ffffff;
-      padding: 12px 14px;
+      padding: 14px 16px;
       border-radius: 12px;
-      margin: -14px -14px 12px -14px;
+      margin: -16px -16px 14px -16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
     }
-    .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 1rem; font-weight: 800; }
+    .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 1.05rem; font-weight: 800; }
 
     .dashboard-floating-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      padding: 10px 0;
+      gap: 12px;
+      padding: 8px 0;
     }
 
     .floating-glass-btn {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-      border-radius: 22px;
-      padding: 20px 14px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: 18px;
+      padding: 20px 12px;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 14px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: right;
-      user-select: none;
-      min-height: 110px;
-    }
-    .floating-glass-btn:active {
-      transform: scale(0.97);
-      background: #f8fafc;
-      border-color: #cbd5e1;
-    }
-    .floating-glass-btn .icon-box {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      animation: floatAnim 4s ease-in-out infinite;
+      text-align: center;
+      user-select: none;
     }
-    .floating-glass-btn .title {
-      font-weight: 800;
-      font-size: 0.95rem;
-      color: #0f172a;
-      line-height: 1.4;
+    .floating-glass-btn:nth-child(2) { animation-delay: 0.6s; }
+    .floating-glass-btn:nth-child(3) { animation-delay: 1.2s; }
+    .floating-glass-btn:nth-child(4) { animation-delay: 1.8s; }
+    .floating-glass-btn:nth-child(5) { animation-delay: 2.4s; }
+
+    .floating-glass-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
+
+    .floating-glass-btn .icon { font-size: 2rem; }
+    .floating-glass-btn .title { font-weight: 800; font-size: 0.9rem; color: var(--primary-dark); }
 
     .nokia-nav-container {
       position: relative;
@@ -160,8 +165,8 @@
 
     .nokia-center-btn {
       position: absolute;
-      width: 92px;
-      height: 92px;
+      width: 96px;
+      height: 96px;
       border-radius: 50%;
       background: linear-gradient(135deg, #10b981 0%, #047857 100%);
       color: #ffffff;
@@ -170,7 +175,7 @@
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       text-align: center;
       box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
       border: 4px solid #ffffff;
@@ -192,7 +197,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 800;
       cursor: pointer;
       color: var(--primary-dark);
@@ -207,139 +212,174 @@
     .nokia-btn-bottom-right { bottom: 10px; right: 10px; border-radius: 16px 40px 16px 16px; }
     .nokia-btn-bottom-left { bottom: 10px; left: 10px; border-radius: 40px 16px 16px 16px; }
 
-    h3 { font-size: 1rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 10px; }
+    h3 { font-size: 1.05rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 10px; }
     .form-group { margin-bottom: 12px; }
     label { display: block; font-size: 0.88rem; font-weight: 700; margin-bottom: 5px; color: #334155; }
 
     input, select, textarea {
-      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-color); border-radius: 10px;
+      width: 100%; padding: 11px 14px; border: 1.5px solid var(--border-color); border-radius: 12px;
       font-size: 0.95rem; background: #ffffff; outline: none; transition: all 0.2s ease;
     }
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent-green-dark);
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
     }
-    textarea { resize: vertical; min-height: 70px; }
+    textarea { resize: vertical; min-height: 80px; }
 
-    .radio-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
     .btn-select-option {
-      flex: 1; min-width: 65px; padding: 9px 4px; text-align: center; background: #f1f5f9;
-      border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 0.88rem;
+      flex: 1; min-width: 70px; padding: 10px 6px; text-align: center; background: #f1f5f9;
+      border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 0.9rem;
       font-weight: 800; cursor: pointer; transition: all 0.2s ease; user-select: none; color: #475569;
     }
     .btn-select-option.selected-creditor {
       background: #ecfdf5 !important; border-color: var(--accent-green) !important; color: var(--accent-green-dark) !important;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
     }
     .btn-select-option.selected-debtor {
       background: #fef2f2 !important; border-color: var(--danger-color) !important; color: var(--danger-color) !important;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
     }
     .btn-select-option.selected-currency {
       background: #f0f9ff !important; border-color: var(--info-color) !important; color: var(--info-color) !important;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.2);
     }
 
     .btn {
-      padding: 9px 12px; background: var(--accent-green-dark); color: white; border: none;
-      border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 0.88rem;
+      padding: 10px 14px; background: var(--accent-green-dark); color: white; border: none;
+      border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 0.9rem;
       display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: all 0.15s ease; user-select: none;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); transition: all 0.15s ease; user-select: none;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-danger { background: var(--danger-color); }
-    .btn-secondary { background: #475569; }
-    .btn-warning { background: var(--warning-color); color: #fff; }
-    .btn-info { background: var(--info-color); }
-    .btn-whatsapp { background: var(--whatsapp-color); color: #ffffff; }
-    .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; box-shadow: none; }
+    .btn-danger { background: var(--danger-color); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
+    .btn-secondary { background: #475569; box-shadow: none; }
+    .btn-warning { background: var(--warning-color); color: #fff; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
+    .btn-info { background: var(--info-color); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2); }
+    .btn-whatsapp { background: var(--whatsapp-color); color: #ffffff; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25); }
+    .btn-whatsapp-dark { background: var(--whatsapp-dark); color: #ffffff; }
+    .btn-sm { padding: 7px 12px; font-size: 0.82rem; width: auto; box-shadow: none; }
 
     .floating-create-account-btn {
-      position: fixed; bottom: 18px; left: 18px; background: var(--accent-green-dark); color: white;
-      padding: 11px 20px; border-radius: 30px; font-weight: 800; font-size: 0.92rem;
-      box-shadow: 0 8px 20px rgba(5, 150, 105, 0.35); z-index: 5000; border: none; cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
+      position: fixed; bottom: 20px; left: 20px; background: var(--accent-green-dark); color: white;
+      padding: 12px 22px; border-radius: 30px; font-weight: 800; font-size: 0.95rem;
+      box-shadow: 0 10px 25px rgba(5, 150, 105, 0.4); z-index: 5000; border: none; cursor: pointer;
+      display: flex; align-items: center; gap: 8px; transition: transform 0.2s ease;
     }
+    .floating-create-account-btn:active { transform: scale(0.95); }
+
     .floating-save-bar {
-      position: sticky; bottom: -8px; background: #ffffff; padding: 10px 0 0 0;
+      position: sticky; bottom: -12px; background: #ffffff; padding: 12px 0 0 0;
       border-top: 1px solid var(--border-color); display: flex; gap: 8px; z-index: 10;
     }
+
     .floating-search-trigger {
-      position: fixed; bottom: 18px; right: 18px; width: 50px; height: 50px;
+      position: fixed; bottom: 20px; right: 20px; width: 52px; height: 52px;
       background: var(--primary-gradient); color: #ffffff; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35); z-index: 6000; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.4); z-index: 6000; cursor: pointer;
+      transition: transform 0.2s ease;
     }
+    .floating-search-trigger:active { transform: scale(0.92); }
 
     #searchDrawerModal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px);
-      z-index: 7000; display: none; justify-content: center; align-items: flex-start; padding: 10px;
+      background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px);
+      z-index: 7000; display: none; justify-content: center; align-items: flex-start; padding: 12px;
     }
     .search-drawer-card {
-      background: #ffffff; width: 100%; border-radius: 16px;
-      padding: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); margin-top: 10px;
+      background: #ffffff; width: 100%; border-radius: 18px;
+      padding: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); margin-top: 12px;
     }
 
-    .stats-grid { display: flex; flex-direction: column; gap: 8px; }
+    .stats-grid { display: flex; flex-direction: column; gap: 10px; }
     .stat-card {
-      background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 12px;
+      background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 12px 14px;
       box-shadow: var(--shadow-sm);
     }
-    .stat-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 3px; align-items: center; }
-    .stat-badge { text-align: center; padding: 6px 10px; border-radius: 8px; font-weight: 800; font-size: 0.92rem; margin-top: 6px; }
+    .stat-row { display: flex; justify-content: space-between; font-size: 0.92rem; margin-bottom: 4px; align-items: center; }
+    .stat-badge { text-align: center; padding: 8px 12px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; margin-top: 8px; }
 
     .account-item-card, .tx-item-card, .phone-item-card {
-      background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;
-      margin-bottom: 10px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 6px;
+      background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 14px;
+      margin-bottom: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px;
       cursor: pointer; user-select: none; transition: all 0.15s ease; width: 100%;
     }
+    .account-item-card:active, .tx-item-card:active, .phone-item-card:active { border-color: var(--accent-green-dark); background: #f8fafc; }
+
     .tx-item-card.tx-creditor { background: #f0fdf4; border-color: #a7f3d0; }
     .tx-item-card.tx-debtor { background: #fef2f2; border-color: #fecaca; }
 
     .account-item-header { display: flex; justify-content: space-between; align-items: center; }
-    .account-name-title { font-size: 1.05rem; font-weight: 900; color: var(--primary-dark); }
-    .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-    .back-home { display: block; text-align: center; margin-top: 14px; color: #475569; text-decoration: none; font-size: 0.8rem; font-weight: 700; }
-    .currency-badge { display: inline-block; padding: 3px 8px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.8rem; margin: 2px; font-weight: 800; }
+    .account-name-title { font-size: 1.1rem; font-weight: 900; color: var(--primary-dark); }
+
+    .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .back-home { display: block; text-align: center; margin-top: 16px; color: #475569; text-decoration: none; font-size: 0.85rem; font-weight: 700; }
+    .currency-badge { display: inline-block; padding: 4px 10px; background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.82rem; margin: 2px; font-weight: 800; }
+
     .view-section { display: none; }
     .view-section.active { display: block; }
 
     #syncIndicator {
-      position: fixed; bottom: 18px; left: 18px; background: var(--accent-green-dark); color: white;
-      padding: 7px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: 800;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.25); display: none; z-index: 8000;
+      position: fixed; bottom: 20px; left: 20px; background: var(--accent-green-dark); color: white;
+      padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25); display: none; z-index: 8000;
     }
-    .profile-img-preview { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-green); background: #ffffff; }
-    .receipt-img-preview { width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; border: 1.5px solid var(--border-color); margin-top: 8px; background: #ffffff; }
-    .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #f1f5f9; border-radius: 8px; margin-bottom: 6px; }
+
+    .profile-img-preview { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--accent-green); background: #ffffff; }
+    .receipt-img-preview { width: 100%; max-height: 240px; object-fit: contain; border-radius: 12px; border: 1.5px solid var(--border-color); margin-top: 8px; background: #ffffff; }
+    .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f1f5f9; border-radius: 10px; margin-bottom: 8px; border: 1px solid #e2e8f0; }
+
     .client-info-header-box {
       background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
+
     #deleteConfirmModal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px);
-      z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
+      background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px);
+      z-index: 99999; display: none; justify-content: center; align-items: center; padding: 16px;
     }
+
     .batch-summary-card {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: #ffffff; padding: 12px; border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow-sm);
+      color: #ffffff;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
     }
+
     .deleted-account-badge {
-      display: inline-block; background: #fef2f2; color: #ef4444; border: 1px solid #fecaca;
-      padding: 2px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 800;
+      display: inline-block;
+      background: #fef2f2;
+      color: #ef4444;
+      border: 1px solid #fecaca;
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 800;
     }
   </style>
 </head>
 <body>
 
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
+
   <div class="floating-search-trigger" onclick="playInteractionEffect(); openSearchDrawer()" title="جستجوی سریع">🔍</div>
 
   <!-- مودال تأییدیه امنیتی حذف -->
   <div id="deleteConfirmModal">
-    <div class="card" style="width:100%; max-width:340px; text-align:center; margin:0;">
-      <h3 style="color: var(--danger-color); margin-bottom: 10px;">⚠️ هشدار حذف</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 16px;" id="deleteConfirmText">آیا از حذف این مورد اطمینان دارید؟ این عملیات غیرقابل بازگشت است.</p>
-      <div class="flex-row" style="gap: 8px;">
+    <div class="card" style="width:100%; max-width:350px; text-align:center; margin:0;">
+      <h3 style="color: var(--danger-color); margin-bottom: 12px;">⚠️ هشدار حذف</h3>
+      <p style="font-size: 0.92rem; color: #475569; margin-bottom: 18px;" id="deleteConfirmText">آیا از حذف این مورد اطمینان دارید؟ این عملیات غیرقابل بازگشت است.</p>
+      <div class="flex-row" style="gap: 10px;">
         <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeDeleteConfirmModal()">انصراف</button>
         <button class="btn btn-danger btn-sm" style="flex:1;" id="confirmDeleteYesBtn">بله، حذف شود</button>
       </div>
@@ -349,14 +389,14 @@
   <!-- کشوی جستجو -->
   <div id="searchDrawerModal" onclick="closeSearchDrawerOnBack(event)">
     <div class="search-drawer-card" onclick="event.stopPropagation()">
-      <div class="flex-row" style="justify-content: space-between; margin-bottom: 8px;">
+      <div class="flex-row" style="justify-content: space-between; margin-bottom: 10px;">
         <h3>🔍 جستجوی هوشمند</h3>
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeSearchDrawer()">✕ بستن</button>
       </div>
       <div class="form-group" style="margin-bottom: 0;">
         <input type="text" id="drawerSearchInput" placeholder="نام مشتری، تلفن، کُد حساب یا کد تراکنش..." oninput="handleDrawerSearch()">
       </div>
-      <div id="drawerSearchResults" style="margin-top: 8px; max-height: 60vh; overflow-y: auto;"></div>
+      <div id="drawerSearchResults" style="margin-top: 10px; max-height: 60vh; overflow-y: auto;"></div>
     </div>
   </div>
 
@@ -386,43 +426,43 @@
 
         <div class="dashboard-floating-grid" style="grid-template-columns: repeat(2, 1fr);">
           <div class="floating-glass-btn" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">
-            <div class="icon-box" style="background: #eff6ff; color: #3b82f6;">📊</div>
+            <span class="icon">📊</span>
             <span class="title">آمارها و گزارشات کلی</span>
           </div>
 
           <div class="floating-glass-btn" onclick="playInteractionEffect(); switchView('viewAccounts')">
-            <div class="icon-box" style="background: #f0fdf4; color: #10b981;">👥</div>
+            <span class="icon">👥</span>
             <span class="title">لیست کامل حساب‌ها</span>
           </div>
 
           <div class="floating-glass-btn" onclick="playInteractionEffect(); openAllTransactionsPage()">
-            <div class="icon-box" style="background: #fef3c7; color: #d97706;">📜</div>
+            <span class="icon">📜</span>
             <span class="title">دفتر کل تراکنش‌های سیستم</span>
           </div>
 
           <div class="floating-glass-btn" onclick="playInteractionEffect(); openPhoneDirectoryPage()">
-            <div class="icon-box" style="background: #f0fdf4; color: #059669;">📞</div>
+            <span class="icon">📞</span>
             <span class="title">دفترچه و بانک شماره‌ها</span>
           </div>
 
           <div class="floating-glass-btn" onclick="playInteractionEffect(); openOpTypeManagerModal()">
-            <div class="icon-box" style="background: #f1f5f9; color: #475569;">⚙️</div>
+            <span class="icon">⚙️</span>
             <span class="title">مدیریت انواع عملیات</span>
           </div>
 
           <div class="floating-glass-btn" id="superAdminMenuBtn" style="display:none;" onclick="playInteractionEffect(); openAdminManagerModal()">
-            <div class="icon-box" style="background: #fef2f2; color: #dc2626;">🛡️</div>
+            <span class="icon">🛡️</span>
             <span class="title">مدیریت ادمین‌های همکار</span>
           </div>
 
-          <div class="floating-glass-btn" id="masterSettingsMenuBtn" style="display:none; background: #fffbeb; border-color: #fde68a;" onclick="playInteractionEffect(); openMasterSettingsModal()">
-            <div class="icon-box" style="background: #fef3c7; color: #b45309;">⚙️</div>
+          <div class="floating-glass-btn" id="masterSettingsMenuBtn" style="display:none; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;" onclick="playInteractionEffect(); openMasterSettingsModal()">
+            <span class="icon">⚙️</span>
             <span class="title" style="color: #92400e;">تنظیمات و توکن مالک</span>
           </div>
 
-          <div class="floating-glass-btn" id="ownerBrokerMenuBtn" style="grid-column: span 2; min-height: 90px; flex-direction: row; align-items: center;" onclick="playInteractionEffect(); handleBrokerNavigation()">
-            <div class="icon-box" style="background: #e0f2fe; color: #0284c7;">🏢</div>
-            <span class="title" style="font-size: 1rem;">مدیریت کارگزاری‌ها و دفاتر همکار</span>
+          <div class="floating-glass-btn" id="ownerBrokerMenuBtn" style="grid-column: span 2;" onclick="playInteractionEffect(); handleBrokerNavigation()">
+            <span class="icon">🏢</span>
+            <span class="title">مدیریت کارگزاری‌ها و دفاتر همکار</span>
           </div>
         </div>
       </div>
@@ -435,12 +475,12 @@
           <h3>📊 آمار و گزارشات کلی سیستم</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
-        <h3 style="font-size:0.95rem; margin-bottom:6px;">موجودی‌های فعال (مانده زنده)</h3>
+        <h3 style="font-size:0.95rem; margin-bottom:8px;">موجودی‌های فعال (مانده زنده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
       </div>
       <div class="card">
         <h3>🚀 منوی گزارشات تفکیکی</h3>
-        <div class="flex-row" style="gap: 8px; flex-direction: column;">
+        <div class="flex-row" style="gap: 10px; flex-direction: column;">
           <button class="btn btn-info" onclick="playInteractionEffect(); openTransfersReport()">📜 آمار و لیست حواله‌ها / انتقال‌ها</button>
           <button class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های بدهکار (انتخاب چندتایی)</button>
           <button class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های بستانکار (انتخاب چندتایی)</button>
@@ -455,11 +495,13 @@
           <h3>📞 بانک کامل شماره‌ها و مخاطبین</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
-        <div class="form-group" style="position: relative; margin-bottom: 10px;">
-          <input type="text" id="searchPhoneInput" placeholder="🔍 جستجو در شماره‌ها، اسامی یا کُد حساب..." oninput="filterPhonesDirectory()" style="padding-left: 35px;">
-          <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.9rem; cursor: pointer; color: #64748b; display: none;">✕</button>
+
+        <div class="form-group" style="position: relative; margin-bottom: 12px;">
+          <input type="text" id="searchPhoneInput" placeholder="🔍 جستجو در شماره‌ها، اسامی یا کُد حساب..." oninput="filterPhonesDirectory()" style="padding-left: 38px;">
+          <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
         </div>
-        <div id="phoneDirectorySummary" class="stat-card" style="background:#f0f9ff; border-color:var(--info-color); margin-bottom:10px;"></div>
+
+        <div id="phoneDirectorySummary" class="stat-card" style="background:#f0f9ff; border-color:var(--info-color); margin-bottom:12px;"></div>
         <div id="phoneDirectoryContainer"></div>
       </div>
     </div>
@@ -474,15 +516,18 @@
             <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
           </div>
         </div>
-        <div class="form-group" style="margin-bottom: 8px;">
-          <label style="font-size: 0.82rem; color: #475569;">فیلتر بر اساس حساب مشتری:</label>
+
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label style="font-size: 0.85rem; color: #475569;">فیلتر بر اساس حساب مشتری:</label>
           <select id="globalLedgerAccountFilter" onchange="renderGlobalTransactionsList()">
             <option value="all">📁 همه حساب‌ها (نمایش کامل)</option>
           </select>
         </div>
-        <div class="form-group" style="margin-bottom: 10px;">
+
+        <div class="form-group" style="margin-bottom: 12px;">
           <input type="text" id="globalLedgerSearchInput" placeholder="🔍 جستجو در دفتر کل (مبلغ، شرح یا کُد)..." oninput="renderGlobalTransactionsList()">
         </div>
+
         <div id="globalTransactionsListContainer"></div>
       </div>
     </div>
@@ -504,45 +549,57 @@
             <option value="custom">📅 انتخاب تاریخ مشخص (از ... تا ...)</option>
           </select>
         </div>
-        <div id="customDateRangeBox" style="display: none; background: #f8fafc; border: 1px solid var(--border-color); padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-          <div class="flex-row" style="gap: 8px;">
-            <div style="flex:1;"><label style="font-size: 0.8rem;">از تاریخ:</label><input type="date" id="startDateFilter" onchange="renderTransfersReport()"></div>
-            <div style="flex:1;"><label style="font-size: 0.8rem;">تا تاریخ:</label><input type="date" id="endDateFilter" onchange="renderTransfersReport()"></div>
+
+        <div id="customDateRangeBox" style="display: none; background: #f8fafc; border: 1.5px solid var(--border-color); padding: 12px; border-radius: 12px; margin-bottom: 12px;">
+          <div class="flex-row" style="gap: 10px;">
+            <div style="flex:1;">
+              <label style="font-size: 0.82rem;">از تاریخ:</label>
+              <input type="date" id="startDateFilter" onchange="renderTransfersReport()">
+            </div>
+            <div style="flex:1;">
+              <label style="font-size: 0.82rem;">تا تاریخ:</label>
+              <input type="date" id="endDateFilter" onchange="renderTransfersReport()">
+            </div>
           </div>
         </div>
-        <div id="transferSummaryHeader" class="stat-card" style="background:#ecfdf5; border-color:var(--accent-green-dark); margin-bottom:8px;"></div>
+
+        <div id="transferSummaryHeader" class="stat-card" style="background:#ecfdf5; border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
         <div id="transfersReportContainer"></div>
       </div>
     </div>
 
-    <!-- گزارش بدهکاران -->
+    <!-- گزارش بدهکاران با قابلیت انتخاب چندتایی -->
     <div id="viewDebtorsReport" class="view-section">
       <div class="card">
         <div class="card-header-styled">
           <h3>🔴 لیست و فیلتر بدهکاران (انتخاب چندتایی)</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
+
         <div id="debtorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
-          <h4 style="margin-bottom:6px; font-size:0.95rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
+          <h4 style="margin-bottom:8px; font-size:0.98rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
           <div id="debtorsBatchSummaryContent"></div>
         </div>
-        <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:var(--danger-color); margin-bottom:8px;"></div>
+
+        <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:var(--danger-color); margin-bottom:10px;"></div>
         <div id="debtorsContainer"></div>
       </div>
     </div>
 
-    <!-- گزارش بستانکاران -->
+    <!-- گزارش بستانکاران با قابلیت انتخاب چندتایی -->
     <div id="viewCreditorsReport" class="view-section">
       <div class="card">
         <div class="card-header-styled">
           <h3>🟢 لیست و فیلتر بستانکاران (انتخاب چندتایی)</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
+
         <div id="creditorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
-          <h4 style="margin-bottom:6px; font-size:0.95rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
+          <h4 style="margin-bottom:8px; font-size:0.98rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
           <div id="creditorsBatchSummaryContent"></div>
         </div>
-        <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:var(--accent-green-dark); margin-bottom:8px;"></div>
+
+        <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
         <div id="creditorsContainer"></div>
       </div>
     </div>
@@ -555,12 +612,15 @@
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
         <div class="form-group" style="position: relative;">
-          <input type="text" id="searchAccountInput" placeholder="🔍 جستجو در حساب‌ها..." oninput="advancedSearchAccounts()" style="padding-left: 35px;">
-          <button type="button" id="clearSearchBtn" onclick="playInteractionEffect(); clearAccountSearch()" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.9rem; cursor: pointer; color: #64748b; display: none;">✕</button>
+          <input type="text" id="searchAccountInput" placeholder="🔍 جستجو در حساب‌ها..." oninput="advancedSearchAccounts()" style="padding-left: 38px;">
+          <button type="button" id="clearSearchBtn" onclick="playInteractionEffect(); clearAccountSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
         </div>
-        <div id="accountsListContainer" style="margin-top: 8px;"></div>
+        <div id="accountsListContainer" style="margin-top: 10px;"></div>
       </div>
-      <button class="floating-create-account-btn" onclick="playInteractionEffect(); openAccountModal()"><span>➕ ایجاد حساب جدید</span></button>
+
+      <button class="floating-create-account-btn" onclick="playInteractionEffect(); openAccountModal()">
+        <span>➕ ایجاد حساب جدید</span>
+      </button>
     </div>
 
     <!-- جزئیات حساب مشتری -->
@@ -573,29 +633,40 @@
           </div>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewAccounts')">← حساب‌ها</button>
         </div>
+
         <div class="client-info-header-box" id="clientFullDetailsBox"></div>
+
         <div class="stats-grid" id="accountStatsGrid"></div>
 
         <div class="nokia-nav-container">
           <button class="nokia-center-btn" onclick="playInteractionEffect(); openAddTransactionModal()">
-            <span style="font-size:1.3rem;">➕</span><span>ثبت تراکنش</span>
+            <span style="font-size:1.35rem;">➕</span>
+            <span>ثبت تراکنش</span>
           </button>
+
           <button class="nokia-corner-btn nokia-btn-top-right" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">
-            <span style="font-size:1.2rem; color:var(--whatsapp-color);">💬</span><span>بیلان واتساپ</span>
+            <span style="font-size:1.25rem; color:var(--whatsapp-color);">💬</span>
+            <span>بیلان واتساپ</span>
           </button>
+
           <button class="nokia-corner-btn nokia-btn-top-left" onclick="playInteractionEffect(); openCustomMessageModal()">
-            <span style="font-size:1.2rem; color:var(--info-color);">✉️</span><span>ارسال پیام</span>
+            <span style="font-size:1.25rem; color:var(--info-color);">✉️</span>
+            <span>ارسال پیام</span>
           </button>
+
           <button class="nokia-corner-btn nokia-btn-bottom-right" onclick="playInteractionEffect(); openEditAccountModal()">
-            <span style="font-size:1.2rem; color:var(--warning-color);">✏️</span><span>ویرایش حساب</span>
+            <span style="font-size:1.25rem; color:var(--warning-color);">✏️</span>
+            <span>ویرایش حساب</span>
           </button>
+
           <button class="nokia-corner-btn nokia-btn-bottom-left" onclick="playInteractionEffect(); confirmDeleteAccountModal()">
-            <span style="font-size:1.2rem; color:var(--danger-color);">🗑️</span><span>حذف حساب</span>
+            <span style="font-size:1.25rem; color:var(--danger-color);">🗑️</span>
+            <span>حذف حساب</span>
           </button>
         </div>
 
-        <h3 style="margin-top: 14px;">📜 تراکنش‌های این حساب</h3>
-        <div id="transactionsListContainer" style="margin-top: 8px;"></div>
+        <h3 style="margin-top: 16px;">📜 تراکنش‌های این حساب</h3>
+        <div id="transactionsListContainer" style="margin-top: 10px;"></div>
       </div>
     </div>
 
@@ -607,7 +678,7 @@
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); selectAccount(currentAccountId, currentAccountName)">← بازگشت</button>
         </div>
         <div id="txDetailCard"></div>
-        <div style="margin-top: 10px;" id="txActionButtonsContainer"></div>
+        <div style="margin-top: 12px;" id="txActionButtonsContainer"></div>
       </div>
     </div>
 
@@ -615,11 +686,13 @@
   </div>
 
   <!-- مودال پیام سفارشی -->
-  <div id="customMessageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:10px;">
+  <div id="customMessageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); backdrop-filter: blur(6px); justify-content:center; align-items:center; z-index:9600; padding:12px;">
     <div class="card" style="width: 100%; margin: 0; max-height:90vh; overflow-y:auto;">
       <h3>✉️ ارسال پیام دستی به مشتری</h3>
-      <p style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
-      <div class="form-group"><textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 110px;"></textarea></div>
+      <p style="font-size:0.88rem; color:#64748b; margin-bottom:12px;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
+      <div class="form-group">
+        <textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 120px;"></textarea>
+      </div>
       <div class="flex-row" style="justify-content: flex-end; gap:8px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeCustomMessageModal()">انصراف</button>
         <button class="btn btn-whatsapp btn-sm" onclick="playInteractionEffect(); sendCustomWhatsAppMessage()">📲 ارسال به واتساپ</button>
@@ -628,14 +701,17 @@
   </div>
 
   <!-- مودال تنظیمات و توکن مالک -->
-  <div id="masterSettingsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9650; padding:10px;">
-    <div class="card" style="width: 100%; margin: 0; max-width: 420px; max-height:90vh; overflow-y:auto;">
+  <div id="masterSettingsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); backdrop-filter: blur(6px); justify-content:center; align-items:center; z-index:9650; padding:12px;">
+    <div class="card" style="width: 100%; margin: 0; max-width: 440px; max-height:90vh; overflow-y:auto;">
       <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
+      <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 14px;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را ویرایش و به‌روزرسانی کنید.</p>
+      
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توکن ربات..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
-      <div class="flex-row" style="justify-content: flex-end; gap:8px; margin-top: 14px;">
+      
+      <div class="flex-row" style="justify-content: flex-end; gap:8px; margin-top: 16px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
         <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
       </div>
@@ -643,20 +719,23 @@
   </div>
 
   <!-- مودال ثبت / ویرایش تراکنش -->
-  <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
+  <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); backdrop-filter: blur(6px); justify-content:center; align-items:center; z-index:9500; padding:12px;">
     <div class="card" style="width: 100%; margin: 0; max-height:94vh; overflow-y:auto; position:relative;">
-      <h3 id="txModalTitle" style="margin-bottom:10px;">ثبت تراکنش جدید</h3>
+      <h3 id="txModalTitle" style="margin-bottom:12px;">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
+
       <div class="form-group"><label>۱. تاریخ تراکنش:</label><input type="date" id="txDateInput"></div>
+
       <div class="form-group">
-        <label>۲. جهت تراکنش:</label>
+        <label>۲. جهت تراکنش (حتماً انتخاب کنید):</label>
         <div class="radio-group">
           <div class="btn-select-option" id="btnDirCreditor" onclick="selectTxDirection('بستانکار')">بستانکار (+)</div>
           <div class="btn-select-option" id="btnDirDebtor" onclick="selectTxDirection('بدهکار')">بدهکار (-)</div>
         </div>
       </div>
+
       <div class="form-group">
-        <label>۳. واحد پول / ارز:</label>
+        <label>۳. واحد پول / ارز (حتماً انتخاب کنید):</label>
         <div class="radio-group">
           <div class="btn-select-option btn-curr-opt" id="btnCurrAFN" onclick="selectTxCurrency('AFN')">AFN</div>
           <div class="btn-select-option btn-curr-opt" id="btnCurrUSD" onclick="selectTxCurrency('USD')">USD</div>
@@ -664,10 +743,16 @@
           <div class="btn-select-option btn-curr-opt" id="btnCurrTom" onclick="selectTxCurrency('تومان')">تومان</div>
         </div>
       </div>
-      <div class="form-group"><label>۴. مبلغ تراکنش:</label><input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.15rem; color:var(--accent-green-dark);"></div>
-      <div class="form-group"><label>۵. توضیحات / شرح تراکنش:</label><textarea id="txDesc" placeholder="توضیحات تراکنش..."></textarea></div>
+
+      <div class="form-group">
+        <label>۴. مبلغ تراکنش:</label>
+        <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.2rem; color:var(--accent-green-dark);">
+      </div>
+
+      <div class="form-group"><label>۵. توضیحات / شرح تراکنش (رسید انتقال):</label><textarea id="txDesc" placeholder="توضیحات تراکنش یا شرح حواله..."></textarea></div>
       <div class="form-group"><label>۶. نوع عملیات:</label><select id="txOpType"></select></div>
       <div class="form-group"><label>۷. تصویر رسید:</label><input type="file" id="txReceiptInput" accept="image/*"><input type="hidden" id="existingReceiptUrl"></div>
+
       <div class="floating-save-bar">
         <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeTransactionModal()">انصراف</button>
         <button class="btn btn-sm" style="flex:2;" onclick="playInteractionEffect(); submitTransaction()">💾 ثبت و ذخیره تراکنش</button>
@@ -675,65 +760,76 @@
     </div>
   </div>
 
-  <!-- مودال انتخاب حساب جهت ثبت تراکنش -->
-  <div id="globalSelectAccountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9450; padding:10px;">
+  <!-- مودال انتخاب حساب قابل جستجو جهت ثبت تراکنش از دفتر کل -->
+  <div id="globalSelectAccountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); backdrop-filter: blur(6px); justify-content:center; align-items:center; z-index:9450; padding:12px;">
     <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
-      <div class="flex-row" style="justify-content:space-between; margin-bottom:8px;">
+      <div class="flex-row" style="justify-content:space-between; margin-bottom:10px;">
         <h3>👤 انتخاب حساب مشتری</h3>
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">✕ بستن</button>
       </div>
-      <div class="form-group"><input type="text" id="globalAccountPickerInput" placeholder="🔍 جستجوی سریع نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()"></div>
+      <div class="form-group">
+        <input type="text" id="globalAccountPickerInput" placeholder="🔍 جستجوی سریع نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()">
+      </div>
       <div id="globalAccountPickerList" style="max-height:55vh; overflow-y:auto;"></div>
     </div>
   </div>
 
   <!-- مودال مدیریت انواع عملیات -->
-  <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
+  <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); backdrop-filter: blur(6px); justify-content:center; align-items:center; z-index:9500; padding:12px;">
     <div class="card" style="width: 100%; margin: 0; max-height:90vh; overflow-y:auto;">
       <h3>⚙️ مدیریت انواع عملیات</h3>
-      <div class="form-group" style="margin-top:8px;">
+      <div class="form-group" style="margin-top:10px;">
         <label>عنوان عملیات جدید:</label>
         <div class="flex-row">
-          <input type="text" id="newOpTypeInput" placeholder="مثلاً: حواله، امانت...">
+          <input type="text" id="newOpTypeInput" placeholder="مثلاً: حواله، امانت، کمیسیون...">
           <button class="btn btn-sm" style="width: auto;" onclick="playInteractionEffect(); addNewOperationType()">+ افزودن</button>
         </div>
       </div>
-      <hr style="margin: 8px 0;">
+      <hr style="margin: 10px 0;">
       <label>لیست انواع عملیات فعال:</label>
-      <div id="opTypesListContainer" style="margin-top:6px;"></div>
-      <div class="flex-row" style="justify-content: flex-end; margin-top:8px;"><button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeOpTypeManagerModal()">بستن</button></div>
+      <div id="opTypesListContainer" style="margin-top:8px;"></div>
+      <div class="flex-row" style="justify-content: flex-end; margin-top:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeOpTypeManagerModal()">بستن</button>
+      </div>
     </div>
   </div>
 
   <!-- مودال مدیریت ادمین‌های همکار -->
-  <div id="adminManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:10px;">
+  <div id="adminManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); backdrop-filter: blur(6px); justify-content:center; align-items:center; z-index:9600; padding:12px;">
     <div class="card" style="width: 100%; margin: 0; max-height:90vh; overflow-y:auto;">
       <h3 id="adminModalMainTitle">🛡️ ایجاد و مدیریت ادمین‌های همکار</h3>
       <input type="hidden" id="editAdminId">
+      <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 12px;">در این بخش می‌توانید برای همکاران ایمیل، رمز عبور، توکن ربات و چت‌آیدی اختصاصی بسازید.</p>
+      
       <div class="form-group"><label>نام ادمین / همکار:</label><input type="text" id="newAdminName" placeholder="نام ادمین..."></div>
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
-      <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="توکن..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="چت‌آیدی..."></div>
-      <div class="flex-row" style="gap:8px; margin-bottom:12px;">
-        <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت ادمین جدید</button>
+      <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="123456:ABC-DEF..."></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="802655440"></div>
+      
+      <div class="flex-row" style="gap:8px; margin-bottom:14px;">
+        <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
         <button class="btn btn-secondary btn-sm" style="flex:1; display:none;" id="adminCancelEditBtn" onclick="playInteractionEffect(); cancelEditAdmin()">انصراف</button>
       </div>
-      <hr style="margin: 10px 0;">
-      <label><b>لیست ادمین‌های همکار:</b></label>
-      <div id="adminsListContainer" style="margin-top:6px;"></div>
-      <div class="flex-row" style="justify-content: flex-end; margin-top:10px;"><button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAdminManagerModal()">بستن</button></div>
+
+      <hr style="margin: 12px 0;">
+      <label><b>لیست ادمین‌های همکار فعال در سیستم:</b></label>
+      <div id="adminsListContainer" style="margin-top:8px;"></div>
+
+      <div class="flex-row" style="justify-content: flex-end; margin-top:12px;">
+        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAdminManagerModal()">بستن</button>
+      </div>
     </div>
   </div>
 
   <!-- مودال حساب جدید / ویرایش حساب -->
-  <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
+  <div id="accountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); backdrop-filter: blur(6px); justify-content:center; align-items:center; z-index:9500; padding:12px;">
     <div class="card" style="width: 100%; margin: 0; max-height:90vh; overflow-y:auto;">
       <h3 id="modalAccountTitle">حساب جدید</h3>
       <input type="hidden" id="editAccountId">
       <div class="form-group"><label>نام مشتری:</label><input type="text" id="modalAccountName" placeholder="نام مشتری..."></div>
       <div class="form-group"><label>تلفن:</label><input type="text" id="modalAccountPhone" dir="ltr" placeholder="07..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام مشتری:</label><input type="text" id="modalAccountChatId" dir="ltr" placeholder="چت‌آیدی..."></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام مشتری:</label><input type="text" id="modalAccountChatId" dir="ltr" placeholder="چت‌آیدی جهت ارسال خودکار تراکنش‌ها..."></div>
       <div class="form-group"><label>عکس صاحب حساب:</label><input type="file" id="modalAccountPhotoInput" accept="image/*"><input type="hidden" id="existingAccountPhotoUrl"></div>
       <div class="flex-row" style="justify-content: flex-end; gap:8px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAccountModal()">انصراف</button>
@@ -742,6 +838,7 @@
     </div>
   </div>
 
+  <!-- کدهای جاوااسکریپت برنامه -->
   <script>
     const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
     const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
@@ -753,64 +850,125 @@
     let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || "802655440";
     const MASTER_ADMIN_ID = "master_owner";
 
-    let allAccounts = [], allTransactions = [], allAdmins = [], phoneArchiveList = [];
+    let allAccounts = [];
+    let allTransactions = [];
+    let allAdmins = [];
+    let phoneArchiveList = [];
     let customOpTypes = ["امانت", "حواله", "انتقال", "دریافت", "پرداخت", "تسویه"];
-    let currentAccountId = null, currentAccountName = "", selectedTxId = null;
-    let selectedDirectionValue = null, selectedCurrencyValue = null, currentLoggedInAdmin = null;
-    let selectedDebtorsMap = {}, selectedCreditorsMap = {};
+    let currentAccountId = null;
+    let currentAccountName = "";
+    let selectedTxId = null;
+
+    let selectedDirectionValue = null;
+    let selectedCurrencyValue = null;
+    let currentLoggedInAdmin = null;
+
+    let selectedDebtorsMap = {};
+    let selectedCreditorsMap = {};
 
     function formatEnNum(str) {
       if (str === null || str === undefined) return '';
-      return String(str).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+      return String(str)
+        .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+        .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
     }
+
     function formatEnMoney(amount) {
       let num = parseFloat(amount);
       if (isNaN(num)) return '0';
       return formatEnNum(num.toLocaleString('en-US'));
     }
+
     function playInteractionEffect() {
       if (navigator.vibrate) { navigator.vibrate(20); }
+      try {
+        let ctx = new (window.AudioContext || window.webkitAudioContext)();
+        let osc = ctx.createOscillator();
+        let gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(550, ctx.currentTime);
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch(e) {}
     }
+
     function handleBrokerNavigation() {
-      try { window.location.href = 'broker.html'; } catch(e) { alert("صفحه کارگزاری‌ها در دسترس نیست."); }
+      try {
+        window.location.href = 'broker.html';
+      } catch(e) {
+        alert("صفحه مدیریت کارگزاری‌ها در این بخش در دسترس نیست.");
+      }
     }
+
     async function sendTelegramMessage(botToken, chatId, messageText) {
       if (!botToken || !chatId) return;
       try {
-        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+        await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: 'Markdown' })
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: messageText,
+            parse_mode: 'Markdown'
+          })
         });
-      } catch (err) {}
+      } catch (err) {
+        console.log("خطا در ارسال تلگرام:", err);
+      }
     }
+
     function getCurrentAdminTokenAndChat() {
-      if (!currentLoggedInAdmin || currentLoggedInAdmin.id === MASTER_ADMIN_ID) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
+        return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      }
       let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
-      return {
-        token: found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN,
-        chatId: found ? String(getVal(found, ['ChatID', 'chatid']) || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID
-      };
+      let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
+      let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
+      return { token, chatId };
     }
+
     function openMasterSettingsModal() {
       document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
       document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
       document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
       document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
       document.getElementById("masterSettingsModal").style.display = "flex";
-      window.history.pushState({ modal: "masterSettingsModal" }, '');
+      pushModalHistory("masterSettingsModal");
     }
-    function closeMasterSettingsModal() { document.getElementById("masterSettingsModal").style.display = "none"; }
+
+    function closeMasterSettingsModal() {
+      document.getElementById("masterSettingsModal").style.display = "none";
+    }
+
     function saveMasterSettings() {
       let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
       let pin = document.getElementById("masterPinInput").value.trim();
       let token = document.getElementById("masterTokenInput").value.trim();
       let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
-      if (!email || !pin) { alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد."); return; }
-      MASTER_ADMIN_EMAIL = email; MASTER_ADMIN_PIN = pin; MASTER_ADMIN_TOKEN = token; MASTER_ADMIN_CHATID = chatId;
-      localStorage.setItem("masterEmail", email); localStorage.setItem("masterPin", pin);
-      localStorage.setItem("masterToken", token); localStorage.setItem("masterChatId", chatId);
-      closeMasterSettingsModal(); alert("✅ تنظیمات مالک ذخیره شد!");
+
+      if (!email || !pin) {
+        alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
+        return;
+      }
+
+      MASTER_ADMIN_EMAIL = email;
+      MASTER_ADMIN_PIN = pin;
+      MASTER_ADMIN_TOKEN = token;
+      MASTER_ADMIN_CHATID = chatId;
+
+      localStorage.setItem("masterEmail", email);
+      localStorage.setItem("masterPin", pin);
+      localStorage.setItem("masterToken", token);
+      localStorage.setItem("masterChatId", chatId);
+
+      closeMasterSettingsModal();
+      alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
     }
 
     function getSystemGlobalBalanceText() {
@@ -820,14 +978,17 @@
         if(!accId) return;
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
         let accCurrencies = {};
+
         accTxs.forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
         });
+
         for(let curr in accCurrencies) {
           let net = accCurrencies[curr];
           if(net !== 0) {
@@ -837,9 +998,11 @@
           }
         }
       });
+
       let parts = [];
       for(let curr in totalsByCurrency) {
-        let cred = totalsByCurrency[curr].credSum, deb = totalsByCurrency[curr].debSum;
+        let cred = totalsByCurrency[curr].credSum;
+        let deb = totalsByCurrency[curr].debSum;
         let finalNet = cred - deb;
         let status = finalNet > 0 ? `بستانکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}` : `بدهکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}`;
         parts.push(`🔹 ${curr} ➔ کل بستانکاری: ${formatEnMoney(cred)} | کل بدهکاری: ${formatEnMoney(deb)} | *مانده: ${status}*`);
@@ -858,32 +1021,48 @@
         if(dir.includes("بستانکار")) currs[curr].credit += amt;
         if(dir.includes("بدهکار")) currs[curr].debit += amt;
       });
+
       let textParts = [];
       for(let curr in currs) {
-        let cred = currs[curr].credit, deb = currs[curr].debit, net = cred - deb;
+        let cred = currs[curr].credit;
+        let deb = currs[curr].debit;
+        let net = cred - deb;
         let status = net > 0 ? `بستانکار (+): ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار (-): ${formatEnMoney(Math.abs(net))} ${curr}` : `تسویه کامل (0)`);
         textParts.push(`🔹 *واحد ارز: ${curr}*\n  ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}\n  ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}\n  📌 *وضعیت مانده: ${status}*`);
       }
       return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
 
+    function pushModalHistory(modalId) {
+      window.history.pushState({ modal: modalId }, '');
+    }
+
     window.onload = async function() {
       let savedSession = localStorage.getItem("adminAuthSessionData");
       let savedArchive = localStorage.getItem("phoneArchiveData");
-      if (savedArchive) { try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {} }
+      if (savedArchive) {
+        try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {}
+      }
 
       if (savedSession) {
         try {
           currentLoggedInAdmin = JSON.parse(savedSession);
           document.getElementById("authOverlay").style.display = "none";
           document.getElementById("adminContainer").style.display = "block";
+          
           if (currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase()) {
             document.getElementById("superAdminMenuBtn").style.display = "flex";
             document.getElementById("masterSettingsMenuBtn").style.display = "flex";
+          } else {
+            document.getElementById("superAdminMenuBtn").style.display = "none";
+            document.getElementById("masterSettingsMenuBtn").style.display = "none";
           }
           document.getElementById("ownerBrokerMenuBtn").style.display = "flex";
+
           await loadDataFromSupabase(true);
-        } catch(e) { localStorage.removeItem("adminAuthSessionData"); }
+        } catch(e) {
+          localStorage.removeItem("adminAuthSessionData");
+        }
       }
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
@@ -898,19 +1077,27 @@
         if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
         if (document.getElementById('deleteConfirmModal').style.display === 'flex') { closeDeleteConfirmModal(); return; }
 
-        if (event.state && event.state.view) { switchView(event.state.view, false); }
-        else { switchView('viewDashboard', false); }
+        if (event.state && event.state.view) {
+          switchView(event.state.view, false);
+        } else {
+          switchView('viewDashboard', false);
+        }
       };
     };
 
     async function handleLogin() {
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
       const pin = document.getElementById("loginPin").value.trim();
-      if (!email || !pin) { alert("لطفاً ایمیل و رمز عبور را وارد کنید."); return; }
+
+      if (!email || !pin) {
+        alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
+        return;
+      }
 
       if (email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
         currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "محمد شریف کریمی (مالک)", email: MASTER_ADMIN_EMAIL };
         localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+        
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
         document.getElementById("superAdminMenuBtn").style.display = "flex";
@@ -929,9 +1116,14 @@
             let admPin = String(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '').trim();
             return admEmail === email && admPin === pin;
           });
+
           if (foundAdmin) {
-            currentLoggedInAdmin = { id: String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || foundAdmin.id), name: String(getVal(foundAdmin, ['Name', 'name']) || 'همکار'), email: email };
+            let adminId = String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || foundAdmin.id);
+            let adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'همکار');
+
+            currentLoggedInAdmin = { id: adminId, name: adminName, email: email };
             localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("adminContainer").style.display = "block";
             document.getElementById("superAdminMenuBtn").style.display = "none";
@@ -941,11 +1133,18 @@
             return;
           }
         }
-      } catch(e) {}
+      } catch(e) {
+        console.log("خطا در بررسی ادمین‌ها:", e);
+      }
+
       alert("ایمیل یا رمز عبور اشتباه است!");
     }
 
-    function handleLogout() { localStorage.removeItem("adminAuthSessionData"); location.reload(); }
+    function handleLogout() { 
+      localStorage.removeItem("adminAuthSessionData"); 
+      location.reload(); 
+    }
+
     function switchView(viewId, pushHistory = true) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
@@ -956,27 +1155,62 @@
     function openSearchDrawer() {
       document.getElementById("searchDrawerModal").style.display = "flex";
       document.getElementById("drawerSearchInput").focus();
-      window.history.pushState({ modal: "searchDrawerModal" }, '');
+      pushModalHistory("searchDrawerModal");
     }
-    function closeSearchDrawer() { document.getElementById("searchDrawerModal").style.display = "none"; }
+
+    function closeSearchDrawer() {
+      document.getElementById("searchDrawerModal").style.display = "none";
+      document.getElementById("drawerSearchInput").value = "";
+      document.getElementById("drawerSearchResults").innerHTML = "";
+    }
     function closeSearchDrawerOnBack(e) { if(e.target.id === 'searchDrawerModal') closeSearchDrawer(); }
 
     function handleDrawerSearch() {
-      const q = formatEnNum(document.getElementById("drawerSearchInput").value.trim().toLowerCase());
+      playInteractionEffect();
+      const input = document.getElementById("drawerSearchInput");
+      const q = formatEnNum(input.value.trim().toLowerCase());
       const container = document.getElementById("drawerSearchResults");
       container.innerHTML = "";
+
       if (q.length === 0) return;
-      let filtered = allAccounts.filter(acc => {
-        let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
-        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
-        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
-        return name.includes(q) || phone.includes(q) || accId.includes(q);
-      });
-      if (filtered.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:8px;">نتیجه‌ای یافت نشد</div>`; return; }
+
+      let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
+      let filtered = [];
+
+      if (matchedTx) {
+        let matchedAccId = getVal(matchedTx, ['AccountID', 'accountid']);
+        filtered = allAccounts.filter(acc => String(getVal(acc, ['AccountID', 'accountid'])) === String(matchedAccId));
+      } else {
+        filtered = allAccounts.filter(acc => {
+          let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
+          let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
+          let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
+          return name.includes(q) || phone.includes(q) || accId.includes(q);
+        });
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">نتیجه‌ای یافت نشد</div>`;
+        return;
+      }
+
       filtered.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
-        container.innerHTML += `<div class="account-item-card" style="padding:8px 10px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName}')"><span style="font-weight:900;">${accName}</span> <span style="font-size:0.8rem; color:#64748b;">کُد: ${accId}</span></div>`;
+        let photoUrl = getVal(acc, ['Photo', 'photo']);
+        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:36px; height:36px; margin-left:8px;">` : '';
+
+        container.innerHTML += `
+          <div class="account-item-card" style="padding:10px 12px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName}')">
+            <div class="flex-row">
+              ${photoHtml}
+              <div>
+                <span style="font-weight:900; font-size:1rem;">${accName}</span>
+                <span style="font-size:0.82rem; color:#64748b; margin-right:8px;">کُد: ${accId}</span>
+              </div>
+            </div>
+          </div>
+        `;
       });
     }
 
@@ -986,6 +1220,7 @@
       document.getElementById("btnDirCreditor").className = "btn-select-option" + (dir === 'بستانکار' ? " selected-creditor" : "");
       document.getElementById("btnDirDebtor").className = "btn-select-option" + (dir === 'بدهکار' ? " selected-debtor" : "");
     }
+
     function selectTxCurrency(curr) {
       playInteractionEffect();
       selectedCurrencyValue = curr;
@@ -996,7 +1231,11 @@
 
     async function loadDataFromSupabase(showLoader = true) {
       const indicator = document.getElementById("syncIndicator");
-      if (showLoader && indicator) { indicator.innerText = "🔄 در حال دریافت اطلاعات..."; indicator.style.display = "block"; }
+      if (showLoader && indicator) {
+        indicator.innerText = "🔄 در حال دریافت اطلاعات...";
+        indicator.style.display = "block";
+      }
+
       try {
         const [accRes, txRes, opRes, admRes] = await Promise.all([
           _supabase.from('accounts').select('*'),
@@ -1004,30 +1243,57 @@
           _supabase.from('operation_types').select('*'),
           _supabase.from('admins').select('*')
         ]);
+
         if (admRes.data) allAdmins = admRes.data;
+
         let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
         let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
         let rawAccounts = accRes.data || [];
-        allAccounts = isMaster ? rawAccounts.filter(acc => {
-          let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-          return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner" || creator === "null";
-        }) : rawAccounts.filter(acc => String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim() === String(currentAdminId));
+        
+        if (isMaster) {
+          allAccounts = rawAccounts.filter(acc => {
+            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
+            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner" || creator === "null";
+          });
+        } else {
+          allAccounts = rawAccounts.filter(acc => {
+            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
+            return creator === String(currentAdminId);
+          });
+        }
 
         updatePhoneDirectoryArchive();
+
+        let rawTransactions = txRes.data || [];
         let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
-        allTransactions = (txRes.data || []).filter(tx => authorizedAccountIds.includes(String(getVal(tx, ['AccountID', 'accountid']))));
-        allTransactions.sort((a, b) => new Date(getVal(b, ['Date', 'date', 'created_at']) || 0) - new Date(getVal(a, ['Date', 'date', 'created_at']) || 0));
+        
+        allTransactions = rawTransactions.filter(tx => {
+          let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
+          return authorizedAccountIds.includes(txAccId);
+        });
+
+        allTransactions.sort((a, b) => {
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
+          return db - da;
+        });
+
         if (opRes.data && opRes.data.length > 0) customOpTypes = opRes.data.map(o => o.title);
 
         renderDashboardStats();
         renderAccountsList(allAccounts);
         populateOpTypeSelect();
         populateGlobalLedgerAccountFilterOptions();
+
         if (currentAccountId) {
           let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
           if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
         }
-      } catch (e) {} finally { if (indicator) indicator.style.display = "none"; }
+      } catch (e) { console.log("خطا:", e); }
+      finally { if (indicator) indicator.style.display = "none"; }
     }
 
     function populateGlobalLedgerAccountFilterOptions() {
@@ -1044,17 +1310,34 @@
     }
 
     function updatePhoneDirectoryArchive() {
+      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let name = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
         let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
+
         if (phone) {
           let existing = phoneArchiveList.find(p => p.accId === accId || p.phone === phone);
-          if (existing) { existing.name = name; existing.phone = phone; existing.isDeleted = false; }
-          else { phoneArchiveList.push({ accId: accId, name: name, phone: phone, isDeleted: false, creator: creator }); }
+          if (existing) {
+            existing.name = name;
+            existing.phone = phone;
+            existing.isDeleted = false;
+            existing.creator = creator;
+          } else {
+            phoneArchiveList.push({
+              accId: accId,
+              name: name,
+              phone: phone,
+              isDeleted: false,
+              creator: creator
+            });
+          }
         }
       });
+
       localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
     }
 
@@ -1063,17 +1346,21 @@
       for (let k of keys) {
         if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
         let lower = k.toLowerCase();
-        for (let prop in obj) { if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") return obj[prop]; }
+        for (let prop in obj) {
+          if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") return obj[prop];
+        }
       }
       return '';
     }
 
     async function uploadFileToSupabase(file, bucketName) {
       if (!file) return null;
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`;
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       const { error } = await _supabase.storage.from(bucketName).upload(fileName, file);
       if (error) return null;
-      return _supabase.storage.from(bucketName).getPublicUrl(fileName).data.publicUrl;
+      const { data: publicUrlData } = _supabase.storage.from(bucketName).getPublicUrl(fileName);
+      return publicUrlData.publicUrl;
     }
 
     function populateOpTypeSelect() {
@@ -1083,42 +1370,163 @@
       customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
     }
 
-    function openOpTypeManagerModal() { renderOpTypesList(); document.getElementById("opTypeManagerModal").style.display = "flex"; window.history.pushState({ modal: "opTypeManagerModal" }, ''); }
+    function openOpTypeManagerModal() { 
+      renderOpTypesList(); 
+      document.getElementById("opTypeManagerModal").style.display = "flex"; 
+      pushModalHistory("opTypeManagerModal");
+    }
     function closeOpTypeManagerModal() { document.getElementById("opTypeManagerModal").style.display = "none"; }
+
     function renderOpTypesList() {
       const container = document.getElementById("opTypesListContainer");
       container.innerHTML = "";
-      customOpTypes.forEach(op => { container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op}')">حذف</button></div>`; });
+      customOpTypes.forEach((op) => {
+        container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op}')">حذف</button></div>`;
+      });
     }
+
     async function addNewOperationType() {
       const input = document.getElementById("newOpTypeInput");
       const title = input.value.trim();
-      if (!title || customOpTypes.includes(title)) return;
-      customOpTypes.push(title); populateOpTypeSelect(); renderOpTypesList(); input.value = "";
-      await _supabase.from('operation_types').insert([{ title: title }]);
+      if (!title) return;
+      if (!customOpTypes.includes(title)) {
+        customOpTypes.push(title);
+        populateOpTypeSelect();
+        renderOpTypesList();
+        input.value = "";
+        await _supabase.from('operation_types').insert([{ title: title }]);
+      }
     }
+
     async function removeOperationType(title) {
-      customOpTypes = customOpTypes.filter(o => o !== title); populateOpTypeSelect(); renderOpTypesList();
+      customOpTypes = customOpTypes.filter(o => o !== title);
+      populateOpTypeSelect();
+      renderOpTypesList();
       await _supabase.from('operation_types').delete().eq('title', title);
     }
 
-    function openAdminManagerModal() { cancelEditAdmin(); renderAdminsList(); document.getElementById("adminManagerModal").style.display = "flex"; window.history.pushState({ modal: "adminManagerModal" }, ''); }
-    function closeAdminManagerModal() { document.getElementById("adminManagerModal").style.display = "none"; }
+    function openAdminManagerModal() {
+      cancelEditAdmin();
+      renderAdminsList();
+      document.getElementById("adminManagerModal").style.display = "flex";
+      pushModalHistory("adminManagerModal");
+    }
+    function closeAdminManagerModal() {
+      document.getElementById("adminManagerModal").style.display = "none";
+    }
+
     function renderAdminsList() {
       const container = document.getElementById("adminsListContainer");
       container.innerHTML = "";
-      if (allAdmins.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:8px;">هیچ ادمینی نیست</div>`; return; }
+      if (allAdmins.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ ادمین همکاری تعریف نشده است</div>`;
+        return;
+      }
       allAdmins.forEach(adm => {
         let admId = formatEnNum(getVal(adm, ['AdminID', 'adminid', 'id']) || adm.id);
-        container.innerHTML += `<div class="op-badge-item" style="background:#f8fafc; border:1px solid #cbd5e1; margin-bottom:8px;"><div><b>${getVal(adm, ['Name', 'name']) || 'بدون نام'}</b><br><span style="font-size:0.8rem; color:#64748b;">${getVal(adm, ['Email', 'email']) || ''}</span></div><button class="btn btn-danger btn-sm" onclick="deleteAdminAccount('${admId}')">حذف</button></div>`;
+        let admName = String(getVal(adm, ['Name', 'name']) || 'بدون نام');
+        let admEmail = String(getVal(adm, ['Email', 'email']) || '');
+        let admPin = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '');
+        let admChatId = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || '');
+
+        container.innerHTML += `
+          <div class="op-badge-item" style="background:#f8fafc; border:1px solid #cbd5e1; margin-bottom:10px; align-items:flex-start;">
+            <div>
+              <b style="color:var(--primary-dark); font-size:0.98rem;">${admName}</b><br>
+              <span style="font-size:0.82rem; color:#64748b;">ایمیل: ${admEmail} | رمز: ${admPin}</span><br>
+              <span style="font-size:0.8rem; color:#0284c7;">چت‌آیدی: ${admChatId || 'ثبت نشده'}</span>
+            </div>
+            <div class="flex-row" style="gap:6px;">
+              <button class="btn btn-warning btn-sm" onclick="playInteractionEffect(); editAdminAccount('${admId}')">ویرایش</button>
+              <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); deleteAdminAccount('${admId}')">حذف</button>
+            </div>
+          </div>
+        `;
       });
     }
-    function cancelEditAdmin() {}
-    async function saveAdminAccount() {}
+
+    function editAdminAccount(admId) {
+      let adm = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(admId));
+      if (!adm) return;
+      document.getElementById("editAdminId").value = admId;
+      document.getElementById("adminModalMainTitle").innerText = "✏️ ویرایش ادمین همکار";
+      document.getElementById("newAdminName").value = getVal(adm, ['Name', 'name']) || "";
+      document.getElementById("newAdminEmail").value = getVal(adm, ['Email', 'email']) || "";
+      document.getElementById("newAdminPin").value = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || "");
+      document.getElementById("newAdminBotToken").value = getVal(adm, ['BotToken', 'bottoken', 'Token', 'token']) || "";
+      document.getElementById("newAdminChatId").value = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || "");
+      
+      document.getElementById("adminSaveBtn").innerText = "💾 ذخیره تغییرات ادمین";
+      document.getElementById("adminCancelEditBtn").style.display = "inline-flex";
+    }
+
+    function cancelEditAdmin() {
+      document.getElementById("editAdminId").value = "";
+      document.getElementById("adminModalMainTitle").innerText = "🛡️ ایجاد و مدیریت ادمین‌های همکار";
+      document.getElementById("newAdminName").value = "";
+      document.getElementById("newAdminEmail").value = "";
+      document.getElementById("newAdminPin").value = "";
+      document.getElementById("newAdminBotToken").value = "";
+      document.getElementById("newAdminChatId").value = "";
+      document.getElementById("adminSaveBtn").innerText = "➕ ثبت و ایجاد ادمین جدید";
+      document.getElementById("adminCancelEditBtn").style.display = "none";
+    }
+
+    async function saveAdminAccount() {
+      let editId = document.getElementById("editAdminId").value;
+      let name = document.getElementById("newAdminName").value.trim();
+      let email = document.getElementById("newAdminEmail").value.trim().toLowerCase();
+      let pin = formatEnNum(document.getElementById("newAdminPin").value.trim());
+      let botToken = document.getElementById("newAdminBotToken").value.trim();
+      let chatId = formatEnNum(document.getElementById("newAdminChatId").value.trim());
+
+      if (!name || !email || !pin) {
+        alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید.");
+        return;
+      }
+
+      let adminId = editId ? editId : ("ADM-" + Math.floor(1000 + Math.random() * 9000));
+      const payload = {
+        AdminID: adminId,
+        Name: name,
+        Email: email,
+        Pin: pin,
+        BotToken: botToken,
+        ChatID: chatId
+      };
+
+      if (editId) {
+        const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
+        if (error) { alert("خطا در ویرایش: " + error.message); return; }
+        alert("✅ اطلاعات ادمین با موفقیت ویرایش شد!");
+      } else {
+        const { error } = await _supabase.from('admins').insert([payload]);
+        if (error) { alert("خطا در ایجاد ادمین: " + error.message); return; }
+        alert("✅ ادمین جدید با موفقیت ایجاد شد!");
+
+        if (botToken && chatId) {
+          let siteLink = "https://karimi-trust-app.vercel.app/";
+          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨\n\n` +
+                           `سلام *${name}* عزیز،\n` +
+                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.\n\n` +
+                           `📧 ایمیل ورود: \`${email}\`\n` +
+                           `🔑 رمز عبور: \`${pin}\`\n\n` +
+                           `🌐 لینک ورود به سایت:\n${siteLink}`;
+          sendTelegramMessage(botToken, chatId, welcomeMsg);
+        }
+      }
+
+      cancelEditAdmin();
+      const { data } = await _supabase.from('admins').select('*');
+      if (data) allAdmins = data;
+      renderAdminsList();
+    }
+
     async function deleteAdminAccount(admId) {
-      if (!confirm("حذف شود؟")) return;
+      if (!confirm("آیا از حذف دسترسی این ادمین مطمئن هستید؟")) return;
       await _supabase.from('admins').delete().eq('AdminID', admId);
-      allAdmins = (await _supabase.from('admins').select('*')).data || [];
+      const { data } = await _supabase.from('admins').select('*');
+      if (data) allAdmins = data;
       renderAdminsList();
     }
 
@@ -1126,6 +1534,519 @@
       let totalsByCurrency = {};
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
+        if(!accId) return;
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        let accCurrencies = {};
+
+        accTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+
+          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+
+        for(let curr in accCurrencies) {
+          let net = accCurrencies[curr];
+          if(net !== 0) {
+            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
+            if(net > 0) totalsByCurrency[curr].debSum += net;
+            else totalsByCurrency[curr].credSum += Math.abs(net);
+          }
+        }
+      });
+
+      let gridHtml = '';
+      for (let curr in totalsByCurrency) {
+        let cred = totalsByCurrency[curr].credSum;
+        let deb = totalsByCurrency[curr].debSum;
+        let finalNet = cred - deb;
+        let isCreditor = finalNet > 0;
+        let bgStyle = isCreditor ? "background:#f0fdf4; color:#15803d;" : "background:#fef2f2; color:#dc2626;";
+        let label = isCreditor ? `بستانکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}` : `بدهکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}`;
+
+        gridHtml += `
+          <div class="stat-card">
+            <div class="stat-row"><span style="font-weight:800;">ارز: ${curr}</span><span style="font-weight:800;">مانده خالص: <b>${formatEnMoney(finalNet)}</b></span></div>
+            <div class="stat-row" style="font-size:0.82rem; color:#64748b;">کل بستانکاری: ${formatEnMoney(cred)} | کل بدهکاری: ${formatEnMoney(deb)}</div>
+            <div class="stat-badge" style="${bgStyle}">${label}</div>
+          </div>
+        `;
+      }
+      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
+    }
+
+    function openPhoneDirectoryPage() {
+      switchView('viewPhoneDirectoryPage');
+      renderPhoneDirectoryList(phoneArchiveList);
+    }
+
+    function renderPhoneDirectoryList(list) {
+      const container = document.getElementById("phoneDirectoryContainer");
+      const summaryBox = document.getElementById("phoneDirectorySummary");
+      container.innerHTML = "";
+
+      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
+      let filteredList = list.filter(item => {
+        if (isMaster) return true;
+        let creator = String(item.creator || '').trim();
+        return creator === String(currentAdminId);
+      });
+
+      summaryBox.innerHTML = `
+        <div class="stat-row">
+          <span><b>تعداد کل شماره‌های ثبت‌شده:</b></span>
+          <b style="color:var(--info-color); font-size:1.05rem;">${formatEnNum(filteredList.length)} شماره</b>
+        </div>
+      `;
+
+      if (filteredList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ شماره‌ای در بانک اطلاعاتی موجود نیست</div>`;
+        return;
+      }
+
+      filteredList.forEach(item => {
+        let cleanPhone = item.phone.replace(/\D/g, '');
+        let liveAcc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(item.accId));
+        
+        let statusHtml = '';
+        let balanceBadges = '';
+
+        if (liveAcc && !item.isDeleted) {
+          let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === item.accId);
+          let accCurrencies = {};
+          accTxs.forEach(tx => {
+            let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+            let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+            let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+            if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+            if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+            if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+          });
+
+          for(let curr in accCurrencies) {
+            let val = accCurrencies[curr];
+            let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
+            let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
+            balanceBadges += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
+          }
+
+          statusHtml = `<span style="color:#059669; font-weight:800; font-size:0.82rem;">🟢 حساب فعال (کُد: ${formatEnNum(item.accId)})</span>`;
+        } else {
+          statusHtml = `<span class="deleted-account-badge">❌ حساب این مشتری حذف شده است</span>`;
+          balanceBadges = `<span style="font-size:0.82rem; color:#94a3b8;">اطلاعات مانده حساب در دسترس نیست</span>`;
+        }
+
+        container.innerHTML += `
+          <div class="phone-item-card">
+            <div class="stat-row">
+              <span style="font-weight:900; font-size:1.05rem; color:var(--primary-dark);">${item.name}</span>
+              ${statusHtml}
+            </div>
+            <div class="stat-row" style="margin-top:4px;">
+              <span style="font-weight:800; color:#0284c7; font-size:1rem;" dir="ltr">${item.phone}</span>
+              <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">
+                📲 واتساپ (چت خالی)
+              </button>
+            </div>
+            <div style="margin-top:6px;">${balanceBadges || '<span style="font-size:0.82rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
+          </div>
+        `;
+      });
+    }
+
+    function openWhatsAppBlank(phone) {
+      if (!phone) { alert("شماره تلفن موجود نیست."); return; }
+      window.open(`https://wa.me/${phone}`, '_blank');
+    }
+
+    function filterPhonesDirectory() {
+      playInteractionEffect();
+      const inputEl = document.getElementById("searchPhoneInput");
+      const clearBtn = document.getElementById("clearPhoneSearchBtn");
+      const q = formatEnNum(inputEl.value.trim().toLowerCase());
+
+      if (q.length > 0) clearBtn.style.display = "block";
+      else clearBtn.style.display = "none";
+
+      if (!q) { renderPhoneDirectoryList(phoneArchiveList); return; }
+
+      const filtered = phoneArchiveList.filter(item => {
+        let name = item.name.toLowerCase();
+        let phone = item.phone.toLowerCase();
+        let accId = item.accId.toLowerCase();
+        return name.includes(q) || phone.includes(q) || accId.includes(q);
+      });
+
+      renderPhoneDirectoryList(filtered);
+    }
+
+    function clearPhoneSearch() {
+      playInteractionEffect();
+      const inputEl = document.getElementById("searchPhoneInput");
+      inputEl.value = "";
+      document.getElementById("clearPhoneSearchBtn").style.display = "none";
+      renderPhoneDirectoryList(phoneArchiveList);
+      inputEl.focus();
+    }
+
+    function openGlobalSelectAccountModal() {
+      document.getElementById("globalAccountPickerInput").value = "";
+      renderGlobalAccountPickerList();
+      document.getElementById("globalSelectAccountModal").style.display = "flex";
+      pushModalHistory("globalSelectAccountModal");
+      setTimeout(() => document.getElementById("globalAccountPickerInput").focus(), 100);
+    }
+
+    function closeGlobalSelectAccountModal() {
+      document.getElementById("globalSelectAccountModal").style.display = "none";
+    }
+
+    function renderGlobalAccountPickerList() {
+      const q = formatEnNum((document.getElementById("globalAccountPickerInput").value || "").trim().toLowerCase());
+      const listEl = document.getElementById("globalAccountPickerList");
+      listEl.innerHTML = "";
+
+      const filtered = allAccounts.filter(acc => {
+        let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
+        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
+        let id = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
+        return !q || name.includes(q) || phone.includes(q) || id.includes(q);
+      });
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding:14px;">حسابی یافت نشد</div>`;
+        return;
+      }
+
+      filtered.forEach(acc => {
+        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
+        let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
+        let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
+        listEl.innerHTML += `
+          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
+            <div class="stat-row" style="margin:0;">
+              <span style="font-weight:800; color:var(--primary-dark);">${accName}</span>
+              <span style="font-size:0.82rem; color:#64748b;">کُد: ${accId} | ${accPhone}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function selectAccountAndOpenNewTx(accId, accName) {
+      closeGlobalSelectAccountModal();
+      currentAccountId = accId;
+      currentAccountName = accName;
+      openAddTransactionModal();
+    }
+
+    function openAllTransactionsPage() {
+      switchView('viewAllTransactionsPage');
+      const searchEl = document.getElementById("globalLedgerSearchInput");
+      if (searchEl) searchEl.value = "";
+      const filterEl = document.getElementById("globalLedgerAccountFilter");
+      if (filterEl) filterEl.value = "all";
+      renderGlobalTransactionsList();
+    }
+
+    function openTxFromGlobalLedger(txId, accId, accName) {
+      currentAccountId = accId;
+      currentAccountName = accName;
+      selectTransaction(txId);
+    }
+
+    function renderGlobalTransactionsList() {
+      const container = document.getElementById("globalTransactionsListContainer");
+      container.innerHTML = "";
+
+      const searchEl = document.getElementById("globalLedgerSearchInput");
+      const q = searchEl ? formatEnNum(searchEl.value.trim().toLowerCase()) : "";
+      
+      const filterEl = document.getElementById("globalLedgerAccountFilter");
+      const selectedAccFilter = filterEl ? filterEl.value : "all";
+
+      let sortedTxs = allTransactions.slice().sort((a, b) => {
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        if (isNaN(da)) da = 0;
+        if (isNaN(db)) db = 0;
+        return db - da;
+      });
+
+      if (selectedAccFilter !== "all") {
+        sortedTxs = sortedTxs.filter(tx => String(getVal(tx, ['AccountID', 'accountid'])) === String(selectedAccFilter));
+      }
+
+      if (q) {
+        sortedTxs = sortedTxs.filter(tx => {
+          let txId = String(getVal(tx, ['TransID', 'transid']) || '').toLowerCase();
+          let accId = String(getVal(tx, ['AccountID', 'accountid']) || '').toLowerCase();
+          let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])).toLowerCase() === accId);
+          let accName = acc ? String(getVal(acc, ['Name', 'name'])).toLowerCase() : "";
+          let amt = formatEnNum(getVal(tx, ['Amount', 'amount'])).toLowerCase();
+          let curr = String(getVal(tx, ['Currency', 'currency']) || '').toLowerCase();
+          let desc = String(getVal(tx, ['Description', 'description']) || '').toLowerCase();
+          return txId.includes(q) || accId.includes(q) || accName.includes(q) || amt.includes(q) || curr.includes(q) || desc.includes(q);
+        });
+      }
+
+      if (sortedTxs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">تراکنشی یافت نشد</div>`;
+        return;
+      }
+
+      const groupsByDay = {};
+      sortedTxs.forEach(tx => {
+        let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+        let dateObj = rawDate ? new Date(rawDate) : null;
+        let dayKey = (dateObj && !isNaN(dateObj.getTime()))
+          ? formatEnNum(dateObj.toISOString().split('T')[0])
+          : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
+        if (!groupsByDay[dayKey]) groupsByDay[dayKey] = [];
+        groupsByDay[dayKey].push(tx);
+      });
+
+      const totalCount = sortedTxs.length;
+      let globalCounter = 0;
+
+      Object.keys(groupsByDay).forEach(dayKey => {
+        const dayTxs = groupsByDay[dayKey];
+        let rowsHtml = "";
+
+        let dayTotals = {};
+        dayTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+          if (!dayTotals[curr]) dayTotals[curr] = { cred: 0, deb: 0 };
+          if (dir.includes("بستانکار")) dayTotals[curr].cred += amt;
+          if (dir.includes("بدهکار")) dayTotals[curr].deb += amt;
+        });
+
+        let daySummaryParts = [];
+        for (let c in dayTotals) {
+          let cCred = dayTotals[c].cred;
+          let cDeb = dayTotals[c].deb;
+          if (cCred > 0) daySummaryParts.push(`بستانکار: ${formatEnMoney(cCred)} ${c}`);
+          if (cDeb > 0) daySummaryParts.push(`بدهکار: ${formatEnMoney(cDeb)} ${c}`);
+        }
+        let daySummaryText = daySummaryParts.join(' | ') || 'بدون دادوستد';
+
+        dayTxs.forEach(tx => {
+          const rowNum = formatEnNum(totalCount - globalCounter);
+          globalCounter++;
+
+          let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+          let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
+          let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
+          let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
+
+          let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+          let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+
+          let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+          let dateObj = rawDate ? new Date(rawDate) : null;
+          let timeOnly = (dateObj && !isNaN(dateObj.getTime()))
+            ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
+            : '-';
+
+          let currentAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+          let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === txId);
+          let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
+          
+          let subCurrs = {};
+          subTxs.forEach(stx => {
+            let scurr = String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+            let sdir = String(getVal(stx, ['Direction', 'direction']) || '');
+            let samt = parseFloat(getVal(stx, ['Amount', 'amount'])) || 0;
+            if(!subCurrs[scurr]) subCurrs[scurr] = 0;
+            if(sdir.includes("بستانکار")) subCurrs[scurr] += samt;
+            if(sdir.includes("بدهکار")) subCurrs[scurr] -= samt;
+          });
+
+          let balanceParts = [];
+          for(let sc in subCurrs) {
+            let sval = subCurrs[sc];
+            let stype = sval > 0 ? 'بست.' : (sval < 0 ? 'بده.' : 'تسویه');
+            balanceParts.push(`${sc}:${formatEnMoney(Math.abs(sval))} ${stype}`);
+          }
+          let balanceStr = balanceParts.join(', ') || '0';
+
+          let isCreditor = dir.includes('بستانکار');
+          let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
+          let dirColor = isCreditor ? '#047857' : '#b91c1c';
+
+          rowsHtml += `
+            <tr style="background:${rowBg}; border-bottom:1px solid #cbd5e1; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
+              <td style="padding:8px 6px; text-align:center; font-weight:900; color:#334155; font-size:0.8rem; border-left:1px solid #e2e8f0; width:38px; white-space:nowrap;">${rowNum}</td>
+              <td style="padding:8px 10px; border-left:1px solid #e2e8f0; width:115px; max-width:115px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <div style="font-weight:900; color:var(--primary-dark); font-size:0.88rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
+                <div style="font-size:0.72rem; color:#64748b;">ک: ${formatEnNum(accId)}</div>
+              </td>
+              <td style="padding:8px 8px; text-align:center; border-left:1px solid #e2e8f0; width:65px; white-space:nowrap;">
+                <span style="color:${dirColor}; font-weight:800; font-size:0.8rem;">${dir}</span>
+                <div style="font-size:0.7rem; color:#475569;">${opType}</div>
+              </td>
+              <td style="padding:8px 10px; font-weight:900; color:${dirColor}; font-size:0.88rem; width:115px; white-space:nowrap; border-left:1px solid #e2e8f0;">${amt} ${curr}</td>
+              <td style="padding:8px 8px; text-align:center; font-size:0.78rem; color:#475569; width:52px; white-space:nowrap; border-left:1px solid #e2e8f0;">${timeOnly}</td>
+              <td style="padding:8px 10px; font-size:0.82rem; color:#334155; width:145px; max-width:145px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-left:1px solid #e2e8f0;" title="${desc}">${desc || '-'}</td>
+              <td style="padding:8px 10px; font-weight:800; color:#1e293b; font-size:0.8rem; width:105px; white-space:nowrap; border-left:1px solid #e2e8f0;" title="${balanceStr}">${balanceStr}</td>
+              <td style="padding:6px; text-align:center; width:58px; white-space:nowrap;">
+                <button class="btn btn-secondary btn-sm" style="padding:4px 8px; font-size:0.75rem;" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">حساب</button>
+              </td>
+            </tr>
+          `;
+        });
+
+        container.innerHTML += `
+          <div style="margin-bottom:14px; border:1.5px solid #cbd5e1; border-radius:14px; overflow:hidden; background:#ffffff;">
+            <div style="background: linear-gradient(135deg, #e2e8f0 100%, #cbd5e1 0%); color: #0f172a; padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; border-bottom: 1.5px solid #cbd5e1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 0.88rem;">
+                <span>📅 تاریخ: ${dayKey}</span>
+                <span style="font-size: 0.8rem; color: #334155;">تعداد تراکنش: ${formatEnNum(dayTxs.length)} عدد</span>
+              </div>
+              <div style="font-size: 0.8rem; color: #047857; font-weight: 700; background: rgba(255,255,255,0.75); padding: 4px 10px; border-radius: 8px;">
+                📊 مجموع دادوستد روز ➔ ${daySummaryText}
+              </div>
+            </div>
+            <div style="overflow-x:auto; width:100%; -webkit-overflow-scrolling: touch;">
+              <table style="width:740px; border-collapse:collapse; font-size:0.82rem; table-layout:fixed;">
+                <thead>
+                  <tr style="background:#f8fafc; color:#334155; border-bottom:1.5px solid #cbd5e1; font-weight:800; font-size:0.78rem;">
+                    <th style="padding:8px 6px; text-align:center; width:38px; border-left:1px solid #e2e8f0;">#</th>
+                    <th style="padding:8px 10px; text-align:right; width:115px; border-left:1px solid #e2e8f0;">مشتری</th>
+                    <th style="padding:8px 8px; text-align:center; width:65px; border-left:1px solid #e2e8f0;">جهت</th>
+                    <th style="padding:8px 10px; text-align:right; width:115px; border-left:1px solid #e2e8f0;">مبلغ</th>
+                    <th style="padding:8px 8px; text-align:center; width:52px; border-left:1px solid #e2e8f0;">ساعت</th>
+                    <th style="padding:8px 10px; text-align:right; width:145px; border-left:1px solid #e2e8f0;">شرح</th>
+                    <th style="padding:8px 10px; text-align:right; width:105px; border-left:1px solid #e2e8f0;">مانده حساب</th>
+                    <th style="padding:8px 6px; text-align:center; width:58px;">عملیات</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openTransfersReport() { switchView('viewTransfersReport'); renderTransfersReport(); }
+
+    function toggleCustomDateFilter() {
+      const period = document.getElementById("transferFilterPeriod").value;
+      const customBox = document.getElementById("customDateRangeBox");
+      if (period === "custom") {
+        customBox.style.display = "block";
+      } else {
+        customBox.style.display = "none";
+      }
+      renderTransfersReport();
+    }
+
+    function renderTransfersReport() {
+      const period = document.getElementById("transferFilterPeriod").value;
+      const container = document.getElementById("transfersReportContainer");
+      const headerContainer = document.getElementById("transferSummaryHeader");
+      container.innerHTML = ""; headerContainer.innerHTML = "";
+
+      let now = new Date();
+      let startDate = document.getElementById("startDateFilter").value;
+      let endDate = document.getElementById("endDateFilter").value;
+
+      let filteredTxs = allTransactions.filter(tx => {
+        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+        if (opType !== "حواله" && opType !== "انتقال") return false;
+        if (period === "all") return true;
+        let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+        if (!txDateStr) return false;
+
+        if (period === "today") {
+          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
+          return diffDays <= 1;
+        }
+        if (period === "week") {
+          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
+          return diffDays <= 7;
+        }
+        if (period === "month") {
+          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
+          return diffDays <= 30;
+        }
+        if (period === "custom") {
+          if (startDate && txDateStr < startDate) return false;
+          if (endDate && txDateStr > endDate) return false;
+          return true;
+        }
+        return false;
+      });
+
+      filteredTxs.sort((a, b) => {
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        if (isNaN(da)) da = 0;
+        if (isNaN(db)) db = 0;
+        return db - da;
+      });
+
+      let currencyTotals = {};
+      filteredTxs.forEach(tx => {
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+        if (!currencyTotals[curr]) currencyTotals[curr] = 0;
+        currencyTotals[curr] += amt;
+      });
+
+      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل موارد:</b></span><b>${formatEnNum(filteredTxs.length)} عدد</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع (${curr}):</span><b style="color:var(--accent-green-dark);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
+      headerContainer.innerHTML = summaryHtml;
+
+      if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">موردی یافت نشد</div>`; return; }
+
+      filteredTxs.forEach((tx) => {
+        let accId = formatEnNum(getVal(tx, ['AccountID', 'accountid']) || '');
+        let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
+        let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "نامشخص";
+        let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+        let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
+        let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+        let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+        let dateObj = rawDate ? new Date(rawDate) : null;
+        let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
+          `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+          formatEnNum(String(rawDate).split('T')[0]);
+
+        container.innerHTML += `
+          <div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
+            <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">مشتری: ${accName}</span><span style="font-size:0.82rem; color:#64748b;">⏰ ${formattedTime}</span></div>
+            <div class="stat-row"><span>مبلغ:</span><b style="color:var(--primary-dark); font-size:1.05rem;">${amt} ${curr}</b></div>
+            <div style="font-size:0.88rem; color:#475569; margin-top:6px; background:#f1f5f9; padding:8px; border-radius:8px;"><b>شرح:</b> ${desc}</div>
+          </div>
+        `;
+      });
+    }
+
+    function openDebtorsReport() {
+      switchView('viewDebtorsReport');
+      selectedDebtorsMap = {};
+      document.getElementById("debtorsBatchSummaryBox").style.display = "none";
+
+      const container = document.getElementById("debtorsContainer");
+      const headerContainer = document.getElementById("debtorsSummaryHeader");
+      container.innerHTML = ""; headerContainer.innerHTML = "";
+      let debtors = [], currencyTotals = {};
+
+      allAccounts.forEach(acc => {
+        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
+        let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         if(!accId) return;
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
         let accCurrencies = {};
@@ -1138,157 +2059,591 @@
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
         });
         for(let curr in accCurrencies) {
-          let net = accCurrencies[curr];
-          if(net !== 0) {
-            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
-            if(net > 0) totalsByCurrency[curr].debSum += net;
-            else totalsByCurrency[curr].credSum += Math.abs(net);
+          let val = accCurrencies[curr];
+          if(val < 0) {
+            let absVal = Math.abs(val);
+            debtors.push({ name: accName, id: accId, amount: absVal, currency: curr });
+            if (!currencyTotals[curr]) currencyTotals[curr] = 0;
+            currencyTotals[curr] += absVal;
           }
         }
       });
-      let gridHtml = '';
-      for (let curr in totalsByCurrency) {
-        let cred = totalsByCurrency[curr].credSum, deb = totalsByCurrency[curr].debSum, finalNet = cred - deb;
-        let isCreditor = finalNet > 0;
-        gridHtml += `<div class="stat-card"><div class="stat-row"><span>ارز: ${curr}</span><span>مانده: <b>${formatEnMoney(finalNet)}</b></span></div><div class="stat-badge" style="${isCreditor ? "background:#f0fdf4; color:#15803d;" : "background:#fef2f2; color:#dc2626;"}">${isCreditor ? `بستانکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}` : `بدهکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}`}</div></div>`;
-      }
-      document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:10px;">بدون حساب فعال</div>';
-    }
 
-    function openPhoneDirectoryPage() { switchView('viewPhoneDirectoryPage'); renderPhoneDirectoryList(phoneArchiveList); }
-    function renderPhoneDirectoryList(list) {
-      const container = document.getElementById("phoneDirectoryContainer");
-      document.getElementById("phoneDirectorySummary").innerHTML = `<div class="stat-row"><span><b>تعداد شماره‌ها:</b></span><b>${formatEnNum(list.length)}</b></div>`;
-      container.innerHTML = list.length === 0 ? `<div style="text-align:center; color:#64748b; padding:20px;">شماره‌ای ثبت نشده</div>` : '';
-      list.forEach(item => {
-        container.innerHTML += `<div class="phone-item-card"><div class="stat-row"><span style="font-weight:900;">${item.name}</span><span style="color:#0284c7;" dir="ltr">${item.phone}</span></div><button class="btn btn-whatsapp btn-sm" onclick="window.open('https://wa.me/${item.phone.replace(/\D/g, '')}', '_blank')">📲 واتساپ</button></div>`;
+      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بدهکاران:</b></span><b>${formatEnNum(debtors.length)} مورد</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بدهکاری (${curr}):</span><b style="color:var(--danger-color);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
+      headerContainer.innerHTML = summaryHtml;
+
+      if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
+      
+      debtors.forEach(d => {
+        container.innerHTML += `
+          <div class="tx-item-card tx-debtor" style="flex-direction:row; align-items:center; gap:12px;">
+            <input type="checkbox" onchange="toggleDebtorSelection('${d.id}', '${d.currency}', ${d.amount}, this.checked)" style="width:22px; height:22px; accent-color:var(--danger-color); cursor:pointer;">
+            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')">
+              <div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">بدهکار: ${formatEnMoney(d.amount)} ${d.currency}</span></div>
+            </div>
+          </div>
+        `;
       });
     }
-    function filterPhonesDirectory() {
-      let q = formatEnNum(document.getElementById("searchPhoneInput").value.trim().toLowerCase());
-      renderPhoneDirectoryList(!q ? phoneArchiveList : phoneArchiveList.filter(i => i.name.toLowerCase().includes(q) || i.phone.includes(q)));
-    }
-    function clearPhoneSearch() { document.getElementById("searchPhoneInput").value = ""; renderPhoneDirectoryList(phoneArchiveList); }
 
-    function openGlobalSelectAccountModal() {
-      document.getElementById("globalAccountPickerInput").value = "";
-      renderGlobalAccountPickerList();
-      document.getElementById("globalSelectAccountModal").style.display = "flex";
-      window.history.pushState({ modal: "globalSelectAccountModal" }, '');
+    function toggleDebtorSelection(accId, curr, amt, isChecked) {
+      let key = `${accId}_${curr}`;
+      if (isChecked) {
+        selectedDebtorsMap[key] = { curr, amt };
+      } else {
+        delete selectedDebtorsMap[key];
+      }
+      updateDebtorsBatchSummary();
     }
-    function closeGlobalSelectAccountModal() { document.getElementById("globalSelectAccountModal").style.display = "none"; }
-    function renderGlobalAccountPickerList() {
-      let q = formatEnNum(document.getElementById("globalAccountPickerInput").value.trim().toLowerCase());
-      let listEl = document.getElementById("globalAccountPickerList");
-      listEl.innerHTML = "";
-      let filtered = allAccounts.filter(acc => !q || String(getVal(acc, ['Name', 'name'])).toLowerCase().includes(q) || formatEnNum(getVal(acc, ['Phone', 'phone'])).includes(q));
-      filtered.forEach(acc => {
+
+    function updateDebtorsBatchSummary() {
+      const box = document.getElementById("debtorsBatchSummaryBox");
+      const content = document.getElementById("debtorsBatchSummaryContent");
+      
+      let currs = {};
+      let count = 0;
+      for (let k in selectedDebtorsMap) {
+        let item = selectedDebtorsMap[k];
+        if (!currs[item.curr]) currs[item.curr] = 0;
+        currs[item.curr] += item.amt;
+        count++;
+      }
+
+      if (count === 0) {
+        box.style.display = "none";
+        return;
+      }
+
+      let html = `<div style="font-size:0.88rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
+      for (let c in currs) {
+        html += `<div style="font-weight:800; font-size:1.05rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      }
+      content.innerHTML = html;
+      box.style.display = "block";
+    }
+
+    function openCreditorsReport() {
+      switchView('viewCreditorsReport');
+      selectedCreditorsMap = {};
+      document.getElementById("creditorsBatchSummaryBox").style.display = "none";
+
+      const container = document.getElementById("creditorsContainer");
+      const headerContainer = document.getElementById("creditorsSummaryHeader");
+      container.innerHTML = ""; headerContainer.innerHTML = "";
+      let creditors = [], currencyTotals = {};
+
+      allAccounts.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
-        listEl.innerHTML += `<div class="account-item-card" style="padding:8px 10px; margin-bottom:6px;" onclick="closeGlobalSelectAccountModal(); currentAccountId='${accId}'; currentAccountName='${accName}'; openAddTransactionModal();"><span style="font-weight:800;">${accName}</span> <span style="font-size:0.8rem; color:#64748b;">کُد: ${accId}</span></div>`;
+        if(!accId) return;
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        let accCurrencies = {};
+        accTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+        for(let curr in accCurrencies) {
+          let val = accCurrencies[curr];
+          if(val > 0) {
+            creditors.push({ name: accName, id: accId, amount: val, currency: curr });
+            if (!currencyTotals[curr]) currencyTotals[curr] = 0;
+            currencyTotals[curr] += val;
+          }
+        }
+      });
+
+      let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بستانکاران:</b></span><b>${formatEnNum(creditors.length)} مورد</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بستانکاری (${curr}):</span><b style="color:var(--accent-green-dark);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
+      headerContainer.innerHTML = summaryHtml;
+
+      if(creditors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بستانکاری وجود ندارد</div>`; return; }
+      
+      creditors.forEach(c => {
+        container.innerHTML += `
+          <div class="tx-item-card tx-creditor" style="flex-direction:row; align-items:center; gap:12px;">
+            <input type="checkbox" onchange="toggleCreditorSelection('${c.id}', '${c.currency}', ${c.amount}, this.checked)" style="width:22px; height:22px; accent-color:var(--accent-green-dark); cursor:pointer;">
+            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')">
+              <div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">بستانکار: ${formatEnMoney(c.amount)} ${c.currency}</span></div>
+            </div>
+          </div>
+        `;
       });
     }
 
-    function openAllTransactionsPage() { switchView('viewAllTransactionsPage'); renderGlobalTransactionsList(); }
-    function openTxFromGlobalLedger(txId, accId, accName) { currentAccountId = accId; currentAccountName = accName; selectTransaction(txId); }
-    function renderGlobalTransactionsList() {
-      const container = document.getElementById("globalTransactionsListContainer");
-      container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">دفتر کل مرکزی فعال است</div>`;
+    function toggleCreditorSelection(accId, curr, amt, isChecked) {
+      let key = `${accId}_${curr}`;
+      if (isChecked) {
+        selectedCreditorsMap[key] = { curr, amt };
+      } else {
+        delete selectedCreditorsMap[key];
+      }
+      updateCreditorsBatchSummary();
     }
 
-    function openTransfersReport() { switchView('viewTransfersReport'); }
-    function toggleCustomDateFilter() {}
-    function renderTransfersReport() {}
+    function updateCreditorsBatchSummary() {
+      const box = document.getElementById("creditorsBatchSummaryBox");
+      const content = document.getElementById("creditorsBatchSummaryContent");
+      
+      let currs = {};
+      let count = 0;
+      for (let k in selectedCreditorsMap) {
+        let item = selectedCreditorsMap[k];
+        if (!currs[item.curr]) currs[item.curr] = 0;
+        currs[item.curr] += item.amt;
+        count++;
+      }
 
-    function openDebtorsReport() { switchView('viewDebtorsReport'); }
-    function openCreditorsReport() { switchView('viewCreditorsReport'); }
+      if (count === 0) {
+        box.style.display = "none";
+        return;
+      }
+
+      let html = `<div style="font-size:0.88rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
+      for (let c in currs) {
+        html += `<div style="font-weight:800; font-size:1.05rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      }
+      content.innerHTML = html;
+      box.style.display = "block";
+    }
 
     function renderAccountsList(accounts) {
       const container = document.getElementById("accountsListContainer");
-      container.innerHTML = accounts.length === 0 ? `<div style="text-align:center; color:#64748b; padding:10px;">حسابی یافت نشد</div>` : '';
+      container.innerHTML = "";
+      if(accounts.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">حسابی یافت نشد</div>`; return; }
+
       accounts.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
-        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
-        container.innerHTML += `<div class="account-item-card" onclick="selectAccount('${accId}', '${accName}')"><div class="account-item-header"><span class="account-name-title">${accName}</span><span style="font-size:0.8rem; color:#64748b;">کُد: ${accId}</span></div><div style="font-size:0.85rem; color:#0284c7;" dir="ltr">${phone}</div></div>`;
+        let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
+        let photoUrl = getVal(acc, ['Photo', 'photo']);
+        if (!accId) return;
+
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        let accCurrencies = {};
+        accTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+
+        let badgesHtml = '';
+        for(let curr in accCurrencies) {
+          let val = accCurrencies[curr];
+          let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
+          let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
+          badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
+        }
+
+        let cleanPhone = accPhone.replace(/\D/g, '');
+        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:38px; height:38px; margin-left:8px;">` : '';
+
+        container.innerHTML += `
+          <div class="account-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
+            <div class="account-item-header">
+              <div class="flex-row">
+                ${photoHtml}
+                <div>
+                  <span class="account-name-title">${accName}</span>
+                  <div style="font-size:0.82rem; color:#64748b;">کُد حساب: ${accId}</div>
+                </div>
+              </div>
+              <div class="flex-row" style="gap:5px;">
+                <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openDirectWhatsApp('${cleanPhone}')" title="واتساپ">💬</button>
+                <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName}')" title="پیام">✉️</button>
+                <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccountForEditQuick('${accId}')" title="ویرایش">✏️</button>
+                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); confirmDeleteAccount('${accId}')" title="حذف">🗑️</button>
+              </div>
+            </div>
+            <div style="font-size:0.88rem; margin-top:6px;">${badgesHtml || 'تسویه حساب کامل'}</div>
+          </div>
+        `;
       });
     }
-    function advancedSearchAccounts() {
-      let q = formatEnNum(document.getElementById("searchAccountInput").value.trim().toLowerCase());
-      renderAccountsList(!q ? allAccounts : allAccounts.filter(a => String(getVal(a, ['Name', 'name'])).toLowerCase().includes(q) || formatEnNum(getVal(a, ['Phone', 'phone'])).includes(q)));
+
+    function openDirectWhatsApp(phone) {
+      if(!phone) { alert("شماره تلفن مشتری موجود نیست"); return; }
+      window.open(`https://wa.me/${phone}`, '_blank');
     }
-    function clearAccountSearch() { document.getElementById("searchAccountInput").value = ""; renderAccountsList(allAccounts); }
+
+    function advancedSearchAccounts() {
+      playInteractionEffect();
+      const inputEl = document.getElementById("searchAccountInput");
+      const clearBtn = document.getElementById("clearSearchBtn");
+      const q = formatEnNum(inputEl.value.trim().toLowerCase());
+      
+      if (q.length > 0) {
+        clearBtn.style.display = "block";
+      } else {
+        clearBtn.style.display = "none";
+      }
+
+      if (!q) { renderAccountsList(allAccounts); return; }
+      const filtered = allAccounts.filter(acc => {
+        let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
+        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
+        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
+        return name.includes(q) || phone.includes(q) || accId.includes(q);
+      });
+      renderAccountsList(filtered);
+    }
+
+    function clearAccountSearch() {
+      playInteractionEffect();
+      const inputEl = document.getElementById("searchAccountInput");
+      inputEl.value = "";
+      document.getElementById("clearSearchBtn").style.display = "none";
+      renderAccountsList(allAccounts);
+      inputEl.focus();
+    }
 
     function openAccountModal() {
       document.getElementById("editAccountId").value = "";
-      document.getElementById("modalAccountTitle").innerText = "حساب جدید";
+      document.getElementById("modalAccountTitle").innerText = "ایجاد حساب جدید";
       document.getElementById("modalAccountName").value = "";
       document.getElementById("modalAccountPhone").value = "";
       document.getElementById("modalAccountChatId").value = "";
+      document.getElementById("modalAccountPhotoInput").value = "";
+      document.getElementById("existingAccountPhotoUrl").value = "";
       document.getElementById("accountModal").style.display = "flex";
-      window.history.pushState({ modal: "accountModal" }, '');
+      pushModalHistory("accountModal");
     }
+
+    function selectAccountForEditQuick(accId) {
+      currentAccountId = accId;
+      openEditAccountModal();
+    }
+
     function openEditAccountModal() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) return;
       document.getElementById("editAccountId").value = currentAccountId;
-      document.getElementById("modalAccountTitle").innerText = "ویرایش حساب";
+      document.getElementById("modalAccountTitle").innerText = "ویرایش حساب مشتری";
       document.getElementById("modalAccountName").value = getVal(acc, ['Name', 'name']) || "";
       document.getElementById("modalAccountPhone").value = formatEnNum(getVal(acc, ['Phone', 'phone']) || "");
       document.getElementById("modalAccountChatId").value = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || "");
+      document.getElementById("existingAccountPhotoUrl").value = getVal(acc, ['Photo', 'photo']) || "";
       document.getElementById("accountModal").style.display = "flex";
+      pushModalHistory("accountModal");
     }
+
     function closeAccountModal() { document.getElementById("accountModal").style.display = "none"; }
 
     let pendingDeleteCallback = null;
-    function showDeleteConfirmModal(msg, cb) {
-      document.getElementById("deleteConfirmText").innerText = msg; pendingDeleteCallback = cb;
+    function showDeleteConfirmModal(msg, callback) {
+      document.getElementById("deleteConfirmText").innerText = msg;
+      pendingDeleteCallback = callback;
       document.getElementById("deleteConfirmModal").style.display = "flex";
-      window.history.pushState({ modal: "deleteConfirmModal" }, '');
+      pushModalHistory("deleteConfirmModal");
+      document.getElementById("confirmDeleteYesBtn").onclick = function() {
+        closeDeleteConfirmModal();
+        if (pendingDeleteCallback) pendingDeleteCallback();
+      };
     }
-    function closeDeleteConfirmModal() { document.getElementById("deleteConfirmModal").style.display = "none"; }
-    document.getElementById("confirmDeleteYesBtn").onclick = function() { closeDeleteConfirmModal(); if (pendingDeleteCallback) pendingDeleteCallback(); };
+    function closeDeleteConfirmModal() {
+      document.getElementById("deleteConfirmModal").style.display = "none";
+      pendingDeleteCallback = null;
+    }
 
-    function confirmDeleteAccountModal() { showDeleteConfirmModal("حذف حساب؟", async () => { await _supabase.from('accounts').delete().eq('AccountID', currentAccountId); loadDataFromSupabase(true); switchView('viewAccounts'); }); }
-    function confirmDeleteTransaction() { showDeleteConfirmModal("حذف تراکنش؟", async () => { await _supabase.from('transactions').delete().eq('TransID', selectedTxId); selectAccount(currentAccountId, currentAccountName); }); }
+    function confirmDeleteAccountModal() {
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
+        deleteCurrentAccount();
+      });
+    }
+
+    function confirmDeleteAccount(accId) {
+      currentAccountId = accId;
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
+        deleteCurrentAccount();
+      });
+    }
+
+    function confirmDeleteTransaction() {
+      showDeleteConfirmModal("آیا از حذف این تراکنش اطمینان دارید؟", function() {
+        deleteSingleTransaction();
+      });
+    }
 
     async function saveAccount() {
       let editId = document.getElementById("editAccountId").value;
-      let name = document.getElementById("modalAccountName").value.trim();
-      let phone = formatEnNum(document.getElementById("modalAccountPhone").value.trim());
-      let chatId = formatEnNum(document.getElementById("modalAccountChatId").value.trim());
-      if (!name) return;
+      let accName = document.getElementById("modalAccountName").value;
+      let accPhone = formatEnNum(document.getElementById("modalAccountPhone").value);
+      let accChatId = formatEnNum(document.getElementById("modalAccountChatId").value.trim());
+      let fileInput = document.getElementById("modalAccountPhotoInput");
+      let photoUrl = document.getElementById("existingAccountPhotoUrl").value;
+
+      if (!accName) { alert("نام مشتری الزامی است"); return; }
       closeAccountModal();
-      let accountId = editId || ("ACC-" + Math.floor(100000 + Math.random() * 900000));
-      let payload = { AccountID: accountId, Name: name, Phone: phone, ChatID: chatId, CreatedBy: currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID };
-      if (editId) await _supabase.from('accounts').update(payload).eq('AccountID', editId);
-      else await _supabase.from('accounts').insert([payload]);
+
+      if (fileInput.files.length > 0) {
+        const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'Accounts_Images');
+        if (uploadedUrl) photoUrl = uploadedUrl;
+      }
+
+      let accountId = editId ? editId : "ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000));
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
+
+      let oldAcc = editId ? allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId)) : null;
+      let oldChatId = oldAcc ? formatEnNum(getVal(oldAcc, ['ChatID', 'chatid']) || '').trim() : '';
+      let isNewChatIdAdded = accChatId && (!oldChatId || oldChatId !== accChatId);
+
+      const payload = { 
+        AccountID: accountId, 
+        Name: accName, 
+        Phone: accPhone, 
+        ChatID: accChatId,
+        Photo: photoUrl,
+        CreatedBy: String(currentAdminId)
+      };
+
+      if (editId) {
+        await _supabase.from('accounts').update(payload).eq('AccountID', editId);
+      } else {
+        await _supabase.from('accounts').insert([payload]);
+        let { token } = getCurrentAdminTokenAndChat();
+        if (token && accChatId) {
+          let siteLink = "https://karimi-trust-app.vercel.app/";
+          let msg = `✨ *امانت‌داری کریمی* ✨\n\n` +
+                    `حساب شما با موفقیت ایجاد شد.\n` +
+                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.\n` +
+                    `📌 اطلاعات حساب شما:\n` +
+                    `👤 نام: ${accName}\n` +
+                    `🆔 کُد حساب: \`${accountId}\`\n` +
+                    `📞 شماره تماس: ${accPhone || '-'}\n` +
+                    `💬 چت‌آیدی: \`${accChatId}\`\n\n` +
+                    `🌐 لینک بررسی حساب:\n${siteLink}`;
+          sendTelegramMessage(token, accChatId, msg);
+        }
+      }
+
       await loadDataFromSupabase(false);
-      if (currentAccountId) selectAccount(currentAccountId, name);
+
+      if (editId && isNewChatIdAdded) {
+        let { token } = getCurrentAdminTokenAndChat();
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accountId));
+        if (token && accChatId) {
+          let historyHeader = `✨ *امانت‌داری کریمی* ✨\n\nسلام *${accName}* عزیز،\nچت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:\n────────────────────────`;
+          await sendTelegramMessage(token, accChatId, historyHeader);
+
+          for (let tx of accTxs) {
+            let tType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+            let tDir = String(getVal(tx, ['Direction', 'direction']) || '');
+            let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+            let tCurr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
+            let tDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+            let tDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+
+            let txLine = `📅 تاریخ: ${tDate}\n🔹 نوع: *${tType}* (${tDir})\n💰 مبلغ: *${tAmt} ${tCurr}*\n📝 شرح: ${tDesc || '-'}\n-------------------`;
+            await sendTelegramMessage(token, accChatId, txLine);
+          }
+
+          let liveBal = getAccountLiveBalanceText(accountId);
+          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*\n${liveBal}`;
+          await sendTelegramMessage(token, accChatId, balMsg);
+        }
+      }
+
+      if (currentAccountId) {
+        selectAccount(currentAccountId, accName);
+      }
+    }
+
+    async function deleteCurrentAccount() {
+      let accIdToDelete = currentAccountId;
+      
+      let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
+      if (archiveItem) {
+        archiveItem.isDeleted = true;
+        localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
+      }
+
+      currentAccountId = null;
+      switchView('viewAccounts');
+      await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
+      await _supabase.from('transactions').delete().eq('AccountID', accIdToDelete);
+      await loadDataFromSupabase(true);
     }
 
     function selectAccount(accId, accName) {
-      currentAccountId = accId; currentAccountName = accName;
+      currentAccountId = accId;
+      currentAccountName = accName;
       document.getElementById("detailAccountTitle").innerText = `حساب: ${accName}`;
-      document.getElementById("clientFullDetailsBox").innerHTML = `<div class="stat-row"><span>کُد حساب:</span><b>${accId}</b></div>`;
+      
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
+      let photoUrl = acc ? getVal(acc, ['Photo', 'photo']) : '';
+      let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone'])) : '-';
+      let chatId = acc ? formatEnNum(getVal(acc, ['ChatID', 'chatid'])) : '-';
+
+      const photoEl = document.getElementById("detailAccountPhoto");
+      if (photoUrl) { photoEl.src = photoUrl; photoEl.style.display = "block"; } else { photoEl.style.display = "none"; }
+
+      document.getElementById("clientFullDetailsBox").innerHTML = `
+        <div class="stat-row"><span style="font-size:0.9rem; color:#64748b;">🆔 کُد حساب (Account ID):</span><b style="font-size:0.98rem; color:var(--primary-dark);">${formatEnNum(accId)}</b></div>
+        <div class="stat-row"><span style="font-size:0.9rem; color:#64748b;">📞 شماره تماس:</span><b>${phone || '-'}</b></div>
+        <div class="stat-row"><span style="font-size:0.9rem; color:#64748b;">💬 چت‌آیدی تلگرام:</span><b>${chatId || '-'}</b></div>
+      `;
+
       switchView('viewAccountDetail');
       renderAccountDetailTransactions(accId);
     }
 
     function renderAccountDetailTransactions(accId) {
-      const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId));
+      const txs = allTransactions
+        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
+        .slice()
+        .sort((a, b) => {
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
+          return db - da;
+        });
+
       const container = document.getElementById("transactionsListContainer");
-      container.innerHTML = txs.length === 0 ? `<div style="text-align:center; color:#64748b;">تراکنشی نیست</div>` : '';
-      txs.forEach((tx, idx) => {
+      container.innerHTML = "";
+      let accCurrencies = {};
+
+      allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).forEach(tx => {
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-        let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
-        let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
-        container.innerHTML += `<div class="tx-item-card ${dir.includes('بستانکار') ? 'tx-creditor' : 'tx-debtor'}"><div class="stat-row"><span>مبلغ: <b>${amt} ${curr}</b></span><span style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</span></div></div>`;
+        let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+        if(!accCurrencies[curr]) accCurrencies[curr] = { credit: 0, debit: 0 };
+        if(dir.includes("بستانکار")) accCurrencies[curr].credit += amt;
+        if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
       });
+
+      if (txs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">تراکنشی ثبت نشده است</div>`;
+      } else {
+        txs.forEach((tx, idx) => {
+          let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+          let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
+          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+          
+          let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+          let dateObj = rawDate ? new Date(rawDate) : null;
+          let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
+            `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+            formatEnNum(String(rawDate).split('T')[0]);
+
+          let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+          let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
+          
+          let txNumber = formatEnNum(txs.length - idx);
+          let isCreditor = dir.includes('بستانکار');
+          let cardClass = isCreditor ? 'tx-creditor' : 'tx-debtor';
+          let dirColor = isCreditor ? '#059669' : '#dc2626';
+
+          let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
+          
+          let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+          let transferBtn = isTransferOrRemittance ? `<button class="btn btn-info btn-sm" style="margin-top:8px; flex:1;" onclick="event.stopPropagation(); playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 رسید انتقال</button>` : '';
+
+          container.innerHTML += `
+            <div class="tx-item-card ${cardClass}" onclick="toggleTxAccordion('accBody_${txId}')">
+              <div class="stat-row">
+                <span><b>تراکنش شماره #${txNumber}</b> (⏰ ${formattedTime})</span>
+                <span style="color:${dirColor}; font-weight:900;">${dir}</span>
+              </div>
+              <div class="stat-row">
+                <span>نوع: <b>${opType}</b></span>
+                <span style="font-weight:900;">مبلغ: <b>${amt} ${curr}</b></span>
+              </div>
+
+              <div id="accBody_${txId}" style="display:none; margin-top:10px; border-top:1.5px dashed #cbd5e1; padding-top:10px;">
+                <div style="font-size:0.9rem; color:#334155;"><b>توضیحات / رسید:</b> ${desc || 'بدون شرح'}</div>
+                ${receiptHtml}
+                <div class="flex-row" style="margin-top:10px; gap:8px;">
+                  <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="event.stopPropagation(); playInteractionEffect(); sendSingleTxWhatsApp('${txId}')">💬 ارسال تراکنش به واتساپ</button>
+                  ${transferBtn}
+                </div>
+                <div class="flex-row" style="margin-top:8px; justify-content:flex-end;">
+                  <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectTransaction('${txId}')">🔍 مدیریت کامل</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      let statsHtml = '';
+      for (let curr in accCurrencies) {
+        let net = accCurrencies[curr].credit - accCurrencies[curr].debit;
+        let isCreditor = net > 0;
+        let bgStyle = isCreditor ? "background:#f0fdf4; color:#15803d;" : "background:#fef2f2; color:#dc2626;";
+        let label = net > 0 ? `بستانکار: ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار: ${formatEnMoney(Math.abs(net))} ${curr}` : "تسویه حساب کامل");
+
+        statsHtml += `
+          <div class="stat-card">
+            <div class="stat-row"><span style="font-weight:800;">ارز: ${curr}</span><span style="font-weight:800;">مانده: <b>${formatEnMoney(net)}</b></span></div>
+            <div class="stat-row" style="font-size:0.82rem; color:#64748b;">کل بستانکار: ${formatEnMoney(accCurrencies[curr].credit)} | کل بدهکار: ${formatEnMoney(accCurrencies[curr].debit)}</div>
+            <div class="stat-badge" style="${bgStyle}">${label}</div>
+          </div>
+        `;
+      }
+      document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center;">بدون بیلان</div>';
+    }
+
+    function toggleTxAccordion(elemId) {
+      playInteractionEffect();
+      let el = document.getElementById(elemId);
+      if (el) {
+        el.style.display = (el.style.display === "none" || !el.style.display) ? "block" : "none";
+      }
     }
 
     function selectTransaction(txId) {
       selectedTxId = txId;
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
+      if(!tx) return;
+
+      let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+      let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+      let curr = String(getVal(tx, ['Currency', 'currency']) || '');
+      let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+      let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+      
+      let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+      let dateObj = rawDate ? new Date(rawDate) : null;
+      let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
+        `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+        formatEnNum(String(rawDate).split('T')[0]);
+
+      let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
+      let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
+
+      document.getElementById("txDetailCard").innerHTML = `
+        <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
+        <div class="stat-row"><span>تاریخ و زمان ثبت:</span><b>${formattedTime}</b></div>
+        <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
+        <div class="stat-row"><span>مبلغ:</span><b style="font-size:1.1rem;">${amt} ${curr}</b></div>
+        <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
+        <div style="margin-top:8px; background:#f1f5f9; padding:10px; border-radius:10px;"><b>توضیحات:</b> ${desc || 'بدون شرح'}</div>
+        ${receiptHtml}
+      `;
+
+      let btnContainer = document.getElementById("txActionButtonsContainer");
+      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+      let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
+
+      btnContainer.innerHTML = `
+        <div class="flex-row" style="gap: 8px; margin-bottom:8px;">
+          <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
+          <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); confirmDeleteTransaction()">🗑️ حذف</button>
+        </div>
+        <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال تراکنش به واتساپ</button>
+        ${transferReceiptBtn}
+      `;
+
       switchView('viewTransactionDetail');
     }
 
@@ -1297,41 +2652,318 @@
       document.getElementById("txModalTitle").innerText = "ثبت تراکنش جدید";
       document.getElementById("txAmountInput").value = "";
       document.getElementById("txDesc").value = "";
+      document.getElementById("txReceiptInput").value = "";
+      document.getElementById("existingReceiptUrl").value = "";
+      document.getElementById("txDateInput").value = new Date().toISOString().split('T')[0];
+
+      selectedDirectionValue = null;
+      selectedCurrencyValue = null;
+      document.getElementById("btnDirCreditor").className = "btn-select-option";
+      document.getElementById("btnDirDebtor").className = "btn-select-option";
+      document.querySelectorAll('.btn-curr-opt').forEach(el => el.className = "btn-select-option btn-curr-opt");
+
       document.getElementById("transactionModal").style.display = "flex";
-      window.history.pushState({ modal: "transactionModal" }, '');
+      pushModalHistory("transactionModal");
     }
+
+    function openEditTransactionModal() {
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
+      if (!tx) return;
+      document.getElementById("editTransId").value = selectedTxId;
+      document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
+      
+      let dirVal = getVal(tx, ['Direction', 'direction']) || "بستانکار";
+      let currVal = getVal(tx, ['Currency', 'currency']) || "AFN";
+      selectTxDirection(dirVal);
+      selectTxCurrency(currVal);
+
+      document.getElementById("txAmountInput").value = formatEnNum(getVal(tx, ['Amount', 'amount']) || "");
+      document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
+      document.getElementById("txDateInput").value = String(getVal(tx, ['Date', 'date']) || new Date().toISOString()).split('T')[0];
+      document.getElementById("txDesc").value = (getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+      document.getElementById("existingReceiptUrl").value = getVal(tx, ['receipt_url', 'Receipt_URL']) || "";
+      document.getElementById("transactionModal").style.display = "flex";
+      pushModalHistory("transactionModal");
+    }
+
     function closeTransactionModal() { document.getElementById("transactionModal").style.display = "none"; }
 
     function openCustomMessageModal() {
+      document.getElementById("customWhatsAppMessageText").value = "";
       document.getElementById("customMessageModal").style.display = "flex";
-      window.history.pushState({ modal: "customMessageModal" }, '');
+      pushModalHistory("customMessageModal");
     }
-    function closeCustomMessageModal() { document.getElementById("customMessageModal").style.display = "none"; }
-    function sendCustomWhatsAppMessage() { closeCustomMessageModal(); }
+    function closeCustomMessageModal() {
+      document.getElementById("customMessageModal").style.display = "none";
+    }
+
+    function sendCustomWhatsAppMessage() {
+      let msg = document.getElementById("customWhatsAppMessageText").value.trim();
+      if (!msg) { alert("لطفاً متن پیام را وارد کنید."); return; }
+      closeCustomMessageModal();
+
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
+
+      let encodedMessage = encodeURIComponent(msg);
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
+    }
 
     async function submitTransaction() {
       let amt = parseFloat(formatEnNum(document.getElementById("txAmountInput").value));
-      if (!selectedDirectionValue || !selectedCurrencyValue || isNaN(amt) || amt <= 0) { alert("اطلاعات ناقص است"); return; }
+
+      if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
+      if (!selectedCurrencyValue) { alert("لطفاً واحد پول / ارز را انتخاب کنید!"); return; }
+      if (!amt || isNaN(amt) || amt <= 0) { alert("لطفاً یک مبلغ معتبر وارد کنید"); return; }
+
+      let opType = document.getElementById("txOpType").value;
+      let desc = document.getElementById("txDesc").value;
+      let txDateInputVal = document.getElementById("txDateInput").value;
+      let editTransId = document.getElementById("editTransId").value;
+      let fileInput = document.getElementById("txReceiptInput");
+      let receiptUrl = document.getElementById("existingReceiptUrl").value;
+
       closeTransactionModal();
-      let payload = {
-        TransID: "TX-" + Math.floor(10000000 + Math.random() * 90000000),
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) { indicator.innerText = "🔄 در حال ذخیره تراکنش..."; indicator.style.display = "block"; }
+
+      if (fileInput.files.length > 0) {
+        const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'receipts');
+        if (uploadedUrl) receiptUrl = uploadedUrl;
+      }
+
+      let dateIsoString;
+      if (editTransId) {
+        let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
+        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || new Date().toISOString()) : new Date().toISOString();
+      } else {
+        let now = new Date();
+        if (txDateInputVal) {
+          let selectedDate = new Date(txDateInputVal);
+          selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+          dateIsoString = selectedDate.toISOString();
+        } else {
+          dateIsoString = now.toISOString();
+        }
+      }
+
+      let transIdToSave = editTransId || ("TX-" + formatEnNum(Math.floor(10000000 + Math.random() * 90000000)));
+      const payload = {
+        TransID: transIdToSave,
         AccountID: currentAccountId,
         Direction: selectedDirectionValue,
         Amount: amt,
         Currency: selectedCurrencyValue,
-        OperationType: document.getElementById("txOpType").value,
-        Description: document.getElementById("txDesc").value,
-        Date: new Date().toISOString()
+        OperationType: opType,
+        Description: desc,
+        receipt_url: receiptUrl,
+        Date: dateIsoString
       };
-      await _supabase.from('transactions').insert([payload]);
+
+      if (editTransId) {
+        await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
+      } else {
+        await _supabase.from('transactions').insert([payload]);
+      }
+
       await loadDataFromSupabase(false);
+
+      let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      
+      if (token) {
+        let siteLink = "https://karimi-trust-app.vercel.app/";
+        let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
+        let liveBalance = getAccountLiveBalanceText(currentAccountId);
+        let globalSystemBalance = getSystemGlobalBalanceText();
+        let displayDateFormatted = formatEnNum(dateIsoString.split('T')[0]);
+
+        if (acc) {
+          let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
+          if (customerChatId) {
+            let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+            if (isTransferOrRemittance) {
+              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
+              let msg3 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+              
+              await sendTelegramMessage(token, customerChatId, msg1);
+              await sendTelegramMessage(token, customerChatId, msg2);
+              await sendTelegramMessage(token, customerChatId, msg3);
+            } else {
+              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n🔹 نوع: *${opType}* (${selectedDirectionValue})\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+
+              await sendTelegramMessage(token, customerChatId, msg1);
+              await sendTelegramMessage(token, customerChatId, msg2);
+            }
+          }
+        }
+
+        if (adminChatId) {
+          let adminMsg = `🔔 *گزارش مدیریتی سیستم*\n\n` +
+                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
+                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})\n` +
+                         `${actionTitle} (${opType} - ${selectedDirectionValue})\n` +
+                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n` +
+                         `📅 تاریخ: ${displayDateFormatted}\n` +
+                         `📝 شرح: ${desc || '-'}\n\n` +
+                         `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
+          sendTelegramMessage(token, adminChatId, adminMsg);
+        }
+      }
+
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    function sendAccountBalanceWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(getAccountLiveBalanceText(currentAccountId))}`, '_blank'); }
-    function sendGeneralWhatsAppReport() {}
-    function shareTransferReceiptWhatsApp() {}
-    function openEditTransactionModal() {}
+    async function deleteSingleTransaction() {
+      let txIdToDelete = selectedTxId;
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txIdToDelete));
+      
+      const { error } = await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
+      if (error) {
+        await _supabase.from('transactions').delete().eq('transid', txIdToDelete);
+      }
+
+      await loadDataFromSupabase(false);
+
+      let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+
+      if (token && tx) {
+        let liveBalance = getAccountLiveBalanceText(currentAccountId);
+        let globalSystemBalance = getSystemGlobalBalanceText();
+        let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+        let tCurr = getVal(tx, ['Currency', 'currency']);
+
+        if (acc) {
+          let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
+          if (customerChatId) {
+            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*\n\n` +
+                         `محترم *${currentAccountName}*،\n` +
+                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.\n\n` +
+                         `📊 *بیلان جدید حساب شما:*\n${liveBalance}`;
+            sendTelegramMessage(token, customerChatId, delMsg);
+          }
+        }
+
+        if (adminChatId) {
+          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*\n\n` +
+                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
+                            `👥 مشتری: *${currentAccountName}*\n` +
+                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*\n\n` +
+                            `📊 *موجودی کل سیستم:*\n${globalSystemBalance}`;
+          sendTelegramMessage(token, adminChatId, adminDelMsg);
+        }
+      }
+
+      if (currentAccountId) {
+        selectAccount(currentAccountId, currentAccountName);
+      }
+    }
+
+    function shareTransferReceiptWhatsApp(targetTxId) {
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId || selectedTxId));
+      if (!tx) return;
+
+      let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+
+      let receiptLines = [
+        `✨ *رسید انتقال* ✨`,
+        ``,
+        `${desc || 'بدون توضیحات'}`,
+        ``,
+        `⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`
+      ];
+
+      let encodedMessage = receiptLines.map(line => encodeURIComponent(line)).join('%0A');
+      window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+    }
+
+    function sendSingleTxWhatsApp(targetTxId) {
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId));
+      if(!tx) return;
+
+      let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+      let amtVal = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+      let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
+      let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
+      let txDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+      let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+      let liveBalText = getAccountLiveBalanceText(currentAccountId);
+
+      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+
+      let lines = [
+        `✨ *امانت‌داری کریمی* ✨`,
+        `────────────────────────`,
+        `محترم آقای *${currentAccountName}*`,
+        `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
+        ``,
+        `📌 *جزئیات تراکنش:*`,
+        `🔹 نوع عملیات: *${opType}* (${dirVal})`,
+        `💰 مبلغ: *${amtVal} ${currVal}*`,
+        `📅 تاریخ: ${txDate}`,
+        ...(isTransferOrRemittance ? [] : [`📝 شرح: ${desc || '-'}`]),
+        `────────────────────────`,
+        `📊 *مانده فعلی حساب شما:*`,
+        liveBalText,
+        `────────────────────────`,
+        `با تشکر، امانت‌داری کریمی 🙏`
+      ];
+
+      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
+    }
+
+    function sendGeneralWhatsAppReport() {
+      sendSingleTxWhatsApp(selectedTxId);
+    }
+
+    function sendAccountBalanceWhatsApp() {
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      if (!acc) return;
+      let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
+      let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
+      let siteLink = "https://karimi-trust-app.vercel.app/";
+
+      let liveBalText = getAccountLiveBalanceText(currentAccountId);
+
+      let lines = [
+        `✨ *امانت‌داری کریمی* ✨`,
+        `────────────────────────`,
+        `👤 *مشخصات حساب مشتری:*`,
+        `▫️ نام: *${currentAccountName}*`,
+        `🆔 کُد حساب: \`${formatEnNum(currentAccountId)}\``,
+        `📞 شماره تماس: ${phone || '-'}`,
+        `💬 چت‌آیدی: \`${chatId}\``,
+        `────────────────────────`,
+        `📊 *صورت‌حساب و مانده حساب شما:*`,
+        ``,
+        liveBalText,
+        ``,
+        `────────────────────────`,
+        `🌐 لینک بررسی آنلاین حساب:`,
+        siteLink
+      ];
+
+      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
+    }
   </script>
 </body>
 </html>
