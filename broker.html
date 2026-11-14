@@ -28,9 +28,9 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', system-ui, sans-serif !important; direction: rtl; }
-    body { background: #e2e8f0; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px; color: var(--text-main); padding: 6px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
+    body { background: #e2e8f0; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px; color: var(--text-main); padding: 4px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
 
-    .container { width: 100%; max-width: 100%; margin: 0 auto; padding: 0 4px; }
+    .container { width: 100%; max-width: 100%; margin: 0 auto; padding: 0; }
     .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 12px; border: 1.5px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow-card); width: 100%; }
     .card-header { background: var(--primary-gradient); color: #fff; padding: 12px 16px; border-radius: 10px; margin: -12px -12px 12px -12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #38bdf8; }
     
@@ -68,15 +68,16 @@
 
     .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
     
-    /* رفع حاشیه‌های خالی و تمام صفحه کردن جدول تراکنش‌ها */
+    /* رفع کامل حاشیه‌های خالی و تمام صفحه کردن جدول و هدر روزانه مشابه بخش ادمین */
     .tx-table-wrapper {
       width: 100% !important;
       max-width: 100% !important;
       overflow-x: auto;
-      border-radius: 8px;
+      border-radius: 0 0 8px 8px !important;
       border: 1.5px solid #cbd5e1;
+      border-top: none;
       background: #ffffff;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
       margin-left: 0 !important;
       margin-right: 0 !important;
@@ -140,24 +141,20 @@
     .day-group-header {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: #ffffff;
-      padding: 7px 12px;
-      border-radius: 8px 8px 0 0;
-      margin: 12px 0 0 0;
+      padding: 8px 12px;
+      border-radius: 8px 8px 0 0 !important;
+      margin: 14px 0 0 0 !important;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 0.82rem;
       font-weight: 800;
       border-right: 4px solid #38bdf8;
-      width: 100%;
+      width: 100% !important;
     }
-    .day-group-header:first-child { margin-top: 2px; }
-    .day-group-header + .tx-table-wrapper {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      border-top: none;
-    }
+    .day-group-header:first-child { margin-top: 2px !important; }
     .day-group-badge { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; padding: 1px 8px; border-radius: 12px; font-size: 0.74rem; }
+    
     .adv-filter-panel {
       background: #f8fafc;
       border: 1.5px solid #cbd5e1;
@@ -584,7 +581,7 @@
     let selectedBrokerTxId = null;
     let activeBrokerId = null;
     let currentLoggedInAdmin = null;
-    let isFormDirty = false; // متغیر برای ردیابی تغییرات ذخیره نشده فرم
+    let isFormDirty = false;
 
     function toEnglishDigits(str) {
       if (str === null || str === undefined) return '';
@@ -1306,7 +1303,7 @@
       document.getElementById("btnCustDebtor").className = "btn-opt";
 
       switchView('viewTransactionForm');
-      isFormDirty = false; // تنظیم مجدد پس از بارگذاری اولیه فرم
+      isFormDirty = false;
     }
 
     function generateVerticalBalanceReport() {
@@ -1454,7 +1451,7 @@ ${verticalReport}`;
           let currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
           let { token } = getCurrentAdminTokenAndChat();
           if (currentBroker && currentBroker.chatid && token) {
-            let openAccMsg = `🎉 *حساب شما افتتاح شد*\n🏛️ صرافی: *${currentBroker.name}*\n👤 نام مشتری: *${custName}*\n📅 تاریخ افتتاح: \`${toEnglishDigits(new Date().toISOString().split('T')[0])}\`\n_تراکنش‌های ثبت‌شده از زمان افتتاح حساب فعال شد._`;
+            let openAccMsg = `🎉 *حساب شما افتتاح شد*\n🏛️ صرافی: *${currentBroker.name}*\n👤 نام مشتری: *${custName}*\n📅 تاریخ افتتاح: \`${toEnglishDigits(new Date().toISOString().split('T')[0])}\`\n_تراکنش‌های ثبت‌شده از زمان افتتاح حساب و مانده حساب فعال شد._`;
             sendTelegramMessage(token, currentBroker.chatid, openAccMsg);
           }
         }
@@ -1512,7 +1509,7 @@ ${verticalReport}`;
         await notifyTelegramSmart("تراکنش جدید اضافه شد 🏦", brokerTxObj, currentBroker);
       }
 
-      isFormDirty = false; // بازنشانی وضعیت پس از ذخیره موفق
+      isFormDirty = false;
       playBeep('success');
       alert("✅ معامله با موفقیت ثبت/ویرایش شد و گزارش به تلگرام ارسال گردید!");
       switchView('viewDashboard');
