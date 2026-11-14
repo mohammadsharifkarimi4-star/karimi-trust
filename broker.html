@@ -28,11 +28,11 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', system-ui, sans-serif !important; direction: rtl; }
-    body { background: #e2e8f0; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px; color: var(--text-main); padding: 10px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
+    body { background: #e2e8f0; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px; color: var(--text-main); padding: 6px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
 
-    .container { max-width: 920px; margin: 0 auto; }
-    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 14px; border: 1.5px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow-card); }
-    .card-header { background: var(--primary-gradient); color: #fff; padding: 12px 16px; border-radius: 10px; margin: -14px -14px 14px -14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #38bdf8; }
+    .container { width: 100%; max-width: 100%; margin: 0 auto; padding: 0 4px; }
+    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 12px; border: 1.5px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow-card); width: 100%; }
+    .card-header { background: var(--primary-gradient); color: #fff; padding: 12px 16px; border-radius: 10px; margin: -12px -12px 12px -12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #38bdf8; }
     
     h3 { font-size: 1.05rem; font-weight: 900; color: #fff; }
     .form-group { margin-bottom: 10px; }
@@ -67,14 +67,19 @@
     .stat-row-right { display: flex; gap: 12px; align-items: center; font-size: 0.78rem; flex-wrap: wrap; }
 
     .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
+    
+    /* رفع حاشیه‌های خالی و تمام صفحه کردن جدول تراکنش‌ها */
     .tx-table-wrapper {
-      width: 100%;
+      width: 100% !important;
+      max-width: 100% !important;
       overflow-x: auto;
-      border-radius: 10px;
+      border-radius: 8px;
       border: 1.5px solid #cbd5e1;
       background: #ffffff;
       margin-bottom: 10px;
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+      margin-left: 0 !important;
+      margin-right: 0 !important;
     }
     .tx-table {
       width: 100%;
@@ -87,7 +92,7 @@
       background: #f1f5f9;
       color: #1e293b;
       font-weight: 900;
-      padding: 7px 8px;
+      padding: 8px 10px;
       border-bottom: 1.5px solid #cbd5e1;
       white-space: nowrap;
       font-size: 0.76rem;
@@ -102,7 +107,7 @@
     .tx-table tbody tr.row-creditor { background: #f8fffb; }
     .tx-table tbody tr.row-debtor { background: #fff9f9; }
     .tx-table td {
-      padding: 6px 8px;
+      padding: 7px 10px;
       vertical-align: middle;
       color: #0f172a;
       font-weight: 600;
@@ -135,7 +140,7 @@
     .day-group-header {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: #ffffff;
-      padding: 6px 12px;
+      padding: 7px 12px;
       border-radius: 8px 8px 0 0;
       margin: 12px 0 0 0;
       display: flex;
@@ -144,6 +149,7 @@
       font-size: 0.82rem;
       font-weight: 800;
       border-right: 4px solid #38bdf8;
+      width: 100%;
     }
     .day-group-header:first-child { margin-top: 2px; }
     .day-group-header + .tx-table-wrapper {
@@ -191,7 +197,7 @@
         <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-info btn-xs" onclick="openBrokersListModal()">🏛️ صرافی‌ها</button>
           <button class="btn btn-warning btn-xs" style="color:#000; font-weight:900;" onclick="openStandaloneTokenModal()">⚙️ مدیریت توکن و تنظیمات</button>
-          <a href="admin.html" class="btn btn-secondary btn-xs">👥 مشتریان</a>
+          <a href="admin.html" class="btn btn-secondary btn-xs" onclick="return confirmNavigation('آیا می‌خواهید از صفحه صرافی خارج شوید؟')">👥 مشتریان</a>
           <button class="btn btn-danger btn-xs" onclick="handleLogout()">خروج</button>
         </div>
       </div>
@@ -225,7 +231,7 @@
         
         <div style="margin-top: 12px; display:flex; justify-content:space-between; align-items:center;">
           <button class="btn btn-narrow-action" onclick="openAddTransactionView()">➕ ثبت معامله جدید صرافی</button>
-          <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;">↩️ منو</a>
+          <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;" onclick="return confirmNavigation('آیا می‌خواهید از بخش صرافی خارج شوید؟')">↩️ منو</a>
         </div>
       </div>
 
@@ -283,7 +289,7 @@
           </div>
         </div>
 
-        <div id="brokerTxList"></div>
+        <div id="brokerTxList" style="width:100%;"></div>
       </div>
     </div>
 
@@ -292,7 +298,7 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
           <h3 id="formTitle" style="color:#0f172a; font-size:1rem;">📝 ثبت معامله جدید</h3>
-          <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;">↩️ منو</a>
+          <button class="btn btn-secondary btn-xs" onclick="attemptExitForm()">↩️ بازگشت / منو</button>
         </div>
         <hr style="margin: 6px 0 10px 0; border:0; border-top:1.5px solid #cbd5e1;">
 
@@ -301,12 +307,12 @@
         <div class="grid-2">
           <div class="form-group">
             <label>تاریخ معامله:</label>
-            <input type="date" id="txDate">
+            <input type="date" id="txDate" onchange="markFormDirty()">
           </div>
           <div class="form-group">
             <label>نوع عملیات:</label>
             <div style="display:flex; gap:4px;">
-              <select id="txOpType" style="flex:1;"></select>
+              <select id="txOpType" style="flex:1;" onchange="markFormDirty()"></select>
               <button class="btn btn-info btn-xs" onclick="openOpTypeManagerModal()">⚙️</button>
             </div>
           </div>
@@ -335,7 +341,7 @@
           <div class="grid-3">
             <div class="form-group" style="margin-bottom:0;">
               <label>مبلغ اولیه:</label>
-              <input type="number" id="amtInitial" placeholder="0" oninput="calculateFinal()">
+              <input type="number" id="amtInitial" placeholder="0" oninput="calculateFinal(); markFormDirty();">
             </div>
             <div class="form-group" style="margin-bottom:0;">
               <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -345,24 +351,24 @@
                   <button type="button" class="btn btn-xs" id="btnModeDivide" style="padding:2px 6px; background:#f59e0b;" onclick="setCalcMode('divide')">÷</button>
                 </div>
               </div>
-              <input type="number" id="exchangeRate" placeholder="نرخ..." oninput="calculateFinal()">
+              <input type="number" id="exchangeRate" placeholder="نرخ..." oninput="calculateFinal(); markFormDirty();">
             </div>
             <div class="form-group" style="margin-bottom:0;">
               <label style="color:#059669; font-weight:bold;">مبلغ نهایی:</label>
-              <input type="number" id="amtFinal" placeholder="0" class="highlight-amount">
+              <input type="number" id="amtFinal" placeholder="0" class="highlight-amount" oninput="markFormDirty()">
             </div>
           </div>
         </div>
 
         <div class="form-group">
           <label>شرح / توضیحات:</label>
-          <textarea id="txDesc" rows="2" placeholder="توضیحات معامله..."></textarea>
+          <textarea id="txDesc" rows="2" placeholder="توضیحات معامله..." oninput="markFormDirty()"></textarea>
         </div>
 
         <div class="form-group">
           <label>آدرس مقصد:</label>
           <div style="display:flex; gap:6px;">
-            <input type="text" id="txAddress" placeholder="انتخاب یا تایپ آدرس...">
+            <input type="text" id="txAddress" placeholder="انتخاب یا تایپ آدرس..." oninput="markFormDirty()">
             <button class="btn btn-secondary btn-xs" style="width:auto;" onclick="openAddressDashboardModal()">📂 آدرس‌ها</button>
           </div>
         </div>
@@ -379,7 +385,7 @@
           
           <div class="form-group" style="position:relative;">
             <label>جستجو یا ساخت مشتری:</label>
-            <input type="text" id="custSearchInput" placeholder="نام یا شماره..." oninput="searchCustomers()" style="font-size:0.95rem; padding:10px;">
+            <input type="text" id="custSearchInput" placeholder="نام یا شماره..." oninput="searchCustomers(); markFormDirty();" style="font-size:0.95rem; padding:10px;">
             <div class="search-results" id="custSearchResults" style="display:none;"></div>
           </div>
 
@@ -389,11 +395,11 @@
           <div class="grid-2" style="margin-top:8px;">
             <div class="form-group">
               <label>نام مشتری:</label>
-              <input type="text" id="custNameInput" placeholder="نام و فامیلی" style="padding:10px;">
+              <input type="text" id="custNameInput" placeholder="نام و فامیلی" oninput="markFormDirty()" style="padding:10px;">
             </div>
             <div class="form-group">
               <label>شماره تماس:</label>
-              <input type="text" id="custPhoneInput" placeholder="07..." style="padding:10px;">
+              <input type="text" id="custPhoneInput" placeholder="07..." oninput="markFormDirty()" style="padding:10px;">
             </div>
           </div>
 
@@ -407,7 +413,7 @@
             </div>
             <div class="form-group">
               <label>ارز مشتری:</label>
-              <select id="custCurrency" style="padding:10px; font-weight:bold;">
+              <select id="custCurrency" onchange="markFormDirty()" style="padding:10px; font-weight:bold;">
                 <option value="USD">USD</option>
                 <option value="AFN">AFN</option>
                 <option value="تومان">تومان</option>
@@ -418,7 +424,7 @@
 
           <div class="form-group" style="margin-top:8px;">
             <label>مبلغ مشتری:</label>
-            <input type="number" id="custAmount" placeholder="مبلغ" class="highlight-amount" style="font-size:1.05rem !important; padding:10px;">
+            <input type="number" id="custAmount" placeholder="مبلغ" class="highlight-amount" oninput="markFormDirty()" style="font-size:1.05rem !important; padding:10px;">
           </div>
         </div>
 
@@ -426,9 +432,9 @@
           <button class="btn" style="padding: 12px; font-size: 0.98rem; flex:2;" onclick="saveBrokerTransaction()">
             💾 ذخیره کامل معامله
           </button>
-          <a href="admin.html" class="btn btn-secondary btn-xs" style="padding: 12px; flex:1; text-decoration:none; text-align:center;">
+          <button class="btn btn-secondary btn-xs" style="padding: 12px; flex:1; text-align:center;" onclick="attemptExitForm()">
             ↩️ منو
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -438,7 +444,7 @@
       <div class="card">
         <div class="card-header">
           <h3>🔍 جزئیات تراکنش</h3>
-          <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;">↩️ منو</a>
+          <button class="btn btn-secondary btn-xs" onclick="switchView('viewDashboard')">↩️ بازگشت</button>
         </div>
         <div id="txDetailCard" style="margin-top: 10px;"></div>
         <div style="margin-top: 12px; display:flex; gap:8px; flex-wrap:wrap;">
@@ -453,7 +459,7 @@
 
   </div>
 
-  <!-- مدال مدیریت توکن و تنظیمات (تفکیک‌شده و هماهنگ با اطلاعات ثبت‌شده ادمین در admin.html) -->
+  <!-- مدال مدیریت توکن و تنظیمات -->
   <div id="standaloneTokenModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9800; padding:10px;">
     <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -578,6 +584,7 @@
     let selectedBrokerTxId = null;
     let activeBrokerId = null;
     let currentLoggedInAdmin = null;
+    let isFormDirty = false; // متغیر برای ردیابی تغییرات ذخیره نشده فرم
 
     function toEnglishDigits(str) {
       if (str === null || str === undefined) return '';
@@ -615,7 +622,6 @@
         currentLoggedInAdmin = JSON.parse(savedSession);
         document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
         
-        // همگام‌سازی اطلاعات ادمین از دیتابیس برای دریافت توکن و چت‌آیدی اختصاصی همکار
         await fetchLatestAdminInfo();
         await syncAdminTokenFromDatabase();
 
@@ -627,6 +633,14 @@
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
+        let activeSec = document.getElementById("viewTransactionForm");
+        if (activeSec && activeSec.classList.contains('active') && isFormDirty) {
+          if (!confirm("تراکنش در حال پر شدن است و ذخیره نشده است. آیا می‌خواهید خارج شوید؟")) {
+            window.history.pushState({ view: 'viewTransactionForm' }, '');
+            return;
+          }
+        }
+        isFormDirty = false;
         if (event.state && event.state.view) {
           switchView(event.state.view, false);
         } else {
@@ -635,13 +649,37 @@
       };
     };
 
+    function confirmNavigation(msg) {
+      let activeSec = document.getElementById("viewTransactionForm");
+      if (activeSec && activeSec.classList.contains('active') && isFormDirty) {
+        return confirm("تراکنش در حال پر شدن است و ذخیره نشده است. آیا می‌خواهید خارج شوید؟");
+      }
+      return true;
+    }
+
+    function markFormDirty() {
+      isFormDirty = true;
+    }
+
+    function attemptExitForm() {
+      if (isFormDirty) {
+        if (!confirm("⚠️ اطلاعات این معامله ذخیره نشده است. آیا مطمئن هستید که می‌خواهید بدون تایید و ذخیره خارج شوید؟")) {
+          return;
+        }
+      }
+      isFormDirty = false;
+      switchView('viewDashboard');
+    }
+
     function handleLogout() {
+      if (isFormDirty) {
+        if (!confirm("فرم تراکنش ذخیره نشده است. آیا مایل به خروج هستید؟")) return;
+      }
       playBeep('click');
       localStorage.removeItem("adminAuthSessionData");
       window.location.href = "admin.html";
     }
 
-    // دریافت به‌روزترین اطلاعات ادمین از جدول admins
     async function fetchLatestAdminInfo() {
       if (!currentLoggedInAdmin) return;
       let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
@@ -652,13 +690,12 @@
         if (admins) {
           let found = admins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
           if (found) {
-            currentLoggedInAdmin = found; // جایگزینی با اطلاعات دقیق و به‌روز همان ادمین
+            currentLoggedInAdmin = found;
           }
         }
       } catch(e) {}
     }
 
-    // کلیدهای اختصاصی حافظه محلی کاملاً مجزا به ازای هر ادمین (جلوگیری از هم‌پوشانی با مالک یا دیگران)
     function getAdminStorageKeys() {
       let adminKey = "master_owner";
       if (currentLoggedInAdmin) {
@@ -672,7 +709,6 @@
       };
     }
 
-    // سینک توکن ثبت‌شده در دیتابیس ادمین با تنظیمات صرافی
     async function syncAdminTokenFromDatabase() {
       if (!currentLoggedInAdmin) return;
       let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
@@ -687,7 +723,6 @@
       }
     }
 
-    // دریافت توکن و چت‌آیدی اختصاصی ادمین یا مالک جاری
     function getCurrentAdminTokenAndChat() {
       if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
       
@@ -748,7 +783,7 @@
       localStorage.setItem(keys.pinKey, p);
 
       playBeep('success');
-      alert("✅ تنظیمات اختصاصی شما با موفقیت ذخیره شد و در تمامی تراکنش‌ها و ارسال پیام‌ها اعمال گردید!");
+      alert("✅ تنظیمات اختصاصی شما با موفقیت ذخیره شد!");
       closeStandaloneTokenModal();
     }
 
@@ -861,7 +896,6 @@
       let raw = tx.date || tx.created_at || '';
       if (!raw) return 0;
       let s = toEnglishDigits(String(raw)).trim();
-      // If only YYYY-MM-DD without time, treat as start of that day in local/UTC consistently
       if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
         let t = new Date(s + 'T00:00:00').getTime();
         return isNaN(t) ? 0 : t;
@@ -896,7 +930,6 @@
       loadBrokerAddressesFromDatabase(currentBroker);
 
       const { data } = await _supabase.from('broker_transactions').select('*').eq('broker_id', activeBrokerId);
-      // همیشه بر اساس سال، ماه، روز و ساعت دقیق مرتب‌سازی می‌شود تا شماره ردیف‌ها ثابت و واقعی باشد
       brokerTxs = sortBrokerTxsChronologically(data || [], true);
       
       renderBrokerStatsAndTxs();
@@ -939,7 +972,6 @@
       let clearBtn = document.getElementById("clearTxSearchBtn");
       if (clearBtn) clearBtn.style.display = hasActiveFilter ? "block" : "none";
 
-      // شماره ردیف دائمی بر اساس ترتیب زمانی واقعی از ابتدا تا انتها محاسبه می‌شود
       let chronologicalAll = sortBrokerTxsChronologically(brokerTxs, true);
       let rowNumMap = {};
       chronologicalAll.forEach((t, i) => {
@@ -1036,11 +1068,10 @@
       container.innerHTML = "";
 
       if (filteredTxs.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:18px; font-weight:bold; background:#f8fafc; border-radius:10px; border:1px dashed #cbd5e1;">هیچ تراکنشی با این مشخصات یافت نشد</div>`;
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:18px; font-weight:bold; background:#f8fafc; border-radius:10px; border:1px dashed #cbd5e1; width:100%;">هیچ تراکنشی با این مشخصات یافت نشد</div>`;
         return;
       }
 
-      // دسته‌بندی تراکنش‌ها بر اساس روز
       let groups = [];
       let groupMap = {};
 
@@ -1098,7 +1129,6 @@
           `;
         });
 
-        // محاسبه مجموع بدهکاری و بستانکاری به تفکیک ارز برای این روز خاص
         let dayTotals = {};
         group.items.forEach(tx => {
           let c = (tx.currency || 'USD').toUpperCase();
@@ -1156,6 +1186,7 @@
       selectedDirection = dir;
       document.getElementById("btnDirCreditor").className = "btn-opt" + (dir === 'بستانکار' ? " active-creditor" : "");
       document.getElementById("btnDirDebtor").className = "btn-opt" + (dir === 'بدهکار' ? " active-debtor" : "");
+      markFormDirty();
     }
 
     function setCustDirection(dir) {
@@ -1163,6 +1194,7 @@
       selectedCustomerDirection = dir;
       document.getElementById("btnCustCreditor").className = "btn-opt" + (dir === 'بستانکار' ? " active-creditor" : "");
       document.getElementById("btnCustDebtor").className = "btn-opt" + (dir === 'بدهکار' ? " active-debtor" : "");
+      markFormDirty();
     }
 
     function setCurrency(curr) {
@@ -1171,6 +1203,7 @@
       document.querySelectorAll('.btn-curr').forEach(el => {
         el.className = "btn-opt btn-opt-sm btn-curr" + (el.innerText === curr ? " active-currency" : "");
       });
+      markFormDirty();
     }
 
     function setCalcMode(mode) {
@@ -1179,6 +1212,7 @@
       document.getElementById("btnModeMultiply").style.background = (mode === 'multiply' ? "#f59e0b" : "#64748b");
       document.getElementById("btnModeDivide").style.background = (mode === 'divide' ? "#f59e0b" : "#64748b");
       calculateFinal();
+      markFormDirty();
     }
 
     function calculateFinal() {
@@ -1209,6 +1243,7 @@
       playBeep('click');
       const box = document.getElementById("customerBox");
       box.style.display = box.style.display === "none" || !box.style.display ? "block" : "none";
+      markFormDirty();
     }
 
     function searchCustomers() {
@@ -1233,10 +1268,12 @@
       document.getElementById("custPhoneInput").value = phone;
       document.getElementById("custSearchInput").value = name;
       document.getElementById("custSearchResults").style.display = "none";
+      markFormDirty();
     }
 
     function openAddTransactionView() {
       if (!activeBrokerId) { alert("لطفاً ابتدا یک صرافی انتخاب کنید."); return; }
+      isFormDirty = false;
       document.getElementById("editBrokerTxId").value = "";
       document.getElementById("editCustomerTxId").value = "";
       document.getElementById("formTitle").innerText = "📝 ثبت معامله جدید";
@@ -1269,6 +1306,7 @@
       document.getElementById("btnCustDebtor").className = "btn-opt";
 
       switchView('viewTransactionForm');
+      isFormDirty = false; // تنظیم مجدد پس از بارگذاری اولیه فرم
     }
 
     function generateVerticalBalanceReport() {
@@ -1328,10 +1366,8 @@ ${verticalReport}`;
 
       let { token, chatId } = getCurrentAdminTokenAndChat();
       
-      // ارسال پیام به چت‌آیدی اختصاصی ادمین یا مالک جاری
       await sendTelegramMessage(token, chatId, msgText);
 
-      // ارسال به چت‌آیدی صرافی در صورت متفاوت بودن برای جلوگیری از تکرار
       if (currentBroker && currentBroker.chatid && String(currentBroker.chatid).trim() !== String(chatId).trim()) {
         await sendTelegramMessage(token, currentBroker.chatid, msgText);
       }
@@ -1367,24 +1403,20 @@ ${verticalReport}`;
 
       let oldTx = editId ? brokerTxs.find(t => String(t.broker_tx_id) === String(editId)) : null;
 
-      // حفظ ساعت دقیق ثبت در timestamptz هنگام ثبت جدید یا ویرایش بدون تغییر روز
       let finalTimestampISO = "";
       let nowObj = new Date();
-      let timePartISO = nowObj.toISOString().split('T')[1]; // HH:mm:ss.sssZ
+      let timePartISO = nowObj.toISOString().split('T')[1];
 
       if (editId && oldTx && oldTx.date) {
         let oldDatePart = extractDateOnly(oldTx.date);
         if (oldDatePart === txDate && String(oldTx.date).includes('T')) {
-          // تاریخ تغییر نکرده: ساعت دقیق قبلی حفظ می‌شود تا جایگاهش در لیست به هم نخورد
           finalTimestampISO = oldTx.date;
         } else if (oldDatePart === txDate && String(oldTx.date).includes(' ')) {
           finalTimestampISO = new Date(oldTx.date).toISOString();
         } else {
-          // تاریخ به روز جدیدی تغییر کرده: تاریخ جدید + ساعت فعلی
           finalTimestampISO = new Date(`${txDate}T${timePartISO}`).toISOString();
         }
       } else {
-        // تراکنش جدید: تاریخ انتخاب‌شده + ساعت دقیق همین لحظه
         finalTimestampISO = new Date(`${txDate}T${timePartISO}`).toISOString();
       }
 
@@ -1422,7 +1454,7 @@ ${verticalReport}`;
           let currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
           let { token } = getCurrentAdminTokenAndChat();
           if (currentBroker && currentBroker.chatid && token) {
-            let openAccMsg = `🎉 *حساب شما افتتاح شد*\n🏛️ صرافی: *${currentBroker.name}*\n👤 نام مشتری: *${custName}*\n📅 تاریخ افتتاح: \`${toEnglishDigits(new Date().toISOString().split('T')[0])}\`\n_تراکنش‌های ثبت‌شده از زمان افتتاح حساب و مانده حساب فعال شد._`;
+            let openAccMsg = `🎉 *حساب شما افتتاح شد*\n🏛️ صرافی: *${currentBroker.name}*\n👤 نام مشتری: *${custName}*\n📅 تاریخ افتتاح: \`${toEnglishDigits(new Date().toISOString().split('T')[0])}\`\n_تراکنش‌های ثبت‌شده از زمان افتتاح حساب فعال شد._`;
             sendTelegramMessage(token, currentBroker.chatid, openAccMsg);
           }
         }
@@ -1435,10 +1467,8 @@ ${verticalReport}`;
           combinedDesc = combinedDesc ? `${combinedDesc} | آدرس: ${address}` : `آدرس: ${address}`;
         }
 
-        // حفظ ساعت دقیق معامله اصلی برای تراکنش مشتری تا به ترتیب در بالای لیست قرار گیرد
         let custTimestampISO = finalTimestampISO; 
         if (editId && oldTx && oldTx.date) {
-          // در حالت ویرایش اگر تاریخ تغییر کرده باشد، تاریخ جدید با ساعت فعلی یا ساعت قبلی
           let oldDatePart = extractDateOnly(oldTx.date);
           if (oldDatePart !== txDate) {
             custTimestampISO = new Date(`${txDate}T${timePartISO}`).toISOString();
@@ -1482,6 +1512,7 @@ ${verticalReport}`;
         await notifyTelegramSmart("تراکنش جدید اضافه شد 🏦", brokerTxObj, currentBroker);
       }
 
+      isFormDirty = false; // بازنشانی وضعیت پس از ذخیره موفق
       playBeep('success');
       alert("✅ معامله با موفقیت ثبت/ویرایش شد و گزارش به تلگرام ارسال گردید!");
       switchView('viewDashboard');
@@ -1525,6 +1556,7 @@ ${verticalReport}`;
       const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
       if (!tx) return;
 
+      isFormDirty = false;
       document.getElementById("editBrokerTxId").value = tx.broker_tx_id;
       document.getElementById("formTitle").innerText = `✏️ ویرایش معامله (${tx.broker_tx_id})`;
       document.getElementById("txDate").value = extractDateOnly(tx.date);
@@ -1541,6 +1573,7 @@ ${verticalReport}`;
       document.getElementById("customerBox").style.display = "none";
 
       switchView('viewTransactionForm');
+      isFormDirty = false;
     }
 
     async function deleteBrokerTx() {
@@ -1756,7 +1789,7 @@ ${verticalReport}`;
       });
     }
 
-    function selectAddress(addr) { document.getElementById("txAddress").value = addr; closeAddressDashboardModal(); }
+    function selectAddress(addr) { document.getElementById("txAddress").value = addr; closeAddressDashboardModal(); markFormDirty(); }
     
     async function saveNewAddress() {
       const val = document.getElementById("newAddressInput").value.trim();
