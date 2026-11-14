@@ -449,7 +449,6 @@
             <span class="title">مدیریت ادمین‌های همکار</span>
           </div>
 
-          <!-- دکمه تنظیمات اختصاصی مالک -->
           <div class="floating-glass-btn" id="masterSettingsMenuBtn" style="display:none; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;" onclick="playInteractionEffect(); openMasterSettingsModal()">
             <span class="icon">⚙️</span>
             <span class="title" style="color: #92400e;">تنظیمات و توکن مالک</span>
@@ -501,7 +500,7 @@
       </div>
     </div>
 
-    <!-- دفتر کل مرکزی تمامی تراکنش‌ها -->
+    <!-- دفتر کل مرکزی تمامی تراکنش‌ها (فشرده و بهینه‌شده برای موبایل بدون اسکرول افقی) -->
     <div id="viewAllTransactionsPage" class="view-section">
       <div class="card">
         <div class="card-header-styled">
@@ -841,7 +840,7 @@
     let allAccounts = [];
     let allTransactions = [];
     let allAdmins = [];
-    let phoneArchiveList = []; // ذخیره آرشیو کل شماره‌های ثبت‌شده
+    let phoneArchiveList = [];
     let customOpTypes = ["امانت", "حواله", "انتقال", "دریافت", "پرداخت", "تسویه"];
     let currentAccountId = null;
     let currentAccountName = "";
@@ -1021,7 +1020,6 @@
       return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
 
-    // مدیریت دکمه بازگشت (Back Button)
     function pushModalHistory(modalId) {
       window.history.pushState({ modal: modalId }, '');
     }
@@ -1056,7 +1054,6 @@
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
-        // ابتدا بررسی مودال‌های باز
         if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
         if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
         if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
@@ -1219,7 +1216,6 @@
       if (map[curr]) document.getElementById(map[curr]).classList.add('selected-currency');
     }
 
-    // دریافت داده‌ها و مرتب‌سازی تمامی تراکنش‌ها بر اساس جدیدترین زمان و تاریخ
     async function loadDataFromSupabase(showLoader = true) {
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
@@ -1254,7 +1250,6 @@
           });
         }
 
-        // همگام‌سازی و آپدیت آرشیو شماره‌ها بدون حذف شماره‌های قبلی
         updatePhoneDirectoryArchive();
 
         let rawTransactions = txRes.data || [];
@@ -1265,7 +1260,6 @@
           return authorizedAccountIds.includes(txAccId);
         });
 
-        // مرتب‌سازی تراکنش‌ها به صورت نزولی (جدیدترین در بالا) بر اساس Timestamp کامل
         allTransactions.sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
@@ -1557,10 +1551,6 @@
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
     }
 
-    /* ==============================================================================
-     * صفحه دفترچه و بانک شماره‌ها (Phone Directory)
-     * ============================================================================== */
-
     function openPhoneDirectoryPage() {
       switchView('viewPhoneDirectoryPage');
       renderPhoneDirectoryList(phoneArchiveList);
@@ -1574,7 +1564,6 @@
       let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
       let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
 
-      // فیلتر بر اساس ادمین / مالک
       let filteredList = list.filter(item => {
         if (isMaster) return true;
         let creator = String(item.creator || '').trim();
@@ -1677,10 +1666,6 @@
       renderPhoneDirectoryList(phoneArchiveList);
       inputEl.focus();
     }
-
-    /* ==============================================================================
-     * دفتر کل تراکنش‌ها
-     * ============================================================================== */
 
     function openGlobalSelectAccountModal() {
       document.getElementById("globalAccountPickerInput").value = "";
@@ -1796,6 +1781,26 @@
         const dayTxs = groupsByDay[dayKey];
         let rowsHtml = "";
 
+        // محاسبه مجموع دادوستد (بستانکاری و بدهکاری) آن روز به تفکیک ارز
+        let dayTotals = {};
+        dayTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+          if (!dayTotals[curr]) dayTotals[curr] = { cred: 0, deb: 0 };
+          if (dir.includes("بستانکار")) dayTotals[curr].cred += amt;
+          if (dir.includes("بدهکار")) dayTotals[curr].deb += amt;
+        });
+
+        let daySummaryParts = [];
+        for (let c in dayTotals) {
+          let cCred = dayTotals[c].cred;
+          let cDeb = dayTotals[c].deb;
+          if (cCred > 0) daySummaryParts.push(`بستانکار: ${formatEnMoney(cCred)} ${c}`);
+          if (cDeb > 0) daySummaryParts.push(`بدهکار: ${formatEnMoney(cDeb)} ${c}`);
+        }
+        let daySummaryText = daySummaryParts.join(' | ') || 'بدون دادوستد';
+
         dayTxs.forEach(tx => {
           const rowNum = formatEnNum(totalCount - globalCounter);
           globalCounter++;
@@ -1814,51 +1819,58 @@
           let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
           let dateObj = rawDate ? new Date(rawDate) : null;
           let timeOnly = (dateObj && !isNaN(dateObj.getTime()))
-            ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}`
+            ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
             : '-';
 
           let isCreditor = dir.includes('بستانکار');
           let rowBg = isCreditor ? '#f0fdf4' : '#fef2f2';
           let dirColor = isCreditor ? '#059669' : '#dc2626';
 
+          // طراحی فشرده و بهینه‌شده ستون‌ها برای نمایش کامل در گوشی بدون اسکرول افقی
           rowsHtml += `
             <tr style="background:${rowBg}; border-bottom:1px solid #cbd5e1; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
-              <td style="padding:8px 6px; text-align:center; font-weight:900; color:#334155; border-left:1px solid #e2e8f0;">${rowNum}</td>
-              <td style="padding:8px 8px; border-left:1px solid #e2e8f0;">
-                <div style="font-weight:900; color:var(--primary-dark);">${accName}</div>
-                <div style="font-size:0.75rem; color:#64748b;">کُد: ${formatEnNum(accId)}</div>
+              <td style="padding:6px 4px; text-align:center; font-weight:900; color:#334155; font-size:0.78rem; border-left:1px solid #e2e8f0; width:30px;">${rowNum}</td>
+              <td style="padding:6px 6px; border-left:1px solid #e2e8f0; max-width:90px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <div style="font-weight:900; color:var(--primary-dark); font-size:0.82rem;">${accName}</div>
+                <div style="font-size:0.7rem; color:#64748b;">ک: ${formatEnNum(accId)}</div>
               </td>
-              <td style="padding:8px 6px; text-align:center; border-left:1px solid #e2e8f0;">
-                <span style="color:${dirColor}; font-weight:800;">${dir}</span>
-                <div style="font-size:0.75rem; color:#475569;">${opType}</div>
+              <td style="padding:6px 4px; text-align:center; border-left:1px solid #e2e8f0; font-size:0.75rem;">
+                <span style="color:${dirColor}; font-weight:800;">${dir.replace('بستانکار', 'بست.').replace('بدهکار', 'بده.')}</span>
+                <div style="font-size:0.68rem; color:#475569;">${opType}</div>
               </td>
-              <td style="padding:8px 8px; font-weight:900; color:${dirColor}; white-space:nowrap; border-left:1px solid #e2e8f0;">${amt} ${curr}</td>
-              <td style="padding:8px 6px; text-align:center; font-size:0.8rem; color:#475569; white-space:nowrap; border-left:1px solid #e2e8f0;">${timeOnly}</td>
-              <td style="padding:8px 8px; font-size:0.82rem; color:#334155; max-width:240px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-left:1px solid #e2e8f0;" title="${desc}">${desc || '-'}</td>
-              <td style="padding:6px; text-align:center; white-space:nowrap;">
-                <button class="btn btn-secondary btn-sm" style="padding:4px 8px; font-size:0.75rem;" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">مشاهده حساب</button>
+              <td style="padding:6px 6px; font-weight:900; color:${dirColor}; font-size:0.82rem; white-space:nowrap; border-left:1px solid #e2e8f0;">${amt} ${curr}</td>
+              <td style="padding:6px 4px; text-align:center; font-size:0.75rem; color:#475569; white-space:nowrap; border-left:1px solid #e2e8f0;">${timeOnly}</td>
+              <td style="padding:6px 6px; font-size:0.78rem; color:#334155; max-width:110px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-left:1px solid #e2e8f0;" title="${desc}">${desc || '-'}</td>
+              <td style="padding:4px; text-align:center; white-space:nowrap;">
+                <button class="btn btn-secondary btn-sm" style="padding:3px 6px; font-size:0.7rem;" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">حساب</button>
               </td>
             </tr>
           `;
         });
 
+        // هدر روز با رنگ روشن، زیبا، فونت ریزتر و نمایش مجموع دادوستد روز
         container.innerHTML += `
-          <div style="margin-bottom:14px; border:1.5px solid #cbd5e1; border-radius:12px; overflow:hidden; background:#ffffff;">
-            <div style="background:var(--primary-gradient); color:#ffffff; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:0.88rem;">
-              <span>📅 تاریخ: ${dayKey}</span>
-              <span>تعداد تراکنش روز: ${formatEnNum(dayTxs.length)} عدد</span>
+          <div style="margin-bottom:12px; border:1.5px solid #cbd5e1; border-radius:12px; overflow:hidden; background:#ffffff;">
+            <div style="background: linear-gradient(135deg, #e2e8f0 100%, #cbd5e1 0%); color: #0f172a; padding: 8px 12px; display: flex; flex-direction: column; gap: 3px; border-bottom: 1.5px solid #cbd5e1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 0.85rem;">
+                <span>📅 تاریخ: ${dayKey}</span>
+                <span style="font-size: 0.78rem; color: #334155;">تعداد تراکنش: ${formatEnNum(dayTxs.length)} عدد</span>
+              </div>
+              <div style="font-size: 0.78rem; color: #047857; font-weight: 700; background: rgba(255,255,255,0.7); padding: 3px 8px; border-radius: 6px;">
+                📊 مجموع دادوستد روز ➔ ${daySummaryText}
+              </div>
             </div>
-            <div style="overflow-x:auto;">
-              <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+            <div style="overflow-x:hidden; width:100%;">
+              <table style="width:100%; border-collapse:collapse; font-size:0.8rem; table-layout:fixed;">
                 <thead>
-                  <tr style="background:#f1f5f9; color:#334155; border-bottom:1.5px solid #cbd5e1; font-weight:800;">
-                    <th style="padding:7px 6px; text-align:center; width:42px; border-left:1px solid #e2e8f0;">#</th>
-                    <th style="padding:7px 8px; text-align:right; border-left:1px solid #e2e8f0;">نام مشتری</th>
-                    <th style="padding:7px 6px; text-align:center; border-left:1px solid #e2e8f0;">نوع / جهت</th>
-                    <th style="padding:7px 8px; text-align:right; border-left:1px solid #e2e8f0;">مبلغ</th>
-                    <th style="padding:7px 6px; text-align:center; border-left:1px solid #e2e8f0;">ساعت</th>
-                    <th style="padding:7px 8px; text-align:right; border-left:1px solid #e2e8f0;">توضیحات</th>
-                    <th style="padding:7px 6px; text-align:center;">حساب</th>
+                  <tr style="background:#f8fafc; color:#334155; border-bottom:1.5px solid #cbd5e1; font-weight:800; font-size:0.75rem;">
+                    <th style="padding:5px 4px; text-align:center; width:30px; border-left:1px solid #e2e8f0;">#</th>
+                    <th style="padding:5px 6px; text-align:right; width:90px; border-left:1px solid #e2e8f0;">مشتری</th>
+                    <th style="padding:5px 4px; text-align:center; width:52px; border-left:1px solid #e2e8f0;">جهت</th>
+                    <th style="padding:5px 6px; text-align:right; border-left:1px solid #e2e8f0;">مبلغ</th>
+                    <th style="padding:5px 4px; text-align:center; width:45px; border-left:1px solid #e2e8f0;">ساعت</th>
+                    <th style="padding:5px 6px; text-align:right; border-left:1px solid #e2e8f0;">شرح</th>
+                    <th style="padding:5px 4px; text-align:center; width:40px;">عملیات</th>
                   </tr>
                 </thead>
                 <tbody>${rowsHtml}</tbody>
@@ -1919,7 +1931,6 @@
         return false;
       });
 
-      // مرتب‌سازی نزولی (جدیدترین در بالا)
       filteredTxs.sort((a, b) => {
         let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
         let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
@@ -1942,7 +1953,7 @@
 
       if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">موردی یافت نشد</div>`; return; }
 
-      filteredTxs.forEach((tx, idx) => {
+      filteredTxs.forEach((tx) => {
         let accId = formatEnNum(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
         let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "نامشخص";
@@ -1964,10 +1975,6 @@
         `;
       });
     }
-
-    /* ==============================================================================
-     * گزارش بدهکاران و بستانکاران با انتخاب چندتایی (Multi-Select)
-     * ============================================================================== */
 
     function openDebtorsReport() {
       switchView('viewDebtorsReport');
@@ -2010,7 +2017,7 @@
 
       if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
       
-      debtors.forEach((d, i) => {
+      debtors.forEach(d => {
         container.innerHTML += `
           <div class="tx-item-card tx-debtor" style="flex-direction:row; align-items:center; gap:10px;">
             <input type="checkbox" onchange="toggleDebtorSelection('${d.id}', '${d.currency}', ${d.amount}, this.checked)" style="width:20px; height:20px; accent-color:var(--danger-color); cursor:pointer;">
@@ -2393,7 +2400,6 @@
     async function deleteCurrentAccount() {
       let accIdToDelete = currentAccountId;
       
-      // علامت زدن به عنوان حساب حذف شده در آرشیو شماره‌ها
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
       if (archiveItem) {
         archiveItem.isDeleted = true;
@@ -2431,7 +2437,6 @@
     }
 
     function renderAccountDetailTransactions(accId) {
-      // دریافت تراکنش‌های حساب و مرتب‌سازی دقیق نزولی بر اساس Timestamp کامل
       const txs = allTransactions
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
         .slice()
@@ -2556,7 +2561,6 @@
         formatEnNum(String(rawDate).split('T')[0]);
 
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
-
       let receiptHtml = receiptUrl ? `<div style="margin-top:6px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
       document.getElementById("txDetailCard").innerHTML = `
@@ -2804,6 +2808,7 @@
       }
     }
 
+    // ارسال رسید انتقال ساده و بدون جدول‌های عجیب‌وغریب در واتساپ
     function shareTransferReceiptWhatsApp(targetTxId) {
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
@@ -2811,11 +2816,9 @@
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
 
       let receiptLines = [
-        `📜 ═════════════════ 📜`,
-        `       *رسید انتقال*`,
-        `📜 ═════════════════ 📜`,
+        `✨ *رسید انتقال* ✨`,
         ``,
-        `${desc || 'بدون مشخصات توضیحات'}`,
+        `${desc || 'بدون توضیحات'}`,
         ``,
         `⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`
       ];
