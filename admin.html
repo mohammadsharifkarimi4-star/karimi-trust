@@ -500,7 +500,7 @@
       </div>
     </div>
 
-    <!-- دفتر کل مرکزی تمامی تراکنش‌ها (با اسکرول افقی روان و استاندارد در موبایل + فیلتر بر اساس هر حساب) -->
+    <!-- دفتر کل مرکزی تمامی تراکنش‌ها (ثابت بودن اندازه ستون‌ها با اسکرول افقی روان + رنگ‌های روشن اصیل) -->
     <div id="viewAllTransactionsPage" class="view-section">
       <div class="card">
         <div class="card-header-styled">
@@ -511,15 +511,14 @@
           </div>
         </div>
 
-        <!-- فیلتر پیشرفته بر اساس انتخاب حساب مشتری -->
-        <div class="form-group" style="margin-bottom: 10px;">
+        <div class="form-group" style="margin-bottom: 8px;">
           <label style="font-size: 0.82rem; color: #475569;">فیلتر بر اساس حساب مشتری:</label>
           <select id="globalLedgerAccountFilter" onchange="renderGlobalTransactionsList()">
             <option value="all">📁 همه حساب‌ها (نمایش کامل)</option>
           </select>
         </div>
 
-        <div class="form-group" style="position: relative; margin-bottom: 10px;">
+        <div class="form-group" style="margin-bottom: 10px;">
           <input type="text" id="globalLedgerSearchInput" placeholder="🔍 جستجو در دفتر کل (مبلغ، شرح یا کُد)..." oninput="renderGlobalTransactionsList()">
         </div>
 
@@ -755,7 +754,7 @@
     </div>
   </div>
 
-  <!-- مودال انتخاب حساب جهت ثبت تراکنش از دفتر کل -->
+  <!-- مودال انتخاب حساب قابل جستجو جهت ثبت تراکنش از دفتر کل -->
   <div id="globalSelectAccountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9450; padding:10px;">
     <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
       <div class="flex-row" style="justify-content:space-between; margin-bottom:8px;">
@@ -763,7 +762,7 @@
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">✕ بستن</button>
       </div>
       <div class="form-group">
-        <input type="text" id="globalAccountPickerInput" placeholder="جستجوی نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()">
+        <input type="text" id="globalAccountPickerInput" placeholder="🔍 جستجوی سریع نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()">
       </div>
       <div id="globalAccountPickerList" style="max-height:55vh; overflow-y:auto;"></div>
     </div>
@@ -1028,40 +1027,6 @@
       return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
 
-    // محاسبه مانده زنده تا یک تراکنش خاص برای نمایش در جدول
-    function getRunningBalanceUpToTx(accId, targetTxId) {
-      let accTxs = allTransactions
-        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
-        .slice()
-        .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          return da - db; // از قدیمی به جدید برای محاسبه انباشته
-        });
-
-      let runningCurrs = {};
-      for (let tx of accTxs) {
-        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-        let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-        let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-        if (!runningCurrs[curr]) runningCurrs[curr] = 0;
-        if (dir.includes("بستانکار")) runningCurrs[curr] += amt;
-        if (dir.includes("بدهکار")) runningCurrs[curr] -= amt;
-
-        if (String(getVal(tx, ['TransID', 'transid'])) === String(targetTxId)) {
-          break;
-        }
-      }
-
-      let parts = [];
-      for (let curr in runningCurrs) {
-        let val = runningCurrs[curr];
-        let label = val > 0 ? `بست:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بده:${formatEnMoney(Math.abs(val))}` : `تسویه`);
-        parts.push(`${curr}:${label}`);
-      }
-      return parts.join(' | ') || '0';
-    }
-
     function pushModalHistory(modalId) {
       window.history.pushState({ modal: modalId }, '');
     }
@@ -1315,7 +1280,7 @@
         renderDashboardStats();
         renderAccountsList(allAccounts);
         populateOpTypeSelect();
-        populateGlobalLedgerAccountFilter();
+        populateGlobalLedgerAccountFilterOptions();
 
         if (currentAccountId) {
           let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -1325,17 +1290,17 @@
       finally { if (indicator) indicator.style.display = "none"; }
     }
 
-    function populateGlobalLedgerAccountFilter() {
-      const select = document.getElementById("globalLedgerAccountFilter");
-      if (!select) return;
-      let currentVal = select.value;
-      select.innerHTML = `<option value="all">📁 همه حساب‌ها (نمایش کامل)</option>`;
+    function populateGlobalLedgerAccountFilterOptions() {
+      const selectEl = document.getElementById("globalLedgerAccountFilter");
+      if (!selectEl) return;
+      let currentVal = selectEl.value;
+      selectEl.innerHTML = `<option value="all">📁 همه حساب‌ها (نمایش کامل)</option>`;
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
-        select.innerHTML += `<option value="${accId}">${accName} (کد: ${accId})</option>`;
+        selectEl.innerHTML += `<option value="${accId}">${accName} (کُد: ${accId})</option>`;
       });
-      select.value = currentVal;
+      selectEl.value = currentVal;
     }
 
     function updatePhoneDirectoryArchive() {
@@ -1728,6 +1693,7 @@
       renderGlobalAccountPickerList();
       document.getElementById("globalSelectAccountModal").style.display = "flex";
       pushModalHistory("globalSelectAccountModal");
+      setTimeout(() => document.getElementById("globalAccountPickerInput").focus(), 100);
     }
 
     function closeGlobalSelectAccountModal() {
@@ -1806,7 +1772,6 @@
         return db - da;
       });
 
-      // فیلتر بر اساس حساب انتخابی
       if (selectedAccFilter !== "all") {
         sortedTxs = sortedTxs.filter(tx => String(getVal(tx, ['AccountID', 'accountid'])) === String(selectedAccFilter));
       }
@@ -1866,6 +1831,7 @@
         }
         let daySummaryText = daySummaryParts.join(' | ') || 'بدون دادوستد';
 
+        // محاسبه مانده زنده تا آن تراکنش برای هر ردیف
         dayTxs.forEach(tx => {
           const rowNum = formatEnNum(totalCount - globalCounter);
           globalCounter++;
@@ -1887,59 +1853,79 @@
             ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
             : '-';
 
-          let isCreditor = dir.includes('بستانکار');
-          let rowBg = isCreditor ? '#f0fdf4' : '#fef2f2';
-          let dirColor = isCreditor ? '#059669' : '#dc2626';
+          // محاسبه مانده زنده حساب تا لحظه این تراکنش
+          let currentAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+          let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === txId);
+          let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
+          
+          let subCurrs = {};
+          subTxs.forEach(stx => {
+            let scurr = String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+            let sdir = String(getVal(stx, ['Direction', 'direction']) || '');
+            let samt = parseFloat(getVal(stx, ['Amount', 'amount'])) || 0;
+            if(!subCurrs[scurr]) subCurrs[scurr] = 0;
+            if(sdir.includes("بستانکار")) subCurrs[scurr] += samt;
+            if(sdir.includes("بدهکار")) subCurrs[scurr] -= samt;
+          });
 
-          // محاسبه مانده زنده پس از این تراکنش برای هر شخص
-          let runningBalanceText = getRunningBalanceUpToTx(accId, txId);
+          let balanceParts = [];
+          for(let sc in subCurrs) {
+            let sval = subCurrs[sc];
+            let stype = sval > 0 ? 'بست.' : (sval < 0 ? 'بده.' : 'تسویه');
+            balanceParts.push(`${sc}:${formatEnMoney(Math.abs(sval))} ${stype}`);
+          }
+          let balanceStr = balanceParts.join(', ') || '0';
+
+          // رنگ‌های اصیل، روشن و تفکیک‌کننده برای جدول تراکنش‌ها
+          let isCreditor = dir.includes('بستانکار');
+          let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
+          let dirColor = isCreditor ? '#047857' : '#b91c1c';
 
           rowsHtml += `
             <tr style="background:${rowBg}; border-bottom:1px solid #cbd5e1; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
-              <td style="padding:8px 6px; text-align:center; font-weight:900; color:#334155; font-size:0.8rem; border-left:1px solid #e2e8f0; width:35px;">${rowNum}</td>
-              <td style="padding:8px 8px; border-left:1px solid #e2e8f0; min-width:110px;">
-                <div style="font-weight:900; color:var(--primary-dark); font-size:0.88rem;">${accName}</div>
-                <div style="font-size:0.75rem; color:#64748b;">ک: ${formatEnNum(accId)}</div>
+              <td style="padding:7px 5px; text-align:center; font-weight:900; color:#334155; font-size:0.78rem; border-left:1px solid #e2e8f0; width:35px; white-space:nowrap;">${rowNum}</td>
+              <td style="padding:7px 8px; border-left:1px solid #e2e8f0; width:110px; max-width:110px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <div style="font-weight:900; color:var(--primary-dark); font-size:0.85rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
+                <div style="font-size:0.7rem; color:#64748b;">ک: ${formatEnNum(accId)}</div>
               </td>
-              <td style="padding:8px 6px; text-align:center; border-left:1px solid #e2e8f0; font-size:0.8rem; min-width:65px;">
-                <span style="color:${dirColor}; font-weight:800;">${dir}</span>
-                <div style="font-size:0.72rem; color:#475569;">${opType}</div>
+              <td style="padding:7px 6px; text-align:center; border-left:1px solid #e2e8f0; width:60px; white-space:nowrap;">
+                <span style="color:${dirColor}; font-weight:800; font-size:0.78rem;">${dir}</span>
+                <div style="font-size:0.68rem; color:#475569;">${opType}</div>
               </td>
-              <td style="padding:8px 8px; font-weight:900; color:${dirColor}; font-size:0.9rem; white-space:nowrap; border-left:1px solid #e2e8f0; min-width:100px;">${amt} ${curr}</td>
-              <td style="padding:8px 6px; text-align:center; font-size:0.8rem; color:#475569; white-space:nowrap; border-left:1px solid #e2e8f0; min-width:55px;">${timeOnly}</td>
-              <td style="padding:8px 8px; font-size:0.82rem; color:#334155; min-width:130px;" title="${desc}">${desc || '-'}</td>
-              <td style="padding:8px 8px; font-weight:800; font-size:0.8rem; color:#0f172a; white-space:nowrap; border-left:1px solid #e2e8f0; min-width:90px;">${runningBalanceText}</td>
-              <td style="padding:6px; text-align:center; white-space:nowrap;">
-                <button class="btn btn-secondary btn-sm" style="padding:4px 8px; font-size:0.75rem;" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">حساب</button>
+              <td style="padding:7px 8px; font-weight:900; color:${dirColor}; font-size:0.85rem; width:110px; white-space:nowrap; border-left:1px solid #e2e8f0;">${amt} ${curr}</td>
+              <td style="padding:7px 6px; text-align:center; font-size:0.75rem; color:#475569; width:50px; white-space:nowrap; border-left:1px solid #e2e8f0;">${timeOnly}</td>
+              <td style="padding:7px 8px; font-size:0.8rem; color:#334155; width:140px; max-width:140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-left:1px solid #e2e8f0;" title="${desc}">${desc || '-'}</td>
+              <td style="padding:7px 8px; font-weight:800; color:#1e293b; font-size:0.78rem; width:100px; white-space:nowrap; border-left:1px solid #e2e8f0;" title="${balanceStr}">${balanceStr}</td>
+              <td style="padding:5px; text-align:center; width:55px; white-space:nowrap;">
+                <button class="btn btn-secondary btn-sm" style="padding:3px 6px; font-size:0.7rem;" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">حساب</button>
               </td>
             </tr>
           `;
         });
 
-        // هدر روز با رنگ روشن و تمیز
         container.innerHTML += `
-          <div style="margin-bottom:14px; border:1.5px solid #cbd5e1; border-radius:12px; overflow:hidden; background:#ffffff;">
-            <div style="background: linear-gradient(135deg, #e2e8f0 100%, #cbd5e1 0%); color: #0f172a; padding: 9px 14px; display: flex; flex-direction: column; gap: 4px; border-bottom: 1.5px solid #cbd5e1;">
-              <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 0.88rem;">
+          <div style="margin-bottom:12px; border:1.5px solid #cbd5e1; border-radius:12px; overflow:hidden; background:#ffffff;">
+            <div style="background: linear-gradient(135deg, #e2e8f0 100%, #cbd5e1 0%); color: #0f172a; padding: 8px 12px; display: flex; flex-direction: column; gap: 3px; border-bottom: 1.5px solid #cbd5e1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 0.85rem;">
                 <span>📅 تاریخ: ${dayKey}</span>
-                <span style="font-size: 0.8rem; color: #334155;">تعداد تراکنش: ${formatEnNum(dayTxs.length)} عدد</span>
+                <span style="font-size: 0.78rem; color: #334155;">تعداد تراکنش: ${formatEnNum(dayTxs.length)} عدد</span>
               </div>
-              <div style="font-size: 0.8rem; color: #047857; font-weight: 700; background: rgba(255,255,255,0.8); padding: 4px 10px; border-radius: 6px;">
+              <div style="font-size: 0.78rem; color: #047857; font-weight: 700; background: rgba(255,255,255,0.7); padding: 3px 8px; border-radius: 6px;">
                 📊 مجموع دادوستد روز ➔ ${daySummaryText}
               </div>
             </div>
             <div style="overflow-x:auto; width:100%; -webkit-overflow-scrolling: touch;">
-              <table style="width:100%; border-collapse:collapse; font-size:0.85rem; min-width:680px;">
+              <table style="width:720px; border-collapse:collapse; font-size:0.8rem; table-layout:fixed;">
                 <thead>
-                  <tr style="background:#f8fafc; color:#334155; border-bottom:1.5px solid #cbd5e1; font-weight:800; font-size:0.8rem;">
-                    <th style="padding:7px 6px; text-align:center; width:35px; border-left:1px solid #e2e8f0;">#</th>
-                    <th style="padding:7px 8px; text-align:right; width:110px; border-left:1px solid #e2e8f0;">مشتری</th>
-                    <th style="padding:7px 6px; text-align:center; width:65px; border-left:1px solid #e2e8f0;">جهت</th>
-                    <th style="padding:7px 8px; text-align:right; width:100px; border-left:1px solid #e2e8f0;">مبلغ</th>
-                    <th style="padding:7px 6px; text-align:center; width:55px; border-left:1px solid #e2e8f0;">ساعت</th>
-                    <th style="padding:7px 8px; text-align:right; border-left:1px solid #e2e8f0;">شرح</th>
-                    <th style="padding:7px 8px; text-align:right; width:90px; border-left:1px solid #e2e8f0;">مانده پس از تراکنش</th>
-                    <th style="padding:7px 6px; text-align:center; width:50px;">عملیات</th>
+                  <tr style="background:#f8fafc; color:#334155; border-bottom:1.5px solid #cbd5e1; font-weight:800; font-size:0.75rem;">
+                    <th style="padding:6px 5px; text-align:center; width:35px; border-left:1px solid #e2e8f0;">#</th>
+                    <th style="padding:6px 8px; text-align:right; width:110px; border-left:1px solid #e2e8f0;">مشتری</th>
+                    <th style="padding:6px 6px; text-align:center; width:60px; border-left:1px solid #e2e8f0;">جهت</th>
+                    <th style="padding:6px 8px; text-align:right; width:110px; border-left:1px solid #e2e8f0;">مبلغ</th>
+                    <th style="padding:6px 6px; text-align:center; width:50px; border-left:1px solid #e2e8f0;">ساعت</th>
+                    <th style="padding:6px 8px; text-align:right; width:140px; border-left:1px solid #e2e8f0;">شرح</th>
+                    <th style="padding:6px 8px; text-align:right; width:100px; border-left:1px solid #e2e8f0;">مانده حساب</th>
+                    <th style="padding:6px 5px; text-align:center; width:55px;">عملیات</th>
                   </tr>
                 </thead>
                 <tbody>${rowsHtml}</tbody>
@@ -2877,7 +2863,6 @@
       }
     }
 
-    // ارسال رسید انتقال ساده و بدون کادرهای اضافی در واتساپ
     function shareTransferReceiptWhatsApp(targetTxId) {
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
