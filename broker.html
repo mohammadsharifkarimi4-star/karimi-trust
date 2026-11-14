@@ -65,8 +65,39 @@
     .stat-card { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
 
     .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
-    .tx-item { background: #ffffff; border: 1.5px solid #cbd5e1; padding: 10px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
-    .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; }
+    .tx-item { background: #ffffff; border: 1.5px solid #cbd5e1; padding: 11px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; position: relative; }
+    .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .tx-item.tx-creditor-card { border-right: 4px solid #10b981; background: linear-gradient(to left, #f0fdf4 0%, #ffffff 18%); }
+    .tx-item.tx-debtor-card { border-right: 4px solid #ef4444; background: linear-gradient(to left, #fef2f2 0%, #ffffff 18%); }
+    .day-group-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin: 14px 0 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      border-right: 4px solid #38bdf8;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12);
+    }
+    .day-group-header:first-child { margin-top: 2px; }
+    .day-group-badge { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; }
+    .adv-filter-panel {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .adv-filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 6px;
+      margin-top: 6px;
+    }
     
     .highlight-amount { color: #059669 !important; font-size: 1.2rem !important; font-weight: 900 !important; background: #f0fdf4; border-color: #10b981 !important; }
     .search-results { background: #fff; border: 1.5px solid var(--border-color); max-height: 160px; overflow-y: auto; border-radius: 8px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
@@ -132,13 +163,57 @@
       </div>
 
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <h3 style="color:#1e1b4b; font-size:1rem;">📜 تراکنش‌های صرافی</h3>
-          <span id="txCountBadge" style="font-size:0.8rem; color:#0369a1; font-weight:bold;"></span>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+          <h3 style="color:#1e1b4b; font-size:1rem;">📜 دفتر روزانه و تراکنش‌های صرافی</h3>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span id="txCountBadge" style="font-size:0.8rem; color:#0369a1; font-weight:bold; background:#e0f2fe; padding:3px 9px; border-radius:12px;"></span>
+            <button type="button" class="btn btn-info btn-xs" onclick="toggleAdvTxFilters()">🎛️ فیلتر پیشرفته</button>
+          </div>
         </div>
         
-        <div class="form-group">
-          <input type="text" id="txSearchInput" placeholder="🔍 جستجو (مبلغ، شرح، آیدی، نوع)..." oninput="renderBrokerStatsAndTxs()" style="padding:8px 10px; font-size:0.88rem;">
+        <div class="form-group" style="margin-bottom:8px; position:relative;">
+          <input type="text" id="txSearchInput" placeholder="🔍 جستجوی هوشمند (مبلغ، شرح، کد تراکنش، نوع، آدرس، تاریخ)..." oninput="renderBrokerStatsAndTxs()" style="padding:9px 12px; font-size:0.88rem; padding-left:34px;">
+          <button type="button" id="clearTxSearchBtn" onclick="clearAllTxFilters()" title="پاک کردن جستجو و فیلترها" style="display:none; position:absolute; left:8px; top:50%; transform:translateY(-50%); background:#ef4444; color:#fff; border:none; border-radius:50%; width:20px; height:20px; font-size:0.75rem; cursor:pointer; font-weight:bold;">✕</button>
+        </div>
+
+        <div id="advTxFilterPanel" class="adv-filter-panel" style="display:none;">
+          <div class="adv-filter-grid">
+            <div>
+              <label style="font-size:0.75rem;">جهت معامله:</label>
+              <select id="filterTxDirection" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.82rem;">
+                <option value="all">همه جهت‌ها</option>
+                <option value="بستانکار">🟢 بستانکار (+)</option>
+                <option value="بدهکار">🔴 بدهکار (-)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.75rem;">واحد ارز:</label>
+              <select id="filterTxCurrency" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.82rem;">
+                <option value="all">همه ارزها</option>
+                <option value="USD">USD</option>
+                <option value="AFN">AFN</option>
+                <option value="تومان">تومان</option>
+                <option value="IQD">IQD</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.75rem;">نوع عملیات:</label>
+              <select id="filterTxOpType" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.82rem;">
+                <option value="all">همه عملیات‌ها</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.75rem;">مرتب‌سازی زمانی:</label>
+              <select id="filterTxSortOrder" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.82rem;">
+                <option value="newest">جدیدترین به قدیمی‌ترین</option>
+                <option value="oldest">قدیمی‌ترین به جدیدترین</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:6px; border-top:1px dashed #cbd5e1;">
+            <span style="font-size:0.75rem; color:#64748b; font-weight:700;">تراکنش‌ها به تفکیک روز دسته‌بندی می‌شوند</span>
+            <button type="button" class="btn btn-danger btn-xs" onclick="clearAllTxFilters()">🔄 بازنشانی همه فیلترها</button>
+          </div>
         </div>
 
         <div id="brokerTxList"></div>
@@ -694,6 +769,54 @@
       el.style.display = (el.style.display === "none" || !el.style.display) ? "block" : "none";
     }
 
+    function extractDateOnly(rawDate) {
+      if (!rawDate) return 'بدون تاریخ';
+      let s = toEnglishDigits(String(rawDate)).trim();
+      if (s.includes('T')) return s.split('T')[0];
+      if (s.includes(' ')) return s.split(' ')[0];
+      return s.slice(0, 10);
+    }
+
+    function extractTimeOnly(rawDate) {
+      if (!rawDate) return '';
+      let s = String(rawDate).trim();
+      if (!s.includes('T') && !s.includes(' ')) return '';
+      let d = new Date(s);
+      if (isNaN(d.getTime())) return '';
+      let hh = String(d.getHours()).padStart(2, '0');
+      let mm = String(d.getMinutes()).padStart(2, '0');
+      let ss = String(d.getSeconds()).padStart(2, '0');
+      if (hh === '00' && mm === '00' && ss === '00') return '';
+      return `${hh}:${mm}:${ss}`;
+    }
+
+    function getTxTimestamp(tx) {
+      let raw = tx.date || tx.created_at || '';
+      if (!raw) return 0;
+      let s = toEnglishDigits(String(raw)).trim();
+      // If only YYYY-MM-DD without time, treat as start of that day in local/UTC consistently
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+        let t = new Date(s + 'T00:00:00').getTime();
+        return isNaN(t) ? 0 : t;
+      }
+      let t = new Date(s).getTime();
+      return isNaN(t) ? 0 : t;
+    }
+
+    function sortBrokerTxsChronologically(list, ascending = true) {
+      return list.slice().sort((a, b) => {
+        let ta = getTxTimestamp(a);
+        let tb = getTxTimestamp(b);
+        if (ta !== tb) return ascending ? (ta - tb) : (tb - ta);
+        let ca = a.created_at ? new Date(a.created_at).getTime() : 0;
+        let cb = b.created_at ? new Date(b.created_at).getTime() : 0;
+        if (!isNaN(ca) && !isNaN(cb) && ca !== cb) return ascending ? (ca - cb) : (cb - ca);
+        return ascending
+          ? String(a.broker_tx_id || '').localeCompare(String(b.broker_tx_id || ''))
+          : String(b.broker_tx_id || '').localeCompare(String(a.broker_tx_id || ''));
+      });
+    }
+
     async function loadBrokerTransactions() {
       if (!activeBrokerId) return;
 
@@ -706,37 +829,81 @@
       loadBrokerAddressesFromDatabase(currentBroker);
 
       const { data } = await _supabase.from('broker_transactions').select('*').eq('broker_id', activeBrokerId);
-      brokerTxs = data || [];
+      // همیشه بر اساس سال، ماه، روز و ساعت دقیق مرتب‌سازی می‌شود تا شماره ردیف‌ها ثابت و واقعی باشد
+      brokerTxs = sortBrokerTxsChronologically(data || [], true);
       
       renderBrokerStatsAndTxs();
+    }
+
+    function toggleAdvTxFilters() {
+      playBeep('click');
+      const panel = document.getElementById("advTxFilterPanel");
+      panel.style.display = (panel.style.display === "none" || !panel.style.display) ? "block" : "none";
     }
 
     function clearDateFilter() {
       playBeep('click');
       document.getElementById("filterDateFrom").value = "";
       document.getElementById("filterDateTo").value = "";
+      renderBrokerStatsAndTxs();
+    }
+
+    function clearAllTxFilters() {
+      playBeep('click');
+      document.getElementById("filterDateFrom").value = "";
+      document.getElementById("filterDateTo").value = "";
       document.getElementById("txSearchInput").value = "";
+      if (document.getElementById("filterTxDirection")) document.getElementById("filterTxDirection").value = "all";
+      if (document.getElementById("filterTxCurrency")) document.getElementById("filterTxCurrency").value = "all";
+      if (document.getElementById("filterTxOpType")) document.getElementById("filterTxOpType").value = "all";
+      if (document.getElementById("filterTxSortOrder")) document.getElementById("filterTxSortOrder").value = "newest";
       renderBrokerStatsAndTxs();
     }
 
     function getFilteredTxs() {
       let dateFrom = document.getElementById("filterDateFrom").value;
       let dateTo = document.getElementById("filterDateTo").value;
-      let query = (document.getElementById("txSearchInput").value || "").trim().toLowerCase();
+      let query = toEnglishDigits((document.getElementById("txSearchInput").value || "").trim().toLowerCase());
+      let dirFilter = document.getElementById("filterTxDirection") ? document.getElementById("filterTxDirection").value : "all";
+      let currFilter = document.getElementById("filterTxCurrency") ? document.getElementById("filterTxCurrency").value : "all";
+      let opFilter = document.getElementById("filterTxOpType") ? document.getElementById("filterTxOpType").value : "all";
 
-      return brokerTxs.filter(tx => {
-        if (dateFrom && tx.date < dateFrom) return false;
-        if (dateTo && tx.date > dateTo) return false;
+      let hasActiveFilter = Boolean(dateFrom || dateTo || query || dirFilter !== "all" || currFilter !== "all" || opFilter !== "all");
+      let clearBtn = document.getElementById("clearTxSearchBtn");
+      if (clearBtn) clearBtn.style.display = hasActiveFilter ? "block" : "none";
+
+      // شماره ردیف دائمی بر اساس ترتیب زمانی واقعی از ابتدا تا انتها محاسبه می‌شود
+      let chronologicalAll = sortBrokerTxsChronologically(brokerTxs, true);
+      let rowNumMap = {};
+      chronologicalAll.forEach((t, i) => {
+        rowNumMap[String(t.broker_tx_id)] = i + 1;
+      });
+
+      let filtered = chronologicalAll.filter(tx => {
+        let txDateOnly = extractDateOnly(tx.date);
+        if (dateFrom && txDateOnly < dateFrom) return false;
+        if (dateTo && txDateOnly > dateTo) return false;
+        if (dirFilter !== "all" && tx.direction !== dirFilter) return false;
+        if (currFilter !== "all" && String(tx.currency || "").toUpperCase() !== currFilter.toUpperCase()) return false;
+        if (opFilter !== "all" && tx.operation_type !== opFilter) return false;
+
         if (query) {
+          let rowNumStr = String(rowNumMap[String(tx.broker_tx_id)] || "");
+          let matchRow = rowNumStr === query || `#${rowNumStr}` === query;
           let matchId = String(tx.broker_tx_id || "").toLowerCase().includes(query);
           let matchDesc = String(tx.description || "").toLowerCase().includes(query);
           let matchOp = String(tx.operation_type || "").toLowerCase().includes(query);
-          let matchAmt = String(tx.amount_final || tx.amount_initial || "").includes(query);
+          let matchAmt = toEnglishDigits(String(tx.amount_final || tx.amount_initial || "")).includes(query);
           let matchAddr = String(tx.address_dashboard || "").toLowerCase().includes(query);
-          if (!matchId && !matchDesc && !matchOp && !matchAmt && !matchAddr) return false;
+          let matchDate = txDateOnly.includes(query);
+          if (!matchRow && !matchId && !matchDesc && !matchOp && !matchAmt && !matchAddr && !matchDate) return false;
         }
         return true;
       });
+
+      filtered.forEach(t => { t._permanentRowNum = rowNumMap[String(t.broker_tx_id)]; });
+      let sortOrder = document.getElementById("filterTxSortOrder") ? document.getElementById("filterTxSortOrder").value : "newest";
+      return sortBrokerTxsChronologically(filtered, sortOrder === "oldest");
     }
 
     function renderBrokerStatsAndTxs() {
@@ -784,31 +951,86 @@
       }
     }
 
+    function getPersianDayName(dateStr) {
+      try {
+        let d = new Date(dateStr + 'T12:00:00');
+        if (isNaN(d.getTime())) return '';
+        const days = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+        return days[d.getDay()];
+      } catch (e) { return ''; }
+    }
+
     function renderBrokerTxList(filteredTxs) {
       const container = document.getElementById("brokerTxList");
-      document.getElementById("txCountBadge").innerText = `${filteredTxs.length} تراکنش ثبت‌شده`;
+      document.getElementById("txCountBadge").innerText = `${toEnglishDigits(filteredTxs.length)} تراکنش`;
       container.innerHTML = "";
 
       if (filteredTxs.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px; font-weight:bold;">بدون تراکنش</div>`;
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:18px; font-weight:bold; background:#f8fafc; border-radius:10px; border:1px dashed #cbd5e1;">هیچ تراکنشی با این مشخصات یافت نشد</div>`;
         return;
       }
 
-      filteredTxs.slice().reverse().forEach((tx, idx) => {
-        let txNum = filteredTxs.length - idx;
-        let dirColor = tx.direction === 'بستانکار' ? '#059669' : '#dc2626';
-        container.innerHTML += `
-          <div class="tx-item" onclick="selectBrokerTx('${tx.broker_tx_id}')">
-            <div style="display:flex; justify-content:space-between; font-weight:900; font-size:0.88rem;">
-              <span>#${txNum} (${tx.broker_tx_id}) - ${tx.operation_type} (${tx.date})</span>
-              <span style="color:${dirColor};">${tx.direction}</span>
-            </div>
-            <div style="font-size:0.88rem; margin-top:4px;">
-              مبلغ: <b class="highlight-amount" style="font-size:0.98rem !important;">${(tx.amount_final || tx.amount_initial || 0).toLocaleString()} ${tx.currency}</b>
-            </div>
-            ${tx.description ? `<div style="font-size:0.8rem; color:#475569; margin-top:3px; font-weight:600;">شرح: ${tx.description}</div>` : ''}
+      // دسته‌بندی تراکنش‌ها بر اساس روز
+      let groups = [];
+      let groupMap = {};
+
+      filteredTxs.forEach(tx => {
+        let dayKey = extractDateOnly(tx.date);
+        if (!groupMap[dayKey]) {
+          groupMap[dayKey] = { date: dayKey, items: [] };
+          groups.push(groupMap[dayKey]);
+        }
+        groupMap[dayKey].items.push(tx);
+      });
+
+      groups.forEach(group => {
+        let dayName = getPersianDayName(group.date);
+        let dayTitle = dayName ? `${dayName} — ${toEnglishDigits(group.date)}` : toEnglishDigits(group.date);
+
+        let groupHtml = `
+          <div class="day-group-header">
+            <span>📅 ${dayTitle}</span>
+            <span class="day-group-badge">${toEnglishDigits(group.items.length)} تراکنش</span>
           </div>
         `;
+
+        group.items.forEach((tx, idx) => {
+          let txNum = tx._permanentRowNum || (idx + 1);
+          let isCred = tx.direction === 'بستانکار';
+          let dirColor = isCred ? '#059669' : '#dc2626';
+          let cardBorderClass = isCred ? 'tx-creditor-card' : 'tx-debtor-card';
+          let timeStr = extractTimeOnly(tx.date);
+          let timeBadge = timeStr ? `<span style="font-size:0.75rem; color:#64748b; background:#f1f5f9; padding:1px 6px; border-radius:6px; margin-right:4px;" dir="ltr">🕒 ${timeStr}</span>` : '';
+          let amtDisplay = toEnglishDigits((tx.amount_final || tx.amount_initial || 0).toLocaleString());
+
+          groupHtml += `
+            <div class="tx-item ${cardBorderClass}" onclick="selectBrokerTx('${tx.broker_tx_id}')">
+              <div style="display:flex; justify-content:space-between; align-items:center; font-weight:900; font-size:0.88rem; gap:6px; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
+                  <span style="background:#0f172a; color:#fff; padding:1px 7px; border-radius:6px; font-size:0.78rem;">#${toEnglishDigits(txNum)}</span>
+                  <span>${tx.operation_type}</span>
+                  <span style="font-size:0.76rem; color:#64748b;">(${tx.broker_tx_id})</span>
+                  ${timeBadge}
+                </div>
+                <span style="color:${dirColor}; background:${isCred ? '#dcfce7' : '#fee2e2'}; padding:2px 8px; border-radius:6px; font-size:0.8rem;">${tx.direction}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; flex-wrap:wrap; gap:6px;">
+                <div style="font-size:0.88rem;">
+                  مبلغ: <b class="highlight-amount" style="font-size:0.98rem !important; padding:1px 6px; border-radius:6px;">${amtDisplay} ${tx.currency}</b>
+                  ${tx.exchange_rate ? `<span style="font-size:0.76rem; color:#64748b; margin-right:6px;">(اولیه: ${toEnglishDigits((tx.amount_initial || 0).toLocaleString())} | نرخ: ${toEnglishDigits(tx.exchange_rate)})</span>` : ''}
+                </div>
+                <div style="display:flex; gap:4px;" onclick="event.stopPropagation()">
+                  <button type="button" class="btn btn-warning btn-xs" onclick="quickEditBrokerTx('${tx.broker_tx_id}')" title="ویرایش سریع">✏️ ویرایش</button>
+                  <button type="button" class="btn btn-danger btn-xs" onclick="quickDeleteBrokerTx('${tx.broker_tx_id}')" title="حذف سریع">🗑️</button>
+                </div>
+              </div>
+              ${tx.description ? `<div style="font-size:0.82rem; color:#334155; margin-top:5px; font-weight:600; background:#f8fafc; padding:4px 8px; border-radius:6px; border-right:2px solid #94a3b8;">شرح: ${tx.description}</div>` : ''}
+              ${tx.address_dashboard ? `<div style="font-size:0.76rem; color:#0284c7; margin-top:3px; font-weight:700;">📍 مقصد: ${tx.address_dashboard}</div>` : ''}
+            </div>
+          `;
+        });
+
+        container.innerHTML += groupHtml;
       });
     }
 
@@ -971,7 +1193,7 @@
 
       let txIdEng = toEnglishDigits(txObj.broker_tx_id);
       let amtFinEng = toEnglishDigits((txObj.amount_final || txObj.amount_initial || 0).toLocaleString());
-      let dateEng = toEnglishDigits(txObj.date);
+      let dateEng = toEnglishDigits(extractDateOnly(txObj.date)) + (extractTimeOnly(txObj.date) ? ' ' + extractTimeOnly(txObj.date) : '');
       let rateEng = toEnglishDigits(txObj.exchange_rate || '-');
       let amtInitEng = toEnglishDigits((txObj.amount_initial || 0).toLocaleString());
 
@@ -1028,10 +1250,31 @@ ${verticalReport}`;
 
       let oldTx = editId ? brokerTxs.find(t => String(t.broker_tx_id) === String(editId)) : null;
 
+      // حفظ ساعت دقیق ثبت در timestamptz هنگام ثبت جدید یا ویرایش بدون تغییر روز
+      let finalTimestampISO = "";
+      let nowObj = new Date();
+      let timePartISO = nowObj.toISOString().split('T')[1]; // HH:mm:ss.sssZ
+
+      if (editId && oldTx && oldTx.date) {
+        let oldDatePart = extractDateOnly(oldTx.date);
+        if (oldDatePart === txDate && String(oldTx.date).includes('T')) {
+          // تاریخ تغییر نکرده: ساعت دقیق قبلی حفظ می‌شود تا جایگاهش در لیست به هم نخورد
+          finalTimestampISO = oldTx.date;
+        } else if (oldDatePart === txDate && String(oldTx.date).includes(' ')) {
+          finalTimestampISO = new Date(oldTx.date).toISOString();
+        } else {
+          // تاریخ به روز جدیدی تغییر کرده: تاریخ جدید + ساعت فعلی
+          finalTimestampISO = new Date(`${txDate}T${timePartISO}`).toISOString();
+        }
+      } else {
+        // تراکنش جدید: تاریخ انتخاب‌شده + ساعت دقیق همین لحظه
+        finalTimestampISO = new Date(`${txDate}T${timePartISO}`).toISOString();
+      }
+
       const brokerTxObj = {
         broker_tx_id: editId ? editId : ("BTX-" + Math.floor(10000000 + Math.random() * 90000000)),
         broker_id: activeBrokerId,
-        date: txDate,
+        date: finalTimestampISO,
         operation_type: opType,
         direction: selectedDirection,
         currency: selectedCurrency,
@@ -1122,13 +1365,16 @@ ${verticalReport}`;
       if (!tx) return;
 
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(tx.broker_id));
+      let dOnly = extractDateOnly(tx.date);
+      let tOnly = extractTimeOnly(tx.date);
+      let fullDateDisplay = tOnly ? `${dOnly} — ساعت ${tOnly}` : dOnly;
 
       document.getElementById("txDetailCard").innerHTML = `
         <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>کد تراکنش:</span><b>${tx.broker_tx_id}</b></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>تاریخ:</span><b>${tx.date}</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>تاریخ و زمان ثبت:</span><b dir="ltr">${fullDateDisplay}</b></div>
         <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>صرافی:</span><b>${currentBroker ? currentBroker.name : ''}</b></div>
         <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>عملیات:</span><b>${tx.operation_type} (${tx.direction})</b></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>مبلغ نهایی:</span><b class="highlight-amount" style="font-size:1.1rem !important;">${(tx.amount_final || 0).toLocaleString()} ${tx.currency}</b></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>مبلغ نهایی:</span><b class="highlight-amount" style="font-size:1.1rem !important;">${toEnglishDigits((tx.amount_final || 0).toLocaleString())} ${tx.currency}</b></div>
         <div style="margin-top:8px; background:#f1f5f9; padding:8px; border-radius:8px; border:1px solid #cbd5e1;"><b>توضیحات:</b> ${tx.description || '-'}</div>
         ${tx.address_dashboard ? `<div style="margin-top:6px; color:#0284c7; font-size:0.85rem; font-weight:bold;"><b>آدرس:</b> ${tx.address_dashboard}</div>` : ''}
       `;
@@ -1136,13 +1382,23 @@ ${verticalReport}`;
       switchView('viewTransactionDetail');
     }
 
+    function quickEditBrokerTx(txId) {
+      selectedBrokerTxId = txId;
+      openEditBrokerTx();
+    }
+
+    async function quickDeleteBrokerTx(txId) {
+      selectedBrokerTxId = txId;
+      await deleteBrokerTx();
+    }
+
     async function openEditBrokerTx() {
       const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
       if (!tx) return;
 
       document.getElementById("editBrokerTxId").value = tx.broker_tx_id;
-      document.getElementById("formTitle").innerText = "✏️ ویرایش معامله";
-      document.getElementById("txDate").value = tx.date;
+      document.getElementById("formTitle").innerText = `✏️ ویرایش معامله (${tx.broker_tx_id})`;
+      document.getElementById("txDate").value = extractDateOnly(tx.date);
       document.getElementById("txOpType").value = tx.operation_type;
       document.getElementById("amtInitial").value = tx.amount_initial || "";
       document.getElementById("exchangeRate").value = tx.exchange_rate || "";
@@ -1299,6 +1555,14 @@ ${verticalReport}`;
       const select = document.getElementById("txOpType");
       select.innerHTML = "";
       customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
+
+      const filterSelect = document.getElementById("filterTxOpType");
+      if (filterSelect) {
+        let prev = filterSelect.value || "all";
+        filterSelect.innerHTML = `<option value="all">همه عملیات‌ها</option>`;
+        customOpTypes.forEach(op => { filterSelect.innerHTML += `<option value="${op}">${op}</option>`; });
+        filterSelect.value = prev;
+      }
     }
     function openOpTypeManagerModal() { renderOpTypesList(); document.getElementById("opTypeManagerModal").style.display = "flex"; }
     function closeOpTypeManagerModal() { document.getElementById("opTypeManagerModal").style.display = "none"; }
