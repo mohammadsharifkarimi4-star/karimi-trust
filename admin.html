@@ -335,7 +335,7 @@
       box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5); z-index: 6000; cursor: pointer; border: 2px solid rgba(255,255,255,0.6);
     }
 
-    #searchDrawerModal, #deleteConfirmModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
+    #searchDrawerModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px);
       z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
@@ -500,18 +500,6 @@
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
 
   <div class="floating-search-trigger" onclick="playInteractionEffect(); openSearchDrawer()" title="جستجوی سریع">🔍</div>
-
-  <!-- مودال تأییدیه امنیتی حذف -->
-  <div id="deleteConfirmModal">
-    <div class="modal-card-box" style="text-align:center;">
-      <h3 style="color: var(--danger-color); margin-bottom: 12px;">⚠️ هشدار حذف</h3>
-      <p style="font-size: 0.95rem; color: #334155; margin-bottom: 18px; font-weight:700;" id="deleteConfirmText">آیا از حذف این مورد اطمینان دارید؟ این عملیات غیرقابل بازگشت است.</p>
-      <div class="flex-row" style="gap: 10px;">
-        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeDeleteConfirmModal()">انصراف</button>
-        <button class="btn btn-danger btn-sm" style="flex:1;" id="confirmDeleteYesBtn">بله، حذف شود</button>
-      </div>
-    </div>
-  </div>
 
   <!-- کشوی جستجو -->
   <div id="searchDrawerModal" onclick="closeSearchDrawerOnBack(event)">
@@ -1116,6 +1104,41 @@
       return { token, chatId };
     }
 
+    function getSystemGlobalBalanceText() {
+      let totalsByCurrency = {};
+      allAccounts.forEach(acc => {
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
+        if(!accId) return;
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        let accCurrencies = {};
+
+        accTxs.forEach(tx => {
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+
+          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+        });
+
+        for(let curr in accCurrencies) {
+          let net = accCurrencies[curr];
+          if(net !== 0) {
+            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = 0;
+            totalsByCurrency[curr] += net;
+          }
+        }
+      });
+
+      let parts = [];
+      for(let curr in totalsByCurrency) {
+        let val = totalsByCurrency[curr];
+        parts.push(`▫️ ${curr}: ${formatEnMoney(val)}`);
+      }
+      return parts.join('\n') || 'صفر';
+    }
+
     function openMasterSettingsModal() {
       document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
       document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
@@ -1177,40 +1200,6 @@
       return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
 
-    function getSystemGlobalBalanceText() {
-      let totalsByCurrency = {};
-      allAccounts.forEach(acc => {
-        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
-        if(!accId) return;
-        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
-        let accCurrencies = {};
-        accTxs.forEach(tx => {
-          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
-        });
-        for(let curr in accCurrencies) {
-          let net = accCurrencies[curr];
-          if(net !== 0) {
-            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
-            if(net > 0) totalsByCurrency[curr].debSum += net;
-            else totalsByCurrency[curr].credSum += Math.abs(net);
-          }
-        }
-      });
-      let parts = [];
-      for(let curr in totalsByCurrency) {
-        let cred = totalsByCurrency[curr].credSum;
-        let deb = totalsByCurrency[curr].debSum;
-        let finalNet = cred - deb;
-        parts.push(`▫️ ${curr}: ${formatEnMoney(finalNet)} (${finalNet >= 0 ? 'بستانکار' : 'بدهکار'})`);
-      }
-      return parts.join('\n') || 'بدون موجودی فعال';
-    }
-
     function pushModalHistory(modalId) {
       window.history.pushState({ modal: modalId }, '');
     }
@@ -1246,7 +1235,6 @@
         if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
         if (document.getElementById('globalSelectAccountModal').style.display === 'flex') { closeGlobalSelectAccountModal(); return; }
         if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
-        if (document.getElementById('deleteConfirmModal').style.display === 'flex') { closeDeleteConfirmModal(); return; }
 
         if (event.state && event.state.view) {
           switchView(event.state.view, false);
@@ -2594,40 +2582,26 @@
 
     function closeAccountModal() { document.getElementById("accountModal").style.display = "none"; }
 
-    let pendingDeleteCallback = null;
-    function showDeleteConfirmModal(msg, callback) {
-      document.getElementById("deleteConfirmText").innerText = msg;
-      pendingDeleteCallback = callback;
-      document.getElementById("deleteConfirmModal").style.display = "flex";
-      pushModalHistory("deleteConfirmModal");
-      document.getElementById("confirmDeleteYesBtn").onclick = function() {
-        closeDeleteConfirmModal();
-        if (pendingDeleteCallback) pendingDeleteCallback();
-      };
-    }
-    function closeDeleteConfirmModal() {
-      document.getElementById("deleteConfirmModal").style.display = "none";
-      pendingDeleteCallback = null;
-    }
-
+    // توابع استاندارد و قطعی حذف با استفاده از confirm بومی مرورگر جهت رفع کامل باگ عدم پاسخگویی
     function confirmDeleteAccountModal() {
-      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
-        deleteCurrentAccount();
-      });
+      if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.")) return;
+      deleteCurrentAccount();
     }
 
     function confirmDeleteAccount(accId) {
       currentAccountId = accId;
-      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
-        deleteCurrentAccount();
-      });
+      if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.")) return;
+      deleteCurrentAccount();
     }
 
     function confirmDeleteTransaction() {
       let txIdToDel = selectedTxId;
-      showDeleteConfirmModal("آیا از حذف این تراکنش اطمینان دارید؟", function() {
-        deleteSingleTransaction(txIdToDel);
-      });
+      if (!txIdToDel) {
+        alert("کد تراکنش انتخاب نشده است.");
+        return;
+      }
+      if (!confirm("⚠️ آیا از حذف این تراکنش اطمینان دارید؟ این عمل غیرقابل بازگشت است.")) return;
+      deleteSingleTransaction(txIdToDel);
     }
 
     async function saveAccount() {
@@ -2728,6 +2702,7 @@
       await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
       await _supabase.from('transactions').delete().eq('AccountID', accIdToDelete);
       await loadDataFromSupabase(true);
+      alert("✅ حساب با موفقیت حذف شد.");
     }
 
     function selectAccount(accId, accName) {
@@ -3183,11 +3158,16 @@
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
-      await _supabase.from('transactions').delete().eq('TransID', targetId);
+      const { error } = await _supabase.from('transactions').delete().eq('TransID', targetId);
+      if (error) {
+        alert("خطا در حذف تراکنش: " + error.message);
+        return;
+      }
 
       allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
 
       await loadDataFromSupabase(false);
+      alert("✅ تراکنش با موفقیت حذف شد.");
 
       let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -3418,7 +3398,7 @@
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
-      let liveBalText = getAccountLiveBalanceText(currentAccountId);
+      let liveBalText = getAccountLiveBalanceTest(currentAccountId);
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
