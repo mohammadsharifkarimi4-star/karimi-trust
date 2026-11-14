@@ -17,9 +17,6 @@
     :root {
       --primary-dark: #0f172a;
       --primary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      --glass-bg: rgba(255, 255, 255, 0.85);
-      --glass-border: rgba(255, 255, 255, 0.5);
-      --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       --accent-green: #10b981;
       --accent-green-dark: #059669;
       --bg-main: #f1f5f9;
@@ -32,8 +29,8 @@
       --whatsapp-color: #25d366;
       --whatsapp-dark: #128c7e;
       --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 8px 20px rgba(15, 23, 42, 0.08);
-      --radius-md: 14px;
+      --shadow-md: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --radius-md: 16px;
     }
 
     * {
@@ -48,25 +45,19 @@
     }
 
     body {
-      background: #e2e8f0;
-      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-      background-size: 16px 16px;
+      background: #f8fafc;
       color: var(--text-main);
-      padding: 6px;
+      padding: 10px;
       font-size: 14px;
       min-height: 100vh;
       padding-bottom: 85px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes floatAnim {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-5px); }
-      100% { transform: translateY(0px); }
     }
 
     @keyframes pulseGlow {
@@ -81,21 +72,21 @@
       display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 12px;
     }
     .auth-card {
-      background: #ffffff; width: 100%; max-width: 380px; padding: 22px; border-radius: 18px;
+      background: #ffffff; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
       animation: fadeInUp 0.3s ease-out;
     }
-    .auth-title { font-size: 1.2rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
+    .auth-title { font-size: 1.25rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
 
     .container { max-width: 100%; width: 100%; display: none; margin: 0; padding: 0; }
 
     .card {
       background: var(--card-bg);
       border-radius: var(--radius-md);
-      padding: 14px;
+      padding: 16px;
       box-shadow: var(--shadow-sm);
       border: 1px solid #e2e8f0;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       width: 100%;
       animation: fadeInUp 0.25s ease-out;
     }
@@ -103,53 +94,81 @@
     .card-header-styled {
       background: var(--primary-gradient);
       color: #ffffff;
-      padding: 12px 14px;
+      padding: 14px 16px;
       border-radius: 12px;
-      margin: -14px -14px 12px -14px;
+      margin: -16px -16px 14px -16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 1rem; font-weight: 800; }
+    .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 1.05rem; font-weight: 800; }
 
-    .dashboard-floating-grid {
+    /* منوی جدید، مدرن و شیک (ریسپانسیو برای موبایل و لپ‌تاپ) */
+    .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(1, 1fr);
       gap: 12px;
-      padding: 12px 0;
+      padding: 10px 0;
+    }
+    @media (min-width: 640px) {
+      .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .dashboard-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
-    .floating-glass-btn {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255, 255, 255, 0.9);
-      box-shadow: var(--glass-shadow);
-      border-radius: 18px;
-      padding: 18px 10px;
+    .modern-menu-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px 16px;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      gap: 14px;
       cursor: pointer;
-      transition: all 0.25s ease;
-      animation: floatAnim 4s ease-in-out infinite;
-      text-align: center;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
       user-select: none;
     }
-    .floating-glass-btn:nth-child(2) { animation-delay: 0.6s; }
-    .floating-glass-btn:nth-child(3) { animation-delay: 1.2s; }
-    .floating-glass-btn:nth-child(4) { animation-delay: 1.8s; }
-    .floating-glass-btn:nth-child(5) { animation-delay: 2.4s; }
-
-    .floating-glass-btn:active {
-      transform: scale(0.94);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    .modern-menu-card:hover {
+      border-color: var(--accent-green);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      background: #f8fafc;
     }
-
-    .floating-glass-btn .icon { font-size: 1.8rem; }
-    .floating-glass-btn .title { font-weight: 800; font-size: 0.88rem; color: var(--primary-dark); }
+    .modern-menu-card:active {
+      transform: scale(0.98);
+    }
+    .modern-menu-card .icon-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .modern-menu-card:hover .icon-box {
+      background: #ecfdf5;
+    }
+    .modern-menu-card .info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .modern-menu-card .title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+    .modern-menu-card .subtitle {
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 500;
+    }
 
     .nokia-nav-container {
       position: relative;
@@ -253,7 +272,6 @@
     .btn-warning { background: var(--warning-color); color: #fff; }
     .btn-info { background: var(--info-color); }
     .btn-whatsapp { background: var(--whatsapp-color); color: #ffffff; }
-    .btn-whatsapp-dark { background: var(--whatsapp-dark); color: #ffffff; }
     .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; box-shadow: none; }
 
     .floating-create-account-btn {
@@ -294,12 +312,12 @@
     .stat-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 3px; align-items: center; }
     .stat-badge { text-align: center; padding: 6px 10px; border-radius: 8px; font-weight: 800; font-size: 0.92rem; margin-top: 6px; }
 
-    .account-item-card, .tx-item-card, .phone-item-card {
+    .account-item-card, .tx-item-card {
       background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;
       margin-bottom: 10px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 6px;
       cursor: pointer; user-select: none; transition: all 0.15s ease; width: 100%;
     }
-    .account-item-card:active, .tx-item-card:active, .phone-item-card:active { border-color: var(--accent-green-dark); background: #f8fafc; }
+    .account-item-card:active, .tx-item-card:active { border-color: var(--accent-green-dark); background: #f8fafc; }
 
     .tx-item-card.tx-creditor { background: #f0fdf4; border-color: #a7f3d0; }
     .tx-item-card.tx-debtor { background: #fef2f2; border-color: #fecaca; }
@@ -349,17 +367,6 @@
       margin-bottom: 12px;
       box-shadow: var(--shadow-sm);
     }
-
-    .deleted-account-badge {
-      display: inline-block;
-      background: #fef2f2;
-      color: #ef4444;
-      border: 1px solid #fecaca;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 800;
-    }
   </style>
 </head>
 <body>
@@ -371,11 +378,11 @@
   <!-- مودال تأییدیه امنیتی حذف -->
   <div id="deleteConfirmModal">
     <div class="card" style="width:100%; max-width:340px; text-align:center; margin:0;">
-      <h3 style="color: var(--danger-color); margin-bottom: 10px;">⚠️ هشدار حذف</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 16px;" id="deleteConfirmText">آیا از حذف این مورد اطمینان دارید؟ این عملیات غیرقابل بازگشت است.</p>
+      <h3 style="color: var(--danger-color); margin-bottom: 10px;">⚠️ هشدار</h3>
+      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 16px;" id="deleteConfirmText">آیا از انجام این عملیات اطمینان دارید؟</p>
       <div class="flex-row" style="gap: 8px;">
         <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeDeleteConfirmModal()">انصراف</button>
-        <button class="btn btn-danger btn-sm" style="flex:1;" id="confirmDeleteYesBtn">بله، حذف شود</button>
+        <button class="btn btn-danger btn-sm" style="flex:1;" id="confirmDeleteYesBtn">بله، تایید</button>
       </div>
     </div>
   </div>
@@ -407,7 +414,7 @@
 
   <!-- کانتینر اصلی -->
   <div class="container" id="adminContainer">
-    <!-- داشبورد اصلی -->
+    <!-- داشبورد اصلی با منوی مدرن -->
     <div id="viewDashboard" class="view-section active">
       <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
         <div class="card-header-styled">
@@ -418,45 +425,61 @@
           </div>
         </div>
 
-        <div class="dashboard-floating-grid" style="grid-template-columns: repeat(2, 1fr);">
-          <div class="floating-glass-btn" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">
-            <span class="icon">📊</span>
-            <span class="title">آمارها و گزارشات کلی</span>
+        <div class="dashboard-grid">
+          <div class="modern-menu-card" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">
+            <div class="icon-box">📊</div>
+            <div class="info">
+              <span class="title">آمارها و گزارشات کلی</span>
+              <span class="subtitle">موجودی زنده و گزارشات تفکیکی</span>
+            </div>
           </div>
 
-          <div class="floating-glass-btn" onclick="playInteractionEffect(); switchView('viewAccounts')">
-            <span class="icon">👥</span>
-            <span class="title">لیست کامل حساب‌ها</span>
+          <div class="modern-menu-card" onclick="playInteractionEffect(); switchView('viewAccounts')">
+            <div class="icon-box">👥</div>
+            <div class="info">
+              <span class="title">لیست کامل حساب‌ها</span>
+              <span class="subtitle">مدیریت مشتریان و حساب‌ها</span>
+            </div>
           </div>
 
-          <div class="floating-glass-btn" onclick="playInteractionEffect(); openAllTransactionsPage()">
-            <span class="icon">📜</span>
-            <span class="title">دفتر کل تراکنش‌های سیستم</span>
+          <div class="modern-menu-card" onclick="playInteractionEffect(); openAllTransactionsPage()">
+            <div class="icon-box">📜</div>
+            <div class="info">
+              <span class="title">دفتر کل تراکنش‌های سیستم</span>
+              <span class="subtitle">جستجوی سریع و دفتر کل مرکزی</span>
+            </div>
           </div>
 
-          <div class="floating-glass-btn" onclick="playInteractionEffect(); openPhoneDirectoryPage()">
-            <span class="icon">📞</span>
-            <span class="title">دفترچه و بانک شماره‌ها</span>
+          <div class="modern-menu-card" onclick="playInteractionEffect(); openOpTypeManagerModal()">
+            <div class="icon-box">⚙️</div>
+            <div class="info">
+              <span class="title">مدیریت انواع عملیات</span>
+              <span class="subtitle">افزایش یا ویرایش انواع تراکنش‌ها</span>
+            </div>
           </div>
 
-          <div class="floating-glass-btn" onclick="playInteractionEffect(); openOpTypeManagerModal()">
-            <span class="icon">⚙️</span>
-            <span class="title">مدیریت انواع عملیات</span>
+          <div class="modern-menu-card" id="superAdminMenuBtn" style="display:none;" onclick="playInteractionEffect(); openAdminManagerModal()">
+            <div class="icon-box">🛡️</div>
+            <div class="info">
+              <span class="title">مدیریت ادمین‌های همکار</span>
+              <span class="subtitle">دسترسی‌ها و ربات‌های تلگرام</span>
+            </div>
           </div>
 
-          <div class="floating-glass-btn" id="superAdminMenuBtn" style="display:none;" onclick="playInteractionEffect(); openAdminManagerModal()">
-            <span class="icon">🛡️</span>
-            <span class="title">مدیریت ادمین‌های همکار</span>
+          <div class="modern-menu-card" id="masterSettingsMenuBtn" style="display:none; background: #fffbeb; border-color: #f59e0b;" onclick="playInteractionEffect(); openMasterSettingsModal()">
+            <div class="icon-box">⚙️</div>
+            <div class="info">
+              <span class="title" style="color: #92400e;">تنظیمات و توکن مالک</span>
+              <span class="subtitle">ویرایش توکن و اطلاعات اصلی</span>
+            </div>
           </div>
 
-          <div class="floating-glass-btn" id="masterSettingsMenuBtn" style="display:none; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;" onclick="playInteractionEffect(); openMasterSettingsModal()">
-            <span class="icon">⚙️</span>
-            <span class="title" style="color: #92400e;">تنظیمات و توکن مالک</span>
-          </div>
-
-          <div class="floating-glass-btn" id="ownerBrokerMenuBtn" style="grid-column: span 2;" onclick="playInteractionEffect(); handleBrokerNavigation()">
-            <span class="icon">🏢</span>
-            <span class="title">مدیریت کارگزاری‌ها و دفاتر همکار</span>
+          <div class="modern-menu-card" id="ownerBrokerMenuBtn" style="grid-column: 1 / -1;" onclick="playInteractionEffect(); handleBrokerNavigation()">
+            <div class="icon-box">🏢</div>
+            <div class="info">
+              <span class="title">مدیریت کارگزاری‌ها و دفاتر همکار</span>
+              <span class="subtitle">اتصال و نظارت بر کارگزاری‌ها</span>
+            </div>
           </div>
         </div>
       </div>
@@ -467,7 +490,7 @@
       <div class="card">
         <div class="card-header-styled">
           <h3>📊 آمار و گزارشات کلی سیستم</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← بازگشت به منو</button>
         </div>
         <h3 style="font-size:0.95rem; margin-bottom:6px;">موجودی‌های فعال (مانده زنده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
@@ -482,38 +505,22 @@
       </div>
     </div>
 
-    <!-- دفترچه و بانک شماره‌ها -->
-    <div id="viewPhoneDirectoryPage" class="view-section">
-      <div class="card">
-        <div class="card-header-styled">
-          <h3>📞 بانک کامل شماره‌ها و مخاطبین</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
-        </div>
-
-        <div class="form-group" style="position: relative; margin-bottom: 10px;">
-          <input type="text" id="searchPhoneInput" placeholder="🔍 جستجو در شماره‌ها، اسامی یا کُد حساب..." oninput="filterPhonesDirectory()" style="padding-left: 35px;">
-          <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.9rem; cursor: pointer; color: #64748b; display: none;">✕</button>
-        </div>
-
-        <div id="phoneDirectorySummary" class="stat-card" style="background:#f0f9ff; border-color:var(--info-color); margin-bottom:10px;"></div>
-        <div id="phoneDirectoryContainer"></div>
-      </div>
-    </div>
-
-    <!-- دفتر کل مرکزی تمامی تراکنش‌ها (ثابت بودن اندازه ستون‌ها با اسکرول افقی روان + رنگ‌های روشن اصیل) -->
+    <!-- دفتر کل مرکزی تمامی تراکنش‌ها (با جستجوی آنی حساب‌ها در بالای جدول) -->
     <div id="viewAllTransactionsPage" class="view-section">
       <div class="card">
         <div class="card-header-styled">
           <h3>📜 دفتر کل مرکزی تراکنش‌ها</h3>
           <div class="flex-row" style="gap:6px;">
             <button class="btn btn-sm" style="background:var(--accent-green);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ ایجاد تراکنش</button>
-            <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+            <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← بازگشت به منو</button>
           </div>
         </div>
 
-        <div class="form-group" style="margin-bottom: 8px;">
-          <label style="font-size: 0.82rem; color: #475569;">فیلتر بر اساس حساب مشتری:</label>
-          <select id="globalLedgerAccountFilter" onchange="renderGlobalTransactionsList()">
+        <!-- فیلتر و جستجوی پیشرفته بر اساس انتخاب حساب مشتری -->
+        <div class="form-group" style="margin-bottom: 10px; position:relative;">
+          <label style="font-size: 0.82rem; color: #475569;">جستجو و فیلتر سریع بر اساس حساب مشتری:</label>
+          <input type="text" id="globalLedgerAccountSearchBox" placeholder="🔍 نام یا کُد حساب را تایپ کنید تا فیلتر شود..." oninput="filterGlobalLedgerAccountsList()" style="margin-bottom: 6px;">
+          <select id="globalLedgerAccountFilter" onchange="renderGlobalTransactionsList()" style="background:#f8fafc;">
             <option value="all">📁 همه حساب‌ها (نمایش کامل)</option>
           </select>
         </div>
@@ -603,7 +610,7 @@
       <div class="card">
         <div class="card-header-styled">
           <h3>👥 لیست کامل حساب‌ها</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← بازگشت به منو</button>
         </div>
         <div class="form-group" style="position: relative;">
           <input type="text" id="searchAccountInput" placeholder="🔍 جستجو در حساب‌ها..." oninput="advancedSearchAccounts()" style="padding-left: 35px;">
@@ -625,7 +632,7 @@
             <img id="detailAccountPhoto" src="" class="profile-img-preview" style="display:none;">
             <h3 id="detailAccountTitle">جزئیات حساب</h3>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewAccounts')">← حساب‌ها</button>
+          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewAccounts')">← بازگشت به حساب‌ها</button>
         </div>
 
         <div class="client-info-header-box" id="clientFullDetailsBox"></div>
@@ -712,9 +719,9 @@
     </div>
   </div>
 
-  <!-- مودال ثبت / ویرایش تراکنش -->
-  <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
-    <div class="card" style="width: 100%; margin: 0; max-height:94vh; overflow-y:auto; position:relative;">
+  <!-- مودال ثبت / ویرایش تراکنش (محافظت‌شده در برابر خروج تصادفی) -->
+  <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:9500; padding:10px;">
+    <div class="card" style="width: 100%; margin: 0; max-height:94vh; overflow-y:auto; position:relative;" onclick="event.stopPropagation()">
       <h3 id="txModalTitle" style="margin-bottom:10px;">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
 
@@ -748,7 +755,7 @@
       <div class="form-group"><label>۷. تصویر رسید:</label><input type="file" id="txReceiptInput" accept="image/*"><input type="hidden" id="existingReceiptUrl"></div>
 
       <div class="floating-save-bar">
-        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeTransactionModal()">انصراف</button>
+        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); tryCloseTransactionModal()">انصراف</button>
         <button class="btn btn-sm" style="flex:2;" onclick="playInteractionEffect(); submitTransaction()">💾 ثبت و ذخیره تراکنش</button>
       </div>
     </div>
@@ -847,7 +854,6 @@
     let allAccounts = [];
     let allTransactions = [];
     let allAdmins = [];
-    let phoneArchiveList = [];
     let customOpTypes = ["امانت", "حواله", "انتقال", "دریافت", "پرداخت", "تسویه"];
     let currentAccountId = null;
     let currentAccountName = "";
@@ -1033,11 +1039,6 @@
 
     window.onload = async function() {
       let savedSession = localStorage.getItem("adminAuthSessionData");
-      let savedArchive = localStorage.getItem("phoneArchiveData");
-      if (savedArchive) {
-        try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {}
-      }
-
       if (savedSession) {
         try {
           currentLoggedInAdmin = JSON.parse(savedSession);
@@ -1061,12 +1062,18 @@
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
+        // جلوگیری از بازگشت تصادفی با دکمه Back گوشی هنگام باز بودن فرم ثبت تراکنش
+        if (document.getElementById('transactionModal').style.display === 'flex') {
+          tryCloseTransactionModal();
+          history.pushState(null, null, location.href);
+          return;
+        }
+
         if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
         if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
         if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
         if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
         if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
-        if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
         if (document.getElementById('globalSelectAccountModal').style.display === 'flex') { closeGlobalSelectAccountModal(); return; }
         if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
         if (document.getElementById('deleteConfirmModal').style.display === 'flex') { closeDeleteConfirmModal(); return; }
@@ -1257,8 +1264,6 @@
           });
         }
 
-        updatePhoneDirectoryArchive();
-
         let rawTransactions = txRes.data || [];
         let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
         
@@ -1303,36 +1308,25 @@
       selectEl.value = currentVal;
     }
 
-    function updatePhoneDirectoryArchive() {
-      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+    function filterGlobalLedgerAccountsList() {
+      const q = formatEnNum(document.getElementById("globalLedgerAccountSearchBox").value.trim().toLowerCase());
+      const selectEl = document.getElementById("globalLedgerAccountFilter");
+      if (!selectEl) return;
 
-      allAccounts.forEach(acc => {
-        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
-        let name = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
-        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
-        let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-
-        if (phone) {
-          let existing = phoneArchiveList.find(p => p.accId === accId || p.phone === phone);
-          if (existing) {
-            existing.name = name;
-            existing.phone = phone;
-            existing.isDeleted = false;
-            existing.creator = creator;
-          } else {
-            phoneArchiveList.push({
-              accId: accId,
-              name: name,
-              phone: phone,
-              isDeleted: false,
-              creator: creator
-            });
-          }
-        }
+      selectEl.innerHTML = `<option value="all">📁 همه حساب‌ها (نمایش کامل)</option>`;
+      let filtered = allAccounts.filter(acc => {
+        let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
+        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
+        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
+        return !q || name.includes(q) || phone.includes(q) || accId.includes(q);
       });
 
-      localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
+      filtered.forEach(acc => {
+        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
+        let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
+        selectEl.innerHTML += `<option value="${accId}">${accName} (کُد: ${accId})</option>`;
+      });
+      renderGlobalTransactionsList();
     }
 
     function getVal(obj, keys) {
@@ -1572,122 +1566,6 @@
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
     }
 
-    function openPhoneDirectoryPage() {
-      switchView('viewPhoneDirectoryPage');
-      renderPhoneDirectoryList(phoneArchiveList);
-    }
-
-    function renderPhoneDirectoryList(list) {
-      const container = document.getElementById("phoneDirectoryContainer");
-      const summaryBox = document.getElementById("phoneDirectorySummary");
-      container.innerHTML = "";
-
-      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
-
-      let filteredList = list.filter(item => {
-        if (isMaster) return true;
-        let creator = String(item.creator || '').trim();
-        return creator === String(currentAdminId);
-      });
-
-      summaryBox.innerHTML = `
-        <div class="stat-row">
-          <span><b>تعداد کل شماره‌های ثبت‌شده:</b></span>
-          <b style="color:var(--info-color); font-size:1rem;">${formatEnNum(filteredList.length)} شماره</b>
-        </div>
-      `;
-
-      if (filteredList.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ شماره‌ای در بانک اطلاعاتی موجود نیست</div>`;
-        return;
-      }
-
-      filteredList.forEach(item => {
-        let cleanPhone = item.phone.replace(/\D/g, '');
-        let liveAcc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(item.accId));
-        
-        let statusHtml = '';
-        let balanceBadges = '';
-
-        if (liveAcc && !item.isDeleted) {
-          let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === item.accId);
-          let accCurrencies = {};
-          accTxs.forEach(tx => {
-            let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-            let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-            let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-            if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-            if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-            if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
-          });
-
-          for(let curr in accCurrencies) {
-            let val = accCurrencies[curr];
-            let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
-            let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
-            balanceBadges += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
-          }
-
-          statusHtml = `<span style="color:#059669; font-weight:800; font-size:0.8rem;">🟢 حساب فعال (کُد: ${formatEnNum(item.accId)})</span>`;
-        } else {
-          statusHtml = `<span class="deleted-account-badge">❌ حساب این مشتری حذف شده است</span>`;
-          balanceBadges = `<span style="font-size:0.8rem; color:#94a3b8;">اطلاعات مانده حساب در دسترس نیست</span>`;
-        }
-
-        container.innerHTML += `
-          <div class="phone-item-card">
-            <div class="stat-row">
-              <span style="font-weight:900; font-size:1rem; color:var(--primary-dark);">${item.name}</span>
-              ${statusHtml}
-            </div>
-            <div class="stat-row" style="margin-top:2px;">
-              <span style="font-weight:800; color:#0284c7; font-size:0.95rem;" dir="ltr">${item.phone}</span>
-              <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">
-                📲 واتساپ (چت خالی)
-              </button>
-            </div>
-            <div style="margin-top:4px;">${balanceBadges || '<span style="font-size:0.8rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
-          </div>
-        `;
-      });
-    }
-
-    function openWhatsAppBlank(phone) {
-      if (!phone) { alert("شماره تلفن موجود نیست."); return; }
-      window.open(`https://wa.me/${phone}`, '_blank');
-    }
-
-    function filterPhonesDirectory() {
-      playInteractionEffect();
-      const inputEl = document.getElementById("searchPhoneInput");
-      const clearBtn = document.getElementById("clearPhoneSearchBtn");
-      const q = formatEnNum(inputEl.value.trim().toLowerCase());
-
-      if (q.length > 0) clearBtn.style.display = "block";
-      else clearBtn.style.display = "none";
-
-      if (!q) { renderPhoneDirectoryList(phoneArchiveList); return; }
-
-      const filtered = phoneArchiveList.filter(item => {
-        let name = item.name.toLowerCase();
-        let phone = item.phone.toLowerCase();
-        let accId = item.accId.toLowerCase();
-        return name.includes(q) || phone.includes(q) || accId.includes(q);
-      });
-
-      renderPhoneDirectoryList(filtered);
-    }
-
-    function clearPhoneSearch() {
-      playInteractionEffect();
-      const inputEl = document.getElementById("searchPhoneInput");
-      inputEl.value = "";
-      document.getElementById("clearPhoneSearchBtn").style.display = "none";
-      renderPhoneDirectoryList(phoneArchiveList);
-      inputEl.focus();
-    }
-
     function openGlobalSelectAccountModal() {
       document.getElementById("globalAccountPickerInput").value = "";
       renderGlobalAccountPickerList();
@@ -1745,6 +1623,8 @@
       if (searchEl) searchEl.value = "";
       const filterEl = document.getElementById("globalLedgerAccountFilter");
       if (filterEl) filterEl.value = "all";
+      const accSearchBox = document.getElementById("globalLedgerAccountSearchBox");
+      if (accSearchBox) accSearchBox.value = "";
       renderGlobalTransactionsList();
     }
 
@@ -1831,7 +1711,6 @@
         }
         let daySummaryText = daySummaryParts.join(' | ') || 'بدون دادوستد';
 
-        // محاسبه مانده زنده تا آن تراکنش برای هر ردیف
         dayTxs.forEach(tx => {
           const rowNum = formatEnNum(totalCount - globalCounter);
           globalCounter++;
@@ -1853,7 +1732,6 @@
             ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
             : '-';
 
-          // محاسبه مانده زنده حساب تا لحظه این تراکنش
           let currentAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
           let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === txId);
           let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
@@ -1876,7 +1754,6 @@
           }
           let balanceStr = balanceParts.join(', ') || '0';
 
-          // رنگ‌های اصیل، روشن و تفکیک‌کننده برای جدول تراکنش‌ها
           let isCreditor = dir.includes('بستانکار');
           let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
           let dirColor = isCreditor ? '#047857' : '#b91c1c';
@@ -2350,14 +2227,14 @@
     }
 
     function confirmDeleteAccountModal() {
-      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟", function() {
         deleteCurrentAccount();
       });
     }
 
     function confirmDeleteAccount(accId) {
       currentAccountId = accId;
-      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟", function() {
         deleteCurrentAccount();
       });
     }
@@ -2421,32 +2298,6 @@
       }
 
       await loadDataFromSupabase(false);
-
-      if (editId && isNewChatIdAdded) {
-        let { token } = getCurrentAdminTokenAndChat();
-        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accountId));
-        if (token && accChatId) {
-          let historyHeader = `✨ *امانت‌داری کریمی* ✨\n\nسلام *${accName}* عزیز،\nچت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:\n────────────────────────`;
-          await sendTelegramMessage(token, accChatId, historyHeader);
-
-          for (let tx of accTxs) {
-            let tType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
-            let tDir = String(getVal(tx, ['Direction', 'direction']) || '');
-            let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
-            let tCurr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
-            let tDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
-            let tDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-
-            let txLine = `📅 تاریخ: ${tDate}\n🔹 نوع: *${tType}* (${tDir})\n💰 مبلغ: *${tAmt} ${tCurr}*\n📝 شرح: ${tDesc || '-'}\n-------------------`;
-            await sendTelegramMessage(token, accChatId, txLine);
-          }
-
-          let liveBal = getAccountLiveBalanceText(accountId);
-          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*\n${liveBal}`;
-          await sendTelegramMessage(token, accChatId, balMsg);
-        }
-      }
-
       if (currentAccountId) {
         selectAccount(currentAccountId, accName);
       }
@@ -2454,13 +2305,6 @@
 
     async function deleteCurrentAccount() {
       let accIdToDelete = currentAccountId;
-      
-      let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
-      if (archiveItem) {
-        archiveItem.isDeleted = true;
-        localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
-      }
-
       currentAccountId = null;
       switchView('viewAccounts');
       await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
@@ -2681,6 +2525,18 @@
       document.getElementById("existingReceiptUrl").value = getVal(tx, ['receipt_url', 'Receipt_URL']) || "";
       document.getElementById("transactionModal").style.display = "flex";
       pushModalHistory("transactionModal");
+    }
+
+    function tryCloseTransactionModal() {
+      let amt = document.getElementById("txAmountInput").value.trim();
+      let desc = document.getElementById("txDesc").value.trim();
+      if (amt || desc || selectedDirectionValue || selectedCurrencyValue) {
+        if (confirm("اطلاعات تراکنش وارد شده است. آیا می‌خواهید بدون ذخیره از این فرم خارج شوید؟")) {
+          closeTransactionModal();
+        }
+      } else {
+        closeTransactionModal();
+      }
     }
 
     function closeTransactionModal() { document.getElementById("transactionModal").style.display = "none"; }
