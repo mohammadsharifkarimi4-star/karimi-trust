@@ -17,22 +17,22 @@
     :root {
       --primary-dark: #0f172a;
       --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      --glass-bg: rgba(255, 255, 255, 0.85);
-      --glass-border: rgba(255, 255, 255, 0.6);
-      --glass-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+      --glass-bg: rgba(255, 255, 255, 0.25);
+      --glass-border: rgba(255, 255, 255, 0.4);
+      --glass-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15);
       --accent-green: #10b981;
       --accent-green-dark: #059669;
-      --card-bg: rgba(255, 255, 255, 0.94);
+      --card-bg: rgba(255, 255, 255, 0.88);
       --text-main: #0f172a;
-      --border-color: rgba(203, 213, 225, 0.8);
+      --border-color: rgba(255, 255, 255, 0.6);
       --danger-color: #ef4444;
       --warning-color: #f59e0b;
       --info-color: #0284c7;
       --whatsapp-color: #25d366;
       --whatsapp-dark: #128c7e;
-      --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.06);
-      --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
-      --radius-md: 18px;
+      --shadow-sm: 0 8px 25px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 15px 35px rgba(0, 0, 0, 0.12);
+      --radius-md: 20px;
     }
 
     * {
@@ -68,13 +68,13 @@
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-      70% { box-shadow: 0 0 0 14px rgba(16, 185, 129, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+      70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
@@ -85,7 +85,7 @@
     }
     .auth-card {
       background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
-      width: 100%; max-width: 400px; padding: 24px; border-radius: 24px;
+      width: 100%; max-width: 400px; padding: 26px; border-radius: 24px;
       box-shadow: 0 25px 50px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
       border: 1px solid rgba(255, 255, 255, 0.8);
       animation: fadeInUp 0.3s ease-out;
@@ -110,7 +110,7 @@
     }
 
     .card-header-styled {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.96) 0%, rgba(15, 23, 42, 0.96) 100%);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
       color: #ffffff;
       padding: 14px 16px;
       border-radius: 16px;
@@ -126,29 +126,30 @@
     .dashboard-floating-grid {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       padding: 10px 0;
     }
 
     .floating-glass-btn {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.82) 100%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
-      border-radius: 18px;
-      padding: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      padding: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       text-align: right;
       user-select: none;
+      position: relative;
     }
     .floating-glass-btn:active {
-      transform: scale(0.98);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: scale(0.97);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
     .floating-glass-btn .content-box {
@@ -158,7 +159,7 @@
       flex: 1;
     }
 
-    .floating-glass-btn .icon { font-size: 1.6rem; background: rgba(59, 130, 246, 0.1); padding: 10px; border-radius: 14px; }
+    .floating-glass-btn .icon { font-size: 1.8rem; background: rgba(59, 130, 246, 0.12); padding: 10px; border-radius: 14px; }
     .floating-glass-btn .title { font-weight: 900; font-size: 1rem; color: var(--primary-dark); }
 
     .menu-sort-controls {
@@ -166,7 +167,7 @@
       gap: 6px;
     }
     .sort-btn {
-      background: rgba(15, 23, 42, 0.08);
+      background: rgba(15, 23, 42, 0.1);
       border: none;
       width: 32px;
       height: 32px;
@@ -179,120 +180,14 @@
       color: var(--primary-dark);
       transition: all 0.2s;
     }
-    .sort-btn:active { background: rgba(15, 23, 42, 0.18); transform: scale(0.9); }
+    .sort-btn:active { background: rgba(15, 23, 42, 0.2); transform: scale(0.9); }
 
-    /* بازطراحی کارت‌های لیست کامل حساب‌ها (شیک، حرفه‌ای و منظم) */
-    .account-card-pro {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
-      border: 1.5px solid rgba(226, 232, 240, 0.9);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
-    }
-    .account-card-pro:active {
-      transform: scale(0.98);
-      border-color: var(--info-color);
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15);
-    }
-    .account-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .account-avatar-name {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .account-avatar-img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #3b82f6;
-      background: #f1f5f9;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    }
-    .account-avatar-placeholder {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 1.15rem;
-      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-    }
-    .account-name-box h4 {
-      font-size: 1.08rem;
-      font-weight: 900;
-      color: var(--primary-dark);
-      margin-bottom: 3px;
-    }
-    .account-code-sub {
-      font-size: 0.82rem;
-      color: #64748b;
-      font-weight: 700;
-    }
-    .account-card-actions {
-      display: flex;
-      gap: 6px;
-    }
-    .icon-action-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      transition: transform 0.15s;
-    }
-    .icon-action-btn:active { transform: scale(0.9); }
-    .btn-wa-action { background: #dcfce7; color: #15803d; }
-    .btn-msg-action { background: #e0f2fe; color: #0369a1; }
-    .btn-edit-action { background: #fef3c7; color: #b45309; }
-    .btn-del-action { background: #fee2e2; color: #b91c1c; }
-
-    .account-card-balances {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding-top: 8px;
-      border-top: 1.5px solid #f1f5f9;
-    }
-    .account-balance-pill {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 6px 12px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* ناوبر نوکیا (مرتب‌سازی دقیق گزینه‌ها) */
     .nokia-nav-container {
       position: relative;
       width: 100%;
       max-width: 320px;
       height: 220px;
-      margin: 20px auto;
+      margin: 15px auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -312,7 +207,7 @@
       font-weight: 900;
       font-size: 0.82rem;
       text-align: center;
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
       border: 4px solid #ffffff;
       cursor: pointer;
       z-index: 10;
@@ -360,7 +255,7 @@
     input:focus, select:focus, textarea:focus {
       border-color: var(--info-color);
       background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
+      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2);
     }
     textarea { resize: vertical; min-height: 80px; }
 
@@ -372,31 +267,32 @@
     }
     .btn-select-option.selected-creditor {
       background: #ecfdf5 !important; border-color: var(--accent-green) !important; color: var(--accent-green-dark) !important;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     }
     .btn-select-option.selected-debtor {
       background: #fef2f2 !important; border-color: var(--danger-color) !important; color: var(--danger-color) !important;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.25);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
     }
     .btn-select-option.selected-currency {
       background: #f0f9ff !important; border-color: var(--info-color) !important; color: var(--info-color) !important;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25);
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
     }
 
     .btn {
       padding: 11px 16px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: none;
       border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 0.92rem;
       display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
-      box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3); transition: all 0.15s ease; user-select: none;
+      box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35); transition: all 0.15s ease; user-select: none;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3); }
-    .btn-secondary { background: linear-gradient(135deg, #475569 0%, #334155 100%); box-shadow: 0 6px 20px rgba(71, 85, 105, 0.3); }
-    .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3); }
-    .btn-info { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.3); }
-    .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3); }
+    .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35); }
+    .btn-secondary { background: linear-gradient(135deg, #475569 0%, #334155 100%); box-shadow: 0 6px 20px rgba(71, 85, 105, 0.35); }
+    .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35); }
+    .btn-info { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35); }
+    .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
     .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 10px; }
 
+    /* دکمه‌های ویرایش و حذف تراکنش کاملاً اصلاح‌شده و تمیز */
     .action-btn-modern {
       padding: 13px 18px;
       border-radius: 16px;
@@ -413,13 +309,21 @@
       user-select: none;
     }
     .action-btn-modern:active { transform: scale(0.97); }
-    .btn-edit-pro { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; box-shadow: 0 8px 22px rgba(245, 158, 11, 0.35); }
-    .btn-delete-pro { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: #ffffff; box-shadow: 0 8px 22px rgba(239, 68, 68, 0.35); }
+    .btn-edit-pro {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 22px rgba(245, 158, 11, 0.4);
+    }
+    .btn-delete-pro {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 22px rgba(239, 68, 68, 0.4);
+    }
 
     .floating-create-account-btn {
       position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white;
       padding: 13px 22px; border-radius: 35px; font-weight: 900; font-size: 0.98rem;
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.45); z-index: 5000; border: 2px solid rgba(255,255,255,0.6); cursor: pointer;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5); z-index: 5000; border: 2px solid rgba(255,255,255,0.6); cursor: pointer;
       display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
     }
     .floating-create-account-btn:active { transform: scale(0.95); }
@@ -428,7 +332,7 @@
       position: fixed; bottom: 20px; right: 20px; width: 54px; height: 54px;
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border-radius: 50%;
       display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.45); z-index: 6000; cursor: pointer; border: 2px solid rgba(255,255,255,0.6);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5); z-index: 6000; cursor: pointer; border: 2px solid rgba(255,255,255,0.6);
     }
 
     #searchDrawerModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
@@ -447,24 +351,28 @@
 
     .stats-grid { display: flex; flex-direction: column; gap: 10px; }
     .stat-card {
-      background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
-      border-radius: var(--radius-md); padding: 14px; box-shadow: var(--shadow-sm);
+      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
+      border-radius: var(--radius-md); padding: 12px 14px; box-shadow: var(--shadow-sm);
     }
     .stat-row { display: flex; justify-content: space-between; font-size: 0.92rem; margin-bottom: 4px; align-items: center; }
-    .stat-badge { text-align: center; padding: 8px 12px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+    .stat-badge { text-align: center; padding: 8px 12px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 
-    .tx-item-card, .phone-item-card {
-      background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
+    .account-item-card, .tx-item-card, .phone-item-card {
+      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
       border-radius: var(--radius-md); padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow-sm); 
       display: flex; flex-direction: column; gap: 8px; cursor: pointer; user-select: none; transition: all 0.15s ease; width: 100%;
     }
-    .tx-item-card:active, .phone-item-card:active { border-color: var(--info-color); background: #ffffff; }
+    .account-item-card:active, .tx-item-card:active, .phone-item-card:active { border-color: var(--info-color); background: #ffffff; }
 
     .tx-item-card.tx-creditor { background: rgba(240, 253, 244, 0.95); border-color: #a7f3d0; }
     .tx-item-card.tx-debtor { background: rgba(254, 242, 242, 0.95); border-color: #fecaca; }
 
+    .account-item-header { display: flex; justify-content: space-between; align-items: center; }
+    .account-name-title { font-size: 1.1rem; font-weight: 900; color: var(--primary-dark); }
+
     .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .back-home { display: block; text-align: center; margin-top: 20px; color: #ffffff; text-decoration: none; font-size: 0.88rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    .currency-badge { display: inline-block; padding: 4px 10px; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(203, 213, 225, 0.8); border-radius: 8px; font-size: 0.82rem; margin: 2px; font-weight: 900; }
 
     .view-section { display: none; }
     .view-section.active { display: block; }
@@ -480,16 +388,15 @@
     .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(255, 255, 255, 0.9); border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(203,213,225,0.8); }
 
     .client-info-header-box {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 245, 249, 0.96) 100%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%);
       backdrop-filter: blur(12px);
       border: 1.5px solid rgba(255, 255, 255, 0.95);
       border-radius: var(--radius-md);
-      padding: 16px;
+      padding: 14px;
       margin-bottom: 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      box-shadow: var(--shadow-sm);
+      gap: 8px;
     }
 
     .batch-summary-card {
@@ -506,8 +413,8 @@
       display: inline-block;
       background: #fef2f2;
       color: #ef4444;
-      border: 1.5px solid #fecaca;
-      padding: 4px 10px;
+      border: 1px solid #fecaca;
+      padding: 3px 10px;
       border-radius: 8px;
       font-size: 0.8rem;
       font-weight: 900;
@@ -776,7 +683,7 @@
       </div>
     </div>
 
-    <!-- لیست کامل حساب‌ها (بازطراحی کاملاً مدرن، شیک و حرفه‌ای) -->
+    <!-- لیست کامل حساب‌ها -->
     <div id="viewAccounts" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
@@ -784,7 +691,7 @@
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
         <div class="form-group" style="position: relative;">
-          <input type="text" id="searchAccountInput" placeholder="🔍 جستجو در نام، شماره یا کُد حساب..." oninput="advancedSearchAccounts()" style="padding-left: 38px;">
+          <input type="text" id="searchAccountInput" placeholder="🔍 جستجو در حساب‌ها..." oninput="advancedSearchAccounts()" style="padding-left: 38px;">
           <button type="button" id="clearSearchBtn" onclick="playInteractionEffect(); clearAccountSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
         </div>
         <div id="accountsListContainer" style="margin-top: 10px;"></div>
@@ -1449,7 +1356,7 @@
         let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:36px; height:36px; margin-left:8px;">` : '';
 
         container.innerHTML += `
-          <div class="account-card-pro" style="padding:10px 12px; margin-bottom:8px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName}')">
+          <div class="account-item-card" style="padding:10px 12px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName}')">
             <div class="flex-row">
               ${photoHtml}
               <div>
@@ -1974,7 +1881,7 @@
             let val = accCurrencies[curr];
             let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
             let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
-            balanceBadges += `<span class="account-balance-pill" style="color:${color};">${curr}:${label}</span>`;
+            balanceBadges += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
           }
 
           statusHtml = `<span style="color:#059669; font-weight:900; font-size:0.85rem;">🟢 حساب فعال (کُد: ${formatEnNum(item.accId)})</span>`;
@@ -1995,7 +1902,7 @@
                 📲 واتساپ (چت خالی)
               </button>
             </div>
-            <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">${balanceBadges || '<span style="font-size:0.85rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
+            <div style="margin-top:6px;">${balanceBadges || '<span style="font-size:0.85rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
           </div>
         `;
       });
@@ -2070,7 +1977,7 @@
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
         listEl.innerHTML += `
-          <div class="account-card-pro" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
+          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
             <div class="stat-row" style="margin:0;">
               <span style="font-weight:900; color:var(--primary-dark);">${accName}</span>
               <span style="font-size:0.85rem; color:#475569;">کُد: ${accId} | ${accPhone}</span>
@@ -2550,7 +2457,6 @@
       box.style.display = "block";
     }
 
-    /* رندر لیست کامل حساب‌ها با طراحی فوق‌العاده شیک، خوانا و تفکیک‌شده */
     function renderAccountsList(accounts) {
       const container = document.getElementById("accountsListContainer");
       container.innerHTML = "";
@@ -2578,35 +2484,31 @@
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
           let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
-          let label = val > 0 ? `بستانکار: ${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار: ${formatEnMoney(Math.abs(val))}` : `تسویه کامل`);
-          badgesHtml += `<span class="account-balance-pill" style="color:${color};">${curr}: ${label}</span>`;
+          let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
+          badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
         }
 
         let cleanPhone = accPhone.replace(/\D/g, '');
-        let avatarHtml = photoUrl 
-          ? `<img src="${photoUrl}" class="account-avatar-img">` 
-          : `<div class="account-avatar-placeholder">${accName.charAt(0)}</div>`;
+        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:38px; height:38px; margin-left:8px;">` : '';
 
         container.innerHTML += `
-          <div class="account-card-pro" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
-            <div class="account-card-top">
-              <div class="account-avatar-name">
-                ${avatarHtml}
-                <div class="account-name-box">
-                  <h4>${accName}</h4>
-                  <div class="account-code-sub">کُد حساب: <b style="color:var(--info-color);">${accId}</b> ${accPhone ? '| 📞 ' + accPhone : ''}</div>
+          <div class="account-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
+            <div class="account-item-header">
+              <div class="flex-row">
+                ${photoHtml}
+                <div>
+                  <span class="account-name-title">${accName}</span>
+                  <div style="font-size:0.82rem; color:#475569;">کُد حساب: ${accId}</div>
                 </div>
               </div>
-              <div class="account-card-actions">
-                <button class="icon-action-btn btn-wa-action" onclick="event.stopPropagation(); playInteractionEffect(); openDirectWhatsApp('${cleanPhone}')" title="ارسال پیام واتساپ">💬</button>
-                <button class="icon-action-btn btn-msg-action" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName}')" title="جزئیات و پیام">✉️</button>
-                <button class="icon-action-btn btn-edit-action" onclick="event.stopPropagation(); playInteractionEffect(); selectAccountForEditQuick('${accId}')" title="ویرایش حساب">✏️</button>
-                <button class="icon-action-btn btn-del-action" onclick="event.stopPropagation(); playInteractionEffect(); confirmDeleteAccount('${accId}')" title="حذف حساب">🗑️</button>
+              <div class="flex-row" style="gap:6px;">
+                <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openDirectWhatsApp('${cleanPhone}')" title="واتساپ">💬</button>
+                <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName}')" title="پیام">✉️</button>
+                <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccountForEditQuick('${accId}')" title="ویرایش">✏️</button>
+                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); confirmDeleteAccount('${accId}')" title="حذف">🗑️</button>
               </div>
             </div>
-            <div class="account-card-balances">
-              ${badgesHtml || '<span style="font-size:0.85rem; color:#64748b; font-weight:700;">تسویه حساب کامل (۰)</span>'}
-            </div>
+            <div style="font-size:0.88rem; margin-top:6px;">${badgesHtml || 'تسویه حساب کامل'}</div>
           </div>
         `;
       });
@@ -2680,6 +2582,7 @@
 
     function closeAccountModal() { document.getElementById("accountModal").style.display = "none"; }
 
+    // توابع استاندارد و قطعی حذف با استفاده از confirm بومی مرورگر جهت رفع کامل باگ عدم پاسخگویی
     function confirmDeleteAccountModal() {
       if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.")) return;
       deleteCurrentAccount();
@@ -3495,7 +3398,7 @@
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
-      let liveBalText = getAccountLiveBalanceText(currentAccountId);
+      let liveBalText = getAccountLiveBalanceTest(currentAccountId);
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
