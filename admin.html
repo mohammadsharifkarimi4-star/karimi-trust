@@ -2590,9 +2590,16 @@
       pendingDeleteCallback = callback;
       document.getElementById("deleteConfirmModal").style.display = "flex";
       pushModalHistory("deleteConfirmModal");
-      document.getElementById("confirmDeleteYesBtn").onclick = function() {
+      
+      // اصلاح بایندر دکمه بله جهت اجرای پایدار تابع اصلی بدون تداخل متغیرها
+      const yesBtn = document.getElementById("confirmDeleteYesBtn");
+      yesBtn.onclick = async function() {
         closeDeleteConfirmModal();
-        if (pendingDeleteCallback) pendingDeleteCallback();
+        if (pendingDeleteCallback) {
+          let cb = pendingDeleteCallback;
+          pendingDeleteCallback = null;
+          await cb();
+        }
       };
     }
     function closeDeleteConfirmModal() {
@@ -2601,22 +2608,22 @@
     }
 
     function confirmDeleteAccountModal() {
-      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
-        deleteCurrentAccount();
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", async function() {
+        await deleteCurrentAccount();
       });
     }
 
     function confirmDeleteAccount(accId) {
       currentAccountId = accId;
-      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
-        deleteCurrentAccount();
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", async function() {
+        await deleteCurrentAccount();
       });
     }
 
     function confirmDeleteTransaction() {
       let txIdToDel = selectedTxId;
-      showDeleteConfirmModal("آیا از حذف این تراکنش اطمینان دارید؟", function() {
-        deleteSingleTransaction(txIdToDel);
+      showDeleteConfirmModal("آیا از حذف این تراکنش اطمینان دارید؟", async function() {
+        await deleteSingleTransaction(txIdToDel);
       });
     }
 
