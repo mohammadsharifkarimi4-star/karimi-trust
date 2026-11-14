@@ -3167,10 +3167,9 @@
       let txIdToDelete = selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txIdToDelete));
       
-      const { error } = await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
-      if (error) {
-        await _supabase.from('transactions').delete().eq('transid', txIdToDelete);
-      }
+      await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
+      await _supabase.from('transactions').delete().eq('transid', txIdToDelete);
+      await _supabase.from('transactions').delete().eq('id', txIdToDelete);
 
       await loadDataFromSupabase(false);
 
@@ -3289,11 +3288,11 @@
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
-          return a - b; // ترتیب صعودی برای گزارش
+          return a - b; // صعودی
         });
 
       let now = new Date();
-      let periodTitle = "مجموع کل تراکنش‌ها";
+      let periodTitle = "گزارش تراکنش‌ها";
 
       let filtered = accTxs.filter(tx => {
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
@@ -3301,13 +3300,13 @@
         let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
 
         if (period === 'today') {
-          periodTitle = "گزارش تراکنش‌های روزانه (امروز)";
+          periodTitle = "گزارش روزانه (امروز)";
           return diffDays <= 1;
         } else if (period === 'week') {
-          periodTitle = "گزارش تراکنش‌های هفتگی (۷ روز گذشته)";
+          periodTitle = "گزارش هفتگی (۷ روز گذشته)";
           return diffDays <= 7;
         } else if (period === 'month') {
-          periodTitle = "گزارش تراکنش‌های ماهانه (۳۰ روز گذشته)";
+          periodTitle = "گزارش ماهانه (۳۰ روز گذشته)";
           return diffDays <= 30;
         }
         return true;
@@ -3318,14 +3317,39 @@
         return;
       }
 
+      // Find the last settlement transaction if any
+      let lastSettlementIdx = -1;
+      for (let i = accTxs.length - 1; i >= 0; i--) {
+        let op = String(getVal(accTxs[i], ['OperationType', 'operationtype']) || '').trim();
+        let desc = String(getVal(accTxs[i], ['Description', 'description']) || '').trim();
+        if (op === 'تسویه' || desc.includes('تسویه')) {
+          lastSettlementIdx = i;
+          break;
+        }
+      }
+
+      let settlementSummaryLine = "";
+      if (lastSettlementIdx !== -1) {
+        let sTx = accTxs[lastSettlementIdx];
+        let sDate = formatEnNum(String(getVal(sTx, ['Date', 'date']) || '').split('T')[0]);
+        let sAmt = formatEnMoney(getVal(sTx, ['Amount', 'amount']));
+        let sCurr = String(getVal(sTx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let sDir = String(getVal(sTx, ['Direction', 'direction']) || '');
+        let roleText = sDir.includes('بستانکار') ? 'بستانکار بودید و مبلغ تسویه شد' : 'بدهکار بودید و تسویه شد';
+        settlementSummaryLine = `📌 آخرین تسویه در تاریخ ${sDate} انجام شد (مبلغ ${sAmt} ${sCurr} - ${roleText}). تراکنش‌های زیر مربوط به بعد از آخرین تسویه است:`;
+      } else {
+        settlementSummaryLine = `📌 تراکنش‌های ثبت‌شده (از ابتدا تا کنون):`;
+      }
+
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
         `👤 مشتری: *${currentAccountName}*`,
         `📅 *${periodTitle}*`,
+        `────────────────────────`,
+        settlementSummaryLine,
         `────────────────────────`
       ];
 
-      // محاسبه تدریجی مانده در هر تراکنش برای گزارش
       let runningBalances = {};
       filtered.forEach((tx, idx) => {
         let date = formatEnNum(String(getVal(tx, ['Date', 'date']) || '').split('T')[0]);
@@ -3342,14 +3366,12 @@
         let balVal = runningBalances[curr];
         let balText = balVal === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balVal))} ${curr} (${balVal > 0 ? 'بستانکار' : 'بدهکار'})`;
 
-        lines.push(
-          `${formatEnNum(idx + 1)}. تاریخ: ${date}\n` +
-          `▫️ نوع: *${opType}* (${dir})\n` +
-          `▫️ مبلغ: *${formatEnMoney(amt)} ${curr}*\n` +
-          `▫️ مانده پس از این تراکنش: *${balText}*\n` +
-          `▫️ شرح: ${desc || '-'}\n` +
-          `-------------------`
-        );
+        // Concise single-line transaction format for WhatsApp
+        let lineItem = `${formatEnNum(idx + 1)}. [${date}] *${opType}* (${dir}) | ${formatEnMoney(amt)} ${curr} | مانده: ${balText}`;
+        if (desc && desc !== '-') {
+          lineItem += ` | ${desc}`;
+        }
+        lines.push(lineItem);
       });
 
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
