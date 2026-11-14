@@ -248,7 +248,7 @@
     label { display: block; font-size: 0.9rem; font-weight: 800; margin-bottom: 6px; color: #1e293b; }
 
     input, select, textarea {
-      width: 100%; padding: 12px 14px; border: 2px solid rgba(255, 255, 255, 0.9); border-radius: 14px;
+      width: 100%; padding: 12px 14px; border: 2px solid rgba(203, 213, 225, 0.8); border-radius: 14px;
       font-size: 0.98rem; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
       outline: none; transition: all 0.2s ease; font-weight: 700; color: #0f172a;
     }
@@ -262,7 +262,7 @@
     .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
     .btn-select-option {
       flex: 1; min-width: 70px; padding: 11px 6px; text-align: center; background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: 14px; font-size: 0.92rem;
+      backdrop-filter: blur(10px); border: 2px solid rgba(203, 213, 225, 0.9); border-radius: 14px; font-size: 0.92rem;
       font-weight: 900; cursor: pointer; transition: all 0.2s ease; user-select: none; color: #334155;
     }
     .btn-select-option.selected-creditor {
@@ -292,47 +292,61 @@
     .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
     .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 10px; }
 
+    /* استایل‌های کاملاً جدید و جذاب برای دکمه‌های ویرایش و حذف تراکنش */
+    .action-btn-modern {
+      padding: 13px 18px;
+      border-radius: 16px;
+      font-weight: 900;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      user-select: none;
+    }
+    .action-btn-modern:active { transform: scale(0.97); }
+    .btn-edit-pro {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 22px rgba(245, 158, 11, 0.4);
+    }
+    .btn-delete-pro {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 22px rgba(239, 68, 68, 0.4);
+    }
+
     .floating-create-account-btn {
       position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white;
       padding: 13px 22px; border-radius: 35px; font-weight: 900; font-size: 0.98rem;
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5); z-index: 5000; border: 2px solid rgba(255,255,255,0.7); cursor: pointer;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5); z-index: 5000; border: 2px solid rgba(255,255,255,0.6); cursor: pointer;
       display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
     }
     .floating-create-account-btn:active { transform: scale(0.95); }
-
-    .floating-save-bar {
-      position: sticky; bottom: -8px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); padding: 12px 0 0 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.7); display: flex; gap: 10px; z-index: 10;
-    }
 
     .floating-search-trigger {
       position: fixed; bottom: 20px; right: 20px; width: 54px; height: 54px;
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border-radius: 50%;
       display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5); z-index: 6000; cursor: pointer; border: 2px solid rgba(255,255,255,0.7);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5); z-index: 6000; cursor: pointer; border: 2px solid rgba(255,255,255,0.6);
     }
 
-    /* مدال‌های استاندارد موبایلی بدون تیرگی آزاردهنده پس‌زمینه */
-    .app-modal-overlay {
+    #searchDrawerModal, #deleteConfirmModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px);
-      z-index: 9500; display: none; justify-content: center; align-items: center; padding: 12px;
+      background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px);
+      z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
       overflow-y: auto;
     }
-    .app-modal-card {
-      background: #ffffff; width: 100%; max-width: 420px; border-radius: 24px;
-      padding: 18px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto;
-      border: 1px solid rgba(226, 232, 240, 0.9); animation: fadeInUp 0.2s ease-out;
-    }
-
-    #searchDrawerModal {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px);
-      z-index: 7000; display: none; justify-content: center; align-items: flex-start; padding: 16px;
-    }
-    .search-drawer-card {
-      background: #ffffff; width: 100%; border-radius: 24px;
-      padding: 18px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); margin-top: 20px; border: 1px solid #cbd5e1;
+    .modal-card-box {
+      background: #ffffff;
+      width: 100%; max-width: 420px; border-radius: 24px; padding: 20px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.35); max-height: 90vh; overflow-y: auto;
+      border: 1px solid rgba(255,255,255,0.8);
+      animation: fadeInUp 0.25s ease-out;
     }
 
     .stats-grid { display: flex; flex-direction: column; gap: 10px; }
@@ -446,7 +460,6 @@
     .compact-ledger-table tr:active {
       filter: brightness(0.95);
     }
-
     /* جستجوگر پیشرفته مشتری در دفتر کل */
     .ledger-customer-picker {
       position: relative;
@@ -491,9 +504,9 @@
 
   <div class="floating-search-trigger" onclick="playInteractionEffect(); openSearchDrawer()" title="جستجوی سریع">🔍</div>
 
-  <!-- مودال تأییدیه امنیتی حذف (اصلاح‌شده برای پرهیز از تداخل و خاکستری شدن صفحه) -->
-  <div id="deleteConfirmModal" class="app-modal-overlay">
-    <div class="app-modal-card" style="max-width:340px; text-align:center;">
+  <!-- مودال تأییدیه امنیتی حذف -->
+  <div id="deleteConfirmModal">
+    <div class="modal-card-box" style="text-align:center;">
       <h3 style="color: var(--danger-color); margin-bottom: 12px;">⚠️ هشدار حذف</h3>
       <p style="font-size: 0.95rem; color: #334155; margin-bottom: 18px; font-weight:700;" id="deleteConfirmText">آیا از حذف این مورد اطمینان دارید؟ این عملیات غیرقابل بازگشت است.</p>
       <div class="flex-row" style="gap: 10px;">
@@ -505,7 +518,7 @@
 
   <!-- کشوی جستجو -->
   <div id="searchDrawerModal" onclick="closeSearchDrawerOnBack(event)">
-    <div class="search-drawer-card" onclick="event.stopPropagation()">
+    <div class="modal-card-box" style="margin-top: 20px;" onclick="event.stopPropagation()">
       <div class="flex-row" style="justify-content: space-between; margin-bottom: 10px;">
         <h3>🔍 جستجوی هوشمند</h3>
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeSearchDrawer()">✕ بستن</button>
@@ -513,7 +526,7 @@
       <div class="form-group" style="margin-bottom: 0;">
         <input type="text" id="drawerSearchInput" placeholder="نام مشتری، تلفن، کُد حساب یا کد تراکنش..." oninput="handleDrawerSearch()">
       </div>
-      <div id="drawerSearchResults" style="margin-top: 10px; max-height: 60vh; overflow-y: auto;"></div>
+      <div id="drawerSearchResults" style="margin-top: 10px; max-height: 55vh; overflow-y: auto;"></div>
     </div>
   </div>
 
@@ -780,8 +793,8 @@
   </div>
 
   <!-- مودال پیام سفارشی -->
-  <div id="customMessageModal" class="app-modal-overlay">
-    <div class="app-modal-card">
+  <div id="customMessageModal">
+    <div class="modal-card-box">
       <h3>✉️ ارسال پیام دستی به مشتری</h3>
       <p style="font-size:0.9rem; color:#475569; margin-bottom:12px; font-weight:700;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
       <div class="form-group">
@@ -795,8 +808,8 @@
   </div>
 
   <!-- مودال تنظیمات و توکن مالک -->
-  <div id="masterSettingsModal" class="app-modal-overlay">
-    <div class="app-modal-card" style="max-width: 440px;">
+  <div id="masterSettingsModal">
+    <div class="modal-card-box">
       <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
       <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را ویرایش کنید.</p>
       
@@ -812,9 +825,9 @@
     </div>
   </div>
 
-  <!-- مودال ثبت / ویرایش تراکنش (اصلاح‌شده جهت خوانایی کامل روی موبایل) -->
-  <div id="transactionModal" class="app-modal-overlay">
-    <div class="app-modal-card">
+  <!-- مودال ثبت / ویرایش تراکنش -->
+  <div id="transactionModal">
+    <div class="modal-card-box">
       <h3 id="txModalTitle" style="margin-bottom:12px;">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
 
@@ -855,8 +868,8 @@
   </div>
 
   <!-- مودال انتخاب حساب قابل جستجو جهت ثبت تراکنش از دفتر کل -->
-  <div id="globalSelectAccountModal" class="app-modal-overlay">
-    <div class="app-modal-card" style="max-width: 440px;">
+  <div id="globalSelectAccountModal">
+    <div class="modal-card-box">
       <div class="flex-row" style="justify-content:space-between; margin-bottom:10px;">
         <h3>👤 انتخاب حساب مشتری</h3>
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">✕ بستن</button>
@@ -869,8 +882,8 @@
   </div>
 
   <!-- مودال مدیریت انواع عملیات -->
-  <div id="opTypeManagerModal" class="app-modal-overlay">
-    <div class="app-modal-card">
+  <div id="opTypeManagerModal">
+    <div class="modal-card-box">
       <h3>⚙️ مدیریت انواع عملیات</h3>
       <div class="form-group" style="margin-top:10px;">
         <label>عنوان عملیات جدید:</label>
@@ -889,8 +902,8 @@
   </div>
 
   <!-- مودال مدیریت ادمین‌های همکار -->
-  <div id="adminManagerModal" class="app-modal-overlay">
-    <div class="app-modal-card">
+  <div id="adminManagerModal">
+    <div class="modal-card-box">
       <h3 id="adminModalMainTitle">🛡️ ایجاد و مدیریت ادمین‌های همکار</h3>
       <input type="hidden" id="editAdminId">
       <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px; font-weight:700;">در این بخش می‌توانید برای همکاران ایمیل، رمز عبور، توکن ربات و چت‌آیدی اختصاصی بسازید.</p>
@@ -917,8 +930,8 @@
   </div>
 
   <!-- مودال حساب جدید / ویرایش حساب -->
-  <div id="accountModal" class="app-modal-overlay">
-    <div class="app-modal-card">
+  <div id="accountModal">
+    <div class="modal-card-box">
       <h3 id="modalAccountTitle">حساب جدید</h3>
       <input type="hidden" id="editAccountId">
       <div class="form-group"><label>نام مشتری:</label><input type="text" id="modalAccountName" placeholder="نام مشتری..."></div>
@@ -2977,21 +2990,28 @@
           <div class="stat-row" style="font-size:0.86rem; margin-bottom:0;"><span>📊 مانده نهایی حساب پس از این تراکنش:</span><b style="color:${balanceAfter>=0?'#047857':'#b91c1c'};">${afterStr}</b></div>
         </div>
 
-        <div style="margin-top:8px; background:rgba(255,255,255,0.8); padding:10px; border-radius:12px;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
+        <div style="margin-top:8px; background:rgba(255,255,255,0.85); padding:10px; border-radius:12px;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
         ${receiptHtml}
       `;
 
       let btnContainer = document.getElementById("txActionButtonsContainer");
       let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
-      let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
+      let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
 
+      // طراحی کاملاً جدید و زیبا برای دکمه‌های ویرایش و حذف تراکنش
       btnContainer.innerHTML = `
-        <button class="btn btn-info" style="margin-bottom:8px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">👤 رفتن به حساب شخص (${accName})</button>
-        <div class="flex-row" style="gap: 8px; margin-bottom:8px;">
-          <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
-          <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); confirmDeleteTransaction()">🗑️ حذف</button>
+        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">👤 رفتن به حساب شخص (${accName})</button>
+        
+        <div class="flex-row" style="gap: 10px; margin-bottom:10px;">
+          <button class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()">
+            <span style="font-size:1.1rem;">✏️</span> ویرایش تراکنش
+          </button>
+          <button class="action-btn-modern btn-delete-pro" onclick="playInteractionEffect(); confirmDeleteTransaction()">
+            <span style="font-size:1.1rem;">🗑️</span> حذف تراکنش
+          </button>
         </div>
-        <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال این تراکنش به واتساپ</button>
+
+        <button class="btn btn-whatsapp" style="border-radius:14px; padding:12px;" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال این تراکنش به واتساپ</button>
         ${transferReceiptBtn}
       `;
 
