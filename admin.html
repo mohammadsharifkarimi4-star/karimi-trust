@@ -6,7 +6,251 @@
   <title>مدیریت امانت‌داری کریمی</title>
   
   <!-- کتابخانه Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    // --- ۱. مدیریت تم رسمی سرمه‌ای-طلایی و روشن ---
+    function initTheme() {
+      const savedTheme = localStorage.getItem("karimiAppTheme") || "royal-dark";
+      if (savedTheme === "royal-dark") {
+        document.body.classList.add("royal-dark-theme");
+        const btn = document.getElementById("themeToggleBtn");
+        if (btn) btn.innerText = "☀️ تم روشن";
+      }
+    }
+    function toggleAppTheme() {
+      const isDark = document.body.classList.toggle("royal-dark-theme");
+      localStorage.setItem("karimiAppTheme", isDark ? "royal-dark" : "light");
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) btn.innerText = isDark ? "☀️ تم روشن" : "🌙 تم رسمی";
+    }
+    initTheme();
+
+    // --- ۲. ماشین‌حساب داخلی فیلد مبلغ ---
+    function evaluateAmountCalculator() {
+      const inputEl = document.getElementById("txAmountInput");
+      const previewEl = document.getElementById("calcPreviewResult");
+      if (!inputEl || !previewEl) return 0;
+      let raw = formatEnNum(inputEl.value).replace(/,/g, '').trim();
+      if (!raw) { previewEl.style.display = "none"; return 0; }
+
+      if (/^[0-9+\-*/().\s]+$/.test(raw) && /[+\-*/]/.test(raw)) {
+        try {
+          let result = Function('"use strict";return (' + raw + ')')();
+          if (isFinite(result) && result > 0) {
+            previewEl.innerText = `🧮 نتیجه محاسبه: ${formatEnMoney(result)}`;
+            previewEl.style.display = "block";
+            return result;
+          }
+        } catch (e) {}
+      }
+      previewEl.style.display = "none";
+      return parseFloat(raw) || 0;
+    }
+
+    // --- ۳. قالب‌های سریع تراکنش (Quick Templates) ---
+    function applyQuickTemplate(opType, descText) {
+      playInteractionEffect();
+      const opSelect = document.getElementById("txOpType");
+      if (opSelect) {
+        for (let i = 0; i < opSelect.options.length; i++) {
+          if (opSelect.options[i].value === opType) {
+            opSelect.selectedIndex = i;
+            break;
+          }
+        }
+      }
+      document.getElementById("txDesc").value = descText;
+    }
+
+    // --- ۴. تشخیص خودکار آخرین ارز مشتری هنگام باز شدن مودال ثبت تراکنش ---
+    const _origOpenAddTx = openAddTransactionModal;
+    openAddTransactionModal = function() {
+      _origOpenAddTx();
+      const previewEl = document.getElementById("calcPreviewResult");
+      if (previewEl) previewEl.style.display = "none";
+      if (currentAccountId) {
+        const clientTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId));
+        if (clientTxs.length > 0) {
+          const lastCurr = String(getVal(clientTxs[0], ['Currency', 'currency']) || '').trim();
+          if (lastCurr) selectTxCurrency(lastCurr);
+        }
+      }
+    };
+
+    // --- ۵. به‌روزرسانی submitTransaction برای پشتیبانی از ماشین‌حساب ---
+    const _origSubmitTransaction = submitTransaction;
+    submitTransaction = async function() {
+      const calcVal = evaluateAmountCalculator();
+      if (calcVal && calcVal > 0) {
+        document.getElementById("txAmountInput").value = calcVal;
+      }
+      await _origSubmitTransaction();
+    };
+
+    // --- ۶. نمودار خطی روند مانده حساب مشتری (Chart.js) ---
+    let balanceChartInstance = null;
+    function renderAccountBalanceChart(accId) {
+      const ctx = document.getElementById("accountBalanceChart");
+      if (!ctx || typeof Chart === "undefined") return;
+      if (balanceChartInstance) balanceChartInstance.destroy();
+
+      const txs = allTransactions
+        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
+        .slice()
+        .sort((a, b) => new Date(getVal(a, ['Date', 'date', 'created_at']) || 0) - new Date(getVal(b, ['Date', 'date', 'created_at']) || 0));
+
+      if (txs.length === 0) return;
+
+      const mainCurr = String(getVal(txs[txs.length - 1], ['Currency', 'currency']) || 'AFN').toUpperCase();
+      let running = 0;
+      const labels = [];
+      const dataPoints = [];
+
+      txs.forEach(tx => {
+        if (String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase() !== mainCurr) return;
+        const dir = String(getVal(tx, ['Direction', 'direction']) || '');
+        const amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+        if (dir.includes("بستانکار")) running += amt;
+        if (dir.includes("بدهکار")) running -= amt;
+
+        const dStr = formatEnNum(String(getVal(tx, ['Date', 'date']) || '').split('T')[0]);
+        labels.push(dStr);
+        dataPoints.push(running);
+      });
+
+      balanceChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: `روند مانده حساب (${mainCurr})`,
+            data: dataPoints,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+            borderWidth: 2.5,
+            tension: 0.35,
+            fill: true,
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { font: { family: 'Vazirmatn', weight: 'bold' } } } },
+          scales: { x: { display: false } }
+        }
+      });
+    }
+
+    // --- ۷. سیستم یادآور هوشمند مشتریان ---
+    function getRemindersList() {
+      try { return JSON.parse(localStorage.getItem("karimiSmartReminders") || "[]"); } catch(e) { return []; }
+    }
+    function saveClientReminder() {
+      const dateVal = document.getElementById("clientReminderDate").value;
+      const noteVal = document.getElementById("clientReminderNote").value.trim();
+      if (!dateVal || !noteVal || !currentAccountId) {
+        alert("لطفاً تاریخ و متن یادآور را وارد کنید.");
+        return;
+      }
+      const list = getRemindersList();
+      list.push({
+        id: Date.now(),
+        accId: currentAccountId,
+        accName: currentAccountName,
+        date: dateVal,
+        note: noteVal
+      });
+      localStorage.setItem("karimiSmartReminders", JSON.stringify(list));
+      document.getElementById("clientReminderNote").value = "";
+      renderClientReminders(currentAccountId);
+      renderDashboardReminders();
+    }
+    function deleteReminder(id) {
+      const list = getRemindersList().filter(r => r.id !== id);
+      localStorage.setItem("karimiSmartReminders", JSON.stringify(list));
+      if (currentAccountId) renderClientReminders(currentAccountId);
+      renderDashboardReminders();
+    }
+    function renderClientReminders(accId) {
+      const container = document.getElementById("clientRemindersList");
+      if (!container) return;
+      const items = getRemindersList().filter(r => String(r.accId) === String(accId));
+      container.innerHTML = items.map(r => `
+        <div class="stat-row" style="background:rgba(245,158,11,0.12); padding:6px 10px; border-radius:10px; margin-top:4px; font-size:0.82rem;">
+          <span>📅 <b>${formatEnNum(r.date)}</b>: ${r.note}</span>
+          <button onclick="deleteReminder(${r.id})" style="background:none; border:none; color:#ef4444; font-weight:900; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    function renderDashboardReminders() {
+      const banner = document.getElementById("smartRemindersBanner");
+      const listEl = document.getElementById("smartRemindersBannerList");
+      if (!banner || !listEl) return;
+      const items = getRemindersList();
+      if (items.length === 0) { banner.style.display = "none"; return; }
+      banner.style.display = "block";
+      listEl.innerHTML = items.map(r => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px dashed rgba(120,53,15,0.2);">
+          <span onclick="selectAccount('${r.accId}', '${r.accName}')" style="cursor:pointer;">👤 <b>${r.accName}</b> (${formatEnNum(r.date)}): ${r.note}</span>
+          <button onclick="deleteReminder(${r.id})" style="background:none; border:none; color:#b91c1c; font-weight:900; cursor:pointer;">حذف</button>
+        </div>
+      `).join('');
+    }
+    renderDashboardReminders();
+
+    const _origSelectAccount = selectAccount;
+    selectAccount = function(accId, accName) {
+      _origSelectAccount(accId, accName);
+      renderAccountBalanceChart(accId);
+      renderClientReminders(accId);
+    };
+
+    // --- ۸. خروجی حرفه‌ای Excel و PDF از دفتر کل ---
+    function exportLedgerToExcel() {
+      if (typeof XLSX === "undefined") { alert("کتابخانه اکسل بارگذاری نشده است."); return; }
+      const rows = allTransactions.map((tx, i) => {
+        const accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
+        const acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
+        return {
+          "ردیف": i + 1,
+          "تاریخ": formatEnNum(String(getVal(tx, ['Date', 'date']) || '').split('T')[0]),
+          "نام مشتری": acc ? getVal(acc, ['Name', 'name']) : accId,
+          "نوع عملیات": getVal(tx, ['OperationType', 'operationtype']),
+          "جهت": getVal(tx, ['Direction', 'direction']),
+          "مبلغ": parseFloat(getVal(tx, ['Amount', 'amount'])) || 0,
+          "ارز": getVal(tx, ['Currency', 'currency']),
+          "شرح": getVal(tx, ['Description', 'description'])
+        };
+      });
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "دفتر_کل_امانت_داری_کریمی");
+      XLSX.writeFile(wb, `Karimi_Ledger_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+
+    function exportLedgerToPDF() {
+      if (typeof html2pdf === "undefined") { alert("کتابخانه PDF بارگذاری نشده است."); return; }
+      const element = document.getElementById("globalTransactionsListContainer");
+      if (!element) return;
+      const opt = {
+        margin: 8,
+        filename: `Karimi_Report_${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    // --- ۹. اصلاح باگ تایپی خط آخر فایل اصلی ---
+    function getAccountLiveBalanceTest(accId) {
+      return getAccountLiveBalanceText(accId);
+    }
+  </script>
+  <!-- کتابخانه نمودار Chart.js و خروجی PDF / Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
   <!-- فونت وزیرمتن -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -493,6 +737,85 @@
     .ledger-picker-item:hover, .ledger-picker-item.active-opt {
       background: #eff6ff;
     }
+  
+    /* --- پالت رسمی صرافی (سرمه‌ای تیره و طلایی) و حالت شب/روز --- */
+    body.royal-dark-theme {
+      background: linear-gradient(135deg, #070b14 0%, #0f172a 50%, #1e293b 100%) !important;
+      color: #f8fafc !important;
+    }
+    body.royal-dark-theme .card {
+      background: rgba(15, 23, 42, 0.88) !important;
+      color: #f1f5f9 !important;
+      border-bottom: 1px solid rgba(251, 191, 36, 0.2) !important;
+    }
+    body.royal-dark-theme .card-header-styled {
+      background: linear-gradient(135deg, #090d16 0%, #1e293b 100%) !important;
+      border: 1px solid rgba(245, 158, 11, 0.45) !important;
+    }
+    body.royal-dark-theme .card-header-styled h3 {
+      color: #fbbf24 !important;
+    }
+    body.royal-dark-theme .floating-glass-btn,
+    body.royal-dark-theme .stat-card,
+    body.royal-dark-theme .account-item-card,
+    body.royal-dark-theme .phone-item-card,
+    body.royal-dark-theme .client-info-header-box,
+    body.royal-dark-theme .modal-card-box,
+    body.royal-dark-theme .nokia-corner-btn {
+      background: rgba(30, 41, 59, 0.92) !important;
+      border-color: rgba(245, 158, 11, 0.3) !important;
+      color: #f8fafc !important;
+    }
+    body.royal-dark-theme .floating-glass-btn .title,
+    body.royal-dark-theme .account-name-title,
+    body.royal-dark-theme h3,
+    body.royal-dark-theme label {
+      color: #f8fafc !important;
+    }
+    body.royal-dark-theme input,
+    body.royal-dark-theme select,
+    body.royal-dark-theme textarea {
+      background: rgba(15, 23, 42, 0.95) !important;
+      color: #ffffff !important;
+      border-color: rgba(245, 158, 11, 0.4) !important;
+    }
+
+    /* --- اسکلتون لودینگ حرفه‌ای --- */
+    .skeleton-box {
+      background: linear-gradient(90deg, rgba(203,213,225,0.4) 25%, rgba(241,245,249,0.8) 50%, rgba(203,213,225,0.4) 75%);
+      background-size: 200% 100%;
+      animation: skeletonLoading 1.4s infinite ease-in-out;
+      border-radius: 14px;
+      height: 62px;
+      margin-bottom: 10px;
+    }
+    @keyframes skeletonLoading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* --- دکمه‌های تراکنش آماده (Quick Templates) و ماشین‌حساب --- */
+    .quick-template-chip {
+      padding: 6px 11px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid #f59e0b;
+      color: #b45309;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    body.royal-dark-theme .quick-template-chip { color: #fbbf24; }
+    .quick-template-chip:active { transform: scale(0.95); }
+
+    .calc-preview-badge {
+      font-size: 0.82rem;
+      font-weight: 900;
+      color: #059669;
+      margin-top: 5px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -534,9 +857,16 @@
         <div class="card-header-styled">
           <h3>🏛️ مدیریت امانت‌داری کریمی</h3>
           <div class="flex-row">
+            <button class="btn btn-warning btn-sm" onclick="playInteractionEffect(); toggleAppTheme()" id="themeToggleBtn" title="تغییر ظاهر">🌙 تم رسمی</button>
             <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); loadDataFromSupabase(true)">🔄 همگام‌سازی</button>
             <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); handleLogout()">خروج</button>
           </div>
+        </div>
+
+        <!-- کادر هشدار یادآورهای هوشمند سررسید -->
+        <div id="smartRemindersBanner" style="display:none; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1.5px solid #f59e0b; border-radius: 16px; padding: 12px; margin-bottom: 12px; color: #78350f;">
+          <div style="font-weight:900; font-size:0.9rem; margin-bottom:6px;">⏰ یادآورهای هوشمند و سررسید مشتریان:</div>
+          <div id="smartRemindersBannerList" style="font-size:0.84rem;"></div>
         </div>
 
         <div class="dashboard-floating-grid" id="dashboardMenuGrid"></div>
@@ -589,6 +919,8 @@
           <h3>📜 دفتر کل مرکزی تراکنش‌ها</h3>
           <div class="flex-row" style="gap:6px;">
             <button class="btn btn-sm" style="background:var(--accent-green);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ ایجاد تراکنش</button>
+            <button class="btn btn-info btn-sm" onclick="playInteractionEffect(); exportLedgerToExcel()">📊 اکسل</button>
+            <button class="btn btn-warning btn-sm" onclick="playInteractionEffect(); exportLedgerToPDF()">📄 PDF</button>
             <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
           </div>
         </div>
@@ -725,6 +1057,27 @@
           </div>
         </div>
 
+        <!-- بخش یادآور هوشمند اختصاصی مشتری -->
+        <div class="stat-card" style="margin-bottom: 12px; border-color: #f59e0b;">
+          <div class="stat-row" style="margin-bottom:6px;">
+            <span style="font-weight:900; font-size:0.86rem;">⏰ ثبت یادآور / وعده تسویه مشتری:</span>
+          </div>
+          <div class="flex-row" style="gap:6px;">
+            <input type="date" id="clientReminderDate" style="flex:1; padding:8px; font-size:0.85rem;">
+            <input type="text" id="clientReminderNote" placeholder="مثلاً: وعده پرداخت بدهی..." style="flex:2; padding:8px; font-size:0.85rem;">
+            <button class="btn btn-warning btn-sm" onclick="playInteractionEffect(); saveClientReminder()">ثبت</button>
+          </div>
+          <div id="clientRemindersList" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- نمودار تغییرات مانده حساب -->
+        <div class="stat-card" style="margin-bottom: 12px;">
+          <div style="font-weight:900; font-size:0.86rem; margin-bottom:8px;">📈 نمودار روند تغییرات مانده حساب:</div>
+          <div style="position:relative; height:170px; width:100%;">
+            <canvas id="accountBalanceChart"></canvas>
+          </div>
+        </div>
+
         <div class="stats-grid" id="accountStatsGrid"></div>
 
         <div class="nokia-nav-container">
@@ -834,11 +1187,21 @@
       </div>
 
       <div class="form-group">
-        <label>۴. مبلغ تراکنش:</label>
-        <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.2rem; color:var(--accent-green-dark);">
+        <label>۴. مبلغ تراکنش (ماشین‌حساب داخلی: مثلاً 100*86 یا 500+200):</label>
+        <input type="text" inputmode="text" id="txAmountInput" oninput="evaluateAmountCalculator()" placeholder="ورود عدد یا فرمول محاسباتی..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.15rem; color:var(--accent-green-dark);">
+        <div id="calcPreviewResult" class="calc-preview-badge"></div>
       </div>
 
-      <div class="form-group"><label>۵. توضیحات / شرح تراکنش (رسید انتقال):</label><textarea id="txDesc" placeholder="توضیحات تراکنش یا شرح حواله..."></textarea></div>
+      <div class="form-group">
+        <label>۵. توضیحات / شرح تراکنش (یا انتخاب قالب سریع):</label>
+        <div class="flex-row" style="gap:6px; margin-bottom:8px;">
+          <span class="quick-template-chip" onclick="applyQuickTemplate('حواله', 'بابت حواله نقدی')">⚡ حواله نقدی</span>
+          <span class="quick-template-chip" onclick="applyQuickTemplate('تسویه', 'تسویه کامل حساب')">⚡ تسویه حساب</span>
+          <span class="quick-template-chip" onclick="applyQuickTemplate('امانت', 'دریافت وجه امانت')">⚡ دریافت امانت</span>
+          <span class="quick-template-chip" onclick="applyQuickTemplate('انتقال', 'کمیسیون و کارمزد انتقال')">⚡ کارمزد</span>
+        </div>
+        <textarea id="txDesc" placeholder="توضیحات تراکنش یا شرح حواله..."></textarea>
+      </div>
       <div class="form-group"><label>۶. نوع عملیات:</label><select id="txOpType"></select></div>
       <div class="form-group"><label>۷. تصویر رسید:</label><input type="file" id="txReceiptInput" accept="image/*"><input type="hidden" id="existingReceiptUrl"></div>
 
