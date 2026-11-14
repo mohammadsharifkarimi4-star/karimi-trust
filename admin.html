@@ -292,6 +292,7 @@
     .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
     .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 10px; }
 
+    /* دکمه‌های ویرایش و حذف تراکنش کاملاً اصلاح‌شده و تمیز */
     .action-btn-modern {
       padding: 13px 18px;
       border-radius: 16px;
@@ -658,7 +659,7 @@
       </div>
     </div>
 
-    <!-- گزارش بدهکاران -->
+    <!-- گزارش بدهکاران با قابلیت انتخاب چندتایی -->
     <div id="viewDebtorsReport" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
@@ -676,7 +677,7 @@
       </div>
     </div>
 
-    <!-- گزارش بستانکاران -->
+    <!-- گزارش بستانکاران با قابلیت انتخاب چندتایی -->
     <div id="viewCreditorsReport" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
@@ -860,7 +861,7 @@
     </div>
   </div>
 
-  <!-- مودال انتخاب حساب جهت ثبت تراکنش -->
+  <!-- مودال انتخاب حساب قابل جستجو جهت ثبت تراکنش از دفتر کل -->
   <div id="globalSelectAccountModal">
     <div class="modal-card-box">
       <div class="flex-row" style="justify-content:space-between; margin-bottom:10px;">
@@ -938,7 +939,7 @@
     </div>
   </div>
 
-  <!-- جاوااسکریپت سیستم -->
+  <!-- کدهای جاوااسکریپت برنامه -->
   <script>
     const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
     const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
@@ -1021,8 +1022,17 @@
         if (item.type === 'superadmin' && !isMaster) return;
         if (item.type === 'master' && !isMaster) return;
 
-        let onClickAttr = item.type === 'standard' ? `switchView('${item.id}')` : item.action;
-        let extraStyle = item.type === 'master' ? "background: linear-gradient(135deg, rgba(254,243,199,0.95) 0%, rgba(253,230,138,0.95) 100%); border-color: #f59e0b;" : "";
+        let onClickAttr = "";
+        if (item.type === 'standard') {
+          onClickAttr = `switchView('${item.id}')`;
+        } else {
+          onClickAttr = item.action;
+        }
+
+        let extraStyle = "";
+        if (item.type === 'master') {
+          extraStyle = "background: linear-gradient(135deg, rgba(254,243,199,0.95) 0%, rgba(253,230,138,0.95) 100%); border-color: #f59e0b;";
+        }
 
         container.innerHTML += `
           <div class="floating-glass-btn" style="${extraStyle}">
@@ -1070,7 +1080,11 @@
     }
 
     function handleBrokerNavigation() {
-      try { window.location.href = 'broker.html'; } catch(e) { alert("صفحه مدیریت کارگزاری‌ها در دسترس نیست."); }
+      try {
+        window.location.href = 'broker.html';
+      } catch(e) {
+        alert("صفحه مدیریت کارگزاری‌ها در این بخش در دسترس نیست.");
+      }
     }
 
     async function sendTelegramMessage(botToken, chatId, messageText) {
@@ -1080,14 +1094,22 @@
         await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: 'Markdown' })
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: messageText,
+            parse_mode: 'Markdown'
+          })
         });
-      } catch (err) {}
+      } catch (err) {
+        console.log("خطا در ارسال تلگرام:", err);
+      }
     }
 
     function getCurrentAdminTokenAndChat() {
       if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
-      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
+        return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      }
       let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
       let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
       let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
@@ -1103,7 +1125,9 @@
       pushModalHistory("masterSettingsModal");
     }
 
-    function closeMasterSettingsModal() { document.getElementById("masterSettingsModal").style.display = "none"; }
+    function closeMasterSettingsModal() {
+      document.getElementById("masterSettingsModal").style.display = "none";
+    }
 
     function saveMasterSettings() {
       let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
@@ -1111,9 +1135,16 @@
       let token = document.getElementById("masterTokenInput").value.trim();
       let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
 
-      if (!email || !pin) { alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد."); return; }
+      if (!email || !pin) {
+        alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
+        return;
+      }
 
-      MASTER_ADMIN_EMAIL = email; MASTER_ADMIN_PIN = pin; MASTER_ADMIN_TOKEN = token; MASTER_ADMIN_CHATID = chatId;
+      MASTER_ADMIN_EMAIL = email;
+      MASTER_ADMIN_PIN = pin;
+      MASTER_ADMIN_TOKEN = token;
+      MASTER_ADMIN_CHATID = chatId;
+
       localStorage.setItem("masterEmail", email);
       localStorage.setItem("masterPin", pin);
       localStorage.setItem("masterToken", token);
@@ -1121,44 +1152,6 @@
 
       closeMasterSettingsModal();
       alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
-    }
-
-    function getSystemGlobalBalanceText() {
-      let totalsByCurrency = {};
-      allAccounts.forEach(acc => {
-        let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
-        if(!accId) return;
-        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
-        let accCurrencies = {};
-
-        accTxs.forEach(tx => {
-          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
-        });
-
-        for(let curr in accCurrencies) {
-          let net = accCurrencies[curr];
-          if(net !== 0) {
-            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
-            if(net > 0) totalsByCurrency[curr].debSum += net;
-            else totalsByCurrency[curr].credSum += Math.abs(net);
-          }
-        }
-      });
-
-      let parts = [];
-      for(let curr in totalsByCurrency) {
-        let cred = totalsByCurrency[curr].credSum;
-        let deb = totalsByCurrency[curr].debSum;
-        let finalNet = cred - deb;
-        let status = finalNet > 0 ? `بستانکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}` : `بدهکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}`;
-        parts.push(`🔹 ${curr} ➔ کل بستانکاری: ${formatEnMoney(cred)} | کل بدهکاری: ${formatEnMoney(deb)} | *مانده: ${status}*`);
-      }
-      return parts.join('\n') || 'بدون مانده فعال';
     }
 
     function getAccountLiveBalanceText(accId) {
@@ -1184,22 +1177,29 @@
       return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
 
-    function pushModalHistory(modalId) { window.history.pushState({ modal: modalId }, ''); }
+    function pushModalHistory(modalId) {
+      window.history.pushState({ modal: modalId }, '');
+    }
 
     window.onload = async function() {
       loadDashboardMenuOrder();
       let savedSession = localStorage.getItem("adminAuthSessionData");
       let savedArchive = localStorage.getItem("phoneArchiveData");
-      if (savedArchive) { try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {} }
+      if (savedArchive) {
+        try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {}
+      }
 
       if (savedSession) {
         try {
           currentLoggedInAdmin = JSON.parse(savedSession);
           document.getElementById("authOverlay").style.display = "none";
           document.getElementById("adminContainer").style.display = "block";
+          
           renderDashboardMenu();
           await loadDataFromSupabase(true);
-        } catch(e) { localStorage.removeItem("adminAuthSessionData"); }
+        } catch(e) {
+          localStorage.removeItem("adminAuthSessionData");
+        }
       }
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
@@ -1226,11 +1226,15 @@
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
       const pin = document.getElementById("loginPin").value.trim();
 
-      if (!email || !pin) { alert("لطفاً ایمیل و رمز عبور را وارد کنید."); return; }
+      if (!email || !pin) {
+        alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
+        return;
+      }
 
       if (email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
         currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "محمد شریف کریمی (مالک)", email: MASTER_ADMIN_EMAIL };
         localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+        
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
         renderDashboardMenu();
@@ -1262,12 +1266,17 @@
             return;
           }
         }
-      } catch(e) {}
+      } catch(e) {
+        console.log("خطا در بررسی ادمین‌ها:", e);
+      }
 
       alert("ایمیل یا رمز عبور اشتباه است!");
     }
 
-    function handleLogout() { localStorage.removeItem("adminAuthSessionData"); location.reload(); }
+    function handleLogout() { 
+      localStorage.removeItem("adminAuthSessionData"); 
+      location.reload(); 
+    }
 
     function switchView(viewId, pushHistory = true) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -1295,6 +1304,7 @@
       const q = formatEnNum(input.value.trim().toLowerCase());
       const container = document.getElementById("drawerSearchResults");
       container.innerHTML = "";
+
       if (q.length === 0) return;
 
       let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
@@ -1371,6 +1381,7 @@
 
         let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
         let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
         let rawAccounts = accRes.data || [];
         
         if (isMaster) {
@@ -1398,7 +1409,8 @@
         allTransactions.sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
           return db - da;
         });
 
@@ -1414,7 +1426,7 @@
           let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
           if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
         }
-      } catch (e) {}
+      } catch (e) { console.log("خطا:", e); }
       finally { if (indicator) indicator.style.display = "none"; }
     }
 
@@ -1429,7 +1441,9 @@
       }
     }
 
-    function populateGlobalLedgerAccountFilterOptions() { renderGlobalLedgerAccountDropdownList(""); }
+    function populateGlobalLedgerAccountFilterOptions() {
+      renderGlobalLedgerAccountDropdownList("");
+    }
 
     function openGlobalLedgerAccountDropdown() {
       const inputEl = document.getElementById("globalLedgerAccountSearchInput");
@@ -1503,18 +1517,26 @@
       const dd = document.getElementById("globalLedgerAccountDropdown");
 
       if (hiddenEl) hiddenEl.value = accId;
-      if (inputEl) inputEl.value = accId === "all" ? "" : `${accName} (${accId})`;
-      if (clearBtn) clearBtn.style.display = accId === "all" ? "none" : "block";
+      if (inputEl) {
+        inputEl.value = accId === "all" ? "" : `${accName} (${accId})`;
+      }
+      if (clearBtn) {
+        clearBtn.style.display = accId === "all" ? "none" : "block";
+      }
       if (dd) dd.style.display = "none";
       renderGlobalTransactionsList();
     }
 
-    function clearGlobalLedgerAccountFilter() { selectGlobalLedgerAccount("all", ""); }
+    function clearGlobalLedgerAccountFilter() {
+      selectGlobalLedgerAccount("all", "");
+    }
 
     document.addEventListener("click", function(e) {
       const wrapper = document.getElementById("globalLedgerPickerWrapper");
       const dd = document.getElementById("globalLedgerAccountDropdown");
-      if (wrapper && dd && !wrapper.contains(e.target)) dd.style.display = "none";
+      if (wrapper && dd && !wrapper.contains(e.target)) {
+        dd.style.display = "none";
+      }
     });
 
     function updatePhoneDirectoryArchive() {
@@ -1527,12 +1549,22 @@
         if (phone) {
           let existing = phoneArchiveList.find(p => p.accId === accId || p.phone === phone);
           if (existing) {
-            existing.name = name; existing.phone = phone; existing.isDeleted = false; existing.creator = creator;
+            existing.name = name;
+            existing.phone = phone;
+            existing.isDeleted = false;
+            existing.creator = creator;
           } else {
-            phoneArchiveList.push({ accId: accId, name: name, phone: phone, isDeleted: false, creator: creator });
+            phoneArchiveList.push({
+              accId: accId,
+              name: name,
+              phone: phone,
+              isDeleted: false,
+              creator: creator
+            });
           }
         }
       });
+
       localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
     }
 
@@ -1606,7 +1638,9 @@
       document.getElementById("adminManagerModal").style.display = "flex";
       pushModalHistory("adminManagerModal");
     }
-    function closeAdminManagerModal() { document.getElementById("adminManagerModal").style.display = "none"; }
+    function closeAdminManagerModal() {
+      document.getElementById("adminManagerModal").style.display = "none";
+    }
 
     function renderAdminsList() {
       const container = document.getElementById("adminsListContainer");
@@ -1673,17 +1707,40 @@
       let botToken = document.getElementById("newAdminBotToken").value.trim();
       let chatId = formatEnNum(document.getElementById("newAdminChatId").value.trim());
 
-      if (!name || !email || !pin) { alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید."); return; }
+      if (!name || !email || !pin) {
+        alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید.");
+        return;
+      }
 
       let adminId = editId ? editId : ("ADM-" + Math.floor(1000 + Math.random() * 9000));
-      const payload = { AdminID: adminId, Name: name, Email: email, Pin: pin, BotToken: botToken, ChatID: chatId };
+      const payload = {
+        AdminID: adminId,
+        Name: name,
+        Email: email,
+        Pin: pin,
+        BotToken: botToken,
+        ChatID: chatId
+      };
 
       if (editId) {
-        await _supabase.from('admins').update(payload).eq('AdminID', editId);
+        const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
+        if (error) { alert("خطا در ویرایش: " + error.message); return; }
         alert("✅ اطلاعات ادمین با موفقیت ویرایش شد!");
       } else {
-        await _supabase.from('admins').insert([payload]);
+        const { error } = await _supabase.from('admins').insert([payload]);
+        if (error) { alert("خطا در ایجاد ادمین: " + error.message); return; }
         alert("✅ ادمین جدید با موفقیت ایجاد شد!");
+
+        if (botToken && chatId) {
+          let siteLink = "https://karimi-trust-app.vercel.app/";
+          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨\n\n` +
+                           `سلام *${name}* عزیز،\n` +
+                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.\n\n` +
+                           `📧 ایمیل ورود: \`${email}\`\n` +
+                           `🔑 رمز عبور: \`${pin}\`\n\n` +
+                           `🌐 لینک ورود به سایت:\n${siteLink}`;
+          sendTelegramMessage(botToken, chatId, welcomeMsg);
+        }
       }
 
       cancelEditAdmin();
@@ -1712,6 +1769,7 @@
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
@@ -1781,6 +1839,7 @@
       filteredList.forEach(item => {
         let cleanPhone = item.phone.replace(/\D/g, '');
         let liveAcc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(item.accId));
+        
         let statusHtml = '';
         let balanceBadges = '';
 
@@ -1870,7 +1929,9 @@
       setTimeout(() => document.getElementById("globalAccountPickerInput").focus(), 100);
     }
 
-    function closeGlobalSelectAccountModal() { document.getElementById("globalSelectAccountModal").style.display = "none"; }
+    function closeGlobalSelectAccountModal() {
+      document.getElementById("globalSelectAccountModal").style.display = "none";
+    }
 
     function renderGlobalAccountPickerList() {
       const q = formatEnNum((document.getElementById("globalAccountPickerInput").value || "").trim().toLowerCase());
@@ -1931,13 +1992,15 @@
 
       const searchEl = document.getElementById("globalLedgerSearchInput");
       const q = searchEl ? formatEnNum(searchEl.value.trim().toLowerCase()) : "";
+      
       const filterEl = document.getElementById("globalLedgerAccountFilter");
       const selectedAccFilter = filterEl ? filterEl.value : "all";
 
       let sortedTxs = allTransactions.slice().sort((a, b) => {
         let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
         let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
+        if (isNaN(da)) da = 0;
+        if (isNaN(db)) db = 0;
         return db - da;
       });
 
@@ -1967,7 +2030,9 @@
       sortedTxs.forEach(tx => {
         let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
         let dateObj = rawDate ? new Date(rawDate) : null;
-        let dayKey = (dateObj && !isNaN(dateObj.getTime())) ? formatEnNum(dateObj.toISOString().split('T')[0]) : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
+        let dayKey = (dateObj && !isNaN(dateObj.getTime()))
+          ? formatEnNum(dateObj.toISOString().split('T')[0])
+          : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
         if (!groupsByDay[dayKey]) groupsByDay[dayKey] = [];
         groupsByDay[dayKey].push(tx);
       });
@@ -2018,7 +2083,8 @@
             .sort((a, b) => {
               let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
               let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-              if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
+              if (isNaN(da)) da = 0;
+              if (isNaN(db)) db = 0;
               return db - da;
             });
           let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === txId);
@@ -2036,7 +2102,9 @@
 
           let balStatus = sameCurrBalance > 0 ? 'بست.' : (sameCurrBalance < 0 ? 'بده.' : 'تسویه');
           let balColor = sameCurrBalance > 0 ? '#047857' : (sameCurrBalance < 0 ? '#b91c1c' : '#475569');
-          let balanceStr = sameCurrBalance === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
+          let balanceStr = sameCurrBalance === 0
+            ? `۰ ${curr} (تسویه)`
+            : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
 
           let isCreditor = dir.includes('بستانکار');
           let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
@@ -2100,7 +2168,11 @@
     function toggleCustomDateFilter() {
       const period = document.getElementById("transferFilterPeriod").value;
       const customBox = document.getElementById("customDateRangeBox");
-      customBox.style.display = (period === "custom") ? "block" : "none";
+      if (period === "custom") {
+        customBox.style.display = "block";
+      } else {
+        customBox.style.display = "none";
+      }
       renderTransfersReport();
     }
 
@@ -2121,10 +2193,18 @@
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
         if (!txDateStr) return false;
 
-        let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-        if (period === "today") return diffDays <= 1;
-        if (period === "week") return diffDays <= 7;
-        if (period === "month") return diffDays <= 30;
+        if (period === "today") {
+          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
+          return diffDays <= 1;
+        }
+        if (period === "week") {
+          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
+          return diffDays <= 7;
+        }
+        if (period === "month") {
+          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
+          return diffDays <= 30;
+        }
         if (period === "custom") {
           if (startDate && txDateStr < startDate) return false;
           if (endDate && txDateStr > endDate) return false;
@@ -2136,7 +2216,8 @@
       filteredTxs.sort((a, b) => {
         let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
         let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
+        if (isNaN(da)) da = 0;
+        if (isNaN(db)) db = 0;
         return db - da;
       });
 
@@ -2232,24 +2313,36 @@
 
     function toggleDebtorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
-      if (isChecked) selectedDebtorsMap[key] = { curr, amt };
-      else delete selectedDebtorsMap[key];
+      if (isChecked) {
+        selectedDebtorsMap[key] = { curr, amt };
+      } else {
+        delete selectedDebtorsMap[key];
+      }
       updateDebtorsBatchSummary();
     }
 
     function updateDebtorsBatchSummary() {
       const box = document.getElementById("debtorsBatchSummaryBox");
       const content = document.getElementById("debtorsBatchSummaryContent");
-      let currs = {}, count = 0;
+      
+      let currs = {};
+      let count = 0;
       for (let k in selectedDebtorsMap) {
         let item = selectedDebtorsMap[k];
         if (!currs[item.curr]) currs[item.curr] = 0;
         currs[item.curr] += item.amt;
         count++;
       }
-      if (count === 0) { box.style.display = "none"; return; }
+
+      if (count === 0) {
+        box.style.display = "none";
+        return;
+      }
+
       let html = `<div style="font-size:0.9rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
-      for (let c in currs) html += `<div style="font-weight:900; font-size:1.05rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      for (let c in currs) {
+        html += `<div style="font-weight:900; font-size:1.05rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      }
       content.innerHTML = html;
       box.style.display = "block";
     }
@@ -2308,24 +2401,36 @@
 
     function toggleCreditorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
-      if (isChecked) selectedCreditorsMap[key] = { curr, amt };
-      else delete selectedCreditorsMap[key];
+      if (isChecked) {
+        selectedCreditorsMap[key] = { curr, amt };
+      } else {
+        delete selectedCreditorsMap[key];
+      }
       updateCreditorsBatchSummary();
     }
 
     function updateCreditorsBatchSummary() {
       const box = document.getElementById("creditorsBatchSummaryBox");
       const content = document.getElementById("creditorsBatchSummaryContent");
-      let currs = {}, count = 0;
+      
+      let currs = {};
+      let count = 0;
       for (let k in selectedCreditorsMap) {
         let item = selectedCreditorsMap[k];
         if (!currs[item.curr]) currs[item.curr] = 0;
         currs[item.curr] += item.amt;
         count++;
       }
-      if (count === 0) { box.style.display = "none"; return; }
+
+      if (count === 0) {
+        box.style.display = "none";
+        return;
+      }
+
       let html = `<div style="font-size:0.9rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
-      for (let c in currs) html += `<div style="font-weight:900; font-size:1.05rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      for (let c in currs) {
+        html += `<div style="font-weight:900; font-size:1.05rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      }
       content.innerHTML = html;
       box.style.display = "block";
     }
@@ -2398,9 +2503,13 @@
       const clearBtn = document.getElementById("clearSearchBtn");
       const q = formatEnNum(inputEl.value.trim().toLowerCase());
       
-      clearBtn.style.display = (q.length > 0) ? "block" : "none";
-      if (!q) { renderAccountsList(allAccounts); return; }
+      if (q.length > 0) {
+        clearBtn.style.display = "block";
+      } else {
+        clearBtn.style.display = "none";
+      }
 
+      if (!q) { renderAccountsList(allAccounts); return; }
       const filtered = allAccounts.filter(acc => {
         let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
         let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
@@ -2506,6 +2615,10 @@
       let accountId = editId ? editId : "ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000));
       let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
 
+      let oldAcc = editId ? allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId)) : null;
+      let oldChatId = oldAcc ? formatEnNum(getVal(oldAcc, ['ChatID', 'chatid']) || '').trim() : '';
+      let isNewChatIdAdded = accChatId && (!oldChatId || oldChatId !== accChatId);
+
       const payload = { 
         AccountID: accountId, 
         Name: accName, 
@@ -2519,14 +2632,57 @@
         await _supabase.from('accounts').update(payload).eq('AccountID', editId);
       } else {
         await _supabase.from('accounts').insert([payload]);
+        let { token } = getCurrentAdminTokenAndChat();
+        if (token && accChatId) {
+          let siteLink = "https://karimi-trust-app.vercel.app/";
+          let msg = `✨ *امانت‌داری کریمی* ✨\n\n` +
+                    `حساب شما با موفقیت ایجاد شد.\n` +
+                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.\n` +
+                    `📌 اطلاعات حساب شما:\n` +
+                    `👤 نام: ${accName}\n` +
+                    `🆔 کُد حساب: \`${accountId}\`\n` +
+                    `📞 شماره تماس: ${accPhone || '-'}\n` +
+                    `💬 چت‌آیدی: \`${accChatId}\`\n\n` +
+                    `🌐 لینک بررسی حساب:\n${siteLink}`;
+          sendTelegramMessage(token, accChatId, msg);
+        }
       }
 
       await loadDataFromSupabase(false);
-      if (currentAccountId) selectAccount(currentAccountId, accName);
+
+      if (editId && isNewChatIdAdded) {
+        let { token } = getCurrentAdminTokenAndChat();
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accountId));
+        if (token && accChatId) {
+          let historyHeader = `✨ *امانت‌داری کریمی* ✨\n\nسلام *${accName}* عزیز،\nچت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:\n────────────────────────`;
+          await sendTelegramMessage(token, accChatId, historyHeader);
+
+          for (let tx of accTxs) {
+            let tType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+            let tDir = String(getVal(tx, ['Direction', 'direction']) || '');
+            let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+            let tCurr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
+            let tDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+            let tDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+
+            let txLine = `📅 تاریخ: ${tDate}\n🔹 نوع: *${tType}* (${tDir})\n💰 مبلغ: *${tAmt} ${tCurr}*\n📝 شرح: ${tDesc || '-'}\n-------------------`;
+            await sendTelegramMessage(token, accChatId, txLine);
+          }
+
+          let liveBal = getAccountLiveBalanceText(accountId);
+          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*\n${liveBal}`;
+          await sendTelegramMessage(token, accChatId, balMsg);
+        }
+      }
+
+      if (currentAccountId) {
+        selectAccount(currentAccountId, accName);
+      }
     }
 
     async function deleteCurrentAccount() {
       let accIdToDelete = currentAccountId;
+      
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
       if (archiveItem) {
         archiveItem.isDeleted = true;
@@ -2575,7 +2731,8 @@
         .sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
           return db - da;
         });
 
@@ -2599,7 +2756,9 @@
         txs.forEach(tx => {
           let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
           let dateObj = rawDate ? new Date(rawDate) : null;
-          let dayKey = (dateObj && !isNaN(dateObj.getTime())) ? formatEnNum(dateObj.toISOString().split('T')[0]) : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
+          let dayKey = (dateObj && !isNaN(dateObj.getTime()))
+            ? formatEnNum(dateObj.toISOString().split('T')[0])
+            : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
           if (!groupsByDay[dayKey]) groupsByDay[dayKey] = [];
           groupsByDay[dayKey].push(tx);
         });
@@ -2624,7 +2783,9 @@
 
             let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
             let dateObj = rawDate ? new Date(rawDate) : null;
-            let timeOnly = (dateObj && !isNaN(dateObj.getTime())) ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : '-';
+            let timeOnly = (dateObj && !isNaN(dateObj.getTime()))
+              ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
+              : '-';
 
             let subTxs = txs.slice(currentIdxInTxs);
             let sameCurrBalance = 0;
@@ -2639,7 +2800,9 @@
 
             let balStatus = sameCurrBalance > 0 ? 'بست.' : (sameCurrBalance < 0 ? 'بده.' : 'تسویه');
             let balColor = sameCurrBalance > 0 ? '#047857' : (sameCurrBalance < 0 ? '#b91c1c' : '#475569');
-            let balanceStr = sameCurrBalance === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
+            let balanceStr = sameCurrBalance === 0
+              ? `۰ ${curr} (تسویه)`
+              : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
 
             let isCreditor = dir.includes('بستانکار');
             let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
@@ -2741,7 +2904,8 @@
         .sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
           return db - da;
         });
 
@@ -2759,8 +2923,11 @@
       });
 
       let balanceBefore = balanceAfter;
-      if (dir.includes("بستانکار")) balanceBefore -= amtNum;
-      else if (dir.includes("بدهکار")) balanceBefore += amtNum;
+      if (dir.includes("بستانکار")) {
+        balanceBefore -= amtNum;
+      } else if (dir.includes("بدهکار")) {
+        balanceBefore += amtNum;
+      }
 
       let beforeStr = balanceBefore === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balanceBefore))} ${curr} (${balanceBefore > 0 ? 'بستانکار' : 'بدهکار'})`;
       let afterStr = balanceAfter === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balanceAfter))} ${curr} (${balanceAfter > 0 ? 'بستانکار' : 'بدهکار'})`;
@@ -2851,7 +3018,9 @@
       document.getElementById("customMessageModal").style.display = "flex";
       pushModalHistory("customMessageModal");
     }
-    function closeCustomMessageModal() { document.getElementById("customMessageModal").style.display = "none"; }
+    function closeCustomMessageModal() {
+      document.getElementById("customMessageModal").style.display = "none";
+    }
 
     function sendCustomWhatsAppMessage() {
       let msg = document.getElementById("customWhatsAppMessageText").value.trim();
@@ -2860,10 +3029,13 @@
 
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
-      let encodedMessage = encodeURIComponent(msg);
 
-      if (phone) window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      else window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      let encodedMessage = encodeURIComponent(msg);
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
     }
 
     async function submitTransaction() {
@@ -2918,23 +3090,100 @@
       };
 
       if (editTransId) {
-        await _supabase.from('transactions').update(payload).or(`TransID.eq.${editTransId},id.eq.${editTransId}`);
+        await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
       } else {
         await _supabase.from('transactions').insert([payload]);
       }
 
       await loadDataFromSupabase(false);
+
+      let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      
+      if (token) {
+        let siteLink = "https://karimi-trust-app.vercel.app/";
+        let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
+        let liveBalance = getAccountLiveBalanceText(currentAccountId);
+        let globalSystemBalance = getSystemGlobalBalanceText();
+        let displayDateFormatted = formatEnNum(dateIsoString.split('T')[0]);
+
+        if (acc) {
+          let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
+          if (customerChatId) {
+            let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+            if (isTransferOrRemittance) {
+              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
+              let msg3 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+              
+              await sendTelegramMessage(token, customerChatId, msg1);
+              await sendTelegramMessage(token, customerChatId, msg2);
+              await sendTelegramMessage(token, customerChatId, msg3);
+            } else {
+              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n🔹 نوع: *${opType}* (${selectedDirectionValue})\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+
+              await sendTelegramMessage(token, customerChatId, msg1);
+              await sendTelegramMessage(token, customerChatId, msg2);
+            }
+          }
+        }
+
+        if (adminChatId) {
+          let adminMsg = `🔔 *گزارش مدیریتی سیستم*\n\n` +
+                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
+                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})\n` +
+                         `${actionTitle} (${opType} - ${selectedDirectionValue})\n` +
+                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n` +
+                         `📅 تاریخ: ${displayDateFormatted}\n` +
+                         `📝 شرح: ${desc || '-'}\n\n` +
+                         `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
+          sendTelegramMessage(token, adminChatId, adminMsg);
+        }
+      }
+
       selectAccount(currentAccountId, currentAccountName);
     }
 
     async function deleteSingleTransaction(txIdToDelete) {
       let targetId = txIdToDelete || selectedTxId;
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
+      
       await _supabase.from('transactions').delete().eq('TransID', targetId);
-      await _supabase.from('transactions').delete().eq('transid', targetId);
-      await _supabase.from('transactions').delete().eq('id', targetId);
 
       allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
+
       await loadDataFromSupabase(false);
+
+      let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+
+      if (token && tx) {
+        let liveBalance = getAccountLiveBalanceText(currentAccountId);
+        let globalSystemBalance = getSystemGlobalBalanceText();
+        let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+        let tCurr = getVal(tx, ['Currency', 'currency']);
+
+        if (acc) {
+          let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
+          if (customerChatId) {
+            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*\n\n` +
+                         `محترم *${currentAccountName}*،\n` +
+                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.\n\n` +
+                         `📊 *بیلان جدید حساب شما:*\n${liveBalance}`;
+            sendTelegramMessage(token, customerChatId, delMsg);
+          }
+        }
+
+        if (adminChatId) {
+          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*\n\n` +
+                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
+                            `👥 مشتری: *${currentAccountName}*\n` +
+                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*\n\n` +
+                            `📊 *موجودی کل سیستم:*\n${globalSystemBalance}`;
+          sendTelegramMessage(token, adminChatId, adminDelMsg);
+        }
+      }
 
       if (currentAccountId) {
         selectAccount(currentAccountId, currentAccountName);
@@ -2949,8 +3198,13 @@
       if (!tx) return;
 
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+
       let receiptLines = [
-        `✨ *رسید انتقال* ✨`, ``, `${desc || 'بدون توضیحات'}`, ``, `⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`
+        `✨ *رسید انتقال* ✨`,
+        ``,
+        `${desc || 'بدون توضیحات'}`,
+        ``,
+        `⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`
       ];
 
       let encodedMessage = receiptLines.map(line => encodeURIComponent(line)).join('%0A');
@@ -2971,20 +3225,37 @@
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
+      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+
       let lines = [
-        `✨ *امانت‌داری کریمی* ✨`, `────────────────────────`, `محترم آقای *${currentAccountName}*`,
-        `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`, ``, `📌 *جزئیات تراکنش:*`,
-        `🔹 نوع عملیات: *${opType}* (${dirVal})`, `💰 مبلغ: *${amtVal} ${currVal}*`, `📅 تاریخ: ${txDate}`,
-        `📝 شرح: ${desc || '-'}`, `────────────────────────`, `📊 *مانده فعلی حساب شما:*`,
-        liveBalText, `────────────────────────`, `با تشکر، امانت‌داری کریمی 🙏`
+        `✨ *امانت‌داری کریمی* ✨`,
+        `────────────────────────`,
+        `محترم آقای *${currentAccountName}*`,
+        `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
+        ``,
+        `📌 *جزئیات تراکنش:*`,
+        `🔹 نوع عملیات: *${opType}* (${dirVal})`,
+        `💰 مبلغ: *${amtVal} ${currVal}*`,
+        `📅 تاریخ: ${txDate}`,
+        ...(isTransferOrRemittance ? [] : [`📝 شرح: ${desc || '-'}`]),
+        `────────────────────────`,
+        `📊 *مانده فعلی حساب شما:*`,
+        liveBalText,
+        `────────────────────────`,
+        `با تشکر، امانت‌داری کریمی 🙏`
       ];
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      else window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
     }
 
-    function sendGeneralWhatsAppReport() { sendSingleTxWhatsApp(selectedTxId); }
+    function sendGeneralWhatsAppReport() {
+      sendSingleTxWhatsApp(selectedTxId);
+    }
 
     function sendPeriodicTransactionsWhatsApp(period) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -2997,7 +3268,8 @@
         .sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
           return da - db;
         });
 
@@ -3008,20 +3280,66 @@
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
         if (!txDateStr) return true;
         let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-        if (period === 'today') { periodTitle = "گزارش روزانه (امروز)"; return diffDays <= 1; }
-        else if (period === 'week') { periodTitle = "گزارش هفتگی (۷ روز گذشته)"; return diffDays <= 7; }
-        else if (period === 'month') { periodTitle = "گزارش ماهانه (۳۰ روز گذشته)"; return diffDays <= 30; }
+
+        if (period === 'today') {
+          periodTitle = "گزارش روزانه (امروز)";
+          return diffDays <= 1;
+        } else if (period === 'week') {
+          periodTitle = "گزارش هفتگی (۷ روز گذشته)";
+          return diffDays <= 7;
+        } else if (period === 'month') {
+          periodTitle = "گزارش ماهانه (۳۰ روز گذشته)";
+          return diffDays <= 30;
+        }
         return true;
       });
 
-      if (filtered.length === 0) { alert("هیچ تراکنشی در این بازه زمانی یافت نشد."); return; }
+      if (filtered.length === 0) {
+        alert("هیچ تراکنشی در این بازه زمانی برای این شخص یافت نشد.");
+        return;
+      }
+
+      let lastSettlementIdx = -1;
+      for (let i = accTxs.length - 1; i >= 0; i--) {
+        let op = String(getVal(accTxs[i], ['OperationType', 'operationtype']) || '').trim();
+        let desc = String(getVal(accTxs[i], ['Description', 'description']) || '').trim();
+        if (op === 'تسویه' || desc.includes('تسویه')) {
+          lastSettlementIdx = i;
+          break;
+        }
+      }
+
+      let finalTransactions = filtered;
+      if (period === 'all' && lastSettlementIdx !== -1) {
+        finalTransactions = accTxs.slice(lastSettlementIdx + 1);
+        if (finalTransactions.length === 0) {
+          finalTransactions = [accTxs[lastSettlementIdx]];
+        }
+      }
+
+      let settlementSummaryLine = "";
+      if (lastSettlementIdx !== -1 && period === 'all') {
+        let sTx = accTxs[lastSettlementIdx];
+        let sDate = formatEnNum(String(getVal(sTx, ['Date', 'date']) || '').split('T')[0]);
+        let sAmt = formatEnMoney(getVal(sTx, ['Amount', 'amount']));
+        let sCurr = String(getVal(sTx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let sDir = String(getVal(sTx, ['Direction', 'direction']) || '');
+        settlementSummaryLine = `📌 آخرین تسویه در تاریخ ${sDate} (مبلغ ${sAmt} ${sCurr} - ${sDir}) انجام شد. تراکنش‌های جدید پس از آن:`;
+      } else {
+        settlementSummaryLine = `📌 لیست تراکنش‌ها (به ترتیب از قدیم به جدید):`;
+      }
 
       let lines = [
-        `✨ *امانت‌داری کریمی* ✨`, `👤 مشتری: *${currentAccountName}*`, `📅 *${periodTitle}*`, `────────────────────────`
+        `✨ *امانت‌داری کریمی* ✨`,
+        `👤 مشتری: *${currentAccountName}*`,
+        `📅 *${periodTitle}*`,
+        `────────────────────────`,
+        settlementSummaryLine,
+        `────────────────────────`
       ];
 
       let runningBalances = {};
-      filtered.forEach((tx, idx) => {
+      finalTransactions.forEach((tx, idx) => {
         let date = formatEnNum(String(getVal(tx, ['Date', 'date']) || '').split('T')[0]);
         let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
@@ -3035,15 +3353,28 @@
 
         let balVal = runningBalances[curr];
         let balText = balVal === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balVal))} ${curr} (${balVal > 0 ? 'بستانکار' : 'بدهکار'})`;
-        lines.push(`${formatEnNum(idx + 1)}. [${date}] *${opType}* (${dir}) | ${formatEnMoney(amt)} ${curr} | مانده: ${balText}`);
+
+        let lineItem = `${formatEnNum(idx + 1)}. [${date}] *${opType}* (${dir}) | ${formatEnMoney(amt)} ${curr} | مانده: ${balText}`;
+        if (desc && desc !== '-') {
+          lineItem += ` | ${desc}`;
+        }
+        lines.push(lineItem);
       });
 
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
-      lines.push(`────────────────────────`, `📊 *مانده نهایی حساب شما:*\n${liveBalText}`, `────────────────────────`, `با تشکر از اعتماد شما 🙏`);
+      lines.push(
+        `────────────────────────`,
+        `📊 *مانده نهایی حساب شما:*\n${liveBalText}`,
+        `────────────────────────`,
+        `با تشکر از اعتماد شما 🙏`
+      );
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      else window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
     }
 
     function sendAccountBalanceWhatsApp() {
@@ -3052,19 +3383,33 @@
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
       let siteLink = "https://karimi-trust-app.vercel.app/";
+
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
       let lines = [
-        `✨ *امانت‌داری کریمی* ✨`, `────────────────────────`, `👤 *مشخصات حساب مشتری:*`,
-        `▫️ نام: *${currentAccountName}*`, `🆔 کُد حساب: \`${formatEnNum(currentAccountId)}\``,
-        `📞 شماره تماس: ${phone || '-'}`, `💬 چت‌آیدی: \`${chatId}\``, `────────────────────────`,
-        `📊 *صورت‌حساب و مانده حساب شما:*`, ``, liveBalText, ``, `────────────────────────`,
-        `🌐 لینک بررسی آنلاین حساب:\n${siteLink}`
+        `✨ *امانت‌داری کریمی* ✨`,
+        `────────────────────────`,
+        `👤 *مشخصات حساب مشتری:*`,
+        `▫️ نام: *${currentAccountName}*`,
+        `🆔 کُد حساب: \`${formatEnNum(currentAccountId)}\``,
+        `📞 شماره تماس: ${phone || '-'}`,
+        `💬 چت‌آیدی: \`${chatId}\``,
+        `────────────────────────`,
+        `📊 *صورت‌حساب و مانده حساب شما:*`,
+        ``,
+        liveBalText,
+        ``,
+        `────────────────────────`,
+        `🌐 لینک بررسی آنلاین حساب:`,
+        siteLink
       ];
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      else window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
     }
   </script>
 </body>
