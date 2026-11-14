@@ -65,26 +65,91 @@
     .stat-card { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
 
     .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
-    .tx-item { background: #ffffff; border: 1.5px solid #cbd5e1; padding: 11px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; position: relative; }
-    .tx-item:hover { border-color: var(--accent-green-dark); background: #f8fafc; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-    .tx-item.tx-creditor-card { border-right: 4px solid #10b981; background: linear-gradient(to left, #f0fdf4 0%, #ffffff 18%); }
-    .tx-item.tx-debtor-card { border-right: 4px solid #ef4444; background: linear-gradient(to left, #fef2f2 0%, #ffffff 18%); }
+    .tx-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    }
+    .tx-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      text-align: right;
+      min-width: 640px;
+    }
+    .tx-table thead th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 900;
+      padding: 7px 8px;
+      border-bottom: 1.5px solid #cbd5e1;
+      white-space: nowrap;
+      font-size: 0.76rem;
+    }
+    .tx-table tbody tr {
+      border-bottom: 1px solid #e2e8f0;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .tx-table tbody tr:last-child { border-bottom: none; }
+    .tx-table tbody tr:hover { background: #f0f9ff !important; }
+    .tx-table tbody tr.row-creditor { background: #f8fffb; }
+    .tx-table tbody tr.row-debtor { background: #fff9f9; }
+    .tx-table td {
+      padding: 6px 8px;
+      vertical-align: middle;
+      color: #0f172a;
+      font-weight: 600;
+    }
+    .tx-desc-cell {
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #334155;
+    }
+    .tx-addr-sub {
+      display: block;
+      font-size: 0.7rem;
+      color: #0284c7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tx-badge-dir {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .tx-badge-cred { background: #dcfce7; color: #059669; }
+    .tx-badge-debt { background: #fee2e2; color: #dc2626; }
     .day-group-header {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: #ffffff;
-      padding: 8px 12px;
-      border-radius: 10px;
-      margin: 14px 0 8px 0;
+      padding: 6px 12px;
+      border-radius: 8px 8px 0 0;
+      margin: 12px 0 0 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 800;
       border-right: 4px solid #38bdf8;
-      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12);
     }
     .day-group-header:first-child { margin-top: 2px; }
-    .day-group-badge { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; }
+    .day-group-header + .tx-table-wrapper {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-top: none;
+    }
+    .day-group-badge { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; padding: 1px 8px; border-radius: 12px; font-size: 0.74rem; }
     .adv-filter-panel {
       background: #f8fafc;
       border: 1.5px solid #cbd5e1;
@@ -987,48 +1052,70 @@
         let dayName = getPersianDayName(group.date);
         let dayTitle = dayName ? `${dayName} — ${toEnglishDigits(group.date)}` : toEnglishDigits(group.date);
 
+        let rowsHtml = "";
+        group.items.forEach((tx, idx) => {
+          let txNum = tx._permanentRowNum || (idx + 1);
+          let isCred = tx.direction === 'بستانکار';
+          let rowClass = isCred ? 'row-creditor' : 'row-debtor';
+          let badgeClass = isCred ? 'tx-badge-cred' : 'tx-badge-debt';
+          let timeStr = extractTimeOnly(tx.date);
+          let amtDisplay = toEnglishDigits((tx.amount_final || tx.amount_initial || 0).toLocaleString());
+          let rateSub = tx.exchange_rate ? `<div style="font-size:0.68rem; color:#64748b;">اولیه: ${toEnglishDigits((tx.amount_initial || 0).toLocaleString())} | نرخ: ${toEnglishDigits(tx.exchange_rate)}</div>` : '';
+          let descTitle = [tx.description, tx.address_dashboard ? `مقصد: ${tx.address_dashboard}` : ''].filter(Boolean).join(' | ');
+
+          rowsHtml += `
+            <tr class="${rowClass}" onclick="selectBrokerTx('${tx.broker_tx_id}')">
+              <td style="white-space:nowrap;">
+                <span style="background:#0f172a; color:#fff; padding:1px 6px; border-radius:5px; font-size:0.74rem; font-weight:800;">#${toEnglishDigits(txNum)}</span>
+                <div style="font-size:0.68rem; color:#64748b; margin-top:1px;" dir="ltr">${tx.broker_tx_id}</div>
+              </td>
+              <td style="white-space:nowrap;">
+                <span style="font-weight:800;">${tx.operation_type}</span>
+                ${timeStr ? `<div style="font-size:0.7rem; color:#64748b;" dir="ltr">🕒 ${timeStr}</div>` : ''}
+              </td>
+              <td style="white-space:nowrap;">
+                <span class="tx-badge-dir ${badgeClass}">${tx.direction}</span>
+              </td>
+              <td style="white-space:nowrap;">
+                <b style="color:${isCred ? '#059669' : '#dc2626'}; font-size:0.86rem; font-weight:900;">${amtDisplay}</b>
+                <span style="font-size:0.74rem; font-weight:800; color:#334155;">${tx.currency}</span>
+                ${rateSub}
+              </td>
+              <td class="tx-desc-cell" title="${descTitle.replace(/"/g, '&quot;')}">
+                <span>${tx.description || '-'}</span>
+                ${tx.address_dashboard ? `<span class="tx-addr-sub">📍 ${tx.address_dashboard}</span>` : ''}
+              </td>
+              <td style="white-space:nowrap; text-align:left;" onclick="event.stopPropagation()">
+                <button type="button" class="btn btn-warning btn-xs" style="padding:3px 6px; font-size:0.72rem;" onclick="quickEditBrokerTx('${tx.broker_tx_id}')" title="ویرایش">✏️</button>
+                <button type="button" class="btn btn-danger btn-xs" style="padding:3px 6px; font-size:0.72rem;" onclick="quickDeleteBrokerTx('${tx.broker_tx_id}')" title="حذف">🗑️</button>
+              </td>
+            </tr>
+          `;
+        });
+
         let groupHtml = `
           <div class="day-group-header">
             <span>📅 ${dayTitle}</span>
             <span class="day-group-badge">${toEnglishDigits(group.items.length)} تراکنش</span>
           </div>
+          <div class="tx-table-wrapper">
+            <table class="tx-table">
+              <thead>
+                <tr>
+                  <th>ردیف / کد</th>
+                  <th>عملیات / ساعت</th>
+                  <th>جهت</th>
+                  <th>مبلغ نهایی</th>
+                  <th>شرح و مقصد</th>
+                  <th style="text-align:left;">عملیات</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
         `;
-
-        group.items.forEach((tx, idx) => {
-          let txNum = tx._permanentRowNum || (idx + 1);
-          let isCred = tx.direction === 'بستانکار';
-          let dirColor = isCred ? '#059669' : '#dc2626';
-          let cardBorderClass = isCred ? 'tx-creditor-card' : 'tx-debtor-card';
-          let timeStr = extractTimeOnly(tx.date);
-          let timeBadge = timeStr ? `<span style="font-size:0.75rem; color:#64748b; background:#f1f5f9; padding:1px 6px; border-radius:6px; margin-right:4px;" dir="ltr">🕒 ${timeStr}</span>` : '';
-          let amtDisplay = toEnglishDigits((tx.amount_final || tx.amount_initial || 0).toLocaleString());
-
-          groupHtml += `
-            <div class="tx-item ${cardBorderClass}" onclick="selectBrokerTx('${tx.broker_tx_id}')">
-              <div style="display:flex; justify-content:space-between; align-items:center; font-weight:900; font-size:0.88rem; gap:6px; flex-wrap:wrap;">
-                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
-                  <span style="background:#0f172a; color:#fff; padding:1px 7px; border-radius:6px; font-size:0.78rem;">#${toEnglishDigits(txNum)}</span>
-                  <span>${tx.operation_type}</span>
-                  <span style="font-size:0.76rem; color:#64748b;">(${tx.broker_tx_id})</span>
-                  ${timeBadge}
-                </div>
-                <span style="color:${dirColor}; background:${isCred ? '#dcfce7' : '#fee2e2'}; padding:2px 8px; border-radius:6px; font-size:0.8rem;">${tx.direction}</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; flex-wrap:wrap; gap:6px;">
-                <div style="font-size:0.88rem;">
-                  مبلغ: <b class="highlight-amount" style="font-size:0.98rem !important; padding:1px 6px; border-radius:6px;">${amtDisplay} ${tx.currency}</b>
-                  ${tx.exchange_rate ? `<span style="font-size:0.76rem; color:#64748b; margin-right:6px;">(اولیه: ${toEnglishDigits((tx.amount_initial || 0).toLocaleString())} | نرخ: ${toEnglishDigits(tx.exchange_rate)})</span>` : ''}
-                </div>
-                <div style="display:flex; gap:4px;" onclick="event.stopPropagation()">
-                  <button type="button" class="btn btn-warning btn-xs" onclick="quickEditBrokerTx('${tx.broker_tx_id}')" title="ویرایش سریع">✏️ ویرایش</button>
-                  <button type="button" class="btn btn-danger btn-xs" onclick="quickDeleteBrokerTx('${tx.broker_tx_id}')" title="حذف سریع">🗑️</button>
-                </div>
-              </div>
-              ${tx.description ? `<div style="font-size:0.82rem; color:#334155; margin-top:5px; font-weight:600; background:#f8fafc; padding:4px 8px; border-radius:6px; border-right:2px solid #94a3b8;">شرح: ${tx.description}</div>` : ''}
-              ${tx.address_dashboard ? `<div style="font-size:0.76rem; color:#0284c7; margin-top:3px; font-weight:700;">📍 مقصد: ${tx.address_dashboard}</div>` : ''}
-            </div>
-          `;
-        });
 
         container.innerHTML += groupHtml;
       });
