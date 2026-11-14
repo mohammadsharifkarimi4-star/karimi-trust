@@ -8,7 +8,7 @@
   <!-- کتابخانه Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
-  <!-- فونت وزیرمتن -->
+  <!-- فونت فوق‌العاده زیبای وزیرمتن -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -360,46 +360,6 @@
       font-size: 0.78rem;
       font-weight: 800;
     }
-
-    /* استایل‌های بخش دفتر کل پیشرفته */
-    .day-group-card {
-      background: #ffffff;
-      border: 2px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 12px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
-    }
-    .day-group-header {
-      background: var(--primary-gradient);
-      color: white;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-weight: 900;
-      font-size: 0.98rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .client-day-block {
-      background: #f8fafc;
-      border: 1.5px solid var(--border-color);
-      border-radius: 12px;
-      padding: 10px;
-      margin-bottom: 8px;
-    }
-    .client-day-title {
-      font-size: 0.95rem;
-      font-weight: 900;
-      color: var(--primary-dark);
-      border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 6px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
   </style>
 </head>
 <body>
@@ -489,6 +449,7 @@
             <span class="title">مدیریت ادمین‌های همکار</span>
           </div>
 
+          <!-- دکمه تنظیمات اختصاصی مالک -->
           <div class="floating-glass-btn" id="masterSettingsMenuBtn" style="display:none; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;" onclick="playInteractionEffect(); openMasterSettingsModal()">
             <span class="icon">⚙️</span>
             <span class="title" style="color: #92400e;">تنظیمات و توکن مالک</span>
@@ -540,20 +501,19 @@
       </div>
     </div>
 
-    <!-- دفتر کل تراکنش‌ها (بخش مستقل جدید با دسته‌بندی پیشرفته روزانه و شماره‌گذاری) -->
+    <!-- دفتر کل مرکزی تمامی تراکنش‌ها -->
     <div id="viewAllTransactionsPage" class="view-section">
       <div class="card">
         <div class="card-header-styled">
-          <h3>📜 دفتر کل مرکزی تمامی تراکنش‌ها</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+          <h3>📜 دفتر کل مرکزی تراکنش‌ها</h3>
+          <div class="flex-row" style="gap:6px;">
+            <button class="btn btn-sm" style="background:var(--accent-green);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ ایجاد تراکنش</button>
+            <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+          </div>
         </div>
 
-        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px;">
-          در این بخش تمامی تراکنش‌های ثبت‌شده در سیستم به تفکیک تاریخ، روز و ساعت دقیق دسته‌بندی شده‌اند. در هر روز، نام هر شخص در بالا و تراکنش‌های آن شخص به همراه شماره‌گذاری مرتب زیر آن نمایش داده می‌شود.
-        </p>
-
-        <div class="form-group" style="margin-bottom: 12px;">
-          <input type="text" id="searchGlobalTxInput" placeholder="🔍 جستجو در دفتر کل (نام مشتری، کد، مبلغ یا توضیحات)..." oninput="renderGlobalTransactionsList()">
+        <div class="flex-row" style="gap:8px; margin-bottom:10px;">
+          <input type="text" id="globalLedgerSearchInput" placeholder="🔍 جستجو در دفتر کل (نام مشتری، کد، مبلغ یا شرح)..." oninput="renderGlobalTransactionsList()" style="flex:1;">
         </div>
 
         <div id="globalTransactionsListContainer"></div>
@@ -788,6 +748,20 @@
     </div>
   </div>
 
+  <!-- مودال انتخاب حساب جهت ثبت تراکنش از دفتر کل -->
+  <div id="globalSelectAccountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9450; padding:10px;">
+    <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
+      <div class="flex-row" style="justify-content:space-between; margin-bottom:8px;">
+        <h3>👤 انتخاب حساب مشتری</h3>
+        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">✕ بستن</button>
+      </div>
+      <div class="form-group">
+        <input type="text" id="globalAccountPickerInput" placeholder="جستجوی نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()">
+      </div>
+      <div id="globalAccountPickerList" style="max-height:55vh; overflow-y:auto;"></div>
+    </div>
+  </div>
+
   <!-- مودال مدیریت انواع عملیات -->
   <div id="opTypeManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width: 100%; margin: 0; max-height:90vh; overflow-y:auto;">
@@ -867,7 +841,7 @@
     let allAccounts = [];
     let allTransactions = [];
     let allAdmins = [];
-    let phoneArchiveList = [];
+    let phoneArchiveList = []; // ذخیره آرشیو کل شماره‌های ثبت‌شده
     let customOpTypes = ["امانت", "حواله", "انتقال", "دریافت", "پرداخت", "تسویه"];
     let currentAccountId = null;
     let currentAccountName = "";
@@ -1047,6 +1021,7 @@
       return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
 
+    // مدیریت دکمه بازگشت (Back Button)
     function pushModalHistory(modalId) {
       window.history.pushState({ modal: modalId }, '');
     }
@@ -1081,12 +1056,14 @@
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
+        // ابتدا بررسی مودال‌های باز
         if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
         if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
         if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
         if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
         if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
         if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
+        if (document.getElementById('globalSelectAccountModal').style.display === 'flex') { closeGlobalSelectAccountModal(); return; }
         if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
         if (document.getElementById('deleteConfirmModal').style.display === 'flex') { closeDeleteConfirmModal(); return; }
 
@@ -1242,6 +1219,7 @@
       if (map[curr]) document.getElementById(map[curr]).classList.add('selected-currency');
     }
 
+    // دریافت داده‌ها و مرتب‌سازی تمامی تراکنش‌ها بر اساس جدیدترین زمان و تاریخ
     async function loadDataFromSupabase(showLoader = true) {
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
@@ -1276,6 +1254,7 @@
           });
         }
 
+        // همگام‌سازی و آپدیت آرشیو شماره‌ها بدون حذف شماره‌های قبلی
         updatePhoneDirectoryArchive();
 
         let rawTransactions = txRes.data || [];
@@ -1286,7 +1265,7 @@
           return authorizedAccountIds.includes(txAccId);
         });
 
-        // مرتب‌سازی سراسری بر اساس زمان (جدیدترین اول)
+        // مرتب‌سازی تراکنش‌ها به صورت نزولی (جدیدترین در بالا) بر اساس Timestamp کامل
         allTransactions.sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
@@ -1310,6 +1289,9 @@
     }
 
     function updatePhoneDirectoryArchive() {
+      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let name = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
@@ -1576,7 +1558,7 @@
     }
 
     /* ==============================================================================
-     * صفحه دفترچه و بانک شماره‌ها
+     * صفحه دفترچه و بانک شماره‌ها (Phone Directory)
      * ============================================================================== */
 
     function openPhoneDirectoryPage() {
@@ -1592,6 +1574,7 @@
       let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
       let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
 
+      // فیلتر بر اساس ادمین / مالک
       let filteredList = list.filter(item => {
         if (isMaster) return true;
         let creator = String(item.creator || '').trim();
@@ -1696,178 +1679,194 @@
     }
 
     /* ==============================================================================
-     * دفتر کل مرکزی تراکنش‌ها (بخش مستقل جدید با ویژگی کامل روزانه و شماره‌گذاری)
+     * دفتر کل تراکنش‌ها
      * ============================================================================== */
+
+    function openGlobalSelectAccountModal() {
+      document.getElementById("globalAccountPickerInput").value = "";
+      renderGlobalAccountPickerList();
+      document.getElementById("globalSelectAccountModal").style.display = "flex";
+      pushModalHistory("globalSelectAccountModal");
+    }
+
+    function closeGlobalSelectAccountModal() {
+      document.getElementById("globalSelectAccountModal").style.display = "none";
+    }
+
+    function renderGlobalAccountPickerList() {
+      const q = formatEnNum((document.getElementById("globalAccountPickerInput").value || "").trim().toLowerCase());
+      const listEl = document.getElementById("globalAccountPickerList");
+      listEl.innerHTML = "";
+
+      const filtered = allAccounts.filter(acc => {
+        let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
+        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
+        let id = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
+        return !q || name.includes(q) || phone.includes(q) || id.includes(q);
+      });
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">حسابی یافت نشد</div>`;
+        return;
+      }
+
+      filtered.forEach(acc => {
+        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
+        let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
+        let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
+        listEl.innerHTML += `
+          <div class="account-item-card" style="padding:8px 10px; margin-bottom:6px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
+            <div class="stat-row" style="margin:0;">
+              <span style="font-weight:800; color:var(--primary-dark);">${accName}</span>
+              <span style="font-size:0.8rem; color:#64748b;">کُد: ${accId} | ${accPhone}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function selectAccountAndOpenNewTx(accId, accName) {
+      closeGlobalSelectAccountModal();
+      currentAccountId = accId;
+      currentAccountName = accName;
+      openAddTransactionModal();
+    }
 
     function openAllTransactionsPage() {
       switchView('viewAllTransactionsPage');
-      document.getElementById("searchGlobalTxInput").value = "";
+      const searchEl = document.getElementById("globalLedgerSearchInput");
+      if (searchEl) searchEl.value = "";
       renderGlobalTransactionsList();
+    }
+
+    function openTxFromGlobalLedger(txId, accId, accName) {
+      currentAccountId = accId;
+      currentAccountName = accName;
+      selectTransaction(txId);
     }
 
     function renderGlobalTransactionsList() {
       const container = document.getElementById("globalTransactionsListContainer");
-      const searchInput = document.getElementById("searchGlobalTxInput");
-      const q = searchInput ? formatEnNum(searchInput.value.trim().toLowerCase()) : "";
       container.innerHTML = "";
 
-      if (allTransactions.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ تراکنشی در سیستم ثبت نشده است</div>`;
-        return;
-      }
+      const searchEl = document.getElementById("globalLedgerSearchInput");
+      const q = searchEl ? formatEnNum(searchEl.value.trim().toLowerCase()) : "";
 
-      // فیلتر بر اساس جستجو
-      let txsToProcess = allTransactions.filter(tx => {
-        if (!q) return true;
-        let txId = String(getVal(tx, ['TransID', 'transid'])).toLowerCase();
-        let accId = String(getVal(tx, ['AccountID', 'accountid'])).toLowerCase();
-        let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
-        let accName = acc ? String(getVal(acc, ['Name', 'name'])).toLowerCase() : "";
-        let amt = String(getVal(tx, ['Amount', 'amount'])).toLowerCase();
-        let desc = String(getVal(tx, ['Description', 'description'])).toLowerCase();
-        let op = String(getVal(tx, ['OperationType', 'operationtype'])).toLowerCase();
-
-        return txId.includes(q) || accId.includes(q) || accName.includes(q) || amt.includes(q) || desc.includes(q) || op.includes(q);
+      let sortedTxs = allTransactions.slice().sort((a, b) => {
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        if (isNaN(da)) da = 0;
+        if (isNaN(db)) db = 0;
+        return db - da;
       });
 
-      if (txsToProcess.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ تراکنشی با مشخصات جستجو شده یافت نشد</div>`;
+      if (q) {
+        sortedTxs = sortedTxs.filter(tx => {
+          let txId = String(getVal(tx, ['TransID', 'transid']) || '').toLowerCase();
+          let accId = String(getVal(tx, ['AccountID', 'accountid']) || '').toLowerCase();
+          let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])).toLowerCase() === accId);
+          let accName = acc ? String(getVal(acc, ['Name', 'name'])).toLowerCase() : "";
+          let amt = formatEnNum(getVal(tx, ['Amount', 'amount'])).toLowerCase();
+          let curr = String(getVal(tx, ['Currency', 'currency']) || '').toLowerCase();
+          let desc = String(getVal(tx, ['Description', 'description']) || '').toLowerCase();
+          return txId.includes(q) || accId.includes(q) || accName.includes(q) || amt.includes(q) || curr.includes(q) || desc.includes(q);
+        });
+      }
+
+      if (sortedTxs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">تراکنشی یافت نشد</div>`;
         return;
       }
 
-      // ۱. گروه‌بندی بر اساس تاریخ روز (YYYY-MM-DD)
-      let groupedByDate = {};
-      txsToProcess.forEach(tx => {
+      const groupsByDay = {};
+      sortedTxs.forEach(tx => {
         let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
-        let dateObj = rawDate ? new Date(rawDate) : new Date();
-        let dateKey = !isNaN(dateObj.getTime()) ? dateObj.toISOString().split('T')[0] : 'نامشخص';
-        
-        if (!groupedByDate[dateKey]) groupedByDate[dateKey] = [];
-        groupedByDate[dateKey].push(tx);
+        let dateObj = rawDate ? new Date(rawDate) : null;
+        let dayKey = (dateObj && !isNaN(dateObj.getTime()))
+          ? formatEnNum(dateObj.toISOString().split('T')[0])
+          : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
+        if (!groupsByDay[dayKey]) groupsByDay[dayKey] = [];
+        groupsByDay[dayKey].push(tx);
       });
 
-      // مرتب‌سازی روزها (جدیدترین روز در بالا)
-      let sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
+      const totalCount = sortedTxs.length;
+      let globalCounter = 0;
 
-      let globalCounter = txsToProcess.length;
+      Object.keys(groupsByDay).forEach(dayKey => {
+        const dayTxs = groupsByDay[dayKey];
+        let rowsHtml = "";
 
-      sortedDates.forEach(dateKey => {
-        let dayTxs = groupedByDate[dateKey];
-
-        // در داخل هر روز، تراکنش‌ها را بر اساس زمان کامل (ساعت، دقیقه، ثانیه) مرتب‌سازی می‌کنیم (جدیدترین اول)
-        dayTxs.sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          return db - da;
-        });
-
-        // ۲. در داخل هر روز، گروه‌بندی بر اساس شخص (AccountID)
-        let groupedByClientInDay = {};
         dayTxs.forEach(tx => {
+          const rowNum = formatEnNum(totalCount - globalCounter);
+          globalCounter++;
+
+          let txId = String(getVal(tx, ['TransID', 'transid']) || '');
           let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
-          if (!groupedByClientInDay[accId]) groupedByClientInDay[accId] = [];
-          groupedByClientInDay[accId].push(tx);
+          let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
+          let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
+
+          let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+          let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+
+          let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+          let dateObj = rawDate ? new Date(rawDate) : null;
+          let timeOnly = (dateObj && !isNaN(dateObj.getTime()))
+            ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}`
+            : '-';
+
+          let isCreditor = dir.includes('بستانکار');
+          let rowBg = isCreditor ? '#f0fdf4' : '#fef2f2';
+          let dirColor = isCreditor ? '#059669' : '#dc2626';
+
+          rowsHtml += `
+            <tr style="background:${rowBg}; border-bottom:1px solid #cbd5e1; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
+              <td style="padding:8px 6px; text-align:center; font-weight:900; color:#334155; border-left:1px solid #e2e8f0;">${rowNum}</td>
+              <td style="padding:8px 8px; border-left:1px solid #e2e8f0;">
+                <div style="font-weight:900; color:var(--primary-dark);">${accName}</div>
+                <div style="font-size:0.75rem; color:#64748b;">کُد: ${formatEnNum(accId)}</div>
+              </td>
+              <td style="padding:8px 6px; text-align:center; border-left:1px solid #e2e8f0;">
+                <span style="color:${dirColor}; font-weight:800;">${dir}</span>
+                <div style="font-size:0.75rem; color:#475569;">${opType}</div>
+              </td>
+              <td style="padding:8px 8px; font-weight:900; color:${dirColor}; white-space:nowrap; border-left:1px solid #e2e8f0;">${amt} ${curr}</td>
+              <td style="padding:8px 6px; text-align:center; font-size:0.8rem; color:#475569; white-space:nowrap; border-left:1px solid #e2e8f0;">${timeOnly}</td>
+              <td style="padding:8px 8px; font-size:0.82rem; color:#334155; max-width:240px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-left:1px solid #e2e8f0;" title="${desc}">${desc || '-'}</td>
+              <td style="padding:6px; text-align:center; white-space:nowrap;">
+                <button class="btn btn-secondary btn-sm" style="padding:4px 8px; font-size:0.75rem;" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">مشاهده حساب</button>
+              </td>
+            </tr>
+          `;
         });
 
-        let dayCard = document.createElement('div');
-        dayCard.className = 'day-group-card';
-
-        let dayHeaderHtml = `
-          <div class="day-group-header">
-            <span>📅 تاریخ روز: ${formatEnNum(dateKey)}</span>
-            <span>تعداد تراکنش روز: ${formatEnNum(dayTxs.length)} عدد</span>
+        container.innerHTML += `
+          <div style="margin-bottom:14px; border:1.5px solid #cbd5e1; border-radius:12px; overflow:hidden; background:#ffffff;">
+            <div style="background:var(--primary-gradient); color:#ffffff; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:0.88rem;">
+              <span>📅 تاریخ: ${dayKey}</span>
+              <span>تعداد تراکنش روز: ${formatEnNum(dayTxs.length)} عدد</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                <thead>
+                  <tr style="background:#f1f5f9; color:#334155; border-bottom:1.5px solid #cbd5e1; font-weight:800;">
+                    <th style="padding:7px 6px; text-align:center; width:42px; border-left:1px solid #e2e8f0;">#</th>
+                    <th style="padding:7px 8px; text-align:right; border-left:1px solid #e2e8f0;">نام مشتری</th>
+                    <th style="padding:7px 6px; text-align:center; border-left:1px solid #e2e8f0;">نوع / جهت</th>
+                    <th style="padding:7px 8px; text-align:right; border-left:1px solid #e2e8f0;">مبلغ</th>
+                    <th style="padding:7px 6px; text-align:center; border-left:1px solid #e2e8f0;">ساعت</th>
+                    <th style="padding:7px 8px; text-align:right; border-left:1px solid #e2e8f0;">توضیحات</th>
+                    <th style="padding:7px 6px; text-align:center;">حساب</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+            </div>
           </div>
         `;
-        let clientsHtmlContainer = '';
-
-        for (let accId in groupedByClientInDay) {
-          let clientTxs = groupedByClientInDay[accId];
-          let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-          let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص (حذف شده)";
-          let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '') : '';
-          let cleanPhone = phone.replace(/\D/g, '');
-
-          let clientTxsHtml = '';
-          clientTxs.forEach((tx, subIdx) => {
-            let txId = String(getVal(tx, ['TransID', 'transid']) || '');
-            let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
-            let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-            let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-            let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
-            let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-            
-            let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
-            let dateObj = rawDate ? new Date(rawDate) : null;
-            let timeStr = dateObj && !isNaN(dateObj.getTime()) ? 
-              `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : 
-              '--:--:--';
-
-            let isCreditor = dir.includes('بستانکار');
-            let cardClass = isCreditor ? 'tx-creditor' : 'tx-debtor';
-            let dirColor = isCreditor ? '#059669' : '#dc2626';
-            let serialNum = formatEnNum(globalCounter - subIdx);
-
-            clientTxsHtml += `
-              <div class="tx-item-card ${cardClass}" style="margin-bottom:8px;">
-                <div class="stat-row">
-                  <span><b>تراکنش شماره #${serialNum}</b> (⏱️ ساعت دقیق: ${timeStr})</span>
-                  <span style="color:${dirColor}; font-weight:900;">${dir}</span>
-                </div>
-                <div class="stat-row">
-                  <span>نوع: <b>${opType}</b></span>
-                  <span style="font-weight:900;">مبلغ: <b>${amt} ${curr}</b></span>
-                </div>
-                <div style="font-size:0.82rem; color:#475569; background:#ffffff; padding:6px; border-radius:6px; border:1px solid #e2e8f0; margin-top:2px;">
-                  <b>شرح / توضیحات:</b> ${desc || 'بدون شرح'}
-                </div>
-                <div class="flex-row" style="margin-top:6px; gap:6px;">
-                  <button class="btn btn-warning btn-sm" style="flex:1;" onclick="playInteractionEffect(); selectTransactionFromGlobal('${txId}', '${accId}')">🔍 مدیریت / ویرایش</button>
-                  <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendGlobalTxWhatsApp('${txId}', '${accId}')">📲 ارسال رسید به واتساپ</button>
-                  <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); deleteGlobalSingleTx('${txId}', '${accId}')">🗑️ حذف</button>
-                </div>
-              </div>
-            `;
-          });
-
-          clientsHtmlContainer += `
-            <div class="client-day-block">
-              <div class="client-day-title">
-                <span>👤 نام مشتری: ${accName} (کد حساب: ${formatEnNum(accId)})</span>
-                <button class="btn btn-secondary btn-sm" style="padding:2px 8px; font-size:0.75rem;" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">مشاهده حساب</button>
-              </div>
-              ${clientTxsHtml}
-            </div>
-          `;
-        }
-
-        dayCard.innerHTML = dayHeaderHtml + `<div style="padding: 4px;">` + clientsHtmlContainer + `</div>`;
-        container.appendChild(dayCard);
-        globalCounter -= dayTxs.length;
       });
-    }
-
-    function selectTransactionFromGlobal(txId, accId) {
-      currentAccountId = accId;
-      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-      if (acc) currentAccountName = getVal(acc, ['Name', 'name']);
-      selectTransaction(txId);
-    }
-
-    function sendGlobalTxWhatsApp(targetTxId, accId) {
-      currentAccountId = accId;
-      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-      if (acc) currentAccountName = getVal(acc, ['Name', 'name']);
-      sendSingleTxWhatsApp(targetTxId);
-    }
-
-    async function deleteGlobalSingleTx(txId, accId) {
-      if (!confirm("آیا از حذف این تراکنش اطمینان دارید؟")) return;
-      selectedTxId = txId;
-      currentAccountId = accId;
-      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-      if (acc) currentAccountName = getVal(acc, ['Name', 'name']);
-      await deleteSingleTransaction();
-      renderGlobalTransactionsList();
     }
 
     function openTransfersReport() { switchView('viewTransfersReport'); renderTransfersReport(); }
@@ -1920,9 +1919,12 @@
         return false;
       });
 
+      // مرتب‌سازی نزولی (جدیدترین در بالا)
       filteredTxs.sort((a, b) => {
         let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
         let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        if (isNaN(da)) da = 0;
+        if (isNaN(db)) db = 0;
         return db - da;
       });
 
@@ -1964,7 +1966,7 @@
     }
 
     /* ==============================================================================
-     * گزارش بدهکاران و بستانکاران با انتخاب چندتایی
+     * گزارش بدهکاران و بستانکاران با انتخاب چندتایی (Multi-Select)
      * ============================================================================== */
 
     function openDebtorsReport() {
@@ -2391,6 +2393,7 @@
     async function deleteCurrentAccount() {
       let accIdToDelete = currentAccountId;
       
+      // علامت زدن به عنوان حساب حذف شده در آرشیو شماره‌ها
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
       if (archiveItem) {
         archiveItem.isDeleted = true;
@@ -2428,12 +2431,15 @@
     }
 
     function renderAccountDetailTransactions(accId) {
+      // دریافت تراکنش‌های حساب و مرتب‌سازی دقیق نزولی بر اساس Timestamp کامل
       const txs = allTransactions
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
         .slice()
         .sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          if (isNaN(da)) da = 0;
+          if (isNaN(db)) db = 0;
           return db - da;
         });
 
@@ -2463,7 +2469,7 @@
           let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
           let dateObj = rawDate ? new Date(rawDate) : null;
           let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
-            `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : 
+            `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
             formatEnNum(String(rawDate).split('T')[0]);
 
           let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
@@ -2482,7 +2488,7 @@
           container.innerHTML += `
             <div class="tx-item-card ${cardClass}" onclick="toggleTxAccordion('accBody_${txId}')">
               <div class="stat-row">
-                <span><b>تراکنش شماره #${txNumber}</b> (⏱️ ${formattedTime})</span>
+                <span><b>تراکنش شماره #${txNumber}</b> (⏰ ${formattedTime})</span>
                 <span style="color:${dirColor}; font-weight:900;">${dir}</span>
               </div>
               <div class="stat-row">
@@ -2546,15 +2552,16 @@
       let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
       let dateObj = rawDate ? new Date(rawDate) : null;
       let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
-        `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : 
+        `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
         formatEnNum(String(rawDate).split('T')[0]);
 
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
+
       let receiptHtml = receiptUrl ? `<div style="margin-top:6px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
       document.getElementById("txDetailCard").innerHTML = `
         <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
-        <div class="stat-row"><span>تاریخ و زمان دقیق ثبت:</span><b>${formattedTime}</b></div>
+        <div class="stat-row"><span>تاریخ و زمان ثبت:</span><b>${formattedTime}</b></div>
         <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
         <div class="stat-row"><span>مبلغ:</span><b style="font-size:1.05rem;">${amt} ${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
@@ -2571,7 +2578,7 @@
           <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
           <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); confirmDeleteTransaction()">🗑️ حذف</button>
         </div>
-        <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال کامل تراکنش به واتساپ</button>
+        <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال تراکنش به واتساپ</button>
         ${transferReceiptBtn}
       `;
 
@@ -2668,11 +2675,11 @@
       }
 
       let dateIsoString;
-      let now = new Date();
       if (editTransId) {
         let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
-        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || now.toISOString()) : now.toISOString();
+        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || new Date().toISOString()) : new Date().toISOString();
       } else {
+        let now = new Date();
         if (txDateInputVal) {
           let selectedDate = new Date(txDateInputVal);
           selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
@@ -2827,30 +2834,26 @@
       let amtVal = formatEnMoney(getVal(tx, ['Amount', 'amount']));
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
       let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
-      
-      let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
-      let dateObj = rawDate ? new Date(rawDate) : null;
-      let txDateTime = dateObj && !isNaN(dateObj.getTime()) ? 
-        `${formatEnNum(dateObj.toISOString().split('T')[0])} ساعت ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : 
-        formatEnNum(String(rawDate).split('T')[0]);
-
+      let txDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-      let siteLink = "https://karimi-trust-app.vercel.app/";
+      let liveBalText = getAccountLiveBalanceText(currentAccountId);
+
+      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
         `────────────────────────`,
-        `👤 مخاطب گرامی: *${currentAccountName}*`,
-        `📄 *رسید کامل تراکنش ثبت‌شده:*`,
+        `محترم آقای *${currentAccountName}*`,
+        `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
         ``,
-        `🆔 کُد تراکنش: \`${getVal(tx, ['TransID', 'transid'])}\``,
-        `📌 نوع عملیات: *${opType}* (${dirVal})`,
+        `📌 *جزئیات تراکنش:*`,
+        `🔹 نوع عملیات: *${opType}* (${dirVal})`,
         `💰 مبلغ: *${amtVal} ${currVal}*`,
-        `⏱️ تاریخ و زمان دقیق: ${txDateTime}`,
-        `📝 شرح / توضیحات:\n${desc || 'بدون توضیحات'}`,
-        ``,
-        `🌐 لینک بررسی حساب:`,
-        siteLink,
+        `📅 تاریخ: ${txDate}`,
+        ...(isTransferOrRemittance ? [] : [`📝 شرح: ${desc || '-'}`]),
+        `────────────────────────`,
+        `📊 *مانده فعلی حساب شما:*`,
+        liveBalText,
         `────────────────────────`,
         `با تشکر، امانت‌داری کریمی 🙏`
       ];
