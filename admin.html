@@ -2725,7 +2725,7 @@
       }
     }
 
-    async function deleteCurrentAccount() {
+    async async function deleteCurrentAccount() {
       let accIdToDelete = currentAccountId;
       
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
@@ -3084,7 +3084,7 @@
       }
     }
 
-    async function submitTransaction() {
+    async async function submitTransaction() {
       let amt = parseFloat(formatEnNum(document.getElementById("txAmountInput").value));
 
       if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
@@ -3191,7 +3191,7 @@
       selectAccount(currentAccountId, currentAccountName);
     }
 
-    async function deleteSingleTransaction(txIdToDelete) {
+    async async function deleteSingleTransaction(txIdToDelete) {
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
