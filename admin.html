@@ -360,6 +360,46 @@
       font-size: 0.78rem;
       font-weight: 800;
     }
+
+    /* استایل‌های بخش دفتر کل پیشرفته */
+    .day-group-card {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .day-group-header {
+      background: var(--primary-gradient);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 900;
+      font-size: 0.98rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .client-day-block {
+      background: #f8fafc;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .client-day-title {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -500,32 +540,20 @@
       </div>
     </div>
 
-    <!-- دفتر کل تراکنش‌های سیستم (مشابه حساب مشتری با تفکیک روزانه و دکمه ثبت تراکنش) -->
+    <!-- دفتر کل تراکنش‌ها (بخش مستقل جدید با دسته‌بندی پیشرفته روزانه و شماره‌گذاری) -->
     <div id="viewAllTransactionsPage" class="view-section">
       <div class="card">
         <div class="card-header-styled">
-          <h3>📜 دفتر کل تمامی تراکنش‌ها</h3>
+          <h3>📜 دفتر کل مرکزی تمامی تراکنش‌ها</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
 
-        <!-- بخش ایجاد تراکنش در بالا با جستجوی حساب -->
-        <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:12px; margin-bottom:12px;">
-          <div class="flex-row" style="margin-bottom:8px;">
-            <button class="btn" style="background:var(--accent-green-dark); flex:1;" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">
-              <span>➕ ایجاد تراکنش جدید (انتخاب مشتری)</span>
-            </button>
-          </div>
-          <div class="form-group" style="margin-bottom:0; position:relative;">
-            <input type="text" id="globalTxSearchInput" placeholder="🔍 جستجو در تراکنش‌ها (نام مشتری، کد تراکنش یا شرح)..." oninput="filterGlobalTransactions()" style="padding-left:35px;">
-          </div>
-        </div>
+        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px;">
+          در این بخش تمامی تراکنش‌های ثبت‌شده در سیستم به تفکیک تاریخ، روز و ساعت دقیق دسته‌بندی شده‌اند. در هر روز، نام هر شخص در بالا و تراکنش‌های آن شخص به همراه شماره‌گذاری مرتب زیر آن نمایش داده می‌شود.
+        </p>
 
-        <div class="flex-row" style="justify-content: space-between; margin-bottom: 12px; background: #f8fafc; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color);">
-          <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 800; margin: 0;">
-            <input type="checkbox" id="selectAllGlobalTxsCb" onchange="toggleSelectAllGlobalTxs(this)" style="width:18px; height:18px; accent-color:var(--accent-green-dark);">
-            انتخاب همه تراکنش‌ها
-          </label>
-          <button class="btn btn-danger btn-sm" onclick="deleteSelectedGlobalTxsBatch()">🗑️ حذف موارد انتخاب‌شده</button>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <input type="text" id="searchGlobalTxInput" placeholder="🔍 جستجو در دفتر کل (نام مشتری، کد، مبلغ یا توضیحات)..." oninput="renderGlobalTransactionsList()">
         </div>
 
         <div id="globalTransactionsListContainer"></div>
@@ -718,20 +746,6 @@
     </div>
   </div>
 
-  <!-- مودال انتخاب حساب برای ثبت تراکنش از دفتر کل -->
-  <div id="globalSelectAccountModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9400; padding:10px;">
-    <div class="card" style="width:100%; max-width:420px; margin:0; max-height:85vh; overflow-y:auto;">
-      <h3>🔍 انتخاب مشتری برای ثبت تراکنش</h3>
-      <div class="form-group" style="margin-top:8px;">
-        <input type="text" id="globalAccountSearchInput" placeholder="جستجوی نام یا تلفن مشتری..." oninput="filterGlobalAccountSelection()">
-      </div>
-      <div id="globalAccountSelectionList" style="max-height:50vh; overflow-y:auto; margin-top:8px;"></div>
-      <div class="flex-row" style="justify-content:flex-end; margin-top:10px;">
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">انصراف</button>
-      </div>
-    </div>
-  </div>
-
   <!-- مودال ثبت / ویرایش تراکنش -->
   <div id="transactionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9500; padding:10px;">
     <div class="card" style="width: 100%; margin: 0; max-height:94vh; overflow-y:auto; position:relative;">
@@ -897,7 +911,11 @@
     }
 
     function handleBrokerNavigation() {
-      try { window.location.href = 'broker.html'; } catch(e) {}
+      try {
+        window.location.href = 'broker.html';
+      } catch(e) {
+        alert("صفحه مدیریت کارگزاری‌ها در این بخش در دسترس نیست.");
+      }
     }
 
     async function sendTelegramMessage(botToken, chatId, messageText) {
@@ -907,14 +925,22 @@
         await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: 'Markdown' })
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: messageText,
+            parse_mode: 'Markdown'
+          })
         });
-      } catch (err) {}
+      } catch (err) {
+        console.log("خطا در ارسال تلگرام:", err);
+      }
     }
 
     function getCurrentAdminTokenAndChat() {
       if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
-      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
+        return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      }
       let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
       let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
       let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
@@ -930,7 +956,9 @@
       pushModalHistory("masterSettingsModal");
     }
 
-    function closeMasterSettingsModal() { document.getElementById("masterSettingsModal").style.display = "none"; }
+    function closeMasterSettingsModal() {
+      document.getElementById("masterSettingsModal").style.display = "none";
+    }
 
     function saveMasterSettings() {
       let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
@@ -938,11 +966,20 @@
       let token = document.getElementById("masterTokenInput").value.trim();
       let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
 
-      if (!email || !pin) { alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد."); return; }
+      if (!email || !pin) {
+        alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
+        return;
+      }
 
-      MASTER_ADMIN_EMAIL = email; MASTER_ADMIN_PIN = pin; MASTER_ADMIN_TOKEN = token; MASTER_ADMIN_CHATID = chatId;
-      localStorage.setItem("masterEmail", email); localStorage.setItem("masterPin", pin);
-      localStorage.setItem("masterToken", token); localStorage.setItem("masterChatId", chatId);
+      MASTER_ADMIN_EMAIL = email;
+      MASTER_ADMIN_PIN = pin;
+      MASTER_ADMIN_TOKEN = token;
+      MASTER_ADMIN_CHATID = chatId;
+
+      localStorage.setItem("masterEmail", email);
+      localStorage.setItem("masterPin", pin);
+      localStorage.setItem("masterToken", token);
+      localStorage.setItem("masterChatId", chatId);
 
       closeMasterSettingsModal();
       alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
@@ -960,6 +997,7 @@
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
@@ -1016,7 +1054,9 @@
     window.onload = async function() {
       let savedSession = localStorage.getItem("adminAuthSessionData");
       let savedArchive = localStorage.getItem("phoneArchiveData");
-      if (savedArchive) { try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {} }
+      if (savedArchive) {
+        try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {}
+      }
 
       if (savedSession) {
         try {
@@ -1047,7 +1087,6 @@
         if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
         if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
         if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
-        if (document.getElementById('globalSelectAccountModal').style.display === 'flex') { closeGlobalSelectAccountModal(); return; }
         if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
         if (document.getElementById('deleteConfirmModal').style.display === 'flex') { closeDeleteConfirmModal(); return; }
 
@@ -1063,7 +1102,10 @@
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
       const pin = document.getElementById("loginPin").value.trim();
 
-      if (!email || !pin) { alert("لطفاً ایمیل و رمز عبور را وارد کنید."); return; }
+      if (!email || !pin) {
+        alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
+        return;
+      }
 
       if (email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
         currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "محمد شریف کریمی (مالک)", email: MASTER_ADMIN_EMAIL };
@@ -1104,12 +1146,17 @@
             return;
           }
         }
-      } catch(e) {}
+      } catch(e) {
+        console.log("خطا در بررسی ادمین‌ها:", e);
+      }
 
       alert("ایمیل یا رمز عبور اشتباه است!");
     }
 
-    function handleLogout() { localStorage.removeItem("adminAuthSessionData"); location.reload(); }
+    function handleLogout() { 
+      localStorage.removeItem("adminAuthSessionData"); 
+      location.reload(); 
+    }
 
     function switchView(viewId, pushHistory = true) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -1239,7 +1286,7 @@
           return authorizedAccountIds.includes(txAccId);
         });
 
-        // مرتب‌سازی دقیق نزولی بر اساس تاریخ و ثانیه دقیق
+        // مرتب‌سازی سراسری بر اساس زمان (جدیدترین اول)
         allTransactions.sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
@@ -1258,7 +1305,7 @@
           let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
           if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
         }
-      } catch (e) {}
+      } catch (e) { console.log("خطا:", e); }
       finally { if (indicator) indicator.style.display = "none"; }
     }
 
@@ -1272,12 +1319,22 @@
         if (phone) {
           let existing = phoneArchiveList.find(p => p.accId === accId || p.phone === phone);
           if (existing) {
-            existing.name = name; existing.phone = phone; existing.isDeleted = false; existing.creator = creator;
+            existing.name = name;
+            existing.phone = phone;
+            existing.isDeleted = false;
+            existing.creator = creator;
           } else {
-            phoneArchiveList.push({ accId: accId, name: name, phone: phone, isDeleted: false, creator: creator });
+            phoneArchiveList.push({
+              accId: accId,
+              name: name,
+              phone: phone,
+              isDeleted: false,
+              creator: creator
+            });
           }
         }
       });
+
       localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
     }
 
@@ -1351,7 +1408,9 @@
       document.getElementById("adminManagerModal").style.display = "flex";
       pushModalHistory("adminManagerModal");
     }
-    function closeAdminManagerModal() { document.getElementById("adminManagerModal").style.display = "none"; }
+    function closeAdminManagerModal() {
+      document.getElementById("adminManagerModal").style.display = "none";
+    }
 
     function renderAdminsList() {
       const container = document.getElementById("adminsListContainer");
@@ -1393,6 +1452,7 @@
       document.getElementById("newAdminPin").value = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || "");
       document.getElementById("newAdminBotToken").value = getVal(adm, ['BotToken', 'bottoken', 'Token', 'token']) || "";
       document.getElementById("newAdminChatId").value = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || "");
+      
       document.getElementById("adminSaveBtn").innerText = "💾 ذخیره تغییرات ادمین";
       document.getElementById("adminCancelEditBtn").style.display = "inline-flex";
     }
@@ -1417,15 +1477,40 @@
       let botToken = document.getElementById("newAdminBotToken").value.trim();
       let chatId = formatEnNum(document.getElementById("newAdminChatId").value.trim());
 
-      if (!name || !email || !pin) { alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید."); return; }
+      if (!name || !email || !pin) {
+        alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید.");
+        return;
+      }
 
       let adminId = editId ? editId : ("ADM-" + Math.floor(1000 + Math.random() * 9000));
-      const payload = { AdminID: adminId, Name: name, Email: email, Pin: pin, BotToken: botToken, ChatID: chatId };
+      const payload = {
+        AdminID: adminId,
+        Name: name,
+        Email: email,
+        Pin: pin,
+        BotToken: botToken,
+        ChatID: chatId
+      };
 
       if (editId) {
-        await _supabase.from('admins').update(payload).eq('AdminID', editId);
+        const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
+        if (error) { alert("خطا در ویرایش: " + error.message); return; }
+        alert("✅ اطلاعات ادمین با موفقیت ویرایش شد!");
       } else {
-        await _supabase.from('admins').insert([payload]);
+        const { error } = await _supabase.from('admins').insert([payload]);
+        if (error) { alert("خطا در ایجاد ادمین: " + error.message); return; }
+        alert("✅ ادمین جدید با موفقیت ایجاد شد!");
+
+        if (botToken && chatId) {
+          let siteLink = "https://karimi-trust-app.vercel.app/";
+          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨\n\n` +
+                           `سلام *${name}* عزیز،\n` +
+                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.\n\n` +
+                           `📧 ایمیل ورود: \`${email}\`\n` +
+                           `🔑 رمز عبور: \`${pin}\`\n\n` +
+                           `🌐 لینک ورود به سایت:\n${siteLink}`;
+          sendTelegramMessage(botToken, chatId, welcomeMsg);
+        }
       }
 
       cancelEditAdmin();
@@ -1454,6 +1539,7 @@
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+
           if(!accCurrencies[curr]) accCurrencies[curr] = 0;
           if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
           if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
@@ -1489,246 +1575,289 @@
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
     }
 
-    // ==============================================================================
-    // بخش دفتر کل تراکنش‌ها (مشابه حساب مشتری با تفکیک روزانه و دکمه ایجاد تراکنش بالا)
-    // ==============================================================================
+    /* ==============================================================================
+     * صفحه دفترچه و بانک شماره‌ها
+     * ============================================================================== */
+
+    function openPhoneDirectoryPage() {
+      switchView('viewPhoneDirectoryPage');
+      renderPhoneDirectoryList(phoneArchiveList);
+    }
+
+    function renderPhoneDirectoryList(list) {
+      const container = document.getElementById("phoneDirectoryContainer");
+      const summaryBox = document.getElementById("phoneDirectorySummary");
+      container.innerHTML = "";
+
+      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+
+      let filteredList = list.filter(item => {
+        if (isMaster) return true;
+        let creator = String(item.creator || '').trim();
+        return creator === String(currentAdminId);
+      });
+
+      summaryBox.innerHTML = `
+        <div class="stat-row">
+          <span><b>تعداد کل شماره‌های ثبت‌شده:</b></span>
+          <b style="color:var(--info-color); font-size:1rem;">${formatEnNum(filteredList.length)} شماره</b>
+        </div>
+      `;
+
+      if (filteredList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ شماره‌ای در بانک اطلاعاتی موجود نیست</div>`;
+        return;
+      }
+
+      filteredList.forEach(item => {
+        let cleanPhone = item.phone.replace(/\D/g, '');
+        let liveAcc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(item.accId));
+        
+        let statusHtml = '';
+        let balanceBadges = '';
+
+        if (liveAcc && !item.isDeleted) {
+          let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === item.accId);
+          let accCurrencies = {};
+          accTxs.forEach(tx => {
+            let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+            let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+            let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
+            if(!accCurrencies[curr]) accCurrencies[curr] = 0;
+            if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
+            if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+          });
+
+          for(let curr in accCurrencies) {
+            let val = accCurrencies[curr];
+            let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
+            let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
+            balanceBadges += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
+          }
+
+          statusHtml = `<span style="color:#059669; font-weight:800; font-size:0.8rem;">🟢 حساب فعال (کُد: ${formatEnNum(item.accId)})</span>`;
+        } else {
+          statusHtml = `<span class="deleted-account-badge">❌ حساب این مشتری حذف شده است</span>`;
+          balanceBadges = `<span style="font-size:0.8rem; color:#94a3b8;">اطلاعات مانده حساب در دسترس نیست</span>`;
+        }
+
+        container.innerHTML += `
+          <div class="phone-item-card">
+            <div class="stat-row">
+              <span style="font-weight:900; font-size:1rem; color:var(--primary-dark);">${item.name}</span>
+              ${statusHtml}
+            </div>
+            <div class="stat-row" style="margin-top:2px;">
+              <span style="font-weight:800; color:#0284c7; font-size:0.95rem;" dir="ltr">${item.phone}</span>
+              <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">
+                📲 واتساپ (چت خالی)
+              </button>
+            </div>
+            <div style="margin-top:4px;">${balanceBadges || '<span style="font-size:0.8rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
+          </div>
+        `;
+      });
+    }
+
+    function openWhatsAppBlank(phone) {
+      if (!phone) { alert("شماره تلفن موجود نیست."); return; }
+      window.open(`https://wa.me/${phone}`, '_blank');
+    }
+
+    function filterPhonesDirectory() {
+      playInteractionEffect();
+      const inputEl = document.getElementById("searchPhoneInput");
+      const clearBtn = document.getElementById("clearPhoneSearchBtn");
+      const q = formatEnNum(inputEl.value.trim().toLowerCase());
+
+      if (q.length > 0) clearBtn.style.display = "block";
+      else clearBtn.style.display = "none";
+
+      if (!q) { renderPhoneDirectoryList(phoneArchiveList); return; }
+
+      const filtered = phoneArchiveList.filter(item => {
+        let name = item.name.toLowerCase();
+        let phone = item.phone.toLowerCase();
+        let accId = item.accId.toLowerCase();
+        return name.includes(q) || phone.includes(q) || accId.includes(q);
+      });
+
+      renderPhoneDirectoryList(filtered);
+    }
+
+    function clearPhoneSearch() {
+      playInteractionEffect();
+      const inputEl = document.getElementById("searchPhoneInput");
+      inputEl.value = "";
+      document.getElementById("clearPhoneSearchBtn").style.display = "none";
+      renderPhoneDirectoryList(phoneArchiveList);
+      inputEl.focus();
+    }
+
+    /* ==============================================================================
+     * دفتر کل مرکزی تراکنش‌ها (بخش مستقل جدید با ویژگی کامل روزانه و شماره‌گذاری)
+     * ============================================================================== */
 
     function openAllTransactionsPage() {
       switchView('viewAllTransactionsPage');
-      document.getElementById("globalTxSearchInput").value = "";
-      renderGlobalTransactionsList(allTransactions);
+      document.getElementById("searchGlobalTxInput").value = "";
+      renderGlobalTransactionsList();
     }
 
-    function filterGlobalTransactions() {
-      playInteractionEffect();
-      let q = formatEnNum(document.getElementById("globalTxSearchInput").value.trim().toLowerCase());
-      if (!q) { renderGlobalTransactionsList(allTransactions); return; }
-
-      let filtered = allTransactions.filter(tx => {
-        let txId = String(getVal(tx, ['TransID', 'transid']) || '').toLowerCase();
-        let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
-        let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-        let accName = acc ? String(getVal(acc, ['Name', 'name'])).toLowerCase() : "";
-        let desc = String(getVal(tx, ['Description', 'description']) || '').toLowerCase();
-        return txId.includes(q) || accName.includes(q) || desc.includes(q);
-      });
-      renderGlobalTransactionsList(filtered);
-    }
-
-    function renderGlobalTransactionsList(txsList) {
+    function renderGlobalTransactionsList() {
       const container = document.getElementById("globalTransactionsListContainer");
+      const searchInput = document.getElementById("searchGlobalTxInput");
+      const q = searchInput ? formatEnNum(searchInput.value.trim().toLowerCase()) : "";
       container.innerHTML = "";
 
-      if (txsList.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ تراکنشی یافت نشد</div>`;
+      if (allTransactions.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ تراکنشی در سیستم ثبت نشده است</div>`;
         return;
       }
 
-      // مرتب‌سازی صعودی برای محاسبه شماره ردیف‌های دائمی
-      let chronologicalAll = txsList.slice().sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
-        return da - db;
+      // فیلتر بر اساس جستجو
+      let txsToProcess = allTransactions.filter(tx => {
+        if (!q) return true;
+        let txId = String(getVal(tx, ['TransID', 'transid'])).toLowerCase();
+        let accId = String(getVal(tx, ['AccountID', 'accountid'])).toLowerCase();
+        let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
+        let accName = acc ? String(getVal(acc, ['Name', 'name'])).toLowerCase() : "";
+        let amt = String(getVal(tx, ['Amount', 'amount'])).toLowerCase();
+        let desc = String(getVal(tx, ['Description', 'description'])).toLowerCase();
+        let op = String(getVal(tx, ['OperationType', 'operationtype'])).toLowerCase();
+
+        return txId.includes(q) || accId.includes(q) || accName.includes(q) || amt.includes(q) || desc.includes(q) || op.includes(q);
       });
 
-      let rowNumMap = {};
-      chronologicalAll.forEach((t, i) => {
-        let tid = String(getVal(t, ['TransID', 'transid']) || i);
-        rowNumMap[tid] = i + 1;
-      });
+      if (txsToProcess.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ تراکنشی با مشخصات جستجو شده یافت نشد</div>`;
+        return;
+      }
 
-      // نمایش جدیدترین به قدیمی‌ترین
-      let sortedList = txsList.slice().sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
-        return db - da;
-      });
-
-      // دسته‌بندی بر اساس روز
-      let groupMap = {};
-      let groups = [];
-      sortedList.forEach(tx => {
+      // ۱. گروه‌بندی بر اساس تاریخ روز (YYYY-MM-DD)
+      let groupedByDate = {};
+      txsToProcess.forEach(tx => {
         let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
-        let dayKey = String(rawDate).split('T')[0] || 'نامشخص';
-        if (!groupMap[dayKey]) {
-          groupMap[dayKey] = { date: dayKey, items: [] };
-          groups.push(groupMap[dayKey]);
-        }
-        groupMap[dayKey].items.push(tx);
+        let dateObj = rawDate ? new Date(rawDate) : new Date();
+        let dateKey = !isNaN(dateObj.getTime()) ? dateObj.toISOString().split('T')[0] : 'نامشخص';
+        
+        if (!groupedByDate[dateKey]) groupedByDate[dateKey] = [];
+        groupedByDate[dateKey].push(tx);
       });
 
-      let finalHtml = "";
-      groups.forEach(group => {
-        let dayTotals = {};
-        group.items.forEach(tx => {
-          let c = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-          let d = String(getVal(tx, ['Direction', 'direction']));
-          let a = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-          if (!dayTotals[c]) dayTotals[c] = { creditor: 0, debtor: 0 };
-          if (d.includes('بستانکار') || d.includes('دریافت')) dayTotals[c].creditor += a;
-          if (d.includes('بدهکار') || d.includes('پرداخت')) dayTotals[c].debtor += a;
+      // مرتب‌سازی روزها (جدیدترین روز در بالا)
+      let sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
+
+      let globalCounter = txsToProcess.length;
+
+      sortedDates.forEach(dateKey => {
+        let dayTxs = groupedByDate[dateKey];
+
+        // در داخل هر روز، تراکنش‌ها را بر اساس زمان کامل (ساعت، دقیقه، ثانیه) مرتب‌سازی می‌کنیم (جدیدترین اول)
+        dayTxs.sort((a, b) => {
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          return db - da;
         });
 
-        let summaryParts = [];
-        for (let c in dayTotals) {
-          let cred = dayTotals[c].creditor;
-          let debt = dayTotals[c].debtor;
-          if (cred > 0) summaryParts.push(`<span style="color:#10b981;">بستانکار: ${formatEnMoney(cred)} ${c}</span>`);
-          if (debt > 0) summaryParts.push(`<span style="color:#f87171;">بدهکار: ${formatEnMoney(debt)} ${c}</span>`);
-        }
-        let daySummaryStr = summaryParts.length > 0 ? summaryParts.join(' | ') : 'بدون مبلغ';
-
-        let cardsHtml = "";
-        group.items.forEach(tx => {
-          let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+        // ۲. در داخل هر روز، گروه‌بندی بر اساس شخص (AccountID)
+        let groupedByClientInDay = {};
+        dayTxs.forEach(tx => {
           let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
+          if (!groupedByClientInDay[accId]) groupedByClientInDay[accId] = [];
+          groupedByClientInDay[accId].push(tx);
+        });
+
+        let dayCard = document.createElement('div');
+        dayCard.className = 'day-group-card';
+
+        let dayHeaderHtml = `
+          <div class="day-group-header">
+            <span>📅 تاریخ روز: ${formatEnNum(dateKey)}</span>
+            <span>تعداد تراکنش روز: ${formatEnNum(dayTxs.length)} عدد</span>
+          </div>
+        `;
+        let clientsHtmlContainer = '';
+
+        for (let accId in groupedByClientInDay) {
+          let clientTxs = groupedByClientInDay[accId];
           let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-          let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
-          let txNum = rowNumMap[txId] || '-';
+          let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص (حذف شده)";
+          let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '') : '';
+          let cleanPhone = phone.replace(/\D/g, '');
 
-          let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
-          let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-          let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
-          let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-          let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
-          
-          let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
-          let dateObj = rawDate ? new Date(rawDate) : null;
-          let timeStr = dateObj && !isNaN(dateObj.getTime()) ? 
-            `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : '';
+          let clientTxsHtml = '';
+          clientTxs.forEach((tx, subIdx) => {
+            let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+            let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+            let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+            let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+            let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+            let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+            
+            let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+            let dateObj = rawDate ? new Date(rawDate) : null;
+            let timeStr = dateObj && !isNaN(dateObj.getTime()) ? 
+              `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : 
+              '--:--:--';
 
-          let isCreditor = dir.includes('بستانکار');
-          let cardClass = isCreditor ? 'tx-creditor' : 'tx-debtor';
-          let dirColor = isCreditor ? '#059669' : '#dc2626';
-          let receiptHtml = receiptUrl ? `<div style="margin-top:6px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
-          let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
-          let transferBtn = isTransferOrRemittance ? `<button class="btn btn-info btn-sm" style="margin-top:6px; flex:1;" onclick="event.stopPropagation(); playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 رسید انتقال</button>` : '';
+            let isCreditor = dir.includes('بستانکار');
+            let cardClass = isCreditor ? 'tx-creditor' : 'tx-debtor';
+            let dirColor = isCreditor ? '#059669' : '#dc2626';
+            let serialNum = formatEnNum(globalCounter - subIdx);
 
-          cardsHtml += `
-            <div class="tx-item-card ${cardClass}" onclick="toggleTxAccordion('globalBody_${txId}')">
-              <div class="flex-row" style="justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <div class="flex-row" style="gap:6px;">
-                  <input type="checkbox" class="global-tx-cb" value="${txId}" style="width:16px; height:16px; accent-color:var(--accent-green-dark); cursor:pointer;" onclick="event.stopPropagation()">
-                  <span style="background:#0f172a; color:#fff; padding:1px 6px; border-radius:5px; font-size:11px; font-weight:800;">#${formatEnNum(txNum)}</span>
-                  <span style="font-weight:900; color:var(--primary-dark);" onclick="event.stopPropagation(); selectAccount('${accId}', '${accName}')">👤 ${accName}</span>
+            clientTxsHtml += `
+              <div class="tx-item-card ${cardClass}" style="margin-bottom:8px;">
+                <div class="stat-row">
+                  <span><b>تراکنش شماره #${serialNum}</b> (⏱️ ساعت دقیق: ${timeStr})</span>
+                  <span style="color:${dirColor}; font-weight:900;">${dir}</span>
                 </div>
-                <span style="color:${dirColor}; font-weight:900; font-size:0.85rem;">${dir}</span>
-              </div>
-              <div class="stat-row" style="font-size:0.85rem;">
-                <span>نوع: <b>${opType}</b> | ${timeStr ? `🕒 ${timeStr}` : ''}</span>
-                <span style="font-weight:900;">مبلغ: <b>${amt} ${curr}</b></span>
-              </div>
-
-              <div id="globalBody_${txId}" style="display:none; margin-top:8px; border-top:1px dashed #cbd5e1; padding-top:8px;">
-                <div style="font-size:0.85rem; color:#334155;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
-                ${receiptHtml}
-                <div class="flex-row" style="margin-top:8px; gap:6px;">
-                  <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="event.stopPropagation(); playInteractionEffect(); sendSingleTxWhatsAppFromGlobal('${txId}', '${accId}', '${accName}')">💬 ارسال به واتساپ</button>
-                  ${transferBtn}
+                <div class="stat-row">
+                  <span>نوع: <b>${opType}</b></span>
+                  <span style="font-weight:900;">مبلغ: <b>${amt} ${curr}</b></span>
                 </div>
-                <div class="flex-row" style="margin-top:6px; justify-content:flex-end; gap:6px;">
-                  <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectTxFromGlobal('${txId}', '${accId}')">🔍 مدیریت کامل</button>
-                  <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteGlobalSingleTx('${txId}', '${accId}')">🗑️ حذف</button>
+                <div style="font-size:0.82rem; color:#475569; background:#ffffff; padding:6px; border-radius:6px; border:1px solid #e2e8f0; margin-top:2px;">
+                  <b>شرح / توضیحات:</b> ${desc || 'بدون شرح'}
+                </div>
+                <div class="flex-row" style="margin-top:6px; gap:6px;">
+                  <button class="btn btn-warning btn-sm" style="flex:1;" onclick="playInteractionEffect(); selectTransactionFromGlobal('${txId}', '${accId}')">🔍 مدیریت / ویرایش</button>
+                  <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendGlobalTxWhatsApp('${txId}', '${accId}')">📲 ارسال رسید به واتساپ</button>
+                  <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); deleteGlobalSingleTx('${txId}', '${accId}')">🗑️ حذف</button>
                 </div>
               </div>
+            `;
+          });
+
+          clientsHtmlContainer += `
+            <div class="client-day-block">
+              <div class="client-day-title">
+                <span>👤 نام مشتری: ${accName} (کد حساب: ${formatEnNum(accId)})</span>
+                <button class="btn btn-secondary btn-sm" style="padding:2px 8px; font-size:0.75rem;" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">مشاهده حساب</button>
+              </div>
+              ${clientTxsHtml}
             </div>
           `;
-        });
+        }
 
-        finalHtml += `
-          <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 6px 12px; border-radius: 8px 8px 0 0; margin: 12px 0 6px 0; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 800; border-right: 4px solid #38bdf8; flex-wrap:wrap; gap:4px;">
-            <div class="flex-row" style="gap:6px;">
-              <span>📅 ${formatEnNum(group.date)}</span>
-              <span style="background: rgba(56, 189, 248, 0.2); color: #7dd3fc; padding: 1px 6px; border-radius: 10px; font-size: 11px;">${formatEnNum(group.items.length)} تراکنش</span>
-            </div>
-            <div style="font-size:11px; background:rgba(15,23,42,0.6); padding:2px 6px; border-radius:6px; display:flex; gap:6px; flex-wrap:wrap;">
-              ${daySummaryStr}
-            </div>
-          </div>
-          <div>${cardsHtml}</div>
-        `;
-      });
-
-      container.innerHTML = finalHtml;
-    }
-
-    function openGlobalSelectAccountModal() {
-      renderGlobalAccountSelectionList(allAccounts);
-      document.getElementById("globalAccountSearchInput").value = "";
-      document.getElementById("globalSelectAccountModal").style.display = "flex";
-      pushModalHistory("globalSelectAccountModal");
-    }
-    function closeGlobalSelectAccountModal() { document.getElementById("globalSelectAccountModal").style.display = "none"; }
-
-    function renderGlobalAccountSelectionList(accounts) {
-      const listContainer = document.getElementById("globalAccountSelectionList");
-      listContainer.innerHTML = "";
-      if (accounts.length === 0) {
-        listContainer.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">حسابی یافت نشد</div>`;
-        return;
-      }
-      accounts.forEach(acc => {
-        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
-        let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
-        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
-        let photoUrl = getVal(acc, ['Photo', 'photo']);
-        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:34px; height:34px; margin-left:6px;">` : '';
-
-        listContainer.innerHTML += `
-          <div class="account-item-card" style="padding:10px; margin-bottom:6px;" onclick="playInteractionEffect(); pickAccountForGlobalTx('${accId}', '${accName}')">
-            <div class="flex-row">
-              ${photoHtml}
-              <div>
-                <span style="font-weight:900; font-size:0.95rem;">${accName}</span>
-                <div style="font-size:0.8rem; color:#64748b;">تلفن: ${phone} | کُد: ${accId}</div>
-              </div>
-            </div>
-          </div>
-        `;
+        dayCard.innerHTML = dayHeaderHtml + `<div style="padding: 4px;">` + clientsHtmlContainer + `</div>`;
+        container.appendChild(dayCard);
+        globalCounter -= dayTxs.length;
       });
     }
 
-    function filterGlobalAccountSelection() {
-      playInteractionEffect();
-      let q = formatEnNum(document.getElementById("globalAccountSearchInput").value.trim().toLowerCase());
-      if (!q) { renderGlobalAccountSelectionList(allAccounts); return; }
-      let filtered = allAccounts.filter(acc => {
-        let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
-        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
-        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
-        return name.includes(q) || phone.includes(q) || accId.includes(q);
-      });
-      renderGlobalAccountSelectionList(filtered);
-    }
-
-    function pickAccountForGlobalTx(accId, accName) {
-      closeGlobalSelectAccountModal();
+    function selectTransactionFromGlobal(txId, accId) {
       currentAccountId = accId;
-      currentAccountName = accName;
-      openAddTransactionModal();
-    }
-
-    function selectTxFromGlobal(txId, accId) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-      if (acc) {
-        currentAccountId = accId;
-        currentAccountName = getVal(acc, ['Name', 'name']);
-      }
+      if (acc) currentAccountName = getVal(acc, ['Name', 'name']);
       selectTransaction(txId);
     }
 
-    function sendSingleTxWhatsAppFromGlobal(txId, accId, accName) {
+    function sendGlobalTxWhatsApp(targetTxId, accId) {
       currentAccountId = accId;
-      currentAccountName = accName;
-      sendSingleTxWhatsApp(txId);
-    }
-
-    function toggleSelectAllGlobalTxs(masterCb) {
-      const cbs = document.querySelectorAll('.global-tx-cb');
-      cbs.forEach(cb => cb.checked = masterCb.checked);
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
+      if (acc) currentAccountName = getVal(acc, ['Name', 'name']);
+      sendSingleTxWhatsApp(targetTxId);
     }
 
     async function deleteGlobalSingleTx(txId, accId) {
@@ -1738,25 +1867,7 @@
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
       if (acc) currentAccountName = getVal(acc, ['Name', 'name']);
       await deleteSingleTransaction();
-      renderGlobalTransactionsList(allTransactions);
-    }
-
-    async function deleteSelectedGlobalTxsBatch() {
-      const selectedCbs = document.querySelectorAll('.global-tx-cb:checked');
-      if (selectedCbs.length === 0) { alert("لطفاً حداقل یک تراکنش را انتخاب کنید."); return; }
-      if (!confirm(`آیا از حذف دسته جمعی ${selectedCbs.length} تراکنش انتخاب‌شده اطمینان دارید؟`)) return;
-
-      const indicator = document.getElementById("syncIndicator");
-      if (indicator) { indicator.innerText = "🔄 در حال حذف تراکنش‌ها..."; indicator.style.display = "block"; }
-
-      let ids = Array.from(selectedCbs).map(cb => cb.value);
-      for (let txId of ids) {
-        await _supabase.from('transactions').delete().eq('TransID', txId);
-      }
-
-      await loadDataFromSupabase(false);
-      renderGlobalTransactionsList(allTransactions);
-      alert("تراکنش‌های انتخاب‌شده با موفقیت حذف گردیدند.");
+      renderGlobalTransactionsList();
     }
 
     function openTransfersReport() { switchView('viewTransfersReport'); renderTransfersReport(); }
@@ -1764,7 +1875,11 @@
     function toggleCustomDateFilter() {
       const period = document.getElementById("transferFilterPeriod").value;
       const customBox = document.getElementById("customDateRangeBox");
-      customBox.style.display = (period === "custom") ? "block" : "none";
+      if (period === "custom") {
+        customBox.style.display = "block";
+      } else {
+        customBox.style.display = "none";
+      }
       renderTransfersReport();
     }
 
@@ -1808,7 +1923,6 @@
       filteredTxs.sort((a, b) => {
         let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
         let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
         return db - da;
       });
 
@@ -1826,7 +1940,7 @@
 
       if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">موردی یافت نشد</div>`; return; }
 
-      filteredTxs.forEach((tx) => {
+      filteredTxs.forEach((tx, idx) => {
         let accId = formatEnNum(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
         let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "نامشخص";
@@ -1848,6 +1962,10 @@
         `;
       });
     }
+
+    /* ==============================================================================
+     * گزارش بدهکاران و بستانکاران با انتخاب چندتایی
+     * ============================================================================== */
 
     function openDebtorsReport() {
       switchView('viewDebtorsReport');
@@ -1890,7 +2008,7 @@
 
       if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
       
-      debtors.forEach(d => {
+      debtors.forEach((d, i) => {
         container.innerHTML += `
           <div class="tx-item-card tx-debtor" style="flex-direction:row; align-items:center; gap:10px;">
             <input type="checkbox" onchange="toggleDebtorSelection('${d.id}', '${d.currency}', ${d.amount}, this.checked)" style="width:20px; height:20px; accent-color:var(--danger-color); cursor:pointer;">
@@ -1904,24 +2022,36 @@
 
     function toggleDebtorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
-      if (isChecked) selectedDebtorsMap[key] = { curr, amt };
-      else delete selectedDebtorsMap[key];
+      if (isChecked) {
+        selectedDebtorsMap[key] = { curr, amt };
+      } else {
+        delete selectedDebtorsMap[key];
+      }
       updateDebtorsBatchSummary();
     }
 
     function updateDebtorsBatchSummary() {
       const box = document.getElementById("debtorsBatchSummaryBox");
       const content = document.getElementById("debtorsBatchSummaryContent");
-      let currs = {}, count = 0;
+      
+      let currs = {};
+      let count = 0;
       for (let k in selectedDebtorsMap) {
         let item = selectedDebtorsMap[k];
         if (!currs[item.curr]) currs[item.curr] = 0;
         currs[item.curr] += item.amt;
         count++;
       }
-      if (count === 0) { box.style.display = "none"; return; }
+
+      if (count === 0) {
+        box.style.display = "none";
+        return;
+      }
+
       let html = `<div style="font-size:0.85rem; margin-bottom:4px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
-      for (let c in currs) html += `<div style="font-weight:800; font-size:1rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      for (let c in currs) {
+        html += `<div style="font-weight:800; font-size:1rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      }
       content.innerHTML = html;
       box.style.display = "block";
     }
@@ -1980,24 +2110,36 @@
 
     function toggleCreditorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
-      if (isChecked) selectedCreditorsMap[key] = { curr, amt };
-      else delete selectedCreditorsMap[key];
+      if (isChecked) {
+        selectedCreditorsMap[key] = { curr, amt };
+      } else {
+        delete selectedCreditorsMap[key];
+      }
       updateCreditorsBatchSummary();
     }
 
     function updateCreditorsBatchSummary() {
       const box = document.getElementById("creditorsBatchSummaryBox");
       const content = document.getElementById("creditorsBatchSummaryContent");
-      let currs = {}, count = 0;
+      
+      let currs = {};
+      let count = 0;
       for (let k in selectedCreditorsMap) {
         let item = selectedCreditorsMap[k];
         if (!currs[item.curr]) currs[item.curr] = 0;
         currs[item.curr] += item.amt;
         count++;
       }
-      if (count === 0) { box.style.display = "none"; return; }
+
+      if (count === 0) {
+        box.style.display = "none";
+        return;
+      }
+
       let html = `<div style="font-size:0.85rem; margin-bottom:4px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
-      for (let c in currs) html += `<div style="font-weight:800; font-size:1rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      for (let c in currs) {
+        html += `<div style="font-weight:800; font-size:1rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
+      }
       content.innerHTML = html;
       box.style.display = "block";
     }
@@ -2070,9 +2212,14 @@
       const clearBtn = document.getElementById("clearSearchBtn");
       const q = formatEnNum(inputEl.value.trim().toLowerCase());
       
-      clearBtn.style.display = q.length > 0 ? "block" : "none";
+      if (q.length > 0) {
+        clearBtn.style.display = "block";
+      } else {
+        clearBtn.style.display = "none";
+      }
+
       if (!q) { renderAccountsList(allAccounts); return; }
-      let filtered = allAccounts.filter(acc => {
+      const filtered = allAccounts.filter(acc => {
         let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
         let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
@@ -2102,7 +2249,10 @@
       pushModalHistory("accountModal");
     }
 
-    function selectAccountForEditQuick(accId) { currentAccountId = accId; openEditAccountModal(); }
+    function selectAccountForEditQuick(accId) {
+      currentAccountId = accId;
+      openEditAccountModal();
+    }
 
     function openEditAccountModal() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -2130,17 +2280,28 @@
         if (pendingDeleteCallback) pendingDeleteCallback();
       };
     }
-    function closeDeleteConfirmModal() { document.getElementById("deleteConfirmModal").style.display = "none"; pendingDeleteCallback = null; }
+    function closeDeleteConfirmModal() {
+      document.getElementById("deleteConfirmModal").style.display = "none";
+      pendingDeleteCallback = null;
+    }
 
     function confirmDeleteAccountModal() {
-      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", () => deleteCurrentAccount());
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
+        deleteCurrentAccount();
+      });
     }
+
     function confirmDeleteAccount(accId) {
       currentAccountId = accId;
-      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", () => deleteCurrentAccount());
+      showDeleteConfirmModal("آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.", function() {
+        deleteCurrentAccount();
+      });
     }
+
     function confirmDeleteTransaction() {
-      showDeleteConfirmModal("آیا از حذف این تراکنش اطمینان دارید؟", () => deleteSingleTransaction());
+      showDeleteConfirmModal("آیا از حذف این تراکنش اطمینان دارید؟", function() {
+        deleteSingleTransaction();
+      });
     }
 
     async function saveAccount() {
@@ -2162,25 +2323,80 @@
       let accountId = editId ? editId : "ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000));
       let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
 
-      const payload = { AccountID: accountId, Name: accName, Phone: accPhone, ChatID: accChatId, Photo: photoUrl, CreatedBy: String(currentAdminId) };
+      let oldAcc = editId ? allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId)) : null;
+      let oldChatId = oldAcc ? formatEnNum(getVal(oldAcc, ['ChatID', 'chatid']) || '').trim() : '';
+      let isNewChatIdAdded = accChatId && (!oldChatId || oldChatId !== accChatId);
+
+      const payload = { 
+        AccountID: accountId, 
+        Name: accName, 
+        Phone: accPhone, 
+        ChatID: accChatId,
+        Photo: photoUrl,
+        CreatedBy: String(currentAdminId)
+      };
 
       if (editId) {
         await _supabase.from('accounts').update(payload).eq('AccountID', editId);
       } else {
         await _supabase.from('accounts').insert([payload]);
+        let { token } = getCurrentAdminTokenAndChat();
+        if (token && accChatId) {
+          let siteLink = "https://karimi-trust-app.vercel.app/";
+          let msg = `✨ *امانت‌داری کریمی* ✨\n\n` +
+                    `حساب شما با موفقیت ایجاد شد.\n` +
+                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.\n` +
+                    `📌 اطلاعات حساب شما:\n` +
+                    `👤 نام: ${accName}\n` +
+                    `🆔 کُد حساب: \`${accountId}\`\n` +
+                    `📞 شماره تماس: ${accPhone || '-'}\n` +
+                    `💬 چت‌آیدی: \`${accChatId}\`\n\n` +
+                    `🌐 لینک بررسی حساب:\n${siteLink}`;
+          sendTelegramMessage(token, accChatId, msg);
+        }
       }
 
       await loadDataFromSupabase(false);
-      if (currentAccountId) selectAccount(currentAccountId, accName);
+
+      if (editId && isNewChatIdAdded) {
+        let { token } = getCurrentAdminTokenAndChat();
+        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accountId));
+        if (token && accChatId) {
+          let historyHeader = `✨ *امانت‌داری کریمی* ✨\n\nسلام *${accName}* عزیز،\nچت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:\n────────────────────────`;
+          await sendTelegramMessage(token, accChatId, historyHeader);
+
+          for (let tx of accTxs) {
+            let tType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+            let tDir = String(getVal(tx, ['Direction', 'direction']) || '');
+            let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+            let tCurr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
+            let tDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+            let tDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+
+            let txLine = `📅 تاریخ: ${tDate}\n🔹 نوع: *${tType}* (${tDir})\n💰 مبلغ: *${tAmt} ${tCurr}*\n📝 شرح: ${tDesc || '-'}\n-------------------`;
+            await sendTelegramMessage(token, accChatId, txLine);
+          }
+
+          let liveBal = getAccountLiveBalanceText(accountId);
+          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*\n${liveBal}`;
+          await sendTelegramMessage(token, accChatId, balMsg);
+        }
+      }
+
+      if (currentAccountId) {
+        selectAccount(currentAccountId, accName);
+      }
     }
 
     async function deleteCurrentAccount() {
       let accIdToDelete = currentAccountId;
+      
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
       if (archiveItem) {
         archiveItem.isDeleted = true;
         localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
       }
+
       currentAccountId = null;
       switchView('viewAccounts');
       await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
@@ -2218,7 +2434,6 @@
         .sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
           let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0; if (isNaN(db)) db = 0;
           return db - da;
         });
 
@@ -2248,24 +2463,26 @@
           let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
           let dateObj = rawDate ? new Date(rawDate) : null;
           let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
-            `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+            `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : 
             formatEnNum(String(rawDate).split('T')[0]);
 
           let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
           let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
+          
           let txNumber = formatEnNum(txs.length - idx);
           let isCreditor = dir.includes('بستانکار');
           let cardClass = isCreditor ? 'tx-creditor' : 'tx-debtor';
           let dirColor = isCreditor ? '#059669' : '#dc2626';
 
           let receiptHtml = receiptUrl ? `<div style="margin-top:6px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
+          
           let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
           let transferBtn = isTransferOrRemittance ? `<button class="btn btn-info btn-sm" style="margin-top:6px; flex:1;" onclick="event.stopPropagation(); playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 رسید انتقال</button>` : '';
 
           container.innerHTML += `
             <div class="tx-item-card ${cardClass}" onclick="toggleTxAccordion('accBody_${txId}')">
               <div class="stat-row">
-                <span><b>تراکنش شماره #${txNumber}</b> (⏰ ${formattedTime})</span>
+                <span><b>تراکنش شماره #${txNumber}</b> (⏱️ ${formattedTime})</span>
                 <span style="color:${dirColor}; font-weight:900;">${dir}</span>
               </div>
               <div class="stat-row">
@@ -2310,7 +2527,9 @@
     function toggleTxAccordion(elemId) {
       playInteractionEffect();
       let el = document.getElementById(elemId);
-      if (el) el.style.display = (el.style.display === "none" || !el.style.display) ? "block" : "none";
+      if (el) {
+        el.style.display = (el.style.display === "none" || !el.style.display) ? "block" : "none";
+      }
     }
 
     function selectTransaction(txId) {
@@ -2327,7 +2546,7 @@
       let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
       let dateObj = rawDate ? new Date(rawDate) : null;
       let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
-        `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
+        `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : 
         formatEnNum(String(rawDate).split('T')[0]);
 
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
@@ -2335,7 +2554,7 @@
 
       document.getElementById("txDetailCard").innerHTML = `
         <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
-        <div class="stat-row"><span>تاریخ و زمان ثبت:</span><b>${formattedTime}</b></div>
+        <div class="stat-row"><span>تاریخ و زمان دقیق ثبت:</span><b>${formattedTime}</b></div>
         <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
         <div class="stat-row"><span>مبلغ:</span><b style="font-size:1.05rem;">${amt} ${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
@@ -2352,7 +2571,7 @@
           <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
           <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); confirmDeleteTransaction()">🗑️ حذف</button>
         </div>
-        <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال تراکنش به واتساپ</button>
+        <button class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال کامل تراکنش به واتساپ</button>
         ${transferReceiptBtn}
       `;
 
@@ -2360,9 +2579,8 @@
     }
 
     function openAddTransactionModal() {
-      if (!currentAccountId) { alert("لطفاً ابتدا یک حساب را انتخاب کنید."); return; }
       document.getElementById("editTransId").value = "";
-      document.getElementById("txModalTitle").innerText = `ثبت تراکنش برای: ${currentAccountName}`;
+      document.getElementById("txModalTitle").innerText = "ثبت تراکنش جدید";
       document.getElementById("txAmountInput").value = "";
       document.getElementById("txDesc").value = "";
       document.getElementById("txReceiptInput").value = "";
@@ -2406,7 +2624,9 @@
       document.getElementById("customMessageModal").style.display = "flex";
       pushModalHistory("customMessageModal");
     }
-    function closeCustomMessageModal() { document.getElementById("customMessageModal").style.display = "none"; }
+    function closeCustomMessageModal() {
+      document.getElementById("customMessageModal").style.display = "none";
+    }
 
     function sendCustomWhatsAppMessage() {
       let msg = document.getElementById("customWhatsAppMessageText").value.trim();
@@ -2415,9 +2635,13 @@
 
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
+
       let encodedMessage = encodeURIComponent(msg);
-      if (phone) window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      else window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
     }
 
     async function submitTransaction() {
@@ -2444,11 +2668,11 @@
       }
 
       let dateIsoString;
+      let now = new Date();
       if (editTransId) {
         let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
-        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || new Date().toISOString()) : new Date().toISOString();
+        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || now.toISOString()) : now.toISOString();
       } else {
-        let now = new Date();
         if (txDateInputVal) {
           let selectedDate = new Date(txDateInputVal);
           selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
@@ -2478,20 +2702,107 @@
       }
 
       await loadDataFromSupabase(false);
+
+      let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      
+      if (token) {
+        let siteLink = "https://karimi-trust-app.vercel.app/";
+        let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
+        let liveBalance = getAccountLiveBalanceText(currentAccountId);
+        let globalSystemBalance = getSystemGlobalBalanceText();
+        let displayDateFormatted = formatEnNum(dateIsoString.split('T')[0]);
+
+        if (acc) {
+          let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
+          if (customerChatId) {
+            let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+            if (isTransferOrRemittance) {
+              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
+              let msg3 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+              
+              await sendTelegramMessage(token, customerChatId, msg1);
+              await sendTelegramMessage(token, customerChatId, msg2);
+              await sendTelegramMessage(token, customerChatId, msg3);
+            } else {
+              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n🔹 نوع: *${opType}* (${selectedDirectionValue})\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+
+              await sendTelegramMessage(token, customerChatId, msg1);
+              await sendTelegramMessage(token, customerChatId, msg2);
+            }
+          }
+        }
+
+        if (adminChatId) {
+          let adminMsg = `🔔 *گزارش مدیریتی سیستم*\n\n` +
+                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
+                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})\n` +
+                         `${actionTitle} (${opType} - ${selectedDirectionValue})\n` +
+                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n` +
+                         `📅 تاریخ: ${displayDateFormatted}\n` +
+                         `📝 شرح: ${desc || '-'}\n\n` +
+                         `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
+          sendTelegramMessage(token, adminChatId, adminMsg);
+        }
+      }
+
       selectAccount(currentAccountId, currentAccountName);
     }
 
     async function deleteSingleTransaction() {
       let txIdToDelete = selectedTxId;
-      await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txIdToDelete));
+      
+      const { error } = await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
+      if (error) {
+        await _supabase.from('transactions').delete().eq('transid', txIdToDelete);
+      }
+
       await loadDataFromSupabase(false);
-      if (currentAccountId) selectAccount(currentAccountId, currentAccountName);
+
+      let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+
+      if (token && tx) {
+        let liveBalance = getAccountLiveBalanceText(currentAccountId);
+        let globalSystemBalance = getSystemGlobalBalanceText();
+        let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+        let tCurr = getVal(tx, ['Currency', 'currency']);
+
+        if (acc) {
+          let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
+          if (customerChatId) {
+            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*\n\n` +
+                         `محترم *${currentAccountName}*،\n` +
+                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.\n\n` +
+                         `📊 *بیلان جدید حساب شما:*\n${liveBalance}`;
+            sendTelegramMessage(token, customerChatId, delMsg);
+          }
+        }
+
+        if (adminChatId) {
+          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*\n\n` +
+                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
+                            `👥 مشتری: *${currentAccountName}*\n` +
+                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*\n\n` +
+                            `📊 *موجودی کل سیستم:*\n${globalSystemBalance}`;
+          sendTelegramMessage(token, adminChatId, adminDelMsg);
+        }
+      }
+
+      if (currentAccountId) {
+        selectAccount(currentAccountId, currentAccountName);
+      }
     }
 
     function shareTransferReceiptWhatsApp(targetTxId) {
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
+
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
+
       let receiptLines = [
         `📜 ═════════════════ 📜`,
         `       *رسید انتقال*`,
@@ -2501,6 +2812,7 @@
         ``,
         `⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`
       ];
+
       let encodedMessage = receiptLines.map(line => encodeURIComponent(line)).join('%0A');
       window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
     }
@@ -2515,33 +2827,45 @@
       let amtVal = formatEnMoney(getVal(tx, ['Amount', 'amount']));
       let currVal = String(getVal(tx, ['Currency', 'currency']) || '');
       let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
-      let txDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+      
+      let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+      let dateObj = rawDate ? new Date(rawDate) : null;
+      let txDateTime = dateObj && !isNaN(dateObj.getTime()) ? 
+        `${formatEnNum(dateObj.toISOString().split('T')[0])} ساعت ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getSeconds()).padStart(2, '0'))}` : 
+        formatEnNum(String(rawDate).split('T')[0]);
+
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
         `────────────────────────`,
-        `محترم آقای *${currentAccountName}*`,
-        `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
+        `👤 مخاطب گرامی: *${currentAccountName}*`,
+        `📄 *رسید کامل تراکنش ثبت‌شده:*`,
         ``,
-        `📌 *جزئیات تراکنش:*`,
-        `💰 مبلغ: *${amtVal} ${currVal}* (${dirVal})`,
-        `📅 تاریخ: ${txDate}`,
-        `📝 شرح: ${desc || '-'}`,
+        `🆔 کُد تراکنش: \`${getVal(tx, ['TransID', 'transid'])}\``,
+        `📌 نوع عملیات: *${opType}* (${dirVal})`,
+        `💰 مبلغ: *${amtVal} ${currVal}*`,
+        `⏱️ تاریخ و زمان دقیق: ${txDateTime}`,
+        `📝 شرح / توضیحات:\n${desc || 'بدون توضیحات'}`,
         ``,
-        `🌐 بررسی آنلاین حساب:`,
+        `🌐 لینک بررسی حساب:`,
         siteLink,
         `────────────────────────`,
         `با تشکر، امانت‌داری کریمی 🙏`
       ];
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      else window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
     }
 
-    function sendGeneralWhatsAppReport() { sendSingleTxWhatsApp(selectedTxId); }
+    function sendGeneralWhatsAppReport() {
+      sendSingleTxWhatsApp(selectedTxId);
+    }
 
     function sendAccountBalanceWhatsApp() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -2549,6 +2873,7 @@
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
       let siteLink = "https://karimi-trust-app.vercel.app/";
+
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
       let lines = [
@@ -2570,8 +2895,11 @@
       ];
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      else window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      } else {
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      }
     }
   </script>
 </body>
