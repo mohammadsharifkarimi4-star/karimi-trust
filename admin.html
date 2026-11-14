@@ -589,6 +589,17 @@
           </div>
         </div>
 
+        <!-- دکمه‌های ارسال گزارش تراکنش‌های دوره‌ای به واتساپ -->
+        <div class="stat-card" style="background: rgba(240,253,244,0.95); border-color: var(--accent-green); margin-bottom: 14px;">
+          <label style="font-size:0.86rem; color:#065f46; margin-bottom:8px;"><b>📲 ارسال گروهی گزارش تراکنش‌ها به واتساپ (با مانده، مبلغ، جهت و ارز):</b></label>
+          <div class="flex-row" style="gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('today')">☀️ روزانه (امروز)</button>
+            <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('week')">📅 هفتگی (۷ روز)</button>
+            <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('month')">🗓️ ماهانه (۳۰ روز)</button>
+            <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('all')">📜 مجموع کل</button>
+          </div>
+        </div>
+
         <div class="form-group ledger-customer-picker" id="globalLedgerPickerWrapper" style="margin-bottom: 10px;">
           <label style="font-size: 0.85rem; color: #334155;">جستجو و انتخاب حساب مشتری (نام، تلفن یا کُد حساب):</label>
           <input type="hidden" id="globalLedgerAccountFilter" value="all">
@@ -2178,6 +2189,92 @@
       });
     }
 
+    // ارسال گزارش دوره‌ای تراکنش‌ها به واتساپ با مانده، مبلغ، جهت، نوع و ارز
+    function sendPeriodicTransactionsWhatsApp(period) {
+      let now = new Date();
+      let periodTitle = "مجموع کل تراکنش‌ها";
+
+      let filteredTxs = allTransactions.filter(tx => {
+        let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
+        if (!txDateStr) return period === 'all';
+        let txDate = new Date(txDateStr);
+        let diffDays = Math.ceil(Math.abs(now - txDate) / (1000 * 60 * 60 * 24));
+
+        if (period === 'today') {
+          periodTitle = "گزارش تراکنش‌های روزانه (امروز)";
+          return diffDays <= 1;
+        } else if (period === 'week') {
+          periodTitle = "گزارش تراکنش‌های هفتگی (۷ روز گذشته)";
+          return diffDays <= 7;
+        } else if (period === 'month') {
+          periodTitle = "گزارش تراکنش‌های ماهانه (۳۰ روز گذشته)";
+          return diffDays <= 30;
+        }
+        return true;
+      });
+
+      if (filteredTxs.length === 0) {
+        alert("هیچ تراکنشی در این بازه زمانی یافت نشد.");
+        return;
+      }
+
+      let lines = [
+        `✨ *امانت‌داری کریمی* ✨`,
+        `📋 *${periodTitle}*`,
+        `────────────────────────`
+      ];
+
+      filteredTxs.forEach((tx, idx) => {
+        let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
+        let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
+        let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
+        
+        let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
+        let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        let dir = String(getVal(tx, ['Direction', 'direction']) || '');
+        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+        let rawDate = getVal(tx, ['Date', 'date']) || '';
+        let txDate = formatEnNum(String(rawDate).split('T')[0]);
+
+        // محاسبه مانده حساب این شخص تا لحظه تراکنش
+        let currentAccTxs = allTransactions
+          .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId)
+          .slice()
+          .sort((a, b) => {
+            let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+            let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+            return db - da;
+          });
+        let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(getVal(tx, ['TransID', 'transid'])));
+        let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
+        let sameCurrBalance = 0;
+        subTxs.forEach(stx => {
+          let scurr = String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+          if (scurr !== curr) return;
+          let sdir = String(getVal(stx, ['Direction', 'direction']) || '');
+          let samt = parseFloat(getVal(stx, ['Amount', 'amount'])) || 0;
+          if (sdir.includes("بستانکار")) sameCurrBalance += samt;
+          if (sdir.includes("بدهکار")) sameCurrBalance -= samt;
+        });
+
+        let balanceStr = sameCurrBalance === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr} (${sameCurrBalance > 0 ? 'بستانکار' : 'بدهکار'})`;
+
+        lines.push(
+          `${formatEnNum(idx + 1)}. مشتری: *${accName}*`,
+          `   ▫️ مبلغ: *${amt} ${curr}*`,
+          `   ▫️ جهت: ${dir} | نوع: ${opType}`,
+          `   ▫️ مانده حساب: *${balanceStr}*`,
+          `   ▫️ تاریخ: ${txDate}`,
+          `-----------------------------------`
+        );
+      });
+
+      lines.push(`با تشکر، مدیریت امانت‌داری کریمی 🙏`);
+
+      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
+      window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+    }
+
     function openTransfersReport() { switchView('viewTransfersReport'); renderTransfersReport(); }
 
     function toggleCustomDateFilter() {
@@ -2901,6 +2998,12 @@
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
       if(!tx) return;
 
+      let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
+      let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
+      let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "نامشخص";
+      let accPhone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone'])) : "-";
+      let accChatId = acc ? formatEnNum(getVal(acc, ['ChatID', 'chatid'])) : "-";
+
       let dir = String(getVal(tx, ['Direction', 'direction']) || '');
       let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
       let curr = String(getVal(tx, ['Currency', 'currency']) || '');
@@ -2916,13 +3019,43 @@
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
       let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
+      // محاسبه مانده حساب این شخص تا لحظه ثبت این تراکنش جهت نمایش کامل در جزئیات
+      let currentAccTxs = allTransactions
+        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId)
+        .slice()
+        .sort((a, b) => {
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          return db - da;
+        });
+      let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
+      let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
+      let sameCurrBalance = 0;
+      subTxs.forEach(stx => {
+        let scurr = String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        if (scurr !== curr.toUpperCase()) return;
+        let sdir = String(getVal(stx, ['Direction', 'direction']) || '');
+        let samt = parseFloat(getVal(stx, ['Amount', 'amount'])) || 0;
+        if (sdir.includes("بستانکار")) sameCurrBalance += samt;
+        if (sdir.includes("بدهکار")) sameCurrBalance -= samt;
+      });
+      let balanceStr = sameCurrBalance === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr} (${sameCurrBalance > 0 ? 'بستانکار' : 'بدهکار'})`;
+
+      // نمایش جزئیات کامل شامل مشخصات صاحب حساب و مانده لحظه‌ای
       document.getElementById("txDetailCard").innerHTML = `
+        <div class="stat-card" style="background:rgba(240,249,255,0.9); border-color:var(--info-color); margin-bottom:12px;">
+          <h4 style="margin-bottom:6px; font-size:0.95rem; color:var(--primary-dark);">👤 مشخصات صاحب حساب:</h4>
+          <div class="stat-row"><span>نام مشتری:</span><b>${accName}</b></div>
+          <div class="stat-row"><span>کُد حساب:</span><b>${formatEnNum(accId)}</b></div>
+          <div class="stat-row"><span>شماره تماس:</span><b>${accPhone}</b></div>
+        </div>
         <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
         <div class="stat-row"><span>تاریخ و زمان ثبت:</span><b>${formattedTime}</b></div>
-        <div class="stat-row"><span>جهت:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
-        <div class="stat-row"><span>مبلغ:</span><b style="font-size:1.1rem;">${amt} ${curr}</b></div>
+        <div class="stat-row"><span>جهت تراکنش:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
+        <div class="stat-row"><span>مبلغ تراکنش:</span><b style="font-size:1.1rem; color:var(--primary-dark);">${amt} ${curr}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
-        <div style="margin-top:8px; background:rgba(255,255,255,0.8); padding:10px; border-radius:12px;"><b>توضیحات:</b> ${desc || 'بدون شرح'}</div>
+        <div class="stat-row"><span>مانده حساب پس از این تراکنش:</span><b style="color:${sameCurrBalance >= 0 ? '#059669':'#dc2626'};">${balanceStr}</b></div>
+        <div style="margin-top:8px; background:rgba(255,255,255,0.8); padding:10px; border-radius:12px;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
         ${receiptHtml}
       `;
 
@@ -2930,8 +3063,12 @@
       let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
       let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
 
+      // دکمه رفتن به حساب شخص
+      let goToPersonAccountBtn = `<button class="btn btn-info" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">👤 رفتن به حساب شخص (${accName})</button>`;
+
       btnContainer.innerHTML = `
-        <div class="flex-row" style="gap: 8px; margin-bottom:8px;">
+        ${goToPersonAccountBtn}
+        <div class="flex-row" style="gap: 8px; margin-top:8px; margin-bottom:8px;">
           <button class="btn btn-warning" style="flex:1;" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
           <button class="btn btn-danger" style="flex:1;" onclick="playInteractionEffect(); confirmDeleteTransaction()">🗑️ حذف</button>
         </div>
@@ -3119,9 +3256,13 @@
       let txIdToDelete = selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txIdToDelete));
       
-      const { error } = await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
+      // رفع مشکل حذف تراکنش در دفتر کل (حذف بر اساس transid با حروف کوچک یا بزرگ)
+      let { error } = await _supabase.from('transactions').delete().eq('TransID', txIdToDelete);
       if (error) {
-        await _supabase.from('transactions').delete().eq('transid', txIdToDelete);
+        let res2 = await _supabase.from('transactions').delete().eq('transid', txIdToDelete);
+        if (res2.error) {
+          await _supabase.from('transactions').delete().eq('TRANSID', txIdToDelete);
+        }
       }
 
       await loadDataFromSupabase(false);
@@ -3158,6 +3299,9 @@
 
       if (currentAccountId) {
         selectAccount(currentAccountId, currentAccountName);
+      } else {
+        switchView('viewAllTransactionsPage');
+        renderGlobalTransactionsList();
       }
     }
 
