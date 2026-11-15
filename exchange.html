@@ -571,46 +571,48 @@
         </div>
       </div>
 
-      <!-- مرحله ۳: داشبورد اصلی (منوی خلوت و بدون اسکرول) -->
-      <div id="dashboardSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%; padding-bottom:4px;">
+      <!-- مرحله ۳: داشبورد اصلی حرفه‌ای و مدرن (بدون اسکرول) -->
+      <div id="dashboardSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%; padding-bottom:2px;">
         <div>
-          <!-- ۱. کارت پروفایل و مشخصات در بالا -->
-          <div class="profile-summary-card">
-            <div class="profile-top-row">
-              <span id="dashName" class="profile-user-name">---</span>
-              <span class="profile-status-pill">● حساب فعال</span>
+          <!-- ۱. کارت پروفایل و مشخصات حرفه‌ای بالا -->
+          <div class="profile-summary-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 14px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span id="dashName" style="font-size: 1.05rem; font-weight: 900; color: var(--primary);">---</span>
+              <span style="font-size: 0.72rem; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 2px 10px; border-radius: 20px; font-weight: 800;">● حساب فعال</span>
             </div>
-            <div class="profile-meta-row">
-              <span>تلفن: <b id="dashPhone" class="eng-num" style="color:var(--primary);">---</b></span>
-              <span>کد حساب: <b id="dashAccountId" class="eng-num" style="color:var(--accent);">---</b></span>
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); padding-top: 6px; border-top: 1px dashed #e2e8f0; margin-bottom: 10px;">
+              <span>تلفن: <b id="dashPhone" class="eng-num" style="color: var(--primary);">---</b></span>
+              <span>کد حساب: <b id="dashAccountId" class="eng-num" style="color: var(--accent);">---</b></span>
             </div>
-            <div class="profile-quick-actions">
-              <button type="button" onclick="toggleBiometricSetting()" id="bioToggleBtn" class="profile-mini-btn">🔑 اثرانگشت</button>
-              <button type="button" onclick="logout()" class="profile-mini-btn logout-btn">🚪 خروج از حساب</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button type="button" onclick="toggleBiometricSetting()" id="bioToggleBtn" style="padding: 8px; border-radius: 10px; border: 1.5px solid #cbd5e1; background: #f8fafc; color: var(--primary); font-size: 0.76rem; font-weight: 800; cursor: pointer; text-align: center; transition: all 0.15s;">🔑 اثرانگشت</button>
+              <button type="button" onclick="logout()" style="padding: 8px; border-radius: 10px; border: 1.5px solid #fca5a5; background: #fef2f2; color: #991b1b; font-size: 0.76rem; font-weight: 800; cursor: pointer; text-align: center; transition: all 0.15s;">🚪 خروج از حساب</button>
             </div>
           </div>
 
-          <!-- ۲. منوی گزینه‌های تو در تو (بدون اسکرول، دسترسی سریع و تمیز) -->
-          <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
-            <button type="button" class="btn" onclick="openBalanceModal()" style="padding:12px; font-size:0.88rem; justify-content:flex-start;">
-              📊 مشاهده مانده حساب و موجودی
+          <!-- ۲. منوی اصلی دکمه‌های حرفه‌ای و فین‌تک -->
+          <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+            <button type="button" onclick="openBalanceModal()" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 16px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1.5px solid #cbd5e1; border-radius: 14px; color: var(--primary); font-size: 0.9rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 8px rgba(15,23,42,0.03); transition: all 0.15s;">
+              <span style="display: flex; align-items: center; gap: 10px;">📊 مشاهده مانده حساب و موجودی</span>
+              <span style="color: var(--accent); font-size: 1.1rem; font-weight: 900;">‹</span>
             </button>
-            <button type="button" class="btn btn-success" onclick="openTransactionsModal()" style="padding:12px; font-size:0.88rem; justify-content:flex-start;">
-              📋 مشاهده دفتر تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
+
+            <button type="button" onclick="openTransactionsModal()" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 16px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1.5px solid #cbd5e1; border-radius: 14px; color: var(--primary); font-size: 0.9rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 8px rgba(15,23,42,0.03); transition: all 0.15s;">
+              <span style="display: flex; align-items: center; gap: 10px;">📋 مشاهده دفتر تراکنش‌ها (<span id="txCountBadge" class="eng-num" style="color:var(--accent);">0</span>)</span>
+              <span style="color: var(--accent); font-size: 1.1rem; font-weight: 900;">‹</span>
             </button>
-            <button type="button" id="pwaInstallBtn" class="btn btn-outline hidden" onclick="installPwaApp()" style="padding:11px; font-size:0.84rem; justify-content:flex-start; border-color:var(--success); color:var(--success); background:#ecfdf5;">
-              📲 نصب برنامه روی صفحه اصلی گوشی
-            </button>
-            <button type="button" class="btn btn-outline" onclick="showComingSoon()" style="padding:11px; font-size:0.84rem; justify-content:flex-start; border-color:var(--accent); color:var(--accent);">
-              📒 حساب کتاب من (به زودی ✨)
+
+            <button type="button" onclick="showComingSoon()" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 16px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1.5px solid #cbd5e1; border-radius: 14px; color: var(--primary); font-size: 0.9rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 8px rgba(15,23,42,0.03); transition: all 0.15s;">
+              <span style="display: flex; align-items: center; gap: 10px;">📒 حساب کتاب من <span style="font-size: 0.72rem; background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 6px; font-weight: 800;">به زودی ✨</span></span>
+              <span style="color: var(--accent); font-size: 1.1rem; font-weight: 900;">‹</span>
             </button>
           </div>
         </div>
 
-        <!-- ۳. پشتیبانی واتساپ در پایین صفحه -->
-        <div style="margin-top:8px;">
-          <a id="directWhatsAppMsg" href="#" target="_blank" class="btn btn-whatsapp" style="padding:11px; font-size:0.86rem;">
-            💬 ارسال پیام به امانت‌داری کریمی
+        <!-- ۳. دکمه ارتباط با پشتیبانی در پایین صفحه -->
+        <div style="margin-top: 6px;">
+          <a id="directWhatsAppMsg" href="#" target="_blank" class="btn btn-whatsapp" style="padding: 12px; font-size: 0.88rem; border-radius: 14px;">
+            💬 ارسال پیام به امانت‌داری کریمی در واتساپ
           </a>
         </div>
       </div>
@@ -1497,38 +1499,7 @@
 
 
   
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const installBtn = document.getElementById('pwaInstallBtn');
-      if (installBtn) installBtn.classList.remove('hidden');
-    });
 
-    // Also show install button on mobile browsers as a reliable fallback helper
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const installBtn = document.getElementById('pwaInstallBtn');
-        if (installBtn && !window.matchMedia('(display-mode: standalone)').matches) {
-          installBtn.classList.remove('hidden');
-        }
-      }, 500);
-    });
-
-    async function installPwaApp() {
-      playSound('click');
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        let choiceResult = await deferredPrompt.userChoice;
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted install prompt');
-        }
-        deferredPrompt = null;
-        document.getElementById('pwaInstallBtn').classList.add('hidden');
-      } else {
-        alert("برای نصب برنامه روی صفحه اصلی گوشی، از منوی مرورگر (سه نقطه بالای صفحه) گزینه 'Add to Home screen' یا 'افزودن به صفحه اصلی' را انتخاب کنید.");
-      }
-    }
 
     function showComingSoon() {
       playSound('click');
