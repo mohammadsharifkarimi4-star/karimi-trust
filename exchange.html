@@ -5,50 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>امانت‌داری کریمی - سامانه ویژه مشتریان</title>
 
-  <!-- فونت‌های اختصاصی Vazirmatn و Farhang -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    @font-face {
-      font-family: 'Farhang';
-      src: url('https://cdn.jsdelivr.net/gh/font-store/farhang@main/Farhang-Bold.woff2') format('woff2');
-      font-weight: 700;
-      font-style: normal;
-    }
-    @font-face {
-      font-family: 'Farhang';
-      src: url('https://cdn.jsdelivr.net/gh/font-store/farhang@main/Farhang-Regular.woff2') format('woff2');
-      font-weight: 400;
-      font-style: normal;
-    }
-  </style>
 
-  <!-- کتابخانه‌های ابزاری -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
-      --primary: #6366f1;
-      --primary-dark: #4338ca;
-      --primary-light: #818cf8;
+      --primary: #0f172a;
+      --primary-light: #1e293b;
       --accent: #0284c7;
-      --success: #10b981;
-      --success-dark: #047857;
-      --danger: #f43f5e;
-      --danger-dark: #be123c;
-      --warning: #f59e0b;
-      --bg-gradient: linear-gradient(145deg, #090d16 0%, #1e1b4b 40%, #0f172a 100%);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --radius-xl: 24px;
-      --radius-lg: 16px;
+      --accent-soft: #e0f2fe;
+      --success: #059669;
+      --success-soft: #ecfdf5;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --warning: #d97706;
+      --bg-body: #eef2f6;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Farhang', 'Vazirmatn', sans-serif;
+      font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
       direction: rtl;
       -webkit-tap-highlight-color: transparent;
       font-feature-settings: "tnum";
@@ -56,340 +46,463 @@
     }
 
     body {
-      background: #060913;
-      background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #060913 75%);
-      color: #0f172a;
+      background: var(--bg-body);
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+      background-size: 18px 18px;
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px;
-      overflow-y: auto;
-    }
-
-    @keyframes glowNeon {
-      0% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.2); border-color: #818cf8; }
-      50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.7), inset 0 0 25px rgba(99, 102, 241, 0.4); border-color: #38bdf8; }
-      100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.2); border-color: #818cf8; }
-    }
-
-    @keyframes tabAction {
-      0% { transform: scale(0.95); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      padding: 0;
+      overflow-x: hidden;
     }
 
     .app-viewport {
       width: 100%;
-      max-width: 600px;
-      min-height: 92vh;
-      background: linear-gradient(160deg, #f8fafc 0%, #e2e8f0 100%);
+      max-width: 520px;
+      min-height: 100vh;
+      background: #f8fafc;
       display: flex;
       flex-direction: column;
       position: relative;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-      border-radius: 24px;
-      overflow: hidden;
-      margin: auto;
+      box-shadow: var(--shadow-md);
     }
 
-    @media (max-width: 450px) {
+    @media (min-width: 540px) {
+      body { padding: 14px; }
       .app-viewport {
-        width: 100vw;
-        height: 100vh;
-        min-height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
+        min-height: 92vh;
+        max-height: 94vh;
+        border-radius: 22px;
+        border: 1.5px solid var(--border-color);
+        overflow: hidden;
       }
     }
 
+    /* هدر یکپارچه و آرام */
     .app-header {
-      padding: 14px 18px;
-      background: #ffffff;
-      border-bottom: 2px solid #cbd5e1;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border-bottom: 3px solid #38bdf8;
+      z-index: 10;
     }
 
     .header-title {
-      font-size: 16.5px;
+      font-size: 1rem;
       font-weight: 900;
-      color: #1e1b4b;
       display: flex;
       align-items: center;
       gap: 6px;
+      color: #ffffff;
     }
+
+    .header-action-btn {
+      background: rgba(255, 255, 255, 0.12);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 6px 12px;
+      border-radius: 9px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      width: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s;
+    }
+    .header-action-btn:active { background: rgba(255, 255, 255, 0.25); }
 
     .app-body {
       flex: 1;
       padding: 14px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
+      overflow-y: auto;
+    }
+
+    /* کارت‌های استاندارد تمیز */
+    .clean-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
     }
 
     .form-group { margin-bottom: 12px; }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: var(--primary-light);
+    }
 
     input {
       width: 100%;
-      padding: 14px;
-      border: 2px solid #cbd5e1;
-      border-radius: 14px;
-      font-size: 16px;
+      padding: 13px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
       text-align: center;
       outline: none;
       background: #ffffff;
-      color: #0f172a;
+      color: var(--text-main);
       font-weight: 800;
-      transition: all 0.25s ease;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
     }
 
-    button {
+    .btn {
       width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: white;
+      padding: 13px 16px;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
       border: none;
-      border-radius: 14px;
-      font-size: 15px;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
       cursor: pointer;
       font-weight: 800;
-      box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
-      transition: transform 0.1s ease;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.22);
+      transition: transform 0.12s ease, opacity 0.15s;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      text-decoration: none;
     }
-
-    button:active { transform: scale(0.97); }
-
-    /* کارت نام نمایشی لوکس بدون عکس پروفایل (نوردهی و متحرک) */
-    .user-profile-neon-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      border-radius: var(--radius-xl);
-      padding: 16px 20px;
-      border: 2.5px solid #38bdf8;
-      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.25);
-      animation: glowNeon 4s infinite alternate;
-      flex-shrink: 0;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .profile-neon-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .profile-neon-name {
-      font-size: 18px;
-      font-weight: 900;
-      color: #38bdf8;
-      text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-    }
-
-    .profile-neon-details {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12.5px;
-      font-weight: 800;
-      color: #cbd5e1;
-      border-top: 1px dashed rgba(255,255,255,0.2);
-      padding-top: 8px;
-    }
-
-    .profile-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .btn-pill {
-      flex: 1;
-      padding: 8px 10px;
-      font-size: 11.5px;
-      border-radius: 10px;
-      font-weight: 800;
-      margin-top: 0;
+    .btn:active { transform: scale(0.98); }
+    .btn-success { background: linear-gradient(135deg, #059669 0%, #047857 100%); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.22); }
+    .btn-whatsapp { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 4px 12px rgba(22, 163, 74, 0.22); }
+    .btn-secondary { background: #64748b; box-shadow: none; }
+    .btn-danger { background: #dc2626; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2); }
+    .btn-outline {
+      background: #f8fafc;
+      color: var(--primary);
+      border: 1.5px solid var(--border-color);
       box-shadow: none;
     }
 
-    /* کارت اصلی آمار - وسط صفحه، بزرگ‌تر و برجسته */
-    .dashboard-main-card {
-      background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
-      border: 2.5px solid #64748b;
-      border-radius: var(--radius-xl);
-      padding: 16px;
-      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.12);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      margin: 10px 0;
+    /* بخش ورود تمیز و بدون شلوغی */
+    .login-hero {
+      text-align: center;
+      padding: 10px 6px 14px 6px;
+    }
+    .login-badge-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      margin-bottom: 10px;
+      border: 1.5px solid #bae6fd;
+    }
+    .login-hero h2 {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .login-hero p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
     }
 
-    /* تب‌های انتخاب ارز متحرک در بالاترین بخش آمار */
+    .about-accordion {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    /* کارت پروفایل آرام و شیک در داشبورد */
+    .profile-summary-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      color: #ffffff;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+      border: 1px solid #334155;
+    }
+    .profile-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .profile-user-name {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #ffffff;
+    }
+    .profile-status-pill {
+      font-size: 0.72rem;
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-weight: 800;
+    }
+    .profile-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.16);
+      margin-bottom: 10px;
+    }
+    .profile-quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 0.75fr;
+      gap: 6px;
+    }
+    .profile-mini-btn {
+      padding: 7px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s;
+    }
+    .profile-mini-btn:active { background: rgba(255, 255, 255, 0.22); }
+    .profile-mini-btn.bio-on {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: #34d399;
+      color: #a7f3d0;
+    }
+    .profile-mini-btn.logout-btn {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: rgba(248, 113, 113, 0.4);
+      color: #fecaca;
+    }
+
+    /* تب‌های ارز */
     .currency-tabs {
       display: flex;
-      gap: 6px;
-      background: #cbd5e1;
-      padding: 5px;
-      border-radius: 14px;
-      border: 1px solid #94a3b8;
+      gap: 5px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 12px;
     }
-
     .currency-tab {
       flex: 1;
-      padding: 10px;
+      padding: 8px 6px;
       text-align: center;
-      font-size: 13.5px;
+      font-size: 0.84rem;
       font-weight: 900;
       cursor: pointer;
-      border-radius: 10px;
-      color: #334155;
+      border-radius: 9px;
+      color: #475569;
       background: transparent;
       border: none;
-      box-shadow: none;
-      margin-top: 0;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.2s ease;
     }
-
     .currency-tab.active {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: #ffffff;
-      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
-      animation: tabAction 0.3s ease;
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
     }
 
-    /* کادر مانده حساب بسیار بزرگ، شیک و دیجیتالی در وسط آمار */
-    .odometer-card-bright {
-      background: linear-gradient(135deg, #090d16 0%, #1e1b4b 100%);
-      color: #ffffff;
-      border: 2.5px solid #38bdf8;
-      border-radius: 18px;
-      padding: 20px 14px;
-      text-align: center;
-      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.3);
-      position: relative;
-      margin: 8px 0;
-    }
-
-    .odometer-value-large {
-      font-size: 36px;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      color: #38bdf8;
-      text-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
-      margin: 8px 0;
-    }
-
-    /* کادر هشدار در پایین آمار */
-    .psychology-box {
+    /* باکس مانده حساب روشن و خوانا */
+    .balance-box-modern {
+      background: linear-gradient(145deg, #f8fafc 0%, #eff6ff 100%);
+      border: 1.5px solid #bfdbfe;
       border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 12px;
+      padding: 16px 14px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .balance-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #475569;
+    }
+    .balance-main-figure {
+      font-size: 1.95rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin: 6px 0;
+      letter-spacing: 0.5px;
+    }
+    .balance-sub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      border-top: 1px solid #dbeafe;
+      padding-top: 10px;
+      margin-top: 8px;
+    }
+    .balance-sub-item {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 6px 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .balance-sub-title {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      display: block;
+    }
+    .balance-sub-val {
+      font-size: 0.88rem;
+      font-weight: 900;
+    }
+
+    /* وضعیت حساب */
+    .status-banner {
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.78rem;
       font-weight: 800;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .psychology-box.positive { background: #ecfdf5; border: 1.5px solid #6ee7b7; color: #065f46; }
-    .psychology-box.negative { background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; }
-    .psychology-box.neutral { background: #eff6ff; border: 1.5px solid #93c5fd; color: #1e40af; }
+    .status-banner.positive { background: var(--success-soft); border: 1px solid #a7f3d0; color: #065f46; }
+    .status-banner.negative { background: var(--danger-soft); border: 1px solid #fecaca; color: #991b1b; }
+    .status-banner.neutral { background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; }
 
-    /* مودال عمومی و صفحات جدید بدون اسکرول و تمیز */
+    /* مودال‌ها و صفحات کشویی */
     .fullscreen-modal {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: #f1f5f9;
+      background: #f8fafc;
       z-index: 2000;
       display: flex;
       flex-direction: column;
       transform: translateY(100%);
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      visibility: hidden;
     }
-    .fullscreen-modal.open { transform: translateY(0); }
+    .fullscreen-modal.open {
+      transform: translateY(0);
+      visibility: visible;
+    }
 
     .modal-header {
-      padding: 16px;
-      border-bottom: 2px solid #cbd5e1;
+      padding: 13px 16px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      border-bottom: 3px solid #38bdf8;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #ffffff;
+      flex-shrink: 0;
     }
 
-    .modal-scroll-body { flex: 1; padding: 16px; overflow-y: auto; }
-
-    /* کارت تراکنش */
-    .tx-card {
-      background: #ffffff;
-      border: 2px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.04);
-      transition: transform 0.2s ease;
+    .modal-scroll-body {
+      flex: 1;
+      padding: 0;
+      overflow-y: auto;
+      background: #f1f5f9;
     }
-    .tx-card:active { transform: scale(0.98); }
 
-    .action-btn {
-      width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      border: none;
-      font-size: 14.5px;
-      font-weight: 800;
-      cursor: pointer;
-      margin-bottom: 8px;
+    /* جدول و لیست تراکنش‌ها مشابه دفتر مرکزی ادمین */
+    .day-group-bar {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 8px 12px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      border-top: 2px solid #38bdf8;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .day-summary-pills {
+      display: flex;
       gap: 8px;
-      color: white;
-      text-decoration: none;
+      font-size: 0.74rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 8px;
+      border-radius: 6px;
     }
 
-    .whatsapp-btn {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
-    }
-
-    .info-card {
+    .tx-table {
+      width: 100%;
+      border-collapse: collapse;
       background: #ffffff;
-      border: 2px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      font-size: 0.8rem;
     }
-
-    .info-title {
+    .tx-table th {
+      background: #e2e8f0;
+      color: #1e293b;
       font-weight: 900;
-      font-size: 14px;
-      color: #1e1b4b;
-      margin-bottom: 6px;
+      padding: 7px 8px;
+      text-align: right;
+      font-size: 0.74rem;
+      border-bottom: 1.5px solid #cbd5e1;
     }
+    .tx-table td {
+      padding: 8px 8px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+    .tx-table tr {
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .tx-table tr:active { background: #e0f2fe; }
+    .tx-row-credit { background: #f8fffb; }
+    .tx-row-debit { background: #fff9f9; }
 
-    .info-desc {
-      font-size: 12.5px;
-      color: #475569;
-      line-height: 1.7;
+    /* دیالوگ مرکزی (خطا و درخواست اثر انگشت) */
+    .center-dialog-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
+      z-index: 3000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .center-dialog-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 370px;
+      border-radius: 20px;
+      padding: 22px 18px;
+      text-align: center;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+      border: 1.5px solid var(--border-color);
     }
 
     .eng-num { font-family: 'Vazirmatn', Tahoma, sans-serif; direction: ltr; display: inline-block; }
@@ -400,173 +513,206 @@
 
   <div class="app-viewport">
     <header class="app-header">
-      <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 13px; font-weight: 800;">← منو</a>
+      <button type="button" id="headerBackBtn" class="header-action-btn" onclick="handleHeaderBack()">← منو</button>
       <div class="header-title">🛡️ امانت‌داری کریمی</div>
-      <div style="width: 25px;"></div>
+      <div style="width: 52px;"></div>
     </header>
 
     <main class="app-body">
-      <!-- صفحه ورود شماره تلفن -->
-      <div id="phoneSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+      <!-- مرحله ۱: صفحه ورود ساده و مرتب -->
+      <div id="phoneSection" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
         <div>
-          <div class="info-card">
-            <div class="info-title">📌 درباره امانت‌داری کریمی</div>
-            <div class="info-desc">
-              دریافت امانت‌های نقدی و نگهداری و انجام معاملات شما، حساب‌رسانی دقیق و انتقال سریع آن‌ها در هر جا که بخواهید. حفظ و مسئولیت کامل امانات، انجام تبدیل و بازگرداندن به‌صورت نقد و ارسال کردیت به شماره‌های افغانستان و عراق.
+          <div class="clean-card">
+            <div class="login-hero">
+              <div class="login-badge-icon">🔐</div>
+              <h2>ورود به حساب مشتریان</h2>
+              <p>برای مشاهده موجودی و سابقه تراکنش‌ها، شماره تماس ثبت‌شده خود را وارد کنید</p>
             </div>
-          </div>
 
-          <div class="info-card">
-            <div class="info-title">💡 درباره این بخش از برنامه</div>
-            <div class="info-desc">
-              اگر در امانت‌داری کریمی حساب دارید، می‌توانید مستقیماً جزئیات حساب و موجودی‌تان را چک کرده، رسیدهای انتقال را دریافت کرده و دائماً با ما در ارتباط باشید.
-            </div>
-          </div>
-
-          <a href="https://wa.me/9647721878997" target="_blank" class="action-btn whatsapp-btn" style="margin-bottom:10px; font-size:13.5px;">
-            ✨ افتتاح حساب با امانت‌داری کریمی
-          </a>
-
-          <div class="info-card" style="border-color:#94a3b8;">
-            <div class="info-title" style="text-align:center; font-size:14.5px; margin-bottom:6px;">ورود و شناسایی حساب</div>
-            <div style="font-size:12px; color:#64748b; margin-bottom:10px; text-align:center; font-weight:700;">
-              اگر با امانت‌داری کریمی حساب دارید، شماره تماس ثبت شده را وارد کنید تا سیستم شما را شناسایی کند:
-            </div>
-            
             <div class="form-group">
-              <input type="tel" inputmode="numeric" id="phoneInput" placeholder="شماره تماس (مثال: 077...)" dir="ltr">
+              <label for="phoneInput">شماره تماس مشتری:</label>
+              <input type="tel" inputmode="numeric" id="phoneInput" placeholder="مثلاً: 07721878997" dir="ltr" onkeydown="if(event.key==='Enter') checkPhone()">
             </div>
-            <button id="btnCheckPhone" onclick="checkPhone()">مرحله بعد ←</button>
-            
+
+            <button type="button" class="btn" id="btnCheckPhone" onclick="checkPhone()">ادامه و شناسایی حساب ←</button>
+
             <div id="biometricBtnWrapper" class="hidden" style="margin-top: 10px;">
-              <button onclick="loginWithBiometric()" style="background: var(--success-dark); font-size: 13px;">🔑 ورود سریع با اثر انگشت</button>
+              <button type="button" class="btn btn-success" onclick="loginWithBiometric()">🔑 ورود سریع با اثر انگشت</button>
             </div>
+          </div>
+
+          <div class="clean-card" style="padding:12px 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.84rem; font-weight:900; color:var(--primary);">✨ هنوز حساب ندارید؟</span>
+              <button type="button" onclick="toggleAboutInfo()" style="background:none; border:none; color:var(--accent); font-size:0.78rem; font-weight:800; cursor:pointer; width:auto; padding:2px 4px;">درباره خدمات ما ▾</button>
+            </div>
+            <div id="aboutServicesBox" class="about-accordion hidden">
+              دریافت امانت‌های نقدی، نگهداری امن، انجام معاملات و حواله‌جات سریع با حساب‌رسانی دقیق و شفاف. جهت افتتاح حساب جدید از طریق واتساپ با ما در ارتباط باشید.
+            </div>
+            <a href="https://wa.me/9647721878997" target="_blank" class="btn btn-whatsapp" style="margin-top:10px; padding:10px; font-size:0.84rem;">
+              💬 درخواست افتتاح حساب در واتساپ
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- صفحه ورود کُد حساب -->
+      <!-- مرحله ۲: ورود کد حساب -->
       <div id="accountSection" class="hidden" style="margin: auto 0;">
-        <div class="info-card" style="text-align:center;">
-          <div style="font-size:36px; margin-bottom:6px;">🔐</div>
-          <div id="greetingMsg" style="font-weight:900; color:var(--success-dark); margin-bottom:12px; font-size:15px;"></div>
+        <div class="clean-card" style="text-align:center; padding:20px 16px;">
+          <div class="login-badge-icon" style="background:var(--success-soft); color:var(--success); border-color:#a7f3d0;">👤</div>
+          <div id="greetingMsg" style="font-weight:900; color:var(--primary); margin-bottom:4px; font-size:1.05rem;"></div>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">لطفاً کد اختصاصی حساب (Account ID) خود را وارد نمایید:</p>
+          
           <div class="form-group">
-            <input type="password" id="accountIdInput" placeholder="کُد حساب (Account ID)" dir="ltr">
+            <input type="password" id="accountIdInput" placeholder="کد حساب (مثلاً: ACC-123456)" dir="ltr" onkeydown="if(event.key==='Enter') verifyAccount()">
           </div>
-          <button id="btnVerifyAcc" onclick="verifyAccount()">ورود به سیستم 🚀</button>
-          <button onclick="backToPhone()" style="background:#64748b; margin-top:8px;">← تغییر شماره</button>
+          <button type="button" class="btn btn-success" id="btnVerifyAcc" onclick="verifyAccount()">ورود به داشبورد حساب 🚀</button>
+          <button type="button" class="btn btn-outline" onclick="navigateToStep('phone')" style="margin-top:8px;">← تغییر شماره تماس</button>
         </div>
       </div>
 
-      <!-- داشبورد اصلی یک‌صفحه‌ای (بدون اسکرول - بدون عکس پروفایل) -->
+      <!-- مرحله ۳: داشبورد مشتری -->
       <div id="dashboardSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
-        <!-- نام نمایشی لوکس نوری و برجسته (بدون عکس) -->
-        <div class="user-profile-neon-card">
-          <div class="profile-neon-header">
-            <span id="dashName" class="profile-neon-name">---</span>
-            <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#38bdf8; padding:3px 8px; border-radius:6px; font-weight:800;">حساب معتبر</span>
-          </div>
-          <div class="profile-neon-details">
-            <span>تلفن: <b id="dashPhone" class="eng-num" style="color:#ffffff;">---</b></span>
-            <span>کُد حساب: <b id="dashAccountId" class="eng-num" style="color:#38bdf8;">---</b></span>
-          </div>
-          <div class="profile-actions">
-            <button onclick="toggleBiometricSetting()" id="bioToggleBtn" class="btn-pill" style="background:var(--success-dark);">🔑 اثرانگشت</button>
-            <button onclick="shareProfileImage()" class="btn-pill" style="background:#0284c7;">📸 عکس صورت‌حساب</button>
-            <button onclick="logout()" class="btn-pill" style="background:var(--danger-dark);">خروج ✕</button>
-          </div>
-        </div>
-
-        <!-- کارت آمار زنده - چیدمان اصلاح‌شده: تب‌های ارز بالا، مانده بسیار بزرگ در وسط، هشدار پایین -->
-        <div class="dashboard-main-card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:14px; font-weight:900; color:#1e293b;">📊 آمار زنده موجودی حساب</span>
-            <button id="refreshAccountBtn" onclick="refreshAccountData()" style="width:auto; padding:5px 10px; font-size:11px; background:#0284c7; margin-top:0; box-shadow:none; border-radius:8px;">
-              🔄 به‌روزرسانی
-            </button>
-          </div>
-
-          <!-- ۱. بالاترین بخش: انتخاب ارزها با اکشن متحرک -->
-          <div class="currency-tabs" id="currencyTabs"></div>
-
-          <!-- ۲. وسط: کادر مانده حساب بسیار بزرگ (بدون عبارت شک‌برانگیز) -->
-          <div class="odometer-card-bright">
-            <div style="font-size:13px; font-weight:800; color:#94a3b8;">مانده حساب (<span id="odometerCurrencyLabel">AFN</span>)</div>
-            <div id="odometerValue" class="odometer-value-large eng-num">0</div>
-            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800; border-top:1px solid rgba(255,255,255,0.15); padding-top:8px; margin-top:6px;">
-              <span>مجموع بستانکار (+): <b id="odometerCredit" class="eng-num" style="color:#4ade80;">0</b></span>
-              <span>مجموع بدهکار (-): <b id="odometerDebit" class="eng-num" style="color:#f87171;">0</b></span>
+        <div>
+          <!-- کارت خلاصه پروفایل -->
+          <div class="profile-summary-card">
+            <div class="profile-top-row">
+              <span id="dashName" class="profile-user-name">---</span>
+              <span class="profile-status-pill">● حساب فعال</span>
+            </div>
+            <div class="profile-meta-row">
+              <span>تلفن: <b id="dashPhone" class="eng-num" style="color:#ffffff;">---</b></span>
+              <span>کد حساب: <b id="dashAccountId" class="eng-num" style="color:#7dd3fc;">---</b></span>
+            </div>
+            <div class="profile-quick-actions">
+              <button type="button" onclick="toggleBiometricSetting()" id="bioToggleBtn" class="profile-mini-btn">🔑 اثرانگشت</button>
+              <button type="button" onclick="shareProfileImage()" class="profile-mini-btn">📸 عکس صورت‌حساب</button>
+              <button type="button" onclick="logout()" class="profile-mini-btn logout-btn">خروج ✕</button>
             </div>
           </div>
 
-          <!-- ۳. پایین: پیام هشدار و وضعیت حساب -->
-          <div id="accountPsychologyMsg"></div>
+          <!-- کارت موجودی و آمار -->
+          <div class="clean-card" style="padding:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-size:0.9rem; font-weight:900; color:var(--primary);">📊 موجودی و وضعیت حساب</span>
+              <button type="button" id="refreshAccountBtn" onclick="refreshAccountData()" class="btn btn-outline" style="width:auto; padding:5px 10px; font-size:0.75rem; border-radius:8px;">
+                🔄 بروزرسانی
+              </button>
+            </div>
+
+            <div class="currency-tabs" id="currencyTabs"></div>
+
+            <div class="balance-box-modern">
+              <div class="balance-label">مانده خالص حساب (<span id="odometerCurrencyLabel">AFN</span>)</div>
+              <div id="odometerValue" class="balance-main-figure eng-num">0</div>
+              <div class="balance-sub-grid">
+                <div class="balance-sub-item">
+                  <span class="balance-sub-title">مجموع بستانکار (+)</span>
+                  <span id="odometerCredit" class="balance-sub-val eng-num" style="color:var(--success);">0</span>
+                </div>
+                <div class="balance-sub-item">
+                  <span class="balance-sub-title">مجموع بدهکار (-)</span>
+                  <span id="odometerDebit" class="balance-sub-val eng-num" style="color:var(--danger);">0</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="accountPsychologyMsg"></div>
+          </div>
         </div>
 
-        <!-- دکمه‌های پایین صفحه -->
-        <div>
-          <button onclick="openTransactionsModal()" style="padding:14px; font-size:14.5px; background:linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%); margin-bottom:8px; box-shadow:0 6px 18px rgba(16, 185, 129, 0.35);">
-            📋 مشاهده سابقه کامل معاملات (<span id="txCountBadge" class="eng-num">0</span>)
+        <!-- دکمه‌های عملیاتی پایین -->
+        <div style="margin-top:6px;">
+          <button type="button" class="btn" onclick="openTransactionsModal()" style="margin-bottom:8px;">
+            📋 مشاهده دفتر تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
           </button>
-          <a id="directWhatsAppMsg" href="#" target="_blank" class="action-btn whatsapp-btn" style="padding:12px; font-size:13.5px; margin-bottom:0;">
-            💬 ارسال پیام مستقیم به امانت‌داری کریمی
+          <a id="directWhatsAppMsg" href="#" target="_blank" class="btn btn-whatsapp" style="padding:11px; font-size:0.86rem;">
+            💬 ارسال پیام به امانت‌داری کریمی
           </a>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- مودال جدید و اختصاصی گزارش خطای شماره نامعتبر (جایگزین متن پایین صفحه) -->
-  <div id="errorModal" class="fullscreen-modal" style="background: rgba(15,23,42,0.85); backdrop-filter: blur(10px); display:flex; justify-content:center; align-items:center;">
-    <div style="background:#ffffff; width:90%; max-width:380px; border-radius:22px; padding:22px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.4); border:2.5px solid var(--danger);">
-      <div style="font-size:42px; margin-bottom:8px;">⚠️</div>
-      <h3 style="font-size:17px; font-weight:900; color:var(--danger-dark); margin-bottom:10px;">شماره شناسایی نشد</h3>
-      <p style="font-size:13px; color:#475569; line-height:1.7; margin-bottom:16px;">
-        شماره تماسی که وارد کرده‌اید در سیستم امانت‌داری کریمی ثبت نشده است. اگر تمایل به ایجاد حساب دارید، می‌توانید از طریق واتساپ با ما در ارتباط باشید:
+  <!-- دیالوگ پیشنهاد/فعال‌سازی اثر انگشت هنگام ورود -->
+  <div id="biometricPromptModal" class="center-dialog-backdrop hidden">
+    <div class="center-dialog-box">
+      <div style="width:58px; height:58px; background:var(--success-soft); color:var(--success); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:10px; border:1.5px solid #a7f3d0;">🔑</div>
+      <h3 style="font-size:1.05rem; font-weight:900; color:var(--primary); margin-bottom:6px;">فعال‌سازی ورود با اثر انگشت</h3>
+      <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.65; margin-bottom:16px;">
+        برای امنیت بیشتر و ورود سریع بدون نیاز به وارد کردن مجدد شماره و کد حساب در دفعات بعدی، اثر انگشت خود را فعال کنید.
       </p>
-      <a id="modalWhatsAppErrorBtn" href="#" target="_blank" class="action-btn whatsapp-btn" style="margin-bottom:10px; font-size:13.5px;">
-        💬 پیام به واتساپ امانت‌داری کریمی
-      </a>
-      <button onclick="closeErrorModal()" style="background:#64748b; margin-top:0;">تأیید و بازگشت ✕</button>
+      <button type="button" class="btn btn-success" onclick="confirmEnableBiometric()" style="margin-bottom:8px;">✅ فعال‌سازی اثر انگشت</button>
+      <button type="button" class="btn btn-outline" onclick="dismissBiometricPrompt()" style="font-size:0.82rem; padding:10px;">فعلاً نیاز نیست</button>
     </div>
   </div>
 
-  <!-- مودال لیست تراکنش‌ها -->
+  <!-- دیالوگ خطای شماره نامعتبر -->
+  <div id="errorModal" class="center-dialog-backdrop hidden">
+    <div class="center-dialog-box" style="border-color:#fca5a5;">
+      <div style="font-size:2.4rem; margin-bottom:6px;">⚠️</div>
+      <h3 style="font-size:1.05rem; font-weight:900; color:var(--danger); margin-bottom:8px;">شماره تماس یافت نشد</h3>
+      <p style="font-size:0.82rem; color:#475569; line-height:1.65; margin-bottom:16px;">
+        شماره واردشده در سیستم امانت‌داری کریمی ثبت نشده است. در صورت نیاز به افتتاح حساب یا بررسی شماره، با پشتیبانی تماس بگیرید:
+      </p>
+      <a id="modalWhatsAppErrorBtn" href="#" target="_blank" class="btn btn-whatsapp" style="margin-bottom:8px; font-size:0.86rem;">
+        💬 پیام به واتساپ پشتیبانی
+      </a>
+      <button type="button" class="btn btn-secondary" onclick="closeErrorModal()">بازگشت و اصلاح شماره</button>
+    </div>
+  </div>
+
+  <!-- مودال تمام‌صفحه لیست تراکنش‌ها (جدول منظم روزانه) -->
   <div id="transactionsModal" class="fullscreen-modal">
     <div class="modal-header">
-      <h3 style="font-size:15px; color:#1e293b; font-weight:900;">📋 سابقه تراکنش‌ها</h3>
-      <button onclick="closeTransactionsModal()" style="width:auto; padding:6px 12px; font-size:12px; background:#64748b; margin-top:0; box-shadow:none;">بستن ✕</button>
+      <h3 style="font-size:0.98rem; font-weight:900;">📋 دفتر و سابقه تراکنش‌ها</h3>
+      <button type="button" class="header-action-btn" onclick="handleModalBackClick('transactionsModal')">← بازگشت</button>
     </div>
     <div class="modal-scroll-body" id="transactionsContainer"></div>
   </div>
 
-  <!-- مودال رسید تراکنش -->
-  <div id="txDetailModal" class="fullscreen-modal">
+  <!-- مودال تمام‌صفحه رسید تراکنش -->
+  <div id="txDetailModal" class="fullscreen-modal" style="z-index:2100;">
     <div class="modal-header">
-      <h3 style="font-size:15px; color:#1e293b; font-weight:900;">📄 رسید معامله</h3>
-      <button onclick="closeDetailModal()" style="width:auto; padding:6px 12px; font-size:12px; background:#64748b; margin-top:0; box-shadow:none;">بازگشت</button>
+      <h3 style="font-size:0.98rem; font-weight:900;">🧾 جزئیات و رسید معامله</h3>
+      <button type="button" class="header-action-btn" onclick="handleModalBackClick('txDetailModal')">← بازگشت</button>
     </div>
-    <div class="modal-scroll-body">
-      <div id="receiptToCapture" class="info-card" style="border-width:2px;">
-        <div style="display:flex; justify-content:space-between; border-bottom:1px dashed #cbd5e1; padding-bottom:8px; margin-bottom:10px;">
-          <span style="font-size:14px; font-weight:900; color:#0284c7;">🧾 رسید معامله</span>
-          <span style="font-size:11px; color:#64748b;" class="eng-num" id="receiptDateStr">---</span>
+    <div class="modal-scroll-body" style="padding:14px;">
+      <div id="receiptToCapture" class="clean-card" style="border-width:1.5px; border-color:#94a3b8;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px dashed #cbd5e1; padding-bottom:10px; margin-bottom:12px;">
+          <span style="font-size:0.95rem; font-weight:900; color:var(--primary);">🛡️ امانت‌داری کریمی</span>
+          <span style="font-size:0.78rem; color:var(--text-muted); font-weight:800;" class="eng-num" id="receiptDateStr">---</span>
         </div>
-        <div id="modalBody" style="font-size:13.5px; color:#334155; line-height:1.9;" class="eng-num"></div>
+        <div id="modalBody" style="font-size:0.86rem; color:#1e293b; line-height:2;"></div>
       </div>
 
-      <button class="action-btn" onclick="shareRecordImage()" style="background:#0284c7;">📸 دانلود عکس رسید</button>
-      <button class="action-btn" onclick="requestEdit()" style="background:var(--warning);">✏️ درخواست ویرایش</button>
+      <button type="button" class="btn" onclick="shareRecordImage()" style="margin-bottom:8px;">📸 ذخیره تصویر رسید</button>
+      <button type="button" class="btn btn-outline" onclick="requestEdit()" style="margin-bottom:8px;">✏️ درخواست بررسی / ویرایش</button>
       
-      <div id="hawalaReceiptWrapper" class="hidden">
-        <button class="action-btn" onclick="shareHawalaReceipt()" style="background:#8b5cf6;">📜 ارسال رسید حواله</button>
+      <div id="hawalaReceiptWrapper" class="hidden" style="margin-bottom:8px;">
+        <button type="button" class="btn btn-success" onclick="shareHawalaReceipt()">📜 اشتراک‌گذاری رسید حواله</button>
       </div>
 
-      <a id="modalWhatsApp" href="#" target="_blank" class="action-btn whatsapp-btn">💬 پشتیبانی واتساپ</a>
+      <a id="modalWhatsApp" href="#" target="_blank" class="btn btn-whatsapp">💬 پشتیبانی این تراکنش در واتساپ</a>
     </div>
   </div>
 
   <script>
+    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
+    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let accountsList = [];
+    let transactionsList = [];
+    let currentFoundUser = null;
+    let customerTransactions = [];
+    let customerBalances = {};
+    let currencyList = [];
+    let activeCurrencyIndex = 0;
+    let selectedTxItem = null;
+    let currentStep = 'phone'; // 'phone' | 'account' | 'dashboard'
+    let isHandlingPopState = false;
+
     function toEnglishDigits(str) {
       if (str === null || str === undefined) return '';
       return String(str).replace(/[۰-۹٠-٩]/g, function (d) {
@@ -590,9 +736,8 @@
       if (isNaN(d.getTime())) return '';
       let hh = String(d.getHours()).padStart(2, '0');
       let mm = String(d.getMinutes()).padStart(2, '0');
-      let ss = String(d.getSeconds()).padStart(2, '0');
-      if (hh === '00' && mm === '00' && ss === '00') return '';
-      return `${hh}:${mm}:${ss}`;
+      if (hh === '00' && mm === '00') return '';
+      return `${hh}:${mm}`;
     }
 
     function getTxTimestamp(tx) {
@@ -630,20 +775,6 @@
       } catch (e) { return ''; }
     }
 
-    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
-    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let accountsList = [];
-    let transactionsList = [];
-    let currentFoundUser = null;
-    let customerTransactions = [];
-    let customerBalances = {};
-    let currencyList = [];
-    let activeCurrencyIndex = 0;
-    let selectedTxItem = null;
-
-    // افکت‌های صوتی کلیک و شمارش مانده
     function playSound(type) {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -651,18 +782,13 @@
         const gain = ctx.createGain();
         osc.connect(gain); gain.connect(ctx.destination);
         if (type === 'click') {
-          osc.frequency.setValueAtTime(550, ctx.currentTime);
-          gain.gain.setValueAtTime(0.04, ctx.currentTime);
-          osc.start(); osc.stop(ctx.currentTime + 0.04);
-        } else if (type === 'tick') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(700, ctx.currentTime);
-          gain.gain.setValueAtTime(0.02, ctx.currentTime);
-          osc.start(); osc.stop(ctx.currentTime + 0.02);
-        } else if (type === 'success') {
           osc.frequency.setValueAtTime(520, ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
-          gain.gain.setValueAtTime(0.06, ctx.currentTime);
+          gain.gain.setValueAtTime(0.03, ctx.currentTime);
+          osc.start(); osc.stop(ctx.currentTime + 0.035);
+        } else if (type === 'success') {
+          osc.frequency.setValueAtTime(540, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(860, ctx.currentTime + 0.1);
+          gain.gain.setValueAtTime(0.05, ctx.currentTime);
           osc.start(); osc.stop(ctx.currentTime + 0.1);
         }
       } catch (e) {}
@@ -684,7 +810,7 @@
 
     function getLast9Digits(str) {
       if (!str) return '';
-      let cleaned = String(str).replace(/\D/g, '');
+      let cleaned = toEnglishDigits(String(str)).replace(/\D/g, '');
       return cleaned.slice(-9);
     }
 
@@ -694,10 +820,106 @@
       return num.toLocaleString('en-US');
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      playSound('success');
+    function toggleAboutInfo() {
+      playSound('click');
+      document.getElementById('aboutServicesBox').classList.toggle('hidden');
+    }
+
+    /* مدیریت هوشمند دکمه بازگشت گوشی تا کاربر ناخواسته از صفحه خارج نشود */
+    function initNavigationHistory() {
+      window.history.replaceState({ appState: 'phone' }, '');
+      window.addEventListener('popstate', function (event) {
+        const detailModal = document.getElementById('txDetailModal');
+        const txModal = document.getElementById('transactionsModal');
+        const errModal = document.getElementById('errorModal');
+        const bioModal = document.getElementById('biometricPromptModal');
+
+        if (!bioModal.classList.contains('hidden')) {
+          bioModal.classList.add('hidden');
+          window.history.pushState({ appState: currentStep }, '');
+          return;
+        }
+        if (!errModal.classList.contains('hidden')) {
+          errModal.classList.add('hidden');
+          window.history.pushState({ appState: currentStep }, '');
+          return;
+        }
+        if (detailModal.classList.contains('open')) {
+          detailModal.classList.remove('open');
+          return;
+        }
+        if (txModal.classList.contains('open')) {
+          txModal.classList.remove('open');
+          return;
+        }
+
+        if (currentStep === 'account') {
+          isHandlingPopState = true;
+          navigateToStep('phone', false);
+          isHandlingPopState = false;
+          window.history.pushState({ appState: 'phone' }, '');
+          return;
+        }
+
+        if (currentStep === 'dashboard') {
+          // جلوگیری از خروج ناگهانی از داشبورد با دکمه بازگشت گوشی
+          window.history.pushState({ appState: 'dashboard' }, '');
+          return;
+        }
+
+        if (currentStep === 'phone') {
+          window.history.pushState({ appState: 'phone' }, '');
+        }
+      });
+    }
+
+    function navigateToStep(step, pushHist = true) {
+      currentStep = step;
+      document.getElementById('phoneSection').classList.add('hidden');
+      document.getElementById('accountSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.add('hidden');
+
+      const headerBtn = document.getElementById('headerBackBtn');
+      if (step === 'phone') {
+        document.getElementById('phoneSection').classList.remove('hidden');
+        headerBtn.innerText = '← منو';
+        headerBtn.classList.remove('hidden');
+      } else if (step === 'account') {
+        document.getElementById('accountSection').classList.remove('hidden');
+        headerBtn.innerText = '← بازگشت';
+        headerBtn.classList.remove('hidden');
+      } else if (step === 'dashboard') {
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        headerBtn.innerText = '← منو';
+        headerBtn.classList.remove('hidden');
+      }
+
+      if (pushHist && !isHandlingPopState) {
+        window.history.pushState({ appState: step }, '');
+      }
+    }
+
+    function handleHeaderBack() {
+      playSound('click');
+      if (currentStep === 'account') {
+        navigateToStep('phone');
+      } else {
+        window.location.href = 'index.html';
+      }
+    }
+
+    function handleModalBackClick(modalId) {
+      playSound('click');
+      document.getElementById(modalId).classList.remove('open');
+      if (window.history.state && window.history.state.modal === modalId) {
+        window.history.back();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      initNavigationHistory();
+      await fetchDataFromSupabaseBackground();
       initUserSession();
-      fetchDataFromSupabaseBackground();
     });
 
     async function fetchDataFromSupabaseBackground() {
@@ -713,21 +935,16 @@
 
     async function refreshAccountData() {
       playSound('click');
-      try {
-        const [accRes, txRes] = await Promise.all([
-          _supabase.from('accounts').select('*'),
-          _supabase.from('transactions').select('*')
-        ]);
-        if (accRes.data) accountsList = accRes.data;
-        if (txRes.data) transactionsList = txRes.data;
-      } catch (e) {}
-
+      const btn = document.getElementById('refreshAccountBtn');
+      if (btn) btn.innerText = '⏳...';
+      await fetchDataFromSupabaseBackground();
       const savedAccId = localStorage.getItem('karimi_accId');
       if (savedAccId) {
         let found = accountsList.find(u => String(getVal(u, ['AccountID', 'accountid', 'ID'])).trim() === savedAccId);
         if (found) currentFoundUser = found;
-        processDashboard(savedAccId);
+        processDashboard(savedAccId, false);
       }
+      if (btn) btn.innerText = '🔄 بروزرسانی';
     }
 
     function initUserSession() {
@@ -737,23 +954,26 @@
       if (savedPhone && savedAccId) {
         autoLogin(savedPhone, savedAccId);
       } else {
-        document.getElementById('phoneSection').classList.remove('hidden');
+        navigateToStep('phone', false);
         if (localStorage.getItem('karimi_biometric_enabled') === 'true') {
           document.getElementById('biometricBtnWrapper').classList.remove('hidden');
         }
       }
     }
 
-    function checkPhone() {
+    async function checkPhone() {
       playSound('click');
-      const rawInput = document.getElementById('phoneInput').value.trim();
-
+      const rawInput = toEnglishDigits(document.getElementById('phoneInput').value.trim());
       if (!rawInput) return;
-      const userLast9 = getLast9Digits(rawInput);
 
+      const userLast9 = getLast9Digits(rawInput);
       if (userLast9.length < 9) {
-        alert("لطفاً شماره تلفن را کامل‌تر وارد کنید.");
+        alert("لطفاً شماره تلفن خود را کامل وارد کنید.");
         return;
+      }
+
+      if (accountsList.length === 0) {
+        await fetchDataFromSupabaseBackground();
       }
 
       const found = accountsList.find(u => {
@@ -763,90 +983,37 @@
 
       if (found) {
         currentFoundUser = found;
-        document.getElementById('phoneSection').classList.add('hidden');
-        document.getElementById('accountSection').classList.remove('hidden');
         let nameVal = getVal(currentFoundUser, ['Name', 'name']) || 'مشتری گرامی';
-        document.getElementById('greetingMsg').innerText = `خوش آمدید ${nameVal} عزیز!`;
+        document.getElementById('greetingMsg').innerText = `خوش آمدید، ${nameVal}`;
+        document.getElementById('accountIdInput').value = '';
+        navigateToStep('account');
+        setTimeout(() => document.getElementById('accountIdInput').focus(), 150);
       } else {
-        // باز کردن صفحه مودال جدید گزارش خطا به جای اسکرول پایین صفحه
-        const encodedText = encodeURIComponent(`سلام کریمی عزیز، شماره تماس من ${rawInput} است. تمایل دارم حساب داشته باشم.`);
+        const encodedText = encodeURIComponent(`سلام کریمی عزیز، شماره تماس من ${rawInput} است. برای بررسی یا افتتاح حساب پیام می‌دهم.`);
         document.getElementById('modalWhatsAppErrorBtn').href = `https://wa.me/9647721878997?text=${encodedText}`;
-        document.getElementById('errorModal').style.transform = 'translateY(0)';
+        document.getElementById('errorModal').classList.remove('hidden');
+        window.history.pushState({ appState: 'errorModal' }, '');
       }
     }
 
     function closeErrorModal() {
       playSound('click');
-      document.getElementById('errorModal').style.transform = 'translateY(100%)';
+      document.getElementById('errorModal').classList.add('hidden');
     }
 
-    async function loginWithBiometric() {
+    async function verifyAccount() {
       playSound('click');
-      const bioPhone = localStorage.getItem('karimi_biometric_phone');
-      const bioAccId = localStorage.getItem('karimi_biometric_accId');
-
-      if (localStorage.getItem('karimi_biometric_enabled') !== 'true' || !bioPhone || !bioAccId) {
-        alert("ورود با اثر انگشت فعال نیست.");
-        return;
-      }
-
-      if (window.PublicKeyCredential) {
-        try {
-          const credential = await navigator.credentials.get({
-            publicKey: {
-              challenge: new Uint8Array([11, 22, 33, 44, 55, 66, 77, 88]),
-              timeout: 60000,
-              userVerification: "preferred"
-            }
-          });
-          if (credential) {
-            autoLogin(bioPhone, bioAccId);
-            return;
-          }
-        } catch(e) {}
-      }
-      autoLogin(bioPhone, bioAccId);
-    }
-
-    function toggleBiometricSetting() {
-      playSound('click');
-      let currentStatus = localStorage.getItem('karimi_biometric_enabled') === 'true';
-      if (currentStatus) {
-        localStorage.setItem('karimi_biometric_enabled', 'false');
-        alert("ورود با اثر انگشت غیرفعال گردید.");
-      } else {
-        let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']);
-        let sheetAccId = String(getVal(currentFoundUser, ['AccountID', 'accountid', 'ID'])).trim();
-        
-        localStorage.setItem('karimi_biometric_enabled', 'true');
-        localStorage.setItem('karimi_biometric_phone', phoneVal);
-        localStorage.setItem('karimi_biometric_accId', sheetAccId);
-        alert("ورود با اثر انگشت فعال گردید.");
-      }
-      updateBioBtnText();
-    }
-
-    function updateBioBtnText() {
-      let isEnabled = localStorage.getItem('karimi_biometric_enabled') === 'true';
-      const btn = document.getElementById('bioToggleBtn');
-      if (btn) {
-        btn.innerText = isEnabled ? "🔴 اثرانگشت فعال" : "🔑 اثرانگشت";
-        btn.style.background = isEnabled ? "var(--danger-dark)" : "var(--success-dark)";
-      }
-    }
-
-    function verifyAccount() {
-      playSound('click');
-      const accIdInput = document.getElementById('accountIdInput').value.trim();
+      const accIdInput = toEnglishDigits(document.getElementById('accountIdInput').value.trim());
       let sheetAccId = String(getVal(currentFoundUser, ['AccountID', 'accountid', 'ID'])).trim();
 
-      if (sheetAccId === accIdInput) {
+      if (sheetAccId.toLowerCase() === accIdInput.toLowerCase()) {
         let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']);
         localStorage.setItem('karimi_phone', phoneVal);
         localStorage.setItem('karimi_accId', sheetAccId);
-        processDashboard(sheetAccId);
+        playSound('success');
+        processDashboard(sheetAccId, true);
       } else {
-        alert("کد حساب اشتباه است.");
+        alert("کد حساب واردشده صحیح نیست.");
       }
     }
 
@@ -859,53 +1026,125 @@
 
       if (found) {
         let sheetAccId = String(getVal(found, ['AccountID', 'accountid', 'ID'])).trim();
-        if (sheetAccId === accId.trim()) {
+        if (sheetAccId.toLowerCase() === accId.trim().toLowerCase()) {
           currentFoundUser = found;
-          processDashboard(sheetAccId);
+          processDashboard(sheetAccId, false);
           return;
         }
       }
       localStorage.removeItem('karimi_phone');
       localStorage.removeItem('karimi_accId');
-      document.getElementById('phoneSection').classList.remove('hidden');
+      navigateToStep('phone', false);
     }
 
-    function backToPhone() {
+    /* مدیریت اثر انگشت (بیومتریک) */
+    async function triggerBiometricAuth() {
+      if (window.PublicKeyCredential) {
+        try {
+          await navigator.credentials.get({
+            publicKey: {
+              challenge: new Uint8Array([14, 28, 42, 56, 70, 84, 98, 112]),
+              timeout: 60000,
+              userVerification: "preferred"
+            }
+          });
+        } catch (e) {}
+      }
+      return true;
+    }
+
+    async function loginWithBiometric() {
       playSound('click');
-      document.getElementById('accountSection').classList.add('hidden');
-      document.getElementById('phoneSection').classList.remove('hidden');
+      const bioPhone = localStorage.getItem('karimi_biometric_phone');
+      const bioAccId = localStorage.getItem('karimi_biometric_accId');
+
+      if (localStorage.getItem('karimi_biometric_enabled') !== 'true' || !bioPhone || !bioAccId) {
+        alert("ورود با اثر انگشت هنوز فعال نشده است.");
+        return;
+      }
+
+      await triggerBiometricAuth();
+      if (accountsList.length === 0) {
+        await fetchDataFromSupabaseBackground();
+      }
+      autoLogin(bioPhone, bioAccId);
+    }
+
+    async function confirmEnableBiometric() {
+      playSound('success');
+      await triggerBiometricAuth();
+      let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']);
+      let sheetAccId = String(getVal(currentFoundUser, ['AccountID', 'accountid', 'ID'])).trim();
+
+      localStorage.setItem('karimi_biometric_enabled', 'true');
+      localStorage.setItem('karimi_biometric_phone', phoneVal);
+      localStorage.setItem('karimi_biometric_accId', sheetAccId);
+      localStorage.removeItem('karimi_biometric_dismissed');
+
+      document.getElementById('biometricPromptModal').classList.add('hidden');
+      updateBioBtnText();
+      alert("✅ ورود با اثر انگشت برای حساب شما فعال شد.");
+    }
+
+    function dismissBiometricPrompt() {
+      playSound('click');
+      localStorage.setItem('karimi_biometric_dismissed', 'true');
+      document.getElementById('biometricPromptModal').classList.add('hidden');
+    }
+
+    function toggleBiometricSetting() {
+      playSound('click');
+      let currentStatus = localStorage.getItem('karimi_biometric_enabled') === 'true';
+      if (currentStatus) {
+        localStorage.setItem('karimi_biometric_enabled', 'false');
+        alert("ورود با اثر انگشت غیرفعال شد.");
+        updateBioBtnText();
+      } else {
+        confirmEnableBiometric();
+      }
+    }
+
+    function updateBioBtnText() {
+      let isEnabled = localStorage.getItem('karimi_biometric_enabled') === 'true';
+      const btn = document.getElementById('bioToggleBtn');
+      if (btn) {
+        btn.innerText = isEnabled ? "🟢 اثرانگشت فعال" : "🔑 فعال‌سازی اثرانگشت";
+        btn.className = isEnabled ? "profile-mini-btn bio-on" : "profile-mini-btn";
+      }
     }
 
     function logout() {
       playSound('click');
       localStorage.removeItem('karimi_phone');
       localStorage.removeItem('karimi_accId');
-      location.reload();
+      currentFoundUser = null;
+      navigateToStep('phone');
+      if (localStorage.getItem('karimi_biometric_enabled') === 'true') {
+        document.getElementById('biometricBtnWrapper').classList.remove('hidden');
+      } else {
+        document.getElementById('biometricBtnWrapper').classList.add('hidden');
+      }
     }
 
-    function processDashboard(sheetAccId) {
-      document.getElementById('phoneSection').classList.add('hidden');
-      document.getElementById('accountSection').classList.add('hidden');
-      document.getElementById('dashboardSection').classList.remove('hidden');
-
+    function processDashboard(sheetAccId, isFreshLogin = false) {
+      navigateToStep('dashboard');
       updateBioBtnText();
 
       let nameVal = getVal(currentFoundUser, ['Name', 'name']) || '---';
       let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']) || '---';
 
       document.getElementById('dashName').innerText = nameVal;
-      document.getElementById('dashPhone').innerText = phoneVal;
+      document.getElementById('dashPhone').innerText = toEnglishDigits(phoneVal);
       document.getElementById('dashAccountId').innerText = sheetAccId;
 
       const directWp = document.getElementById('directWhatsAppMsg');
-      const wpText = encodeURIComponent(`سلام کریمی عزیز، من ${nameVal} هستم. درباره وضعیت حسابم پرسشی دارم.`);
+      const wpText = encodeURIComponent(`سلام کریمی عزیز، من ${nameVal} (کد حساب: ${sheetAccId}) هستم. درباره وضعیت حسابم پرسشی دارم.`);
       directWp.href = `https://wa.me/9647721878997?text=${wpText}`;
 
       let rawUserTxs = transactionsList.filter(tx => {
         let rowAccId = String(getVal(tx, ['AccountID', 'accountid', 'ID'])).trim();
-        return rowAccId === sheetAccId;
+        return rowAccId.toLowerCase() === sheetAccId.toLowerCase();
       });
-      // مرتب‌سازی دقیق زمانی (جدیدترین به قدیمی‌ترین برای نمایش در داشبورد)
       customerTransactions = sortChronologically(rawUserTxs, false);
 
       customerBalances = {};
@@ -938,16 +1177,25 @@
       activeCurrencyIndex = 0;
       renderCurrencyTabs();
       renderTransactionsList();
+
+      // هنگام ورود جدید، اگر اثر انگشت فعال نباشد حتماً از مشتری برای فعال‌سازی پرسیده می‌شود
+      let isBioEnabled = localStorage.getItem('karimi_biometric_enabled') === 'true';
+      if (isFreshLogin && !isBioEnabled) {
+        setTimeout(() => {
+          document.getElementById('biometricPromptModal').classList.remove('hidden');
+          window.history.pushState({ appState: 'biometricPrompt' }, '');
+        }, 450);
+      }
     }
 
     function renderCurrencyTabs() {
       let tabsHtml = '';
       currencyList.forEach((curr, idx) => {
         let activeClass = idx === activeCurrencyIndex ? 'active' : '';
-        tabsHtml += `<button class="currency-tab ${activeClass}" onclick="switchCurrency(${idx})">${curr}</button>`;
+        tabsHtml += `<button type="button" class="currency-tab ${activeClass}" onclick="switchCurrency(${idx})">${curr}</button>`;
       });
       document.getElementById('currencyTabs').innerHTML = tabsHtml;
-      animateOdometer();
+      updateBalanceDisplay();
     }
 
     function switchCurrency(idx) {
@@ -956,8 +1204,7 @@
       renderCurrencyTabs();
     }
 
-    // انیمیشن افزایش ارقام کیلومترشمار همراه با صدای منظم شمارش (تک‌تک)
-    function animateOdometer() {
+    function updateBalanceDisplay() {
       let currName = currencyList[activeCurrencyIndex];
       let b = customerBalances[currName] || { credit: 0, debit: 0, net: 0 };
       
@@ -965,36 +1212,31 @@
 
       let psychBox = document.getElementById('accountPsychologyMsg');
       if (b.net > 0) {
-        psychBox.className = 'psychology-box positive';
-        psychBox.innerHTML = `🌟 <b>اعتبار مثبت:</b> حساب شما دارای بستانکاری و اعتبار فعال است.`;
+        psychBox.className = 'status-banner positive';
+        psychBox.innerHTML = `✅ <span><b>اعتبار بستانکاری:</b> حساب شما به مبلغ ${formatEnMoney(b.net)} ${currName} بستانکار است.</span>`;
       } else if (b.net < 0) {
-        psychBox.className = 'psychology-box negative';
-        psychBox.innerHTML = `⚠️ <b>توجه بدهی:</b> حساب شما دارای کسری یا بدهی می‌باشد.`;
+        psychBox.className = 'status-banner negative';
+        psychBox.innerHTML = `⚠️ <span><b>مانده بدهکاری:</b> حساب شما به مبلغ ${formatEnMoney(Math.abs(b.net))} ${currName} بدهکار می‌باشد.</span>`;
       } else {
-        psychBox.className = 'psychology-box neutral';
-        psychBox.innerHTML = `⚖️ <b>تسویه کامل:</b> موجودی حساب شما کاملاً صفر می‌باشد.`;
+        psychBox.className = 'status-banner neutral';
+        psychBox.innerHTML = `⚖️ <span><b>حساب تسویه است:</b> مانده این ارز در حال حاضر صفر می‌باشد.</span>`;
       }
 
-      let duration = 2500;
+      // انیمیشن سریع و نرم اعداد (۴۵۰ میلی‌ثانیه بدون صدای آزاردهنده)
+      let duration = 450;
       let startTime = null;
       let targetNet = b.net;
       let targetCredit = b.credit;
       let targetDebit = b.debit;
-      let lastTickTime = 0;
 
       function step(timestamp) {
         if (!startTime) startTime = timestamp;
         let progress = Math.min((timestamp - startTime) / duration, 1);
         let easeProgress = 1 - Math.pow(1 - progress, 3);
 
-        if (timestamp - lastTickTime > 80 && progress < 0.95) {
-          playSound('tick');
-          lastTickTime = timestamp;
-        }
-
-        document.getElementById('odometerValue').innerText = formatEnMoney(Math.floor(targetNet * easeProgress));
-        document.getElementById('odometerCredit').innerText = formatEnMoney(Math.floor(targetCredit * easeProgress));
-        document.getElementById('odometerDebit').innerText = formatEnMoney(Math.floor(targetDebit * easeProgress));
+        document.getElementById('odometerValue').innerText = formatEnMoney(Math.round(targetNet * easeProgress));
+        document.getElementById('odometerCredit').innerText = formatEnMoney(Math.round(targetCredit * easeProgress));
+        document.getElementById('odometerDebit').innerText = formatEnMoney(Math.round(targetDebit * easeProgress));
 
         if (progress < 1) {
           window.requestAnimationFrame(step);
@@ -1010,11 +1252,7 @@
     function openTransactionsModal() {
       playSound('click');
       document.getElementById('transactionsModal').classList.add('open');
-    }
-
-    function closeTransactionsModal() {
-      playSound('click');
-      document.getElementById('transactionsModal').classList.remove('open');
+      window.history.pushState({ appState: 'dashboard', modal: 'transactionsModal' }, '');
     }
 
     function renderTransactionsList() {
@@ -1023,22 +1261,18 @@
       container.innerHTML = "";
 
       if (customerTransactions.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; font-size:12.5px;">هیچ معامله‌ای یافت نشد.</div>';
+        container.innerHTML = '<div style="text-align:center; padding:30px 16px; color:#64748b; font-size:0.85rem; font-weight:700;">هیچ تراکنشی برای این حساب ثبت نشده است.</div>';
         return;
       }
 
-      // مرتب‌سازی دقیق صعودی/نزولی بر اساس زمان دقیق (سال، ماه، روز، ساعت، دقیقه، ثانیه)
-      let chronologicalAll = sortChronologically(customerTransactions, true); // قدیمی به جدید برای شماره‌گذاری ردیف‌ها
+      let chronologicalAll = sortChronologically(customerTransactions, true);
       let rowNumMap = {};
       chronologicalAll.forEach((t, i) => {
         let tid = String(getVal(t, ['TransID', 'transid']) || i);
         rowNumMap[tid] = i + 1;
       });
 
-      // نمایش جدیدترین به قدیمی‌ترین در لیست
       let sortedList = sortChronologically(customerTransactions, false);
-
-      // دسته‌بندی بر اساس روز
       let groups = [];
       let groupMap = {};
 
@@ -1058,7 +1292,6 @@
         let dayName = getPersianDayName(group.date);
         let dayTitle = dayName ? `${dayName} — ${toEnglishDigits(group.date)}` : toEnglishDigits(group.date);
 
-        // محاسبه مجموع بستانکار و بدهکار به تفکیک ارز برای این روز
         let dayTotals = {};
         group.items.forEach(tx => {
           let c = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -1073,62 +1306,67 @@
         for (let c in dayTotals) {
           let cred = dayTotals[c].creditor;
           let debt = dayTotals[c].debtor;
-          if (cred > 0) summaryParts.push(`<span style="color:#10b981;">بستانکار: ${toEnglishDigits(formatEnMoney(cred))} ${c}</span>`);
-          if (debt > 0) summaryParts.push(`<span style="color:#f87171;">بدهکار: ${toEnglishDigits(formatEnMoney(debt))} ${c}</span>`);
+          if (cred > 0) summaryParts.push(`<span style="color:#6ee7b7;">بست: ${formatEnMoney(cred)} ${c}</span>`);
+          if (debt > 0) summaryParts.push(`<span style="color:#fca5a5;">بده: ${formatEnMoney(debt)} ${c}</span>`);
         }
-        let daySummaryStr = summaryParts.length > 0 ? summaryParts.join(' | ') : 'بدون مبلغ';
+        let daySummaryStr = summaryParts.length > 0 ? summaryParts.join(' | ') : '';
 
-        let cardsHtml = "";
-        group.items.forEach((tx) => {
+        let rowsHtml = "";
+        group.items.forEach(tx => {
           let tid = String(getVal(tx, ['TransID', 'transid']) || '');
           let txNum = rowNumMap[tid] || '-';
           let dir = String(getVal(tx, ['Direction', 'direction']));
           let isCredit = (dir.includes('بستانکار') || dir.includes('دریافت'));
-          let amtColor = isCredit ? 'var(--success-dark)' : 'var(--danger-dark)';
-          let badgeBg = isCredit ? '#ecfdf5' : '#fef2f2';
+          let amtColor = isCredit ? 'var(--success)' : 'var(--danger)';
+          let rowClass = isCredit ? 'tx-row-credit' : 'tx-row-debit';
           let rawAmt = getVal(tx, ['Amount', 'amount']);
           let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
-          let opType = getVal(tx, ['OperationType', 'operationtype']) || 'عملیات مالی';
+          let opType = getVal(tx, ['OperationType', 'operationtype']) || 'عملیات';
           let rawDate = getVal(tx, ['Date', 'date']) || '';
           let timeStr = extractTimeOnly(rawDate);
-          let descStr = (getVal(tx, ['Description', 'description']) || 'بدون شرح مطلق').replaceAll('+', ' ');
+          let descStr = (getVal(tx, ['Description', 'description']) || '-').replaceAll('+', ' ');
           let currStr = getVal(tx, ['Currency', 'currency']) || 'AFN';
 
-          // پیدا کردن ایندکس اصلی در customerTransactions برای کلیک
           let originalIdx = customerTransactions.findIndex(item => String(getVal(item, ['TransID', 'transid'])) === tid);
 
-          cardsHtml += `
-            <div class="tx-card" onclick="openDetailModal(${originalIdx})" style="border-right: 5px solid ${amtColor}; margin-bottom:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <div style="display:flex; align-items:center; gap:6px;">
-                  <span style="background:#0f172a; color:#fff; padding:1px 6px; border-radius:5px; font-size:11px; font-weight:800;" class="eng-num">#${toEnglishDigits(txNum)}</span>
-                  <span style="font-weight:900; font-size:13.5px; color:#1e293b;">${opType}</span>
-                </div>
-                <span style="font-size:11px; background:${badgeBg}; color:${amtColor}; padding:2px 8px; border-radius:6px; font-weight:800;" class="eng-num">${dir}</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-bottom:4px;">
-                <span class="eng-num"> شناسه: ${tid}</span>
-                ${timeStr ? `<span class="eng-num">🕒 ${timeStr}</span>` : ''}
-              </div>
-              <div style="font-size:12px; color:#475569; margin-bottom:6px; line-height:1.5;">${descStr}</div>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #e2e8f0; padding-top:6px;">
-                <span style="font-weight:900; font-size:13.5px; color:${amtColor};" class="eng-num">${currStr} ${formatEnMoney(amountVal)}</span>
-                <span style="color:var(--primary); font-size:12px; font-weight:800;">مشاهده رسید ➔</span>
-              </div>
-            </div>`;
+          rowsHtml += `
+            <tr class="${rowClass}" onclick="openDetailModal(${originalIdx})">
+              <td style="white-space:nowrap; font-weight:900; color:#475569;" class="eng-num">#${toEnglishDigits(txNum)}</td>
+              <td style="white-space:nowrap;">
+                <div style="font-weight:900; color:var(--primary);">${opType}</div>
+                <div style="font-size:0.68rem; color:var(--text-muted);" class="eng-num">${timeStr ? '🕒 ' + timeStr : tid}</div>
+              </td>
+              <td style="white-space:nowrap;">
+                <span style="font-size:0.74rem; font-weight:900; color:${amtColor};">${isCredit ? 'بستانکار' : 'بدهکار'}</span>
+              </td>
+              <td style="white-space:nowrap;">
+                <div style="font-weight:900; color:${amtColor}; font-size:0.84rem;" class="eng-num">${formatEnMoney(amountVal)}</div>
+                <div style="font-size:0.68rem; color:#475569; font-weight:800;">${currStr}</div>
+              </td>
+              <td style="max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#334155; font-size:0.76rem;">
+                ${descStr}
+              </td>
+            </tr>
+          `;
         });
 
         finalHtml += `
-          <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 6px 12px; border-radius: 8px 8px 0 0; margin: 12px 0 6px 0; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 800; border-right: 4px solid #38bdf8; flex-wrap:wrap; gap:4px;">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span>📅 ${dayTitle}</span>
-              <span style="background: rgba(56, 189, 248, 0.2); color: #7dd3fc; padding: 1px 6px; border-radius: 10px; font-size: 11px;" class="eng-num">${toEnglishDigits(group.items.length)} تراکنش</span>
-            </div>
-            <div style="font-size:11px; background:rgba(15,23,42,0.6); padding:2px 6px; border-radius:6px; display:flex; gap:6px; flex-wrap:wrap;" class="eng-num">
-              ${daySummaryStr}
-            </div>
+          <div class="day-group-bar">
+            <div>📅 ${dayTitle} <span style="color:#7dd3fc; font-size:0.72rem;" class="eng-num">(${toEnglishDigits(group.items.length)})</span></div>
+            ${daySummaryStr ? `<div class="day-summary-pills eng-num">${daySummaryStr}</div>` : ''}
           </div>
-          <div>${cardsHtml}</div>
+          <table class="tx-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>عملیات</th>
+                <th>جهت</th>
+                <th>مبلغ</th>
+                <th>شرح</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
         `;
       });
 
@@ -1140,28 +1378,44 @@
       selectedTxItem = customerTransactions[idx];
       let tx = selectedTxItem;
       let dir = String(getVal(tx, ['Direction', 'direction']));
-      let amtColor = (dir.includes('بستانکار') || dir.includes('دریافت')) ? 'var(--success-dark)' : 'var(--danger-dark)';
+      let isCredit = (dir.includes('بستانکار') || dir.includes('دریافت'));
+      let amtColor = isCredit ? 'var(--success)' : 'var(--danger)';
       let rawAmt = getVal(tx, ['Amount', 'amount']);
       let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
       let transId = getVal(tx, ['TransID', 'transid']) || '---';
       let opType = getVal(tx, ['OperationType', 'operationtype']) || '---';
       let dateStr = getVal(tx, ['Date', 'date']) || '---';
+      let timeStr = extractTimeOnly(dateStr);
       let descStr = (getVal(tx, ['Description', 'description']) || '---').replaceAll('+', ' ');
       let currStr = getVal(tx, ['Currency', 'currency']) || '';
       let statusStr = getVal(tx, ['Status', 'status']) || 'تأیید شده';
+      let nameVal = getVal(currentFoundUser, ['Name', 'name']) || '---';
 
-      document.getElementById('receiptDateStr').innerText = dateStr.split('T')[0];
+      document.getElementById('receiptDateStr').innerText = extractDateOnly(dateStr) + (timeStr ? ' | ' + timeStr : '');
 
       let bodyHtml = `
-        <p><b>شناسه معامله:</b> <span class="eng-num">${transId}</span></p>
-        <p><b>نوع عملیات:</b> ${opType}</p>
-        <p><b>تاریخ:</b> <span class="eng-num">${dateStr.split('T')[0]}</span></p>
-        <p><b>شرح و جزئیات:</b> ${descStr}</p>
-        <p><b>مبلغ:</b> <span class="eng-num" style="font-weight:bold; color:${amtColor};">${formatEnMoney(amountVal)} ${currStr}</span></p>
-        <p><b>وضعیت:</b> <span style="color:var(--success-dark); font-weight:bold;">${statusStr}</span></p>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
+          <span style="color:#64748b;">نام مشتری:</span><b>${nameVal}</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
+          <span style="color:#64748b;">کد تراکنش:</span><b class="eng-num">${transId}</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
+          <span style="color:#64748b;">نوع عملیات:</span><b>${opType} (${isCredit ? 'بستانکار' : 'بدهکار'})</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
+          <span style="color:#64748b;">مبلغ:</span><b class="eng-num" style="color:${amtColor}; font-size:1rem;">${formatEnMoney(amountVal)} ${currStr}</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
+          <span style="color:#64748b;">وضعیت:</span><b style="color:var(--success);">✔ ${statusStr}</b>
+        </div>
+        <div style="margin-top:8px; background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0; font-size:0.82rem;">
+          <span style="color:#64748b; display:block; margin-bottom:2px;">شرح و جزئیات:</span>
+          <b>${descStr}</b>
+        </div>
       `;
       document.getElementById('modalBody').innerHTML = bodyHtml;
-      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=سلام%20درخواست%20پشتیبانی%20برای%20تراکنش%20شماره%20${transId}%20را دارم`;
+      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=${encodeURIComponent(`سلام، درباره تراکنش شماره ${transId} به مبلغ ${formatEnMoney(amountVal)} ${currStr} سوال داشتم.`)}`;
 
       if (opType.includes('حواله')) {
         document.getElementById('hawalaReceiptWrapper').classList.remove('hidden');
@@ -1170,25 +1424,21 @@
       }
 
       document.getElementById('txDetailModal').classList.add('open');
-    }
-
-    function closeDetailModal() {
-      playSound('click');
-      document.getElementById('txDetailModal').classList.remove('open');
+      window.history.pushState({ appState: 'dashboard', modal: 'txDetailModal' }, '');
     }
 
     function requestEdit() {
       playSound('click');
       let transId = getVal(selectedTxItem, ['TransID', 'transid']) || '';
-      window.open(`https://wa.me/9647721878997?text=سلام%20درخواست%20ویرایش%20تراکنش%20با%20شناسه%20${transId}%20را دارم`, '_blank');
+      window.open(`https://wa.me/9647721878997?text=${encodeURIComponent(`سلام، درخواست بررسی و ویرایش تراکنش با شناسه ${transId} را دارم.`)}`, '_blank');
     }
 
     function shareProfileImage() {
       playSound('click');
       const el = document.getElementById('dashboardSection');
-      html2canvas(el, { scale: 2, backgroundColor: '#f1f5f9' }).then(canvas => {
+      html2canvas(el, { scale: 2, backgroundColor: '#f8fafc' }).then(canvas => {
         const link = document.createElement('a');
-        link.download = 'balance-receipt.png';
+        link.download = 'karimi-account-summary.png';
         link.href = canvas.toDataURL();
         link.click();
       });
@@ -1199,7 +1449,7 @@
       const el = document.getElementById('receiptToCapture');
       html2canvas(el, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
         const link = document.createElement('a');
-        link.download = 'receipt.png';
+        link.download = 'karimi-receipt.png';
         link.href = canvas.toDataURL();
         link.click();
       });
@@ -1210,23 +1460,33 @@
       let tx = selectedTxItem;
       let transId = getVal(tx, ['TransID', 'transid']) || '---';
       let descText = (getVal(tx, ['Description', 'description']) || 'بدون توضیحات').replaceAll('+', ' ');
-      let dateText = getVal(tx, ['Date', 'date']) || '';
+      let dateText = extractDateOnly(getVal(tx, ['Date', 'date']) || '');
       let rawAmt = getVal(tx, ['Amount', 'amount']);
       let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
       let currStr = getVal(tx, ['Currency', 'currency']) || '';
 
-      let message = `✨ *امانت‌داری کریمی* ✨\n` +
-                    `────────────────────────\n` +
-                    `📜 *رسید حواله*\n\n` +
-                    `📌 شماره تراکنش: ${transId}\n` +
-                    `💰 مبلغ: ${formatEnMoney(amountVal)} ${currStr}\n` +
-                    `📅 تاریخ: ${dateText.split('T')[0]}\n` +
-                    `📝 شرح و جزئیات:\n${descText}\n\n` +
-                    `────────────────────────\n` +
+      let message = `✨ *امانت‌داری کریمی* ✨
+` +
+                    `────────────────────────
+` +
+                    `📜 *رسید حواله*
+
+` +
+                    `📌 شماره تراکنش: ${transId}
+` +
+                    `💰 مبلغ: ${formatEnMoney(amountVal)} ${currStr}
+` +
+                    `📅 تاریخ: ${dateText}
+` +
+                    `📝 شرح و جزئیات:
+${descText}
+
+` +
+                    `────────────────────────
+` +
                     `با تشکر 🙏`;
 
-      const whatsappUrl = `https://wa.me/?text=` + encodeURIComponent(message);
-      window.open(whatsappUrl, '_blank');
+      window.open(`https://wa.me/?text=` + encodeURIComponent(message), '_blank');
     }
   </script>
 </body>
