@@ -238,13 +238,13 @@
 
     /* کارت پروفایل آرام و شیک در داشبورد */
     .profile-summary-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
       border-radius: var(--radius-lg);
-      padding: 14px 16px;
-      color: #ffffff;
+      padding: 16px;
+      color: var(--text-main);
       margin-bottom: 12px;
-      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
-      border: 1px solid #334155;
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.08);
+      border: 1.5px solid #bae6fd;
     }
     .profile-top-row {
       display: flex;
@@ -580,8 +580,8 @@
               <span class="profile-status-pill">● حساب فعال</span>
             </div>
             <div class="profile-meta-row">
-              <span>تلفن: <b id="dashPhone" class="eng-num" style="color:#ffffff;">---</b></span>
-              <span>کد حساب: <b id="dashAccountId" class="eng-num" style="color:#7dd3fc;">---</b></span>
+              <span>تلفن: <b id="dashPhone" class="eng-num" style="color:var(--primary);">---</b></span>
+              <span>کد حساب: <b id="dashAccountId" class="eng-num" style="color:var(--accent);">---</b></span>
             </div>
             <div class="profile-quick-actions">
               <button type="button" onclick="toggleBiometricSetting()" id="bioToggleBtn" class="profile-mini-btn">🔑 اثرانگشت</button>
@@ -1121,7 +1121,8 @@
       navigateToStep('dashboard');
       updateBioBtnText();
 
-      let nameVal = getVal(currentFoundUser, ['Name', 'name']) || '---';
+      let rawName = getVal(currentFoundUser, ['Name', 'name']) || 'مشتری';
+      let nameVal = `جناب آقای ${rawName} محترم`;
       let phoneVal = getVal(currentFoundUser, ['Phone', 'phone']) || '---';
 
       document.getElementById('dashName').innerText = nameVal;
@@ -1320,11 +1321,11 @@
           let originalIdx = customerTransactions.findIndex(item => String(getVal(item, ['TransID', 'transid'])) === tid);
 
           rowsHtml += `
-            <tr class="${rowClass}" onclick="openDetailModal(${originalIdx})">
-              <td style="white-space:nowrap; font-weight:900; color:#475569;" class="eng-num">#${toEnglishDigits(txNum)}</td>
+            <tr class="${rowClass}" onclick="openDetailModal(${originalIdx})" style="position:relative;">
+              <td style="white-space:nowrap; font-weight:900; color:#475569;" class="eng-num">${toEnglishDigits(txNum)}</td>
               <td style="white-space:nowrap;">
                 <div style="font-weight:900; color:var(--primary);">${opType}</div>
-                <div style="font-size:0.68rem; color:var(--text-muted);" class="eng-num">${timeStr ? '🕒 ' + timeStr : tid}</div>
+                <div style="font-size:0.68rem; color:var(--text-muted);" class="eng-num">${timeStr ? '🕒 ' + timeStr : ''}</div>
               </td>
               <td style="white-space:nowrap;">
                 <span style="font-size:0.74rem; font-weight:900; color:${amtColor};">${isCredit ? 'بستانکار' : 'بدهکار'}</span>
@@ -1333,8 +1334,11 @@
                 <div style="font-weight:900; color:${amtColor}; font-size:0.84rem;" class="eng-num">${formatEnMoney(amountVal)}</div>
                 <div style="font-size:0.68rem; color:#475569; font-weight:800;">${currStr}</div>
               </td>
-              <td style="max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#334155; font-size:0.76rem;">
+              <td style="max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#334155; font-size:0.76rem;">
                 ${descStr}
+              </td>
+              <td style="text-align:left; padding-left:6px; color:var(--accent); font-weight:900; font-size:1rem;">
+                ‹
               </td>
             </tr>
           `;
@@ -1342,17 +1346,18 @@
 
         finalHtml += `
           <div class="day-group-bar">
-            <div>📅 ${dayTitle} <span style="color:#7dd3fc; font-size:0.72rem;" class="eng-num">(${toEnglishDigits(group.items.length)})</span></div>
+            <div>📅 ${dayTitle} <span style="color:var(--accent); font-size:0.72rem;" class="eng-num">(${toEnglishDigits(group.items.length)})</span></div>
             ${daySummaryStr ? `<div class="day-summary-pills eng-num">${daySummaryStr}</div>` : ''}
           </div>
           <table class="tx-table">
             <thead>
               <tr>
-                <th>#</th>
+                <th>ردیف</th>
                 <th>عملیات</th>
                 <th>جهت</th>
                 <th>مبلغ</th>
                 <th>شرح</th>
+                <th style="text-align:left; padding-left:8px;">جزئیات</th>
               </tr>
             </thead>
             <tbody>${rowsHtml}</tbody>
@@ -1383,20 +1388,63 @@
 
       document.getElementById('receiptDateStr').innerText = extractDateOnly(dateStr) + (timeStr ? ' | ' + timeStr : '');
 
+      // Calculate balance before, change, and balance after for this specific transaction and currency
+      let txCurr = currStr.toUpperCase();
+      let allChron = sortChronologically(customerTransactions, true);
+      let runningBalance = 0;
+      let balBefore = 0;
+      let balAfter = 0;
+
+      allChron.forEach(t => {
+        let c = String(getVal(t, ['Currency', 'currency']) || 'AFN').toUpperCase();
+        if (c === txCurr) {
+          let a = parseFloat(getVal(t, ['Amount', 'amount'])) || 0;
+          let d = String(getVal(t, ['Direction', 'direction'])).trim();
+          let tidItem = String(getVal(t, ['TransID', 'transid']) || '');
+          
+          if (tidItem === transId) {
+            balBefore = runningBalance;
+            if (d.includes('بستانکار') || d.includes('دریافت')) {
+              runningBalance += a;
+            } else if (d.includes('بدهکار') || d.includes('پرداخت')) {
+              runningBalance -= a;
+            }
+            balAfter = runningBalance;
+          } else {
+            if (d.includes('بستانکار') || d.includes('دریافت')) {
+              runningBalance += a;
+            } else if (d.includes('بدهکار') || d.includes('پرداخت')) {
+              runningBalance -= a;
+            }
+          }
+        }
+      });
+
+      let changeSign = isCredit ? '+' : '-';
+      let changeText = `${changeSign} ${formatEnMoney(amountVal)}`;
+
       let bodyHtml = `
-        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:6px 0;">
           <span style="color:#64748b;">نام مشتری:</span><b>${nameVal}</b>
         </div>
-        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
-          <span style="color:#64748b;">کد تراکنش:</span><b class="eng-num">${transId}</b>
-        </div>
-        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:6px 0;">
           <span style="color:#64748b;">نوع عملیات:</span><b>${opType} (${isCredit ? 'بستانکار' : 'بدهکار'})</b>
         </div>
-        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
-          <span style="color:#64748b;">مبلغ:</span><b class="eng-num" style="color:${amtColor}; font-size:1rem;">${formatEnMoney(amountVal)} ${currStr}</b>
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1.5px solid #bae6fd; border-radius: 12px; padding: 12px; margin: 10px 0;">
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:6px;">
+            <span style="color:#475569; font-weight:800;">مانده قبل از تراکنش:</span>
+            <b class="eng-num" style="color:var(--primary);">${formatEnMoney(balBefore)} ${currStr}</b>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:6px;">
+            <span style="color:#475569; font-weight:800;">مبلغ این تراکنش:</span>
+            <b class="eng-num" style="color:${amtColor};">${changeText} ${currStr}</b>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; border-top:1px dashed #cbd5e1; padding-top:6px; font-weight:900;">
+            <span style="color:var(--primary);">مانده پس از تراکنش:</span>
+            <b class="eng-num" style="color:var(--primary);">${formatEnMoney(balAfter)} ${currStr}</b>
+          </div>
         </div>
-        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:5px 0;">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding:6px 0;">
           <span style="color:#64748b;">وضعیت:</span><b style="color:var(--success);">✔ ${statusStr}</b>
         </div>
         <div style="margin-top:8px; background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0; font-size:0.82rem;">
