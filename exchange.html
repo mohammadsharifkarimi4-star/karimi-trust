@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -278,7 +277,7 @@
     }
     .profile-quick-actions {
       display: grid;
-      grid-template-columns: 1fr 1fr 0.75fr;
+      grid-template-columns: 1fr 0.75fr;
       gap: 6px;
     }
     .profile-mini-btn {
@@ -531,7 +530,7 @@
 
             <div class="form-group">
               <label for="phoneInput">شماره تماس مشتری:</label>
-              <input type="tel" inputmode="numeric" id="phoneInput" placeholder="مثلاً: 07721878997" dir="ltr" onkeydown="if(event.key==='Enter') checkPhone()">
+              <input type="tel" inputmode="numeric" id="phoneInput" placeholder="شماره تماس" dir="ltr" onkeydown="if(event.key==='Enter') checkPhone()">
             </div>
 
             <button type="button" class="btn" id="btnCheckPhone" onclick="checkPhone()">ادامه و شناسایی حساب ←</button>
@@ -564,7 +563,7 @@
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">لطفاً کد اختصاصی حساب (Account ID) خود را وارد نمایید:</p>
           
           <div class="form-group">
-            <input type="password" id="accountIdInput" placeholder="کد حساب (مثلاً: ACC-123456)" dir="ltr" onkeydown="if(event.key==='Enter') verifyAccount()">
+            <input type="password" id="accountIdInput" placeholder="کد حساب" dir="ltr" onkeydown="if(event.key==='Enter') verifyAccount()">
           </div>
           <button type="button" class="btn btn-success" id="btnVerifyAcc" onclick="verifyAccount()">ورود به داشبورد حساب 🚀</button>
           <button type="button" class="btn btn-outline" onclick="navigateToStep('phone')" style="margin-top:8px;">← تغییر شماره تماس</button>
@@ -586,7 +585,6 @@
             </div>
             <div class="profile-quick-actions">
               <button type="button" onclick="toggleBiometricSetting()" id="bioToggleBtn" class="profile-mini-btn">🔑 اثرانگشت</button>
-              <button type="button" onclick="shareProfileImage()" class="profile-mini-btn">📸 عکس صورت‌حساب</button>
               <button type="button" onclick="logout()" class="profile-mini-btn logout-btn">خروج ✕</button>
             </div>
           </div>
@@ -686,14 +684,7 @@
         <div id="modalBody" style="font-size:0.86rem; color:#1e293b; line-height:2;"></div>
       </div>
 
-      <button type="button" class="btn" onclick="shareRecordImage()" style="margin-bottom:8px;">📸 ذخیره تصویر رسید</button>
-      <button type="button" class="btn btn-outline" onclick="requestEdit()" style="margin-bottom:8px;">✏️ درخواست بررسی / ویرایش</button>
-      
-      <div id="hawalaReceiptWrapper" class="hidden" style="margin-bottom:8px;">
-        <button type="button" class="btn btn-success" onclick="shareHawalaReceipt()">📜 اشتراک‌گذاری رسید حواله</button>
-      </div>
-
-      <a id="modalWhatsApp" href="#" target="_blank" class="btn btn-whatsapp">💬 پشتیبانی این تراکنش در واتساپ</a>
+      <a id="modalWhatsApp" href="https://wa.me/9647721878997" target="_blank" class="btn btn-whatsapp">💬 پشتیبانی در واتساپ</a>
     </div>
   </div>
 
@@ -1138,8 +1129,7 @@
       document.getElementById('dashAccountId').innerText = sheetAccId;
 
       const directWp = document.getElementById('directWhatsAppMsg');
-      const wpText = encodeURIComponent(`سلام کریمی عزیز، من ${nameVal} (کد حساب: ${sheetAccId}) هستم. درباره وضعیت حسابم پرسشی دارم.`);
-      directWp.href = `https://wa.me/9647721878997?text=${wpText}`;
+      directWp.href = "https://wa.me/9647721878997";
 
       let rawUserTxs = transactionsList.filter(tx => {
         let rowAccId = String(getVal(tx, ['AccountID', 'accountid', 'ID'])).trim();
@@ -1415,79 +1405,13 @@
         </div>
       `;
       document.getElementById('modalBody').innerHTML = bodyHtml;
-      document.getElementById('modalWhatsApp').href = `https://wa.me/9647721878997?text=${encodeURIComponent(`سلام، درباره تراکنش شماره ${transId} به مبلغ ${formatEnMoney(amountVal)} ${currStr} سوال داشتم.`)}`;
-
-      if (opType.includes('حواله')) {
-        document.getElementById('hawalaReceiptWrapper').classList.remove('hidden');
-      } else {
-        document.getElementById('hawalaReceiptWrapper').classList.add('hidden');
-      }
+      document.getElementById('modalWhatsApp').href = "https://wa.me/9647721878997";
 
       document.getElementById('txDetailModal').classList.add('open');
       window.history.pushState({ appState: 'dashboard', modal: 'txDetailModal' }, '');
     }
 
-    function requestEdit() {
-      playSound('click');
-      let transId = getVal(selectedTxItem, ['TransID', 'transid']) || '';
-      window.open(`https://wa.me/9647721878997?text=${encodeURIComponent(`سلام، درخواست بررسی و ویرایش تراکنش با شناسه ${transId} را دارم.`)}`, '_blank');
-    }
 
-    function shareProfileImage() {
-      playSound('click');
-      const el = document.getElementById('dashboardSection');
-      html2canvas(el, { scale: 2, backgroundColor: '#f8fafc' }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'karimi-account-summary.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
-    }
-
-    function shareRecordImage() {
-      playSound('click');
-      const el = document.getElementById('receiptToCapture');
-      html2canvas(el, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'karimi-receipt.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
-    }
-
-    function shareHawalaReceipt() {
-      playSound('click');
-      let tx = selectedTxItem;
-      let transId = getVal(tx, ['TransID', 'transid']) || '---';
-      let descText = (getVal(tx, ['Description', 'description']) || 'بدون توضیحات').replaceAll('+', ' ');
-      let dateText = extractDateOnly(getVal(tx, ['Date', 'date']) || '');
-      let rawAmt = getVal(tx, ['Amount', 'amount']);
-      let amountVal = isNaN(parseFloat(rawAmt)) ? 0 : parseFloat(rawAmt);
-      let currStr = getVal(tx, ['Currency', 'currency']) || '';
-
-      let message = `✨ *امانت‌داری کریمی* ✨
-` +
-                    `────────────────────────
-` +
-                    `📜 *رسید حواله*
-
-` +
-                    `📌 شماره تراکنش: ${transId}
-` +
-                    `💰 مبلغ: ${formatEnMoney(amountVal)} ${currStr}
-` +
-                    `📅 تاریخ: ${dateText}
-` +
-                    `📝 شرح و جزئیات:
-${descText}
-
-` +
-                    `────────────────────────
-` +
-                    `با تشکر 🙏`;
-
-      window.open(`https://wa.me/?text=` + encodeURIComponent(message), '_blank');
-    }
   </script>
 </body>
 </html>
