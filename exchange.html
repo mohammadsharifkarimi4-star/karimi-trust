@@ -277,31 +277,32 @@
     }
     .profile-quick-actions {
       display: grid;
-      grid-template-columns: 1fr 0.75fr;
-      gap: 6px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
     }
     .profile-mini-btn {
-      padding: 7px 6px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-      font-size: 0.74rem;
-      font-weight: 800;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1.5px solid #cbd5e1;
+      background: #f1f5f9;
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 900;
       cursor: pointer;
       text-align: center;
-      transition: background 0.15s;
+      transition: all 0.15s;
     }
-    .profile-mini-btn:active { background: rgba(255, 255, 255, 0.22); }
+    .profile-mini-btn:active { background: #e2e8f0; }
     .profile-mini-btn.bio-on {
-      background: rgba(16, 185, 129, 0.25);
+      background: #ecfdf5;
       border-color: #34d399;
-      color: #a7f3d0;
+      color: #065f46;
     }
     .profile-mini-btn.logout-btn {
-      background: rgba(239, 68, 68, 0.22);
-      border-color: rgba(248, 113, 113, 0.4);
-      color: #fecaca;
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
     }
 
     /* تب‌های ارز */
@@ -570,10 +571,10 @@
         </div>
       </div>
 
-      <!-- مرحله ۳: داشبورد مشتری -->
-      <div id="dashboardSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+      <!-- مرحله ۳: داشبورد اصلی (منوی خلوت و بدون اسکرول) -->
+      <div id="dashboardSection" class="hidden" style="display:flex; flex-direction:column; justify-content:space-between; height:100%; padding-bottom:4px;">
         <div>
-          <!-- کارت خلاصه پروفایل -->
+          <!-- ۱. کارت پروفایل و مشخصات در بالا -->
           <div class="profile-summary-card">
             <div class="profile-top-row">
               <span id="dashName" class="profile-user-name">---</span>
@@ -585,55 +586,29 @@
             </div>
             <div class="profile-quick-actions">
               <button type="button" onclick="toggleBiometricSetting()" id="bioToggleBtn" class="profile-mini-btn">🔑 اثرانگشت</button>
-              <button type="button" onclick="logout()" class="profile-mini-btn logout-btn">خروج ✕</button>
+              <button type="button" onclick="logout()" class="profile-mini-btn logout-btn">🚪 خروج از حساب</button>
             </div>
           </div>
 
-          <!-- کارت موجودی و آمار -->
-          <div class="clean-card" style="padding:14px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-              <span style="font-size:0.9rem; font-weight:900; color:var(--primary);">📊 موجودی و وضعیت حساب</span>
-              <button type="button" id="refreshAccountBtn" onclick="refreshAccountData()" class="btn btn-outline" style="width:auto; padding:5px 10px; font-size:0.75rem; border-radius:8px;">
-                🔄 بروزرسانی
-              </button>
-            </div>
-
-            <div class="currency-tabs" id="currencyTabs"></div>
-
-            <div class="balance-box-modern">
-              <div class="balance-label">مانده خالص حساب (<span id="odometerCurrencyLabel">AFN</span>)</div>
-              <div id="odometerValue" class="balance-main-figure eng-num">0</div>
-              <div class="balance-sub-grid">
-                <div class="balance-sub-item">
-                  <span class="balance-sub-title">مجموع بستانکار (+)</span>
-                  <span id="odometerCredit" class="balance-sub-val eng-num" style="color:var(--success);">0</span>
-                </div>
-                <div class="balance-sub-item">
-                  <span class="balance-sub-title">مجموع بدهکار (-)</span>
-                  <span id="odometerDebit" class="balance-sub-val eng-num" style="color:var(--danger);">0</span>
-                </div>
-              </div>
-            </div>
-
-            <div id="accountPsychologyMsg"></div>
-          </div>
-        </div>
-
-        <!-- دکمه‌های عملیاتی پایین -->
-        <div style="margin-top:6px;">
-          <button type="button" class="btn" onclick="openTransactionsModal()" style="margin-bottom:8px;">
-            📋 مشاهده دفتر تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
-          </button>
-
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
-            <button type="button" id="pwaInstallBtn" class="btn btn-success hidden" onclick="installPwaApp()" style="padding:10px; font-size:0.8rem;">
-              📲 نصب برنامه
+          <!-- ۲. منوی گزینه‌های تو در تو (بدون اسکرول، دسترسی سریع و تمیز) -->
+          <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+            <button type="button" class="btn" onclick="openBalanceModal()" style="padding:12px; font-size:0.88rem; justify-content:flex-start;">
+              📊 مشاهده مانده حساب و موجودی
             </button>
-            <button type="button" class="btn btn-outline" onclick="showComingSoon()" style="padding:10px; font-size:0.8rem; border-color:var(--accent); color:var(--accent);">
+            <button type="button" class="btn btn-success" onclick="openTransactionsModal()" style="padding:12px; font-size:0.88rem; justify-content:flex-start;">
+              📋 مشاهده دفتر تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
+            </button>
+            <button type="button" id="pwaInstallBtn" class="btn btn-outline hidden" onclick="installPwaApp()" style="padding:11px; font-size:0.84rem; justify-content:flex-start; border-color:var(--success); color:var(--success); background:#ecfdf5;">
+              📲 نصب برنامه روی صفحه اصلی گوشی
+            </button>
+            <button type="button" class="btn btn-outline" onclick="showComingSoon()" style="padding:11px; font-size:0.84rem; justify-content:flex-start; border-color:var(--accent); color:var(--accent);">
               📒 حساب کتاب من (به زودی ✨)
             </button>
           </div>
+        </div>
 
+        <!-- ۳. پشتیبانی واتساپ در پایین صفحه -->
+        <div style="margin-top:8px;">
           <a id="directWhatsAppMsg" href="#" target="_blank" class="btn btn-whatsapp" style="padding:11px; font-size:0.86rem;">
             💬 ارسال پیام به امانت‌داری کریمی
           </a>
@@ -677,6 +652,43 @@
       <button type="button" class="header-action-btn" onclick="handleModalBackClick('transactionsModal')">← بازگشت</button>
     </div>
     <div class="modal-scroll-body" id="transactionsContainer"></div>
+  </div>
+
+  <!-- مودال تمام‌صفحه مشاهده مانده حساب -->
+  <div id="balanceModal" class="fullscreen-modal" style="z-index:2050;">
+    <div class="modal-header">
+      <h3 style="font-size:0.98rem; font-weight:900;">📊 موجودی و وضعیت حساب</h3>
+      <button type="button" class="header-action-btn" onclick="handleModalBackClick('balanceModal')">← بازگشت</button>
+    </div>
+    <div class="modal-scroll-body" style="padding:14px;">
+      <div class="clean-card" style="padding:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <span style="font-size:0.9rem; font-weight:900; color:var(--primary);">انتخاب ارز:</span>
+          <button type="button" id="refreshAccountBtn" onclick="refreshAccountData()" class="btn btn-outline" style="width:auto; padding:5px 10px; font-size:0.75rem; border-radius:8px;">
+            🔄 بروزرسانی
+          </button>
+        </div>
+
+        <div class="currency-tabs" id="currencyTabs"></div>
+
+        <div class="balance-box-modern">
+          <div class="balance-label">مانده خالص حساب (<span id="odometerCurrencyLabel">AFN</span>)</div>
+          <div id="odometerValue" class="balance-main-figure eng-num">0</div>
+          <div class="balance-sub-grid">
+            <div class="balance-sub-item">
+              <span class="balance-sub-title">مجموع بستانکار (+)</span>
+              <span id="odometerCredit" class="balance-sub-val eng-num" style="color:var(--success);">0</span>
+            </div>
+            <div class="balance-sub-item">
+              <span class="balance-sub-title">مجموع بدهکار (-)</span>
+              <span id="odometerDebit" class="balance-sub-val eng-num" style="color:var(--danger);">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="accountPsychologyMsg" style="margin-top:10px;"></div>
+      </div>
+    </div>
   </div>
 
   <!-- مودال تمام‌صفحه رسید تراکنش -->
@@ -832,6 +844,7 @@
       window.addEventListener('popstate', function (event) {
         const detailModal = document.getElementById('txDetailModal');
         const txModal = document.getElementById('transactionsModal');
+        const balanceModal = document.getElementById('balanceModal');
         const errModal = document.getElementById('errorModal');
         const bioModal = document.getElementById('biometricPromptModal');
 
@@ -851,6 +864,10 @@
         }
         if (txModal.classList.contains('open')) {
           txModal.classList.remove('open');
+          return;
+        }
+        if (balanceModal.classList.contains('open')) {
+          balanceModal.classList.remove('open');
           return;
         }
 
@@ -1250,6 +1267,13 @@
       window.requestAnimationFrame(step);
     }
 
+    
+    function openBalanceModal() {
+      playSound('click');
+      document.getElementById('balanceModal').classList.add('open');
+      window.history.pushState({ appState: 'dashboard', modal: 'balanceModal' }, '');
+    }
+
     function openTransactionsModal() {
       playSound('click');
       document.getElementById('transactionsModal').classList.add('open');
@@ -1479,6 +1503,16 @@
       deferredPrompt = e;
       const installBtn = document.getElementById('pwaInstallBtn');
       if (installBtn) installBtn.classList.remove('hidden');
+    });
+
+    // Also show install button on mobile browsers as a reliable fallback helper
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const installBtn = document.getElementById('pwaInstallBtn');
+        if (installBtn && !window.matchMedia('(display-mode: standalone)').matches) {
+          installBtn.classList.remove('hidden');
+        }
+      }, 500);
     });
 
     async function installPwaApp() {
