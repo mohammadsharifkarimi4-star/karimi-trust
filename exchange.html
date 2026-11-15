@@ -255,7 +255,7 @@
     .profile-user-name {
       font-size: 1.05rem;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--primary);
     }
     .profile-status-pill {
       font-size: 0.72rem;
@@ -270,7 +270,7 @@
       display: flex;
       justify-content: space-between;
       font-size: 0.78rem;
-      color: #cbd5e1;
+      color: var(--text-muted);
       padding-top: 8px;
       border-top: 1px dashed rgba(255, 255, 255, 0.16);
       margin-bottom: 10px;
@@ -624,6 +624,16 @@
           <button type="button" class="btn" onclick="openTransactionsModal()" style="margin-bottom:8px;">
             📋 مشاهده دفتر تراکنش‌ها (<span id="txCountBadge" class="eng-num">0</span>)
           </button>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
+            <button type="button" id="pwaInstallBtn" class="btn btn-success hidden" onclick="installPwaApp()" style="padding:10px; font-size:0.8rem;">
+              📲 نصب برنامه
+            </button>
+            <button type="button" class="btn btn-outline" onclick="showComingSoon()" style="padding:10px; font-size:0.8rem; border-color:var(--accent); color:var(--accent);">
+              📒 حساب کتاب من (به زودی ✨)
+            </button>
+          </div>
+
           <a id="directWhatsAppMsg" href="#" target="_blank" class="btn btn-whatsapp" style="padding:11px; font-size:0.86rem;">
             💬 ارسال پیام به امانت‌داری کریمی
           </a>
@@ -1334,11 +1344,13 @@
                 <div style="font-weight:900; color:${amtColor}; font-size:0.84rem;" class="eng-num">${formatEnMoney(amountVal)}</div>
                 <div style="font-size:0.68rem; color:#475569; font-weight:800;">${currStr}</div>
               </td>
-              <td style="max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#334155; font-size:0.76rem;">
+              <td style="max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#334155; font-size:0.76rem;">
                 ${descStr}
               </td>
-              <td style="text-align:left; padding-left:6px; color:var(--accent); font-weight:900; font-size:1rem;">
-                ‹
+              <td style="text-align:left; padding-left:6px;">
+                <button type="button" onclick="event.stopPropagation(); openDetailModal(${originalIdx});" style="background:var(--accent-soft); color:var(--accent); border:1px solid #bae6fd; padding:5px 9px; border-radius:8px; font-size:0.72rem; font-weight:900; cursor:pointer; white-space:nowrap; box-shadow: 0 2px 5px rgba(2, 132, 199, 0.12);">
+                  🔍 بررسی
+                </button>
               </td>
             </tr>
           `;
@@ -1357,7 +1369,7 @@
                 <th>جهت</th>
                 <th>مبلغ</th>
                 <th>شرح</th>
-                <th style="text-align:left; padding-left:8px;">جزئیات</th>
+                <th style="text-align:left; padding-left:8px;">مشاهده</th>
               </tr>
             </thead>
             <tbody>${rowsHtml}</tbody>
@@ -1459,6 +1471,35 @@
       window.history.pushState({ appState: 'dashboard', modal: 'txDetailModal' }, '');
     }
 
+
+  
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('pwaInstallBtn');
+      if (installBtn) installBtn.classList.remove('hidden');
+    });
+
+    async function installPwaApp() {
+      playSound('click');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        let choiceResult = await deferredPrompt.userChoice;
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted install prompt');
+        }
+        deferredPrompt = null;
+        document.getElementById('pwaInstallBtn').classList.add('hidden');
+      } else {
+        alert("برای نصب برنامه روی صفحه اصلی گوشی، از منوی مرورگر (سه نقطه بالای صفحه) گزینه 'Add to Home screen' یا 'افزودن به صفحه اصلی' را انتخاب کنید.");
+      }
+    }
+
+    function showComingSoon() {
+      playSound('click');
+      alert("✨ بخش «حساب کتاب من» (دفترچه حساب شخصی مشتریان) به زودی فعال خواهد شد.");
+    }
 
   </script>
 </body>
