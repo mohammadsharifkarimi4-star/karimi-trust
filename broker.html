@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مدیریت صرافی و کارگزاران - کریمی</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -237,6 +238,7 @@
           <h3 style="color:#1e1b4b; font-size:1rem;">📜 دفتر روزانه و تراکنش‌های صرافی</h3>
           <div style="display:flex; align-items:center; gap:6px;">
             <span id="txCountBadge" style="font-size:0.8rem; color:#0369a1; font-weight:bold; background:#e0f2fe; padding:3px 9px; border-radius:12px;"></span>
+            <button type="button" class="btn btn-danger btn-xs" onclick="exportBrokerTransactionsPDF()" style="background:#e11d48;">📄 دانلود PDF دفتر حساب</button>
             <button type="button" class="btn btn-info btn-xs" onclick="toggleAdvTxFilters()">🎛️ فیلتر پیشرفته</button>
           </div>
         </div>
@@ -1816,6 +1818,178 @@ ${verticalReport}`;
           })
         });
       } catch (err) { console.log("خطای ارسال تلگرام:", err); }
+    }
+
+
+    async function exportBrokerTransactionsPDF() {
+      playBeep('click');
+      let filtered = getFilteredTxs();
+      if (!filtered || filtered.length === 0) {
+        alert("هیچ تراکنشی برای صدور پی‌دی‌اف وجود ندارد.");
+        return;
+      }
+
+      if (typeof html2pdf === 'undefined') {
+        alert("ابزار تولید PDF هنوز بارگذاری نشده است. لطفاً چند لحظه صبر کنید یا اتصال اینترنت را بررسی نمایید.");
+        return;
+      }
+
+      showSync(true);
+      const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
+      const brokerName = currentBroker ? currentBroker.name : 'صرافی';
+      const brokerCity = currentBroker ? (currentBroker.city || '') : '';
+      const brokerPhone = currentBroker ? (currentBroker.phone || '') : '';
+
+      // Sort chronologically ascending for ledger running balance & clean report
+      let chronological = sortBrokerTxsChronologically(filtered, true);
+
+      // Compute currency totals
+      let currencyTotals = {};
+      chronological.forEach(tx => {
+        let curr = (tx.currency || 'USD').toUpperCase();
+        let dir = tx.direction || '';
+        let amt = parseFloat(tx.amount_final || tx.amount_initial) || 0;
+        if (!currencyTotals[curr]) currencyTotals[curr] = { creditor: 0, debtor: 0 };
+        if (dir === 'بستانکار') currencyTotals[curr].creditor += amt;
+        if (dir === 'بدهکار') currencyTotals[curr].debtor += amt;
+      });
+
+      let summaryCardsHtml = '';
+      for (let curr in currencyTotals) {
+        let cred = currencyTotals[curr].creditor;
+        let debt = currencyTotals[curr].debtor;
+        let net = cred - debt;
+        let statusLabel = net > 0 ? 'بستانکار (+)' : (net < 0 ? 'بدهکار (-)' : 'تسویه');
+        let netColor = net > 0 ? '#059669' : (net < 0 ? '#dc2626' : '#334155');
+        summaryCardsHtml += `
+          <div style="border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; background: #f8fafc; min-width: 170px; flex: 1;">
+            <div style="font-weight: 900; font-size: 13px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 5px;">
+              ارز: ${curr}
+            </div>
+            <div style="font-size: 11px; color: #059669; font-weight: 700;">مجموع بستانکار: ${toEnglishDigits(cred.toLocaleString())}</div>
+            <div style="font-size: 11px; color: #dc2626; font-weight: 700;">مجموع بدهکار: ${toEnglishDigits(debt.toLocaleString())}</div>
+            <div style="font-size: 12px; color: ${netColor}; font-weight: 900; margin-top: 4px; border-top: 1px dashed #cbd5e1; padding-top: 4px;">
+              مانده نهایی: ${toEnglishDigits(Math.abs(net).toLocaleString())} ${curr} (${statusLabel})
+            </div>
+          </div>
+        `;
+      }
+
+      // Compute running balance per currency for each row
+      let runningBal = {};
+      let rowsHtml = '';
+      chronological.forEach((tx, idx) => {
+        let curr = (tx.currency || 'USD').toUpperCase();
+        let dir = tx.direction || '';
+        let amt = parseFloat(tx.amount_final || tx.amount_initial) || 0;
+        if (!runningBal[curr]) runningBal[curr] = 0;
+        if (dir === 'بستانکار') runningBal[curr] += amt;
+        if (dir === 'بدهکار') runningBal[curr] -= amt;
+
+        let curBal = runningBal[curr];
+        let balSign = curBal > 0 ? 'بستانکار' : (curBal < 0 ? 'بدهکار' : 'صفر');
+        let balColor = curBal > 0 ? '#059669' : (curBal < 0 ? '#dc2626' : '#475569');
+        let isCred = dir === 'بستانکار';
+        let dOnly = toEnglishDigits(extractDateOnly(tx.date));
+        let rateInfo = tx.exchange_rate ? ` (اولیه: ${toEnglishDigits((tx.amount_initial||0).toLocaleString())} | نرخ: ${toEnglishDigits(tx.exchange_rate)})` : '';
+        let descFull = [tx.description, tx.address_dashboard ? `مقصد: ${tx.address_dashboard}` : ''].filter(Boolean).join(' - ') || '-';
+
+        rowsHtml += `
+          <tr style="background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'}; border-bottom: 1px solid #cbd5e1;">
+            <td style="padding: 6px 5px; text-align: center; font-weight: 800;">${toEnglishDigits(idx + 1)}</td>
+            <td style="padding: 6px 5px; white-space: nowrap; font-size: 10px;">${dOnly}<br><span style="color:#64748b; font-size:9px;">${tx.broker_tx_id}</span></td>
+            <td style="padding: 6px 5px; font-weight: 700;">${tx.operation_type}</td>
+            <td style="padding: 6px 5px; font-weight: 800; color: ${isCred ? '#059669' : '#dc2626'};">${dir}</td>
+            <td style="padding: 6px 5px; font-weight: 900; color: ${isCred ? '#059669' : '#dc2626'}; white-space: nowrap;">
+              ${toEnglishDigits(amt.toLocaleString())} ${curr}
+              <div style="font-size: 9px; color: #64748b; font-weight: 600;">${rateInfo}</div>
+            </td>
+            <td style="padding: 6px 5px; font-size: 10px; color: #1e293b;">${descFull}</td>
+            <td style="padding: 6px 5px; font-weight: 900; color: ${balColor}; white-space: nowrap; background: #f1f5f9;">
+              ${toEnglishDigits(Math.abs(curBal).toLocaleString())} ${curr} <span style="font-size:9px;">(${balSign})</span>
+            </td>
+          </tr>
+        `;
+      });
+
+      let dateFrom = document.getElementById("filterDateFrom").value;
+      let dateTo = document.getElementById("filterDateTo").value;
+      let periodText = (dateFrom || dateTo)
+        ? `بازه گزارش: ${dateFrom ? 'از ' + toEnglishDigits(dateFrom) : ''} ${dateTo ? 'تا ' + toEnglishDigits(dateTo) : ''}`
+        : 'بازه گزارش: کل سوابق ثبت‌شده';
+
+      let todayStr = toEnglishDigits(new Date().toISOString().split('T')[0]);
+
+      const reportContainer = document.createElement('div');
+      reportContainer.dir = 'rtl';
+      reportContainer.style.fontFamily = "'Vazirmatn', Tahoma, sans-serif";
+      reportContainer.style.padding = '16px';
+      reportContainer.style.background = '#ffffff';
+      reportContainer.style.color = '#0f172a';
+      reportContainer.style.width = '100%';
+
+      reportContainer.innerHTML = `
+        <div style="background: #0f172a; color: #ffffff; padding: 14px 18px; border-radius: 10px; border-bottom: 4px solid #38bdf8; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <div>
+            <div style="font-size: 16px; font-weight: 900;">🏛️ صورت‌حساب و دفتر کل تراکنش‌های صرافی</div>
+            <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px;">نام صرافی: <b style="color:#38bdf8;">${brokerName}</b> ${brokerCity ? '| ' + brokerCity : ''} ${brokerPhone ? '| تلفن: ' + toEnglishDigits(brokerPhone) : ''}</div>
+          </div>
+          <div style="text-align: left; font-size: 11px; color: #e2e8f0;">
+            <div>تاریخ صدور: <b>${todayStr}</b></div>
+            <div>تعداد کل ردیف‌ها: <b>${toEnglishDigits(chronological.length)}</b></div>
+            <div style="color:#7dd3fc; margin-top:2px;">${periodText}</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 12px; font-weight: 900; color: #0f172a; margin-bottom: 6px;">📊 خلاصه وضعیت و مانده نهایی ارزها:</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${summaryCardsHtml}
+          </div>
+        </div>
+
+        <div style="font-size: 12px; font-weight: 900; color: #0f172a; margin-bottom: 6px;">📋 جدول ریز تراکنش‌ها به همراه مانده در گردش:</div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: right; border: 1.5px solid #94a3b8;">
+          <thead>
+            <tr style="background: #1e293b; color: #ffffff;">
+              <th style="padding: 7px 5px; text-align: center; border: 1px solid #475569;">ردیف</th>
+              <th style="padding: 7px 5px; border: 1px solid #475569;">تاریخ / کد</th>
+              <th style="padding: 7px 5px; border: 1px solid #475569;">عملیات</th>
+              <th style="padding: 7px 5px; border: 1px solid #475569;">جهت</th>
+              <th style="padding: 7px 5px; border: 1px solid #475569;">مبلغ</th>
+              <th style="padding: 7px 5px; border: 1px solid #475569;">شرح و آدرس مقصد</th>
+              <th style="padding: 7px 5px; border: 1px solid #475569;">مانده لحظه‌ای</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+
+        <div style="margin-top: 14px; text-align: center; font-size: 10px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+          این صورت‌حساب به صورت سیستمی از سامانه مدیریت صرافی و کارگزاران کریمی صادر شده است.
+        </div>
+      `;
+
+      const fileName = `Statement_${brokerName.replace(/\s+/g, '_')}_${todayStr}.pdf`;
+      const opt = {
+        margin: [8, 8, 8, 8],
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+
+      try {
+        await html2pdf().set(opt).from(reportContainer).save();
+        playBeep('success');
+      } catch (err) {
+        console.error("PDF generation error:", err);
+        alert("خطا در تولید فایل PDF. لطفاً مجدداً تلاش کنید.");
+      } finally {
+        showSync(false);
+      }
     }
 
     function showSync(show) { document.getElementById("syncIndicator").style.display = show ? "block" : "none"; }
