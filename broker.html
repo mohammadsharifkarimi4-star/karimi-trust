@@ -1820,7 +1820,6 @@ ${verticalReport}`;
       } catch (err) { console.log("خطای ارسال تلگرام:", err); }
     }
 
-
     async function exportBrokerTransactionsPDF() {
       playBeep('click');
       let filtered = getFilteredTxs();
@@ -1840,8 +1839,11 @@ ${verticalReport}`;
       const brokerCity = currentBroker ? (currentBroker.city || '') : '';
       const brokerPhone = currentBroker ? (currentBroker.phone || '') : '';
 
-      // Sort strictly by exact date & time (oldest to newest)
+      // مرتب‌سازی دقیق بر اساس تاریخ و ساعت (از قدیمی به جدید)
       let chronological = filtered.slice().sort((a, b) => {
+        let da = extractDateOnly(a.date);
+        let db = extractDateOnly(b.date);
+        if (da !== db) return da.localeCompare(db);
         let ta = getTxTimestamp(a);
         let tb = getTxTimestamp(b);
         if (ta !== tb) return ta - tb;
@@ -1851,7 +1853,7 @@ ${verticalReport}`;
         return String(a.broker_tx_id || '').localeCompare(String(b.broker_tx_id || ''));
       });
 
-      // Compute currency totals
+      // محاسبه جمع کل ارزها برای باکس خلاصه بالای گزارش
       let currencyTotals = {};
       chronological.forEach(tx => {
         let curr = (tx.currency || 'USD').toUpperCase();
@@ -1891,13 +1893,12 @@ ${verticalReport}`;
 
       let todayStr = toEnglishDigits(new Date().toISOString().split('T')[0]);
 
-      // Build paginated pages so every page has repeating header + table column titles and clean row breaks
+      // صفحه‌بندی دستی تا در هر صفحه عنوان ستون‌ها و هدر با دقت کامل چاپ شود و سطرها نصف نشوند
       const FIRST_PAGE_ROWS = 11;
       const NEXT_PAGE_ROWS = 15;
       let pages = [];
-      let ptr = 0;
       pages.push(chronological.slice(0, FIRST_PAGE_ROWS));
-      ptr = FIRST_PAGE_ROWS;
+      let ptr = FIRST_PAGE_ROWS;
       while (ptr < chronological.length) {
         pages.push(chronological.slice(ptr, ptr + NEXT_PAGE_ROWS));
         ptr += NEXT_PAGE_ROWS;
@@ -1924,7 +1925,7 @@ ${verticalReport}`;
           let amtFin = parseFloat(tx.amount_final || tx.amount_initial) || 0;
           let isCred = dir === 'بستانکار';
           let dOnly = toEnglishDigits(extractDateOnly(tx.date));
-          let tOnly = toEnglishDigits(extractTimeOnly(tx.date));
+          let tOnly = toEnglishDigits(extractTimeOnly(tx.date) || extractTimeOnly(tx.created_at));
           let rateText = tx.exchange_rate ? toEnglishDigits(tx.exchange_rate) : '-';
           let initText = amtInit > 0 ? toEnglishDigits(amtInit.toLocaleString()) : '-';
           let descText = tx.description || '-';
@@ -1935,7 +1936,7 @@ ${verticalReport}`;
               <td style="padding: 5px 4px; text-align: center; font-weight: 800; border: 1px solid #cbd5e1;">${toEnglishDigits(globalIndex)}</td>
               <td style="padding: 5px 4px; white-space: nowrap; font-size: 9.5px; border: 1px solid #cbd5e1;">
                 <div style="font-weight: 800; color: #0f172a;">${dOnly}</div>
-                <div style="color: #0284c7; font-weight: 700;" dir="ltr">${tOnly || '--:--'}</div>
+                <div style="color: #0284c7; font-weight: 700;" dir="ltr">${tOnly || '--:--:--'}</div>
               </td>
               <td style="padding: 5px 4px; white-space: nowrap; font-size: 9.5px; font-weight: 700; color: #334155; border: 1px solid #cbd5e1;" dir="ltr">${tx.broker_tx_id}</td>
               <td style="padding: 5px 4px; font-weight: 800; border: 1px solid #cbd5e1; white-space: nowrap;">${tx.operation_type}</td>
@@ -1989,7 +1990,7 @@ ${verticalReport}`;
                 <th style="padding: 6px 4px; border: 1px solid #475569; width: 58px;">عملیات</th>
                 <th style="padding: 6px 4px; text-align: center; border: 1px solid #475569; width: 54px;">جهت</th>
                 <th style="padding: 6px 4px; border: 1px solid #475569; width: 68px;">مبلغ اولیه</th>
-                <th style="padding: 6px 4px; border: 1px solid #475569; width: 46px;">نرخ</th>
+                <th style="padding: 6px 4px; text-align: center; border: 1px solid #475569; width: 46px;">نرخ</th>
                 <th style="padding: 6px 4px; border: 1px solid #475569; width: 88px;">مبلغ نهایی</th>
                 <th style="padding: 6px 5px; border: 1px solid #475569;">شرح / توضیحات</th>
                 <th style="padding: 6px 5px; border: 1px solid #475569; width: 145px;">آدرس مقصد</th>
