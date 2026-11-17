@@ -1840,8 +1840,16 @@ ${verticalReport}`;
       const brokerCity = currentBroker ? (currentBroker.city || '') : '';
       const brokerPhone = currentBroker ? (currentBroker.phone || '') : '';
 
-      // Sort chronologically ascending for ledger running balance & clean report
-      let chronological = sortBrokerTxsChronologically(filtered, true);
+      // Sort strictly by exact date & time (oldest to newest)
+      let chronological = filtered.slice().sort((a, b) => {
+        let ta = getTxTimestamp(a);
+        let tb = getTxTimestamp(b);
+        if (ta !== tb) return ta - tb;
+        let ca = a.created_at ? new Date(a.created_at).getTime() : 0;
+        let cb = b.created_at ? new Date(b.created_at).getTime() : 0;
+        if (!isNaN(ca) && !isNaN(cb) && ca !== cb) return ca - cb;
+        return String(a.broker_tx_id || '').localeCompare(String(b.broker_tx_id || ''));
+      });
 
       // Compute currency totals
       let currencyTotals = {};
@@ -1862,55 +1870,18 @@ ${verticalReport}`;
         let statusLabel = net > 0 ? 'بستانکار (+)' : (net < 0 ? 'بدهکار (-)' : 'تسویه');
         let netColor = net > 0 ? '#059669' : (net < 0 ? '#dc2626' : '#334155');
         summaryCardsHtml += `
-          <div style="border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; background: #f8fafc; min-width: 170px; flex: 1;">
-            <div style="font-weight: 900; font-size: 13px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 5px;">
+          <div style="border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 7px 10px; background: #f8fafc; min-width: 165px; flex: 1;">
+            <div style="font-weight: 900; font-size: 12px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; margin-bottom: 4px;">
               ارز: ${curr}
             </div>
-            <div style="font-size: 11px; color: #059669; font-weight: 700;">مجموع بستانکار: ${toEnglishDigits(cred.toLocaleString())}</div>
-            <div style="font-size: 11px; color: #dc2626; font-weight: 700;">مجموع بدهکار: ${toEnglishDigits(debt.toLocaleString())}</div>
-            <div style="font-size: 12px; color: ${netColor}; font-weight: 900; margin-top: 4px; border-top: 1px dashed #cbd5e1; padding-top: 4px;">
+            <div style="font-size: 10.5px; color: #059669; font-weight: 700;">مجموع بستانکار: ${toEnglishDigits(cred.toLocaleString())}</div>
+            <div style="font-size: 10.5px; color: #dc2626; font-weight: 700;">مجموع بدهکار: ${toEnglishDigits(debt.toLocaleString())}</div>
+            <div style="font-size: 11.5px; color: ${netColor}; font-weight: 900; margin-top: 3px; border-top: 1px dashed #cbd5e1; padding-top: 3px;">
               مانده نهایی: ${toEnglishDigits(Math.abs(net).toLocaleString())} ${curr} (${statusLabel})
             </div>
           </div>
         `;
       }
-
-      // Compute running balance per currency for each row
-      let runningBal = {};
-      let rowsHtml = '';
-      chronological.forEach((tx, idx) => {
-        let curr = (tx.currency || 'USD').toUpperCase();
-        let dir = tx.direction || '';
-        let amt = parseFloat(tx.amount_final || tx.amount_initial) || 0;
-        if (!runningBal[curr]) runningBal[curr] = 0;
-        if (dir === 'بستانکار') runningBal[curr] += amt;
-        if (dir === 'بدهکار') runningBal[curr] -= amt;
-
-        let curBal = runningBal[curr];
-        let balSign = curBal > 0 ? 'بستانکار' : (curBal < 0 ? 'بدهکار' : 'صفر');
-        let balColor = curBal > 0 ? '#059669' : (curBal < 0 ? '#dc2626' : '#475569');
-        let isCred = dir === 'بستانکار';
-        let dOnly = toEnglishDigits(extractDateOnly(tx.date));
-        let rateInfo = tx.exchange_rate ? ` (اولیه: ${toEnglishDigits((tx.amount_initial||0).toLocaleString())} | نرخ: ${toEnglishDigits(tx.exchange_rate)})` : '';
-        let descFull = [tx.description, tx.address_dashboard ? `مقصد: ${tx.address_dashboard}` : ''].filter(Boolean).join(' - ') || '-';
-
-        rowsHtml += `
-          <tr style="background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'}; border-bottom: 1px solid #cbd5e1;">
-            <td style="padding: 6px 5px; text-align: center; font-weight: 800;">${toEnglishDigits(idx + 1)}</td>
-            <td style="padding: 6px 5px; white-space: nowrap; font-size: 10px;">${dOnly}<br><span style="color:#64748b; font-size:9px;">${tx.broker_tx_id}</span></td>
-            <td style="padding: 6px 5px; font-weight: 700;">${tx.operation_type}</td>
-            <td style="padding: 6px 5px; font-weight: 800; color: ${isCred ? '#059669' : '#dc2626'};">${dir}</td>
-            <td style="padding: 6px 5px; font-weight: 900; color: ${isCred ? '#059669' : '#dc2626'}; white-space: nowrap;">
-              ${toEnglishDigits(amt.toLocaleString())} ${curr}
-              <div style="font-size: 9px; color: #64748b; font-weight: 600;">${rateInfo}</div>
-            </td>
-            <td style="padding: 6px 5px; font-size: 10px; color: #1e293b;">${descFull}</td>
-            <td style="padding: 6px 5px; font-weight: 900; color: ${balColor}; white-space: nowrap; background: #f1f5f9;">
-              ${toEnglishDigits(Math.abs(curBal).toLocaleString())} ${curr} <span style="font-size:9px;">(${balSign})</span>
-            </td>
-          </tr>
-        `;
-      });
 
       let dateFrom = document.getElementById("filterDateFrom").value;
       let dateTo = document.getElementById("filterDateTo").value;
@@ -1920,69 +1891,136 @@ ${verticalReport}`;
 
       let todayStr = toEnglishDigits(new Date().toISOString().split('T')[0]);
 
-      const reportContainer = document.createElement('div');
-      reportContainer.dir = 'rtl';
-      reportContainer.style.fontFamily = "'Vazirmatn', Tahoma, sans-serif";
-      reportContainer.style.padding = '16px';
-      reportContainer.style.background = '#ffffff';
-      reportContainer.style.color = '#0f172a';
-      reportContainer.style.width = '100%';
+      // Build paginated pages so every page has repeating header + table column titles and clean row breaks
+      const FIRST_PAGE_ROWS = 11;
+      const NEXT_PAGE_ROWS = 15;
+      let pages = [];
+      let ptr = 0;
+      pages.push(chronological.slice(0, FIRST_PAGE_ROWS));
+      ptr = FIRST_PAGE_ROWS;
+      while (ptr < chronological.length) {
+        pages.push(chronological.slice(ptr, ptr + NEXT_PAGE_ROWS));
+        ptr += NEXT_PAGE_ROWS;
+      }
 
-      reportContainer.innerHTML = `
-        <div style="background: #0f172a; color: #ffffff; padding: 14px 18px; border-radius: 10px; border-bottom: 4px solid #38bdf8; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <div>
-            <div style="font-size: 16px; font-weight: 900;">🏛️ صورت‌حساب و دفتر کل تراکنش‌های صرافی</div>
-            <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px;">نام صرافی: <b style="color:#38bdf8;">${brokerName}</b> ${brokerCity ? '| ' + brokerCity : ''} ${brokerPhone ? '| تلفن: ' + toEnglishDigits(brokerPhone) : ''}</div>
-          </div>
-          <div style="text-align: left; font-size: 11px; color: #e2e8f0;">
-            <div>تاریخ صدور: <b>${todayStr}</b></div>
-            <div>تعداد کل ردیف‌ها: <b>${toEnglishDigits(chronological.length)}</b></div>
-            <div style="color:#7dd3fc; margin-top:2px;">${periodText}</div>
-          </div>
-        </div>
+      const masterWrapper = document.createElement('div');
+      masterWrapper.dir = 'rtl';
+      masterWrapper.style.fontFamily = "'Vazirmatn', Tahoma, sans-serif";
+      masterWrapper.style.background = '#ffffff';
+      masterWrapper.style.color = '#0f172a';
+      masterWrapper.style.width = '100%';
 
-        <div style="margin-bottom: 14px;">
-          <div style="font-size: 12px; font-weight: 900; color: #0f172a; margin-bottom: 6px;">📊 خلاصه وضعیت و مانده نهایی ارزها:</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            ${summaryCardsHtml}
-          </div>
-        </div>
+      let globalIndex = 0;
+      pages.forEach((pageRows, pageIdx) => {
+        const isFirstPage = pageIdx === 0;
+        const isLastPage = pageIdx === pages.length - 1;
 
-        <div style="font-size: 12px; font-weight: 900; color: #0f172a; margin-bottom: 6px;">📋 جدول ریز تراکنش‌ها به همراه مانده در گردش:</div>
-        <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: right; border: 1.5px solid #94a3b8;">
-          <thead>
-            <tr style="background: #1e293b; color: #ffffff;">
-              <th style="padding: 7px 5px; text-align: center; border: 1px solid #475569;">ردیف</th>
-              <th style="padding: 7px 5px; border: 1px solid #475569;">تاریخ / کد</th>
-              <th style="padding: 7px 5px; border: 1px solid #475569;">عملیات</th>
-              <th style="padding: 7px 5px; border: 1px solid #475569;">جهت</th>
-              <th style="padding: 7px 5px; border: 1px solid #475569;">مبلغ</th>
-              <th style="padding: 7px 5px; border: 1px solid #475569;">شرح و آدرس مقصد</th>
-              <th style="padding: 7px 5px; border: 1px solid #475569;">مانده لحظه‌ای</th>
+        let rowsHtml = '';
+        pageRows.forEach((tx) => {
+          globalIndex++;
+          let curr = (tx.currency || 'USD').toUpperCase();
+          let dir = tx.direction || '';
+          let amtInit = parseFloat(tx.amount_initial) || 0;
+          let amtFin = parseFloat(tx.amount_final || tx.amount_initial) || 0;
+          let isCred = dir === 'بستانکار';
+          let dOnly = toEnglishDigits(extractDateOnly(tx.date));
+          let tOnly = toEnglishDigits(extractTimeOnly(tx.date));
+          let rateText = tx.exchange_rate ? toEnglishDigits(tx.exchange_rate) : '-';
+          let initText = amtInit > 0 ? toEnglishDigits(amtInit.toLocaleString()) : '-';
+          let descText = tx.description || '-';
+          let addrText = tx.address_dashboard || '-';
+
+          rowsHtml += `
+            <tr style="background: ${globalIndex % 2 === 1 ? '#ffffff' : '#f8fafc'}; border-bottom: 1px solid #cbd5e1; page-break-inside: avoid;">
+              <td style="padding: 5px 4px; text-align: center; font-weight: 800; border: 1px solid #cbd5e1;">${toEnglishDigits(globalIndex)}</td>
+              <td style="padding: 5px 4px; white-space: nowrap; font-size: 9.5px; border: 1px solid #cbd5e1;">
+                <div style="font-weight: 800; color: #0f172a;">${dOnly}</div>
+                <div style="color: #0284c7; font-weight: 700;" dir="ltr">${tOnly || '--:--'}</div>
+              </td>
+              <td style="padding: 5px 4px; white-space: nowrap; font-size: 9.5px; font-weight: 700; color: #334155; border: 1px solid #cbd5e1;" dir="ltr">${tx.broker_tx_id}</td>
+              <td style="padding: 5px 4px; font-weight: 800; border: 1px solid #cbd5e1; white-space: nowrap;">${tx.operation_type}</td>
+              <td style="padding: 5px 4px; font-weight: 900; color: ${isCred ? '#059669' : '#dc2626'}; border: 1px solid #cbd5e1; white-space: nowrap; text-align: center;">${dir}</td>
+              <td style="padding: 5px 4px; white-space: nowrap; font-size: 10px; color: #334155; border: 1px solid #cbd5e1;">${initText}</td>
+              <td style="padding: 5px 4px; white-space: nowrap; font-size: 10px; color: #475569; border: 1px solid #cbd5e1; text-align: center;">${rateText}</td>
+              <td style="padding: 5px 4px; font-weight: 900; color: ${isCred ? '#059669' : '#dc2626'}; white-space: nowrap; border: 1px solid #cbd5e1;">
+                ${toEnglishDigits(amtFin.toLocaleString())} ${curr}
+              </td>
+              <td style="padding: 5px 5px; font-size: 9.5px; color: #1e293b; border: 1px solid #cbd5e1; line-height: 1.45;">${descText}</td>
+              <td style="padding: 5px 5px; font-size: 9.5px; color: #0369a1; font-weight: 700; border: 1px solid #cbd5e1; line-height: 1.45;">${addrText}</td>
             </tr>
-          </thead>
-          <tbody>
-            ${rowsHtml}
-          </tbody>
-        </table>
+          `;
+        });
 
-        <div style="margin-top: 14px; text-align: center; font-size: 10px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 8px;">
-          این صورت‌حساب به صورت سیستمی از سامانه مدیریت صرافی و کارگزاران کریمی صادر شده است.
-        </div>
-      `;
+        const pageDiv = document.createElement('div');
+        pageDiv.style.padding = '10px 12px';
+        pageDiv.style.background = '#ffffff';
+        if (!isLastPage) {
+          pageDiv.style.pageBreakAfter = 'always';
+        }
+
+        pageDiv.innerHTML = `
+          <div style="background: #0f172a; color: #ffffff; padding: 10px 14px; border-radius: 8px; border-bottom: 3px solid #38bdf8; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div style="font-size: 14px; font-weight: 900;">🏛️ صورت‌حساب و دفتر کل تراکنش‌های صرافی</div>
+              <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">نام صرافی: <b style="color:#38bdf8;">${brokerName}</b> ${brokerCity ? '| ' + brokerCity : ''} ${brokerPhone ? '| تلفن: ' + toEnglishDigits(brokerPhone) : ''}</div>
+            </div>
+            <div style="text-align: left; font-size: 10px; color: #e2e8f0;">
+              <div>تاریخ صدور: <b>${todayStr}</b> | صفحه <b>${toEnglishDigits(pageIdx + 1)}</b> از <b>${toEnglishDigits(pages.length)}</b></div>
+              <div>تعداد کل تراکنش‌ها: <b>${toEnglishDigits(chronological.length)}</b></div>
+              <div style="color:#7dd3fc;">${periodText}</div>
+            </div>
+          </div>
+
+          ${isFirstPage ? `
+            <div style="margin-bottom: 10px;">
+              <div style="font-size: 11px; font-weight: 900; color: #0f172a; margin-bottom: 4px;">📊 خلاصه وضعیت و مانده نهایی ارزها:</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                ${summaryCardsHtml}
+              </div>
+            </div>
+          ` : ''}
+
+          <table style="width: 100%; border-collapse: collapse; font-size: 10px; text-align: right; border: 1.5px solid #475569;">
+            <thead>
+              <tr style="background: #1e293b; color: #ffffff;">
+                <th style="padding: 6px 4px; text-align: center; border: 1px solid #475569; width: 32px;">ردیف</th>
+                <th style="padding: 6px 4px; border: 1px solid #475569; width: 72px;">تاریخ و ساعت</th>
+                <th style="padding: 6px 4px; border: 1px solid #475569; width: 82px;">کد تراکنش</th>
+                <th style="padding: 6px 4px; border: 1px solid #475569; width: 58px;">عملیات</th>
+                <th style="padding: 6px 4px; text-align: center; border: 1px solid #475569; width: 54px;">جهت</th>
+                <th style="padding: 6px 4px; border: 1px solid #475569; width: 68px;">مبلغ اولیه</th>
+                <th style="padding: 6px 4px; text-align: center; border: 1px solid #475569; width: 46px;">نرخ</th>
+                <th style="padding: 6px 4px; border: 1px solid #475569; width: 88px;">مبلغ نهایی</th>
+                <th style="padding: 6px 5px; border: 1px solid #475569;">شرح / توضیحات</th>
+                <th style="padding: 6px 5px; border: 1px solid #475569; width: 145px;">آدرس مقصد</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          ${isLastPage ? `
+            <div style="margin-top: 10px; text-align: center; font-size: 9.5px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+              این صورت‌حساب به صورت سیستمی از سامانه مدیریت صرافی و کارگزاران کریمی صادر شده است.
+            </div>
+          ` : ''}
+        `;
+
+        masterWrapper.appendChild(pageDiv);
+      });
 
       const fileName = `Statement_${brokerName.replace(/\s+/g, '_')}_${todayStr}.pdf`;
       const opt = {
-        margin: [8, 8, 8, 8],
+        margin: [5, 5, 5, 5],
         filename: fileName,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        html2canvas: { scale: 2, useCORS: true, letterRendering: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
       };
 
       try {
-        await html2pdf().set(opt).from(reportContainer).save();
+        await html2pdf().set(opt).from(masterWrapper).save();
         playBeep('success');
       } catch (err) {
         console.error("PDF generation error:", err);
