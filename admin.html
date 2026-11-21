@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مدیریت امانت‌داری کریمی</title>
-  
+
   <!-- کتابخانه Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+
   <!-- فونت وزیرمتن -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,27 +16,27 @@
   <style>
     :root {
       --primary-dark: #0f172a;
-      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      --glass-bg: rgba(255, 255, 255, 0.78);
-      --glass-border: rgba(255, 255, 255, 0.72);
-      --glass-shadow: 0 12px 34px rgba(15, 23, 42, 0.12);
-      --accent-green: #10b981;
-      --accent-green-dark: #047857;
-      --accent-green-soft: #ecfdf5;
-      --card-bg: rgba(255, 255, 255, 0.90);
+      --primary-muted: #1e293b;
+      --accent-green: #15803d;
+      --accent-green-soft: #dcfce7;
+      --accent-green-glow: #22c55e;
+      --accent-red: #b91c1c;
+      --accent-red-soft: #fee2e2;
+      --surface-bg: #f4f7f5;
+      --surface-card: rgba(255, 255, 255, 0.92);
+      --surface-glass: rgba(255, 255, 255, 0.78);
+      --border-soft: rgba(21, 128, 61, 0.14);
+      --border-card: rgba(15, 23, 42, 0.08);
       --text-main: #0f172a;
-      --border-color: rgba(203, 213, 225, 0.75);
-      --danger-color: #ef4444;
-      --danger-dark: #b91c1c;
-      --danger-soft: #fef2f2;
-      --warning-color: #f59e0b;
-      --info-color: #0284c7;
-      --whatsapp-color: #25d366;
-      --whatsapp-dark: #128c7e;
-      --shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.07);
-      --shadow-md: 0 14px 32px rgba(15, 23, 42, 0.12);
-      --radius-md: 20px;
-      --radius-lg: 24px;
+      --text-muted: #475569;
+      --info-color: #0369a1;
+      --warning-color: #b45309;
+      --whatsapp-color: #16a34a;
+      --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --shadow-elevated: 0 14px 32px rgba(21, 128, 61, 0.12);
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
     }
 
     * {
@@ -51,443 +51,849 @@
     }
 
     body {
-      background: linear-gradient(135deg, #a7f3d0 0%, #bfdbfe 28%, #ddd6fe 56%, #fbcfe8 80%, #fde68a 100%);
-      background-attachment: fixed;
-      background-size: 320% 320%;
-      animation: gradientBG 18s ease infinite;
+      background:
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.13), transparent 42%),
+        radial-gradient(circle at bottom left, rgba(21, 128, 61, 0.10), transparent 45%),
+        var(--surface-bg);
       color: var(--text-main);
-      padding: 0;
-      margin: 0;
       font-size: 14px;
       min-height: 100vh;
-      width: 100vw;
-      overflow-x: hidden;
-      padding-bottom: 86px;
-    }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(12px) scale(0.99); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55); }
-      70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-
-    #authOverlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.86), rgba(30, 41, 59, 0.9));
-      backdrop-filter: blur(18px);
-      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 16px;
-    }
-    .auth-card {
-      background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(22px);
-      width: 100%; max-width: 400px; padding: 26px; border-radius: 26px;
-      box-shadow: 0 25px 55px rgba(15, 23, 42, 0.35); display: flex; flex-direction: column; gap: 14px;
-      border: 1.5px solid rgba(255, 255, 255, 0.9);
-      animation: fadeInUp 0.3s ease-out;
-    }
-    .auth-title { font-size: 1.25rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
-
-    .container { max-width: 100%; width: 100%; display: none; margin: 0; padding: 0; }
-
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-radius: 0;
-      padding: 16px;
-      box-shadow: var(--shadow-md);
-      border: none;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.65);
-      margin-bottom: 0;
       width: 100%;
-      min-height: 100vh;
-      animation: fadeInUp 0.25s ease-out;
+      overflow-x: hidden;
+      padding-bottom: 88px;
     }
 
-    .card-header-styled {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      color: #ffffff;
-      padding: 14px 16px;
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* صفحه ورود */
+    #authOverlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(20, 83, 45, 0.92) 0%, rgba(15, 23, 42, 0.94) 100%);
+      backdrop-filter: blur(14px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      width: 100%;
+      max-width: 400px;
+      padding: 26px 22px;
+      border-radius: 24px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.28);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      animation: popIn 0.28s ease-out;
+    }
+
+    .auth-badge {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 2px;
       border-radius: 18px;
-      margin: -16px -16px 16px -16px;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 10px 20px rgba(21, 128, 61, 0.28);
+    }
+
+    .auth-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      text-align: center;
+      color: var(--primary-dark);
+    }
+
+    .auth-subtitle {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: -8px;
+      margin-bottom: 4px;
+    }
+
+    .container {
+      max-width: 100%;
+      width: 100%;
+      display: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeSlideUp 0.24s ease-out;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    /* هدر یکپارچه الهام‌گرفته از اپ‌های مدرن کیف‌پول */
+    .top-app-header {
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 65%, #166534 100%);
+      color: #ffffff;
+      padding: 16px 16px 24px;
+      border-bottom-left-radius: 26px;
+      border-bottom-right-radius: 26px;
+      box-shadow: 0 10px 26px rgba(21, 128, 61, 0.22);
+      position: relative;
+      z-index: 10;
+    }
+
+    .top-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      gap: 10px;
     }
-    .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 1.05rem; font-weight: 800; }
 
-    .dashboard-floating-grid {
+    .brand-greeting {
       display: flex;
-      flex-direction: column;
-      gap: 13px;
-      padding: 8px 0 16px 0;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .brand-avatar-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.15rem;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .brand-welcome-label {
+      font-size: 0.74rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+
+    .brand-main-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .header-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .header-icon-btn {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 7px 11px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .header-icon-btn:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .header-icon-btn.danger-soft {
+      background: rgba(239, 68, 68, 0.24);
+      border-color: rgba(254, 202, 202, 0.45);
+    }
+
+    .page-body-content {
+      padding: 14px 14px 16px;
+    }
+
+    /* کارت خلاصه موجودی در بالای داشبورد (الهام از کارت کیف پول) */
+    .wallet-hero-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+      border: 1.5px solid rgba(21, 128, 61, 0.22);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-top: -12px;
+      box-shadow: var(--shadow-elevated);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wallet-hero-card::after {
+      content: "ک";
+      position: absolute;
+      left: -12px;
+      bottom: -24px;
+      font-size: 6.5rem;
+      font-weight: 900;
+      color: rgba(21, 128, 61, 0.06);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .wallet-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .wallet-pill-tag {
+      background: var(--accent-green-soft);
+      color: var(--accent-green);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .wallet-currencies-strip {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .wallet-mini-box {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 14px;
+      padding: 9px 10px;
+    }
+
+    .wallet-mini-curr {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    .wallet-mini-val {
+      font-size: 0.92rem;
+      font-weight: 900;
+      margin-top: 2px;
+    }
+
+    .section-heading-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 16px 2px 10px;
+    }
+
+    .section-heading-title {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+    }
+
+    .section-heading-sub {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* شبکه منوی اصلی داشبورد */
+    .dashboard-floating-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 11px;
     }
 
     .floating-glass-btn {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.86) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.09);
-      border-radius: 22px;
-      padding: 15px 16px;
+      background: var(--surface-card);
+      backdrop-filter: blur(14px);
+      border: 1.5px solid var(--border-card);
+      box-shadow: var(--shadow-card);
+      border-radius: 18px;
+      padding: 13px 12px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: space-between;
+      gap: 10px;
       cursor: pointer;
-      transition: all 0.22s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
       text-align: right;
       user-select: none;
       position: relative;
     }
-    .floating-glass-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.13);
-    }
+
     .floating-glass-btn:active {
-      transform: scale(0.975);
-      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.1);
+      transform: scale(0.97);
+      border-color: rgba(21, 128, 61, 0.4);
     }
 
-    .floating-glass-btn .content-box {
+    .floating-glass-btn .top-card-line {
       display: flex;
-      align-items: center;
-      gap: 14px;
-      flex: 1;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 6px;
     }
 
     .floating-glass-btn .icon {
-      font-size: 1.7rem;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(16, 185, 129, 0.14));
-      padding: 10px;
-      border-radius: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.85);
+      font-size: 1.35rem;
+      background: var(--accent-green-soft);
+      color: var(--accent-green);
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
-    .floating-glass-btn .title { font-weight: 900; font-size: 0.98rem; color: var(--primary-dark); }
+
+    .floating-glass-btn .title {
+      font-weight: 900;
+      font-size: 0.86rem;
+      color: var(--primary-dark);
+      line-height: 1.38;
+    }
 
     .menu-sort-controls {
       display: flex;
-      gap: 6px;
+      gap: 4px;
     }
+
     .sort-btn {
-      background: rgba(15, 23, 42, 0.08);
-      border: 1px solid rgba(15, 23, 42, 0.06);
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.06);
+      border: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 8px;
+      font-size: 0.72rem;
       font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--primary-dark);
-      transition: all 0.18s;
+      transition: background 0.15s ease, transform 0.15s ease;
     }
-    .sort-btn:active { background: rgba(15, 23, 42, 0.18); transform: scale(0.9); }
 
+    .sort-btn:active {
+      background: rgba(21, 128, 61, 0.2);
+      transform: scale(0.9);
+    }
+
+    /* کنترل نوکیا برای جزئیات حساب */
     .nokia-nav-container {
       position: relative;
       width: 100%;
-      max-width: 324px;
-      height: 224px;
-      margin: 16px auto;
+      max-width: 320px;
+      height: 214px;
+      margin: 14px auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 72%);
-      border-radius: 36px;
     }
 
     .nokia-center-btn {
       position: absolute;
-      width: 94px;
-      height: 94px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
       color: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       text-align: center;
-      box-shadow: 0 10px 26px rgba(16, 185, 129, 0.45);
+      box-shadow: 0 10px 24px rgba(21, 128, 61, 0.34);
       border: 4px solid #ffffff;
       cursor: pointer;
       z-index: 10;
-      animation: pulseGlow 2.2s infinite;
-      transition: transform 0.2s ease;
+      transition: transform 0.18s ease;
     }
-    .nokia-center-btn:active { transform: scale(0.92); }
+
+    .nokia-center-btn:active {
+      transform: scale(0.93);
+    }
 
     .nokia-corner-btn {
       position: absolute;
-      width: 126px;
-      height: 76px;
+      width: 124px;
+      height: 72px;
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(15, 23, 42, 0.09);
+      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 800;
       cursor: pointer;
       color: var(--primary-dark);
-      transition: all 0.2s ease;
+      transition: transform 0.16s ease, background 0.16s ease;
       padding: 6px;
-      gap: 4px;
+      gap: 3px;
     }
-    .nokia-corner-btn:active { transform: scale(0.95); background: #ffffff; }
 
-    .nokia-btn-top-right { top: 10px; right: 10px; border-radius: 18px 18px 40px 18px; }
-    .nokia-btn-top-left { top: 10px; left: 10px; border-radius: 18px 18px 18px 40px; }
-    .nokia-btn-bottom-right { bottom: 10px; right: 10px; border-radius: 18px 40px 18px 18px; }
-    .nokia-btn-bottom-left { bottom: 10px; left: 10px; border-radius: 40px 18px 18px 18px; }
+    .nokia-corner-btn:active {
+      transform: scale(0.95);
+      background: #f0fdf4;
+    }
 
-    h3 { font-size: 1.05rem; font-weight: 900; color: var(--primary-dark); margin-bottom: 12px; }
-    .form-group { margin-bottom: 14px; }
-    label { display: block; font-size: 0.9rem; font-weight: 800; margin-bottom: 6px; color: #1e293b; }
+    .nokia-btn-top-right { top: 10px; right: 10px; border-radius: 16px 16px 36px 16px; }
+    .nokia-btn-top-left { top: 10px; left: 10px; border-radius: 16px 16px 16px 36px; }
+    .nokia-btn-bottom-right { bottom: 10px; right: 10px; border-radius: 16px 36px 16px 16px; }
+    .nokia-btn-bottom-left { bottom: 10px; left: 10px; border-radius: 36px 16px 16px 16px; }
+
+    h3 {
+      font-size: 1.02rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 13px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+      color: #1e293b;
+    }
 
     input, select, textarea {
-      width: 100%; padding: 12px 14px; border: 2px solid rgba(203, 213, 225, 0.85); border-radius: 15px;
-      font-size: 0.96rem; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px);
-      outline: none; transition: all 0.2s ease; font-weight: 700; color: #0f172a;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--info-color);
+      width: 100%;
+      padding: 11px 13px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 13px;
+      font-size: 0.94rem;
       background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.18);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      font-weight: 700;
+      color: var(--text-main);
     }
-    textarea { resize: vertical; min-height: 80px; }
 
-    .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.14);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 76px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
     .btn-select-option {
-      flex: 1; min-width: 70px; padding: 11px 6px; text-align: center; background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(10px); border: 2px solid rgba(203, 213, 225, 0.9); border-radius: 15px; font-size: 0.92rem;
-      font-weight: 900; cursor: pointer; transition: all 0.2s ease; user-select: none; color: #334155;
+      flex: 1;
+      min-width: 68px;
+      padding: 10px 6px;
+      text-align: center;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 13px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      user-select: none;
+      color: #334155;
     }
+
     .btn-select-option.selected-creditor {
-      background: #ecfdf5 !important; border-color: var(--accent-green) !important; color: var(--accent-green-dark) !important;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.28);
+      background: var(--accent-green-soft) !important;
+      border-color: var(--accent-green) !important;
+      color: var(--accent-green) !important;
     }
+
     .btn-select-option.selected-debtor {
-      background: #fef2f2 !important; border-color: var(--danger-color) !important; color: var(--danger-color) !important;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.28);
+      background: var(--accent-red-soft) !important;
+      border-color: var(--accent-red) !important;
+      color: var(--accent-red) !important;
     }
+
     .btn-select-option.selected-currency {
-      background: #f0f9ff !important; border-color: var(--info-color) !important; color: var(--info-color) !important;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.28);
+      background: #e0f2fe !important;
+      border-color: var(--info-color) !important;
+      color: var(--info-color) !important;
     }
 
     .btn {
-      padding: 11px 16px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: none;
-      border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 0.92rem;
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
-      box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3); transition: all 0.16s ease; user-select: none;
+      padding: 11px 15px;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      box-shadow: 0 6px 16px rgba(21, 128, 61, 0.22);
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      user-select: none;
     }
+
     .btn:active { transform: scale(0.97); }
-    .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3); }
-    .btn-secondary { background: linear-gradient(135deg, #475569 0%, #334155 100%); box-shadow: 0 6px 20px rgba(71, 85, 105, 0.3); }
-    .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3); }
-    .btn-info { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.3); }
-    .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3); }
-    .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 11px; }
+    .btn-danger { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); box-shadow: 0 6px 16px rgba(185, 28, 28, 0.22); }
+    .btn-secondary { background: linear-gradient(135deg, #475569 0%, #334155 100%); box-shadow: 0 6px 14px rgba(51, 65, 85, 0.18); }
+    .btn-warning { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #ffffff; box-shadow: 0 6px 16px rgba(180, 83, 9, 0.22); }
+    .btn-info { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); box-shadow: 0 6px 16px rgba(3, 105, 161, 0.22); }
+    .btn-whatsapp { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); color: #ffffff; box-shadow: 0 6px 16px rgba(21, 128, 61, 0.22); }
+    .btn-sm { padding: 7px 12px; font-size: 0.8rem; width: auto; box-shadow: none; border-radius: 10px; }
 
     .action-btn-modern {
-      padding: 13px 18px;
-      border-radius: 16px;
+      padding: 12px 16px;
+      border-radius: 14px;
       font-weight: 900;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       cursor: pointer;
       border: none;
-      transition: all 0.2s ease;
+      transition: transform 0.16s ease;
       width: 100%;
       user-select: none;
     }
+
     .action-btn-modern:active { transform: scale(0.97); }
-    .btn-edit-pro {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    .btn-edit-pro { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #ffffff; }
+    .btn-delete-pro { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff; }
+
+    /* دکمه ایجاد حساب جدید در صفحه حساب‌ها (سمت چپ پایین) */
+    .floating-create-account-btn {
+      position: fixed;
+      bottom: 66px;
+      left: 16px;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
       color: #ffffff;
-      box-shadow: 0 8px 22px rgba(245, 158, 11, 0.35);
-    }
-    .btn-delete-pro {
-      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-      color: #ffffff;
-      box-shadow: 0 8px 22px rgba(239, 68, 68, 0.35);
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.88rem;
+      box-shadow: 0 10px 24px rgba(21, 128, 61, 0.34);
+      z-index: 4500;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.16s ease;
     }
 
-    .floating-create-account-btn {
-      position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white;
-      padding: 13px 22px; border-radius: 35px; font-weight: 900; font-size: 0.96rem;
-      box-shadow: 0 10px 28px rgba(16, 185, 129, 0.45); z-index: 5000; border: 2px solid rgba(255,255,255,0.8); cursor: pointer;
-      display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
-    }
     .floating-create-account-btn:active { transform: scale(0.95); }
 
-    /* پنل شناور و قابل جابه‌جایی جستجو + دکمه بازگشت در زیر آن */
-    #floatingSearchDock {
-      position: fixed;
-      top: 136px;
-      right: 16px;
-      z-index: 6500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      touch-action: none;
-      user-select: none;
-    }
-
+    /* دکمه سرچ کوچک و شناور */
     .floating-search-trigger {
-      width: 54px; height: 54px;
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      color: #ffffff; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.32rem;
-      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.45);
-      cursor: grab; border: 2px solid #ffffff;
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
-    }
-    .floating-search-trigger:active {
-      cursor: grabbing;
-      transform: scale(1.05);
+      position: fixed;
+      bottom: 66px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      box-shadow: 0 8px 20px rgba(21, 128, 61, 0.35);
+      z-index: 5000;
+      cursor: pointer;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      transition: transform 0.16s ease;
     }
 
-    .floating-back-subbtn {
-      width: 42px; height: 42px;
-      background: rgba(255, 255, 255, 0.96);
-      color: var(--primary-dark);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.05rem; font-weight: 900;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
-      border: 1.5px solid rgba(15, 23, 42, 0.14);
+    .floating-search-trigger:active { transform: scale(0.92); }
+
+    /* دکمه بازگشت کوچک، ثابت و همیشگی در پایین صفحه سمت راست */
+    .fixed-back-bottom-right {
+      position: fixed;
+      bottom: 14px;
+      right: 16px;
+      height: 36px;
+      padding: 0 12px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+      z-index: 5500;
       cursor: pointer;
       transition: transform 0.15s ease, background 0.15s ease;
     }
-    .floating-back-subbtn:active {
-      transform: scale(0.92);
-      background: #f1f5f9;
+
+    .fixed-back-bottom-right:active {
+      transform: scale(0.94);
+      background: #0f172a;
     }
 
+    /* مودال‌ها */
     #searchDrawerModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(15, 23, 42, 0.72); backdrop-filter: blur(8px);
-      z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(7px);
+      z-index: 99999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
       overflow-y: auto;
     }
+
     .modal-card-box {
       background: #ffffff;
-      width: 100%; max-width: 424px; border-radius: 26px; padding: 20px;
-      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35); max-height: 90vh; overflow-y: auto;
-      border: 1.5px solid rgba(255,255,255,0.9);
-      animation: fadeInUp 0.24s ease-out;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 24px 55px rgba(15, 23, 42, 0.3);
+      max-height: 88vh;
+      overflow-y: auto;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      animation: popIn 0.2s ease-out;
     }
 
-    .stats-grid { display: flex; flex-direction: column; gap: 10px; }
-    .stat-card {
-      background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
-      border-radius: var(--radius-md); padding: 13px 14px; box-shadow: var(--shadow-sm);
-    }
-    .stat-row { display: flex; justify-content: space-between; font-size: 0.92rem; margin-bottom: 4px; align-items: center; }
-    .stat-badge { text-align: center; padding: 8px 12px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; margin-top: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); }
-
-    .account-item-card, .tx-item-card, .phone-item-card {
-      background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
-      border-radius: var(--radius-md); padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow-sm); 
-      display: flex; flex-direction: column; gap: 8px; cursor: pointer; user-select: none; transition: all 0.16s ease; width: 100%;
-    }
-    .account-item-card:hover, .phone-item-card:hover { border-color: #93c5fd; transform: translateY(-1px); }
-    .account-item-card:active, .tx-item-card:active, .phone-item-card:active { border-color: var(--info-color); background: #ffffff; }
-
-    .tx-item-card.tx-creditor { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 55%); border-color: #86efac; }
-    .tx-item-card.tx-debtor { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 55%); border-color: #fca5a5; }
-
-    .account-item-header { display: flex; justify-content: space-between; align-items: center; }
-    .account-name-title { font-size: 1.08rem; font-weight: 900; color: var(--primary-dark); }
-
-    .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .back-home { display: block; text-align: center; margin-top: 20px; color: #ffffff; text-decoration: none; font-size: 0.88rem; font-weight: 800; text-shadow: 0 2px 6px rgba(15,23,42,0.35); }
-    .currency-badge { display: inline-block; padding: 4px 10px; background: rgba(255, 255, 255, 0.96); border: 1px solid rgba(203, 213, 225, 0.85); border-radius: 9px; font-size: 0.82rem; margin: 2px; font-weight: 900; }
-
-    .view-section { display: none; }
-    .view-section.active { display: block; }
-
-    #syncIndicator {
-      position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white;
-      padding: 9px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 900;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.28); display: none; z-index: 8000; border: 1.5px solid rgba(255,255,255,0.7);
-    }
-
-    .profile-img-preview { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--accent-green); background: #ffffff; }
-    .receipt-img-preview { width: 100%; max-height: 240px; object-fit: contain; border-radius: 14px; border: 2px solid rgba(203,213,225,0.9); margin-top: 10px; background: #ffffff; }
-    .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(248, 250, 252, 0.96); border-radius: 14px; margin-bottom: 8px; border: 1px solid rgba(203,213,225,0.85); }
-
-    .client-info-header-box {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(240, 253, 244, 0.92) 100%);
-      backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      margin-bottom: 14px;
+    .stats-grid {
       display: flex;
       flex-direction: column;
+      gap: 10px;
+    }
+
+    .stat-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      margin-bottom: 4px;
+      align-items: center;
       gap: 8px;
-      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-badge {
+      text-align: center;
+      padding: 7px 10px;
+      border-radius: 11px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+
+    .account-item-card, .tx-item-card, .phone-item-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 13px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      width: 100%;
+    }
+
+    .account-item-card:active, .tx-item-card:active, .phone-item-card:active {
+      transform: scale(0.99);
+      border-color: var(--accent-green);
+    }
+
+    .tx-item-card.tx-creditor {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .tx-item-card.tx-debtor {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .account-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .account-name-title {
+      font-size: 1.02rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .currency-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      margin: 2px;
+      font-weight: 900;
+    }
+
+    #syncIndicator {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.25);
+      display: none;
+      z-index: 9000;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      white-space: nowrap;
+    }
+
+    .profile-img-preview {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ffffff;
+      background: #ffffff;
+    }
+
+    .receipt-img-preview {
+      width: 100%;
+      max-height: 230px;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      margin-top: 8px;
+      background: #ffffff;
+    }
+
+    .op-badge-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 12px;
+      background: #f8fafc;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      border: 1px solid #e2e8f0;
+      gap: 8px;
+    }
+
+    .client-info-header-box {
+      background: var(--surface-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 13px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: var(--shadow-card);
     }
 
     .batch-summary-card {
       background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       color: #ffffff;
-      padding: 14px;
-      border-radius: 18px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(255,255,255,0.22);
+      padding: 13px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
     }
 
     .deleted-account-badge {
       display: inline-block;
-      background: #fef2f2;
-      color: #ef4444;
+      background: var(--accent-red-soft);
+      color: var(--accent-red);
       border: 1px solid #fecaca;
-      padding: 3px 10px;
-      border-radius: 9px;
-      font-size: 0.8rem;
-      font-weight: 900;
+      padding: 2px 9px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 800;
     }
 
     .edge-to-edge-wrapper {
-      margin-left: -16px;
-      margin-right: -16px;
-      width: calc(100% + 32px);
+      margin-left: -14px;
+      margin-right: -14px;
+      width: calc(100% + 28px);
     }
+
     .compact-ledger-table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
       font-size: 0.74rem;
     }
+
     .compact-ledger-table th {
       background: #f1f5f9;
       color: #1e293b;
@@ -500,26 +906,27 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .compact-ledger-table th:last-child,
     .compact-ledger-table td:last-child {
       border-left: none;
     }
+
     .compact-ledger-table td {
       padding: 7px 3px;
-      border-bottom: 1px solid #cbd5e1;
-      border-left: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+      border-left: 1px solid #f1f5f9;
       vertical-align: middle;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .compact-ledger-table tr:active {
-      filter: brightness(0.96);
-    }
+
     .ledger-customer-picker {
       position: relative;
       margin-bottom: 10px;
     }
+
     .ledger-picker-dropdown {
       position: absolute;
       top: 100%;
@@ -527,14 +934,15 @@
       right: 0;
       background: #ffffff;
       border: 1.5px solid #cbd5e1;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
       z-index: 500;
-      max-height: 240px;
+      max-height: 230px;
       overflow-y: auto;
       margin-top: 4px;
       display: none;
     }
+
     .ledger-picker-item {
       padding: 9px 12px;
       border-bottom: 1px solid #f1f5f9;
@@ -542,31 +950,26 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.15s;
     }
-    .ledger-picker-item:last-child {
-      border-bottom: none;
-    }
-    .ledger-picker-item:hover, .ledger-picker-item.active-opt {
-      background: #eff6ff;
-    }
+
+    .ledger-picker-item:last-child { border-bottom: none; }
+    .ledger-picker-item:hover, .ledger-picker-item.active-opt { background: #f0fdf4; }
   </style>
 </head>
 <body>
 
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
 
-  <div id="floatingSearchDock" aria-label="کنترل‌های شناور">
-    <div id="floatingSearchBtn" class="floating-search-trigger" title="جستجوی سریع (قابل جابه‌جایی)">🔍</div>
-    <button type="button" id="floatingBackSubBtn" class="floating-back-subbtn" onclick="playInteractionEffect(); handleFloatingBackAction()" title="بازگشت">↩</button>
-  </div>
+  <!-- دکمه‌های شناور کوچک و ثابت -->
+  <div id="floatingSearchBtn" class="floating-search-trigger" style="display:none;" onclick="playInteractionEffect(); openSearchDrawer()" title="جستجوی سریع">🔍</div>
+  <button id="fixedBackBtn" type="button" class="fixed-back-bottom-right" style="display:none;" onclick="playInteractionEffect(); handleGlobalBackAction()" title="بازگشت">↩ بازگشت</button>
 
   <!-- کشوی جستجو -->
   <div id="searchDrawerModal" onclick="closeSearchDrawerOnBack(event)">
-    <div class="modal-card-box" style="margin-top: 20px;" onclick="event.stopPropagation()">
+    <div class="modal-card-box" onclick="event.stopPropagation()">
       <div class="flex-row" style="justify-content: space-between; margin-bottom: 10px;">
-        <h3>🔍 جستجوی هوشمند</h3>
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeSearchDrawer()">✕ بستن</button>
+        <h3>🔍 جستجوی سریع</h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeSearchDrawer()">✕ بستن</button>
       </div>
       <div class="form-group" style="margin-bottom: 0;">
         <input type="text" id="drawerSearchInput" placeholder="نام مشتری، تلفن، کُد حساب یا کد تراکنش..." oninput="handleDrawerSearch()">
@@ -578,25 +981,59 @@
   <!-- صفحه ورود -->
   <div id="authOverlay">
     <div class="auth-card">
-      <div class="auth-title">🔐 مدیریت امانت‌داری کریمی</div>
-      <div class="form-group"><label>ایمیل ادمین:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
-      <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور..."></div>
-      <button class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
-      <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
+      <div class="auth-badge">🏛️</div>
+      <div class="auth-title">امانت‌داری کریمی</div>
+      <div class="auth-subtitle">پنل مدیریت مالی و حسابداری چندارزی</div>
+      <div class="form-group">
+        <label>ایمیل ادمین:</label>
+        <input type="email" id="loginEmail" dir="ltr" placeholder="admin@example.com">
+      </div>
+      <div class="form-group">
+        <label>کد عبور (PIN):</label>
+        <input type="password" id="loginPin" dir="ltr" placeholder="••••">
+      </div>
+      <button type="button" class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
     </div>
   </div>
 
   <!-- کانتینر اصلی -->
   <div class="container" id="adminContainer">
+
     <!-- داشبورد اصلی -->
     <div id="viewDashboard" class="view-section active">
-      <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0; min-height: auto;">
-        <div class="card-header-styled">
-          <h3>🏛️ مدیریت امانت‌داری کریمی</h3>
-          <div class="flex-row">
-            <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); loadDataFromSupabase(true)">🔄 همگام‌سازی</button>
-            <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); handleLogout()">خروج</button>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-greeting">
+            <div class="brand-avatar-circle" id="dashboardUserAvatar">ک</div>
+            <div>
+              <div class="brand-welcome-label" id="dashboardUserGreeting">خوش آمدید</div>
+              <div class="brand-main-title">امانت‌داری کریمی</div>
+            </div>
           </div>
+          <div class="header-actions-group">
+            <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); loadDataFromSupabase(true)">🔄 بروزرسانی</button>
+            <button type="button" class="header-icon-btn danger-soft" onclick="playInteractionEffect(); handleLogout()">خروج</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-body-content">
+        <div class="wallet-hero-card">
+          <div class="wallet-hero-top">
+            <span style="font-size:0.86rem; font-weight:900; color:var(--primary-dark);">💼 وضعیت خالص حساب‌های فعال</span>
+            <span class="wallet-pill-tag" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')" style="cursor:pointer;">جزئیات آمار ←</span>
+          </div>
+          <div class="wallet-currencies-strip" id="dashboardHeroBalances">
+            <div class="wallet-mini-box">
+              <div class="wallet-mini-curr">در حال محاسبه...</div>
+              <div class="wallet-mini-val">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading-row">
+          <span class="section-heading-title">بخش‌های مدیریت</span>
+          <span class="section-heading-sub">چیدمان قابل سفارشی‌سازی</span>
         </div>
 
         <div class="dashboard-floating-grid" id="dashboardMenuGrid"></div>
@@ -605,20 +1042,22 @@
 
     <!-- آمار کلی -->
     <div id="viewGlobalStatsPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
-          <h3>📊 آمار و گزارشات کلی سیستم</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-main-title">📊 آمار و گزارشات کلی سیستم</div>
+          <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
         </div>
-        <h3 style="font-size:1rem; margin-bottom:8px;">موجودی‌های فعال (مانده زنده)</h3>
+      </div>
+      <div class="page-body-content">
+        <h3>موجودی‌های فعال (مانده زنده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
-      
-        <div style="margin-top: 20px;">
-          <h3>🚀 منوی گزارشات تفکیکی</h3>
-          <div class="flex-row" style="gap: 10px; flex-direction: column;">
-            <button class="btn btn-info" onclick="playInteractionEffect(); openTransfersReport()">📜 آمار و لیست حواله‌ها / انتقال‌ها</button>
-            <button class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های بدهکار (انتخاب چندتایی)</button>
-            <button class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های بستانکار (انتخاب چندتایی)</button>
+
+        <div style="margin-top: 18px;">
+          <h3>🚀 گزارشات تفکیکی</h3>
+          <div class="flex-row" style="gap: 9px; flex-direction: column;">
+            <button type="button" class="btn btn-info" onclick="playInteractionEffect(); openTransfersReport()">📜 آمار و لیست حواله‌ها / انتقال‌ها</button>
+            <button type="button" class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های بدهکار (انتخاب چندتایی)</button>
+            <button type="button" class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های بستانکار (انتخاب چندتایی)</button>
           </div>
         </div>
       </div>
@@ -626,39 +1065,42 @@
 
     <!-- دفترچه و بانک شماره‌ها -->
     <div id="viewPhoneDirectoryPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
-          <h3>📞 بانک کامل شماره‌ها و مخاطبین</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-main-title">📞 بانک کامل شماره‌ها و مخاطبین</div>
+          <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
+        </div>
+      </div>
+      <div class="page-body-content">
+        <div class="form-group" style="position: relative; margin-bottom: 10px;">
+          <input type="text" id="searchPhoneInput" placeholder="🔍 جستجو در شماره‌ها، اسامی یا کُد حساب..." oninput="filterPhonesDirectory()" style="padding-left: 36px;">
+          <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.9rem; cursor: pointer; color: #64748b; display: none;">✕</button>
         </div>
 
-        <div class="form-group" style="position: relative; margin-bottom: 12px;">
-          <input type="text" id="searchPhoneInput" placeholder="🔍 جستجو در شماره‌ها، اسامی یا کُد حساب..." oninput="filterPhonesDirectory()" style="padding-left: 38px;">
-          <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
-        </div>
-
-        <div id="phoneDirectorySummary" class="stat-card" style="background:rgba(240,249,255,0.9); border-color:var(--info-color); margin-bottom:12px;"></div>
+        <div id="phoneDirectorySummary" class="stat-card" style="background:#f0fdf4; border-color:#bbf7d0; margin-bottom:10px;"></div>
         <div id="phoneDirectoryContainer"></div>
       </div>
     </div>
 
     <!-- دفتر کل مرکزی تمامی تراکنش‌ها -->
     <div id="viewAllTransactionsPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
-          <h3>📜 دفتر کل مرکزی تراکنش‌ها</h3>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-main-title">📜 دفتر کل مرکزی تراکنش‌ها</div>
           <div class="flex-row" style="gap:6px;">
-            <button class="btn btn-sm" style="background:var(--accent-green);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ ایجاد تراکنش</button>
-            <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+            <button type="button" class="header-icon-btn" style="background:rgba(255,255,255,0.25);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ تراکنش</button>
+            <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
           </div>
         </div>
+      </div>
 
+      <div class="page-body-content">
         <div class="form-group ledger-customer-picker" id="globalLedgerPickerWrapper" style="margin-bottom: 10px;">
-          <label style="font-size: 0.85rem; color: #334155;">جستجو و انتخاب حساب مشتری (نام، تلفن یا کُد حساب):</label>
+          <label style="font-size: 0.84rem; color: #334155;">جستجو و انتخاب حساب مشتری (نام، تلفن یا کُد حساب):</label>
           <input type="hidden" id="globalLedgerAccountFilter" value="all">
           <div style="position: relative;">
             <input type="text" id="globalLedgerAccountSearchInput" placeholder="📁 همه حساب‌ها — تایپ نام، شماره یا ACC..." onfocus="openGlobalLedgerAccountDropdown()" oninput="filterGlobalLedgerAccountDropdown()" autocomplete="off" style="padding-left: 36px;">
-            <button type="button" id="clearGlobalLedgerAccBtn" onclick="playInteractionEffect(); clearGlobalLedgerAccountFilter()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
+            <button type="button" id="clearGlobalLedgerAccBtn" onclick="playInteractionEffect(); clearGlobalLedgerAccountFilter()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.9rem; cursor: pointer; color: #64748b; display: none;">✕</button>
           </div>
           <div id="globalLedgerAccountDropdown" class="ledger-picker-dropdown"></div>
         </div>
@@ -673,11 +1115,13 @@
 
     <!-- گزارش حواله‌ها / انتقال‌ها -->
     <div id="viewTransfersReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
-          <h3>📜 گزارش پیشرفته حواله‌ها / انتقال‌ها</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-main-title">📜 گزارش حواله‌ها و انتقال‌ها</div>
+          <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">آمار</button>
         </div>
+      </div>
+      <div class="page-body-content">
         <div class="form-group">
           <label>فیلتر زمانی موارد:</label>
           <select id="transferFilterPeriod" onchange="toggleCustomDateFilter()">
@@ -689,162 +1133,166 @@
           </select>
         </div>
 
-        <div id="customDateRangeBox" style="display: none; background: rgba(248,250,252,0.9); border: 1.5px solid rgba(255,255,255,0.8); padding: 12px; border-radius: 14px; margin-bottom: 12px;">
+        <div id="customDateRangeBox" style="display: none; background: #ffffff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 14px; margin-bottom: 12px;">
           <div class="flex-row" style="gap: 10px;">
             <div style="flex:1;">
-              <label style="font-size: 0.85rem;">از تاریخ:</label>
+              <label style="font-size: 0.82rem;">از تاریخ:</label>
               <input type="date" id="startDateFilter" onchange="renderTransfersReport()">
             </div>
             <div style="flex:1;">
-              <label style="font-size: 0.85rem;">تا تاریخ:</label>
+              <label style="font-size: 0.82rem;">تا تاریخ:</label>
               <input type="date" id="endDateFilter" onchange="renderTransfersReport()">
             </div>
           </div>
         </div>
 
-        <div id="transferSummaryHeader" class="stat-card" style="background:rgba(236,253,245,0.9); border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
+        <div id="transferSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:#bbf7d0; margin-bottom:10px;"></div>
         <div id="transfersReportContainer"></div>
       </div>
     </div>
 
-    <!-- گزارش بدهکاران با قابلیت انتخاب چندتایی -->
+    <!-- گزارش بدهکاران -->
     <div id="viewDebtorsReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
-          <h3>🔴 لیست و فیلتر بدهکاران (انتخاب چندتایی)</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-main-title">🔴 لیست حساب‌های بدهکار</div>
+          <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">آمار</button>
         </div>
-
+      </div>
+      <div class="page-body-content">
         <div id="debtorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
-          <h4 style="margin-bottom:8px; font-size:1rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
+          <h4 style="margin-bottom:6px; font-size:0.95rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
           <div id="debtorsBatchSummaryContent"></div>
         </div>
-
-        <div id="debtorsSummaryHeader" class="stat-card" style="background:rgba(254,242,242,0.9); border-color:var(--danger-color); margin-bottom:10px;"></div>
+        <div id="debtorsSummaryHeader" class="stat-card" style="background:#fef2f2; border-color:#fecaca; margin-bottom:10px;"></div>
         <div id="debtorsContainer"></div>
       </div>
     </div>
 
-    <!-- گزارش بستانکاران با قابلیت انتخاب چندتایی -->
+    <!-- گزارش بستانکاران -->
     <div id="viewCreditorsReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
-          <h3>🟢 لیست و فیلتر بستانکاران (انتخاب چندتایی)</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-main-title">🟢 لیست حساب‌های بستانکار</div>
+          <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">آمار</button>
         </div>
-
+      </div>
+      <div class="page-body-content">
         <div id="creditorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
-          <h4 style="margin-bottom:8px; font-size:1rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
+          <h4 style="margin-bottom:6px; font-size:0.95rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
           <div id="creditorsBatchSummaryContent"></div>
         </div>
-
-        <div id="creditorsSummaryHeader" class="stat-card" style="background:rgba(240,253,244,0.9); border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
+        <div id="creditorsSummaryHeader" class="stat-card" style="background:#f0fdf4; border-color:#bbf7d0; margin-bottom:10px;"></div>
         <div id="creditorsContainer"></div>
       </div>
     </div>
 
     <!-- لیست کامل حساب‌ها -->
     <div id="viewAccounts" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
-          <h3>👥 لیست کامل حساب‌ها</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-main-title">👥 لیست کامل حساب‌ها</div>
+          <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
         </div>
-        <div class="form-group" style="position: relative;">
-          <input type="text" id="searchAccountInput" placeholder="🔍 جستجو در حساب‌ها..." oninput="advancedSearchAccounts()" style="padding-left: 38px;">
-          <button type="button" id="clearSearchBtn" onclick="playInteractionEffect(); clearAccountSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
+      </div>
+      <div class="page-body-content">
+        <div class="form-group" style="position: relative; margin-bottom: 10px;">
+          <input type="text" id="searchAccountInput" placeholder="🔍 جستجو در نام، تلفن یا کُد حساب..." oninput="advancedSearchAccounts()" style="padding-left: 36px;">
+          <button type="button" id="clearSearchBtn" onclick="playInteractionEffect(); clearAccountSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.9rem; cursor: pointer; color: #64748b; display: none;">✕</button>
         </div>
-        <div id="accountsListContainer" style="margin-top: 10px;"></div>
+        <div id="accountsListContainer"></div>
       </div>
 
-      <button class="floating-create-account-btn" onclick="playInteractionEffect(); openAccountModal()">
+      <button type="button" class="floating-create-account-btn" onclick="playInteractionEffect(); openAccountModal()">
         <span>➕ ایجاد حساب جدید</span>
       </button>
     </div>
 
     <!-- جزئیات حساب مشتری -->
     <div id="viewAccountDetail" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
+      <div class="top-app-header">
+        <div class="top-header-row">
           <div class="flex-row">
             <img id="detailAccountPhoto" src="" class="profile-img-preview" style="display:none;">
-            <h3 id="detailAccountTitle">جزئیات حساب</h3>
+            <div class="brand-main-title" id="detailAccountTitle">جزئیات حساب</div>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewAccounts')">← حساب‌ها</button>
+          <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); switchView('viewAccounts')">حساب‌ها</button>
         </div>
+      </div>
 
+      <div class="page-body-content">
         <div class="client-info-header-box" id="clientFullDetailsBox"></div>
 
-        <div class="stat-card" style="background: rgba(240,253,244,0.95); border-color: var(--accent-green); margin-bottom: 14px;">
-          <label style="font-size:0.86rem; color:#065f46; margin-bottom:8px;"><b>📲 ارسال گزارش تراکنش‌های شخص به واتساپ خودش:</b></label>
-          <div class="flex-row" style="gap:6px; flex-wrap:wrap;">
-            <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('today')">☀️ روزانه</button>
-            <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('week')">📅 هفتگی</button>
-            <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('month')">🗓️ ماهانه</button>
-            <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('all')">📜 کل</button>
+        <div class="stat-card" style="background:#f0fdf4; border-color:#bbf7d0; margin-bottom:12px;">
+          <label style="font-size:0.84rem; color:#15803d; margin-bottom:7px;">📲 ارسال گزارش تراکنش‌های شخص به واتساپ:</label>
+          <div class="flex-row" style="gap:6px;">
+            <button type="button" class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('today')">روزانه</button>
+            <button type="button" class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('week')">هفتگی</button>
+            <button type="button" class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('month')">ماهانه</button>
+            <button type="button" class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('all')">کل</button>
           </div>
         </div>
 
         <div class="stats-grid" id="accountStatsGrid"></div>
 
         <div class="nokia-nav-container">
-          <button class="nokia-center-btn" onclick="playInteractionEffect(); openAddTransactionModal()">
-            <span style="font-size:1.35rem;">➕</span>
+          <button type="button" class="nokia-center-btn" onclick="playInteractionEffect(); openAddTransactionModal()">
+            <span style="font-size:1.3rem;">➕</span>
             <span>ثبت تراکنش</span>
           </button>
 
-          <button class="nokia-corner-btn nokia-btn-top-right" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">
-            <span style="font-size:1.25rem; color:var(--whatsapp-color);">💬</span>
+          <button type="button" class="nokia-corner-btn nokia-btn-top-right" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">
+            <span style="font-size:1.15rem;">💬</span>
             <span>بیلان واتساپ</span>
           </button>
 
-          <button class="nokia-corner-btn nokia-btn-top-left" onclick="playInteractionEffect(); openCustomMessageModal()">
-            <span style="font-size:1.25rem; color:var(--info-color);">✉️</span>
+          <button type="button" class="nokia-corner-btn nokia-btn-top-left" onclick="playInteractionEffect(); openCustomMessageModal()">
+            <span style="font-size:1.15rem;">✉️</span>
             <span>ارسال پیام</span>
           </button>
 
-          <button class="nokia-corner-btn nokia-btn-bottom-right" onclick="playInteractionEffect(); openEditAccountModal()">
-            <span style="font-size:1.25rem; color:var(--warning-color);">✏️</span>
+          <button type="button" class="nokia-corner-btn nokia-btn-bottom-right" onclick="playInteractionEffect(); openEditAccountModal()">
+            <span style="font-size:1.15rem;">✏️</span>
             <span>ویرایش حساب</span>
           </button>
 
-          <button class="nokia-corner-btn nokia-btn-bottom-left" onclick="playInteractionEffect(); confirmDeleteAccountModal()">
-            <span style="font-size:1.25rem; color:var(--danger-color);">🗑️</span>
+          <button type="button" class="nokia-corner-btn nokia-btn-bottom-left" onclick="playInteractionEffect(); confirmDeleteAccountModal()">
+            <span style="font-size:1.15rem;">🗑️</span>
             <span>حذف حساب</span>
           </button>
         </div>
 
-        <h3 style="margin-top: 16px;">📜 تراکنش‌های این حساب</h3>
-        <div id="transactionsListContainer" class="edge-to-edge-wrapper" style="margin-top: 10px;"></div>
+        <h3 style="margin-top: 12px;">📜 تراکنش‌های این حساب</h3>
+        <div id="transactionsListContainer" class="edge-to-edge-wrapper" style="margin-top: 8px;"></div>
       </div>
     </div>
 
     <!-- جزئیات کامل یک تراکنش -->
     <div id="viewTransactionDetail" class="view-section">
-      <div class="card" style="min-height: 100vh;">
-        <div class="card-header-styled">
-          <h3>🔍 جزئیات کامل تراکنش</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); returnFromTransactionDetail()">← بازگشت</button>
+      <div class="top-app-header">
+        <div class="top-header-row">
+          <div class="brand-main-title">🔍 جزئیات کامل تراکنش</div>
+          <button type="button" class="header-icon-btn" onclick="playInteractionEffect(); returnFromTransactionDetail()">بازگشت</button>
         </div>
-        <div id="txDetailCard"></div>
-        <div style="margin-top: 14px;" id="txActionButtonsContainer"></div>
+      </div>
+      <div class="page-body-content">
+        <div class="stat-card" id="txDetailCard"></div>
+        <div style="margin-top: 12px;" id="txActionButtonsContainer"></div>
       </div>
     </div>
-
-    <a href="index.html" class="back-home">← بازگشت به صفحه اصلی سایت</a>
   </div>
 
   <!-- مودال پیام سفارشی -->
   <div id="customMessageModal">
     <div class="modal-card-box">
       <h3>✉️ ارسال پیام دستی به مشتری</h3>
-      <p style="font-size:0.9rem; color:#475569; margin-bottom:12px; font-weight:700;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
+      <p style="font-size:0.84rem; color:#475569; margin-bottom:10px; font-weight:700;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
       <div class="form-group">
-        <textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 120px;"></textarea>
+        <textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 110px;"></textarea>
       </div>
-      <div class="flex-row" style="justify-content: flex-end; gap:10px;">
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeCustomMessageModal()">انصراف</button>
-        <button class="btn btn-whatsapp btn-sm" onclick="playInteractionEffect(); sendCustomWhatsAppMessage()">📲 ارسال به واتساپ</button>
+      <div class="flex-row" style="justify-content: flex-end; gap:8px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeCustomMessageModal()">انصراف</button>
+        <button type="button" class="btn btn-whatsapp btn-sm" onclick="playInteractionEffect(); sendCustomWhatsAppMessage()">📲 ارسال به واتساپ</button>
       </div>
     </div>
   </div>
@@ -853,16 +1301,16 @@
   <div id="masterSettingsModal">
     <div class="modal-card-box">
       <h3>⚙️ تنظیمات اختصاصی مالک</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">اطلاعات ورود و چت‌آیدی مالک مستقیم در جدول <code>owner_settings</code> ذخیره می‌شوند (توکن ربات از متغیر محیطی <code>TELEGRAM_BOT_TOKEN</code> ورسل خوانده می‌شود).</p>
-      
+      <p style="font-size: 0.84rem; color: #475569; margin-bottom: 12px; font-weight:700;">اطلاعات ورود و چت‌آیدی مالک مستقیم در جدول <code>owner_settings</code> ذخیره می‌شوند.</p>
+
       <div class="form-group"><label>نام مالک:</label><input type="text" id="masterNameInput" placeholder="نام مالک..."></div>
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
-      
-      <div class="flex-row" style="justify-content: flex-end; gap:10px; margin-top: 16px;">
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
-        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
+
+      <div class="flex-row" style="justify-content: flex-end; gap:8px; margin-top: 14px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
+        <button type="button" class="btn btn-warning btn-sm" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
       </div>
     </div>
   </div>
@@ -870,13 +1318,13 @@
   <!-- مودال ثبت / ویرایش تراکنش -->
   <div id="transactionModal">
     <div class="modal-card-box">
-      <h3 id="txModalTitle" style="margin-bottom:12px;">ثبت تراکنش جدید</h3>
+      <h3 id="txModalTitle" style="margin-bottom:10px;">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
 
       <div class="form-group"><label>۱. تاریخ تراکنش:</label><input type="date" id="txDateInput"></div>
 
       <div class="form-group">
-        <label>۲. جهت تراکنش (حتماً انتخاب کنید):</label>
+        <label>۲. جهت تراکنش:</label>
         <div class="radio-group">
           <div class="btn-select-option" id="btnDirCreditor" onclick="selectTxDirection('بستانکار')">بستانکار (+)</div>
           <div class="btn-select-option" id="btnDirDebtor" onclick="selectTxDirection('بدهکار')">بدهکار (-)</div>
@@ -884,7 +1332,7 @@
       </div>
 
       <div class="form-group">
-        <label>۳. واحد پول / ارز (حتماً انتخاب کنید):</label>
+        <label>۳. واحد پول / ارز:</label>
         <div class="radio-group">
           <div class="btn-select-option btn-curr-opt" id="btnCurrAFN" onclick="selectTxCurrency('AFN')">AFN</div>
           <div class="btn-select-option btn-curr-opt" id="btnCurrUSD" onclick="selectTxCurrency('USD')">USD</div>
@@ -895,16 +1343,16 @@
 
       <div class="form-group">
         <label>۴. مبلغ تراکنش:</label>
-        <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.2rem; color:var(--accent-green-dark);">
+        <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.15rem; color:var(--accent-green);">
       </div>
 
-      <div class="form-group"><label>۵. توضیحات / شرح تراکنش (رسید انتقال):</label><textarea id="txDesc" placeholder="توضیحات تراکنش یا شرح حواله..."></textarea></div>
+      <div class="form-group"><label>۵. توضیحات / شرح تراکنش:</label><textarea id="txDesc" placeholder="توضیحات تراکنش یا شرح حواله..."></textarea></div>
       <div class="form-group"><label>۶. نوع عملیات:</label><select id="txOpType"></select></div>
       <div class="form-group"><label>۷. تصویر رسید:</label><input type="file" id="txReceiptInput" accept="image/*"><input type="hidden" id="existingReceiptUrl"></div>
 
-      <div class="flex-row" style="gap:10px; margin-top:16px;">
-        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeTransactionModal()">انصراف</button>
-        <button class="btn btn-sm" style="flex:2;" onclick="playInteractionEffect(); submitTransaction()">💾 ثبت و ذخیره تراکنش</button>
+      <div class="flex-row" style="gap:8px; margin-top:14px;">
+        <button type="button" class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeTransactionModal()">انصراف</button>
+        <button type="button" class="btn btn-sm" style="flex:2;" onclick="playInteractionEffect(); submitTransaction()">💾 ثبت و ذخیره تراکنش</button>
       </div>
     </div>
   </div>
@@ -914,7 +1362,7 @@
     <div class="modal-card-box">
       <div class="flex-row" style="justify-content:space-between; margin-bottom:10px;">
         <h3>👤 انتخاب حساب مشتری</h3>
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">✕ بستن</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">✕ بستن</button>
       </div>
       <div class="form-group">
         <input type="text" id="globalAccountPickerInput" placeholder="🔍 جستجوی سریع نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()">
@@ -930,15 +1378,15 @@
       <div class="form-group" style="margin-top:10px;">
         <label>عنوان عملیات جدید:</label>
         <div class="flex-row">
-          <input type="text" id="newOpTypeInput" placeholder="مثلاً: حواله، امانت، کمیسیون...">
-          <button class="btn btn-sm" style="width: auto;" onclick="playInteractionEffect(); addNewOperationType()">+ افزودن</button>
+          <input type="text" id="newOpTypeInput" placeholder="مثلاً: حواله، امانت، کمیسیون..." style="flex:1;">
+          <button type="button" class="btn btn-sm" style="width: auto;" onclick="playInteractionEffect(); addNewOperationType()">+ افزودن</button>
         </div>
       </div>
-      <hr style="margin: 12px 0;">
+      <hr style="margin: 12px 0; border:none; border-top:1px solid #e2e8f0;">
       <label>لیست انواع عملیات فعال:</label>
       <div id="opTypesListContainer" style="margin-top:8px;"></div>
       <div class="flex-row" style="justify-content: flex-end; margin-top:12px;">
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeOpTypeManagerModal()">بستن</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeOpTypeManagerModal()">بستن</button>
       </div>
     </div>
   </div>
@@ -948,24 +1396,23 @@
     <div class="modal-card-box">
       <h3 id="adminModalMainTitle">🛡️ ایجاد و مدیریت ادمین‌های همکار</h3>
       <input type="hidden" id="editAdminId">
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px; font-weight:700;">در این بخش می‌توانید برای همکاران ایمیل، رمز عبور و چت‌آیدی اختصاصی بسازید (توکن ربات از متغیر محیطی ورسل استفاده می‌شود).</p>
-      
+
       <div class="form-group"><label>نام ادمین / همکار:</label><input type="text" id="newAdminName" placeholder="نام ادمین..."></div>
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="802655440"></div>
-      
-      <div class="flex-row" style="gap:10px; margin-bottom:14px;">
-        <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
-        <button class="btn btn-secondary btn-sm" style="flex:1; display:none;" id="adminCancelEditBtn" onclick="playInteractionEffect(); cancelEditAdmin()">انصراف</button>
+
+      <div class="flex-row" style="gap:8px; margin-bottom:12px;">
+        <button type="button" class="btn" style="flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
+        <button type="button" class="btn btn-secondary btn-sm" style="flex:1; display:none;" id="adminCancelEditBtn" onclick="playInteractionEffect(); cancelEditAdmin()">انصراف</button>
       </div>
 
-      <hr style="margin: 12px 0;">
-      <label><b>لیست ادمین‌های همکار فعال در سیستم:</b></label>
+      <hr style="margin: 12px 0; border:none; border-top:1px solid #e2e8f0;">
+      <label><b>لیست ادمین‌های همکار فعال:</b></label>
       <div id="adminsListContainer" style="margin-top:8px;"></div>
 
       <div class="flex-row" style="justify-content: flex-end; margin-top:12px;">
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAdminManagerModal()">بستن</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAdminManagerModal()">بستن</button>
       </div>
     </div>
   </div>
@@ -977,16 +1424,15 @@
       <input type="hidden" id="editAccountId">
       <div class="form-group"><label>نام مشتری:</label><input type="text" id="modalAccountName" placeholder="نام مشتری..."></div>
       <div class="form-group"><label>تلفن:</label><input type="text" id="modalAccountPhone" dir="ltr" placeholder="07..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام مشتری:</label><input type="text" id="modalAccountChatId" dir="ltr" placeholder="چت‌آیدی جهت ارسال خودکار تراکنش‌ها..."></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام مشتری:</label><input type="text" id="modalAccountChatId" dir="ltr" placeholder="چت‌آیدی تلگرام..."></div>
       <div class="form-group"><label>عکس صاحب حساب:</label><input type="file" id="modalAccountPhotoInput" accept="image/*"><input type="hidden" id="existingAccountPhotoUrl"></div>
-      <div class="flex-row" style="justify-content: flex-end; gap:10px;">
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAccountModal()">انصراف</button>
-        <button class="btn btn-sm" onclick="playInteractionEffect(); saveAccount()">ذخیره</button>
+      <div class="flex-row" style="justify-content: flex-end; gap:8px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAccountModal()">انصراف</button>
+        <button type="button" class="btn btn-sm" onclick="playInteractionEffect(); saveAccount()">ذخیره</button>
       </div>
     </div>
   </div>
 
-  <!-- کدهای جاوااسکریپت برنامه -->
   <script>
     let SUPABASE_URL = "";
     let SUPABASE_KEY = "";
@@ -1017,19 +1463,20 @@
     let selectedDirectionValue = null;
     let selectedCurrencyValue = null;
     let currentLoggedInAdmin = null;
+    let activeViewId = "viewDashboard";
 
     let selectedDebtorsMap = {};
     let selectedCreditorsMap = {};
 
     let dashboardMenuItems = [
-      { id: 'viewGlobalStatsPage', title: 'آمارها و گزارشات کلی', icon: '📊', type: 'standard' },
       { id: 'viewAccounts', title: 'لیست کامل حساب‌ها', icon: '👥', type: 'standard' },
-      { id: 'viewAllTransactions', title: 'دفتر کل تراکنش‌های سیستم', icon: '📜', type: 'action', action: 'openAllTransactionsPage()' },
+      { id: 'viewAllTransactions', title: 'دفتر کل تراکنش‌ها', icon: '📜', type: 'action', action: 'openAllTransactionsPage()' },
+      { id: 'viewGlobalStatsPage', title: 'آمار و گزارشات کلی', icon: '📊', type: 'standard' },
       { id: 'viewPhoneDirectory', title: 'دفترچه و بانک شماره‌ها', icon: '📞', type: 'action', action: 'openPhoneDirectoryPage()' },
-      { id: 'viewOpTypeManager', title: 'مدیریت انواع عملیات', icon: '⚙️', type: 'action', action: 'openOpTypeManagerModal()' },
-      { id: 'superAdminMenu', title: 'مدیریت ادمین‌های همکار', icon: '🛡️', type: 'superadmin', action: 'openAdminManagerModal()' },
-      { id: 'masterSettingsMenu', title: 'تنظیمات مالک', icon: '⚙️', type: 'master', action: 'openMasterSettingsModal()' },
-      { id: 'ownerBrokerMenu', title: 'مدیریت کارگزاری‌ها و دفاتر همکار', icon: '🏢', type: 'broker', action: 'handleBrokerNavigation()' }
+      { id: 'viewOpTypeManager', title: 'انواع عملیات', icon: '⚙️', type: 'action', action: 'openOpTypeManagerModal()' },
+      { id: 'superAdminMenu', title: 'ادمین‌های همکار', icon: '🛡️', type: 'superadmin', action: 'openAdminManagerModal()' },
+      { id: 'masterSettingsMenu', title: 'تنظیمات مالک', icon: '🔑', type: 'master', action: 'openMasterSettingsModal()' },
+      { id: 'ownerBrokerMenu', title: 'مدیریت کارگزاری‌ها', icon: '🏢', type: 'broker', action: 'handleBrokerNavigation()' }
     ];
 
     async function ensureRuntimeConfig() {
@@ -1125,7 +1572,20 @@
       renderDashboardMenu();
     }
 
+    function updateHeaderUserIdentity() {
+      const avatarEl = document.getElementById("dashboardUserAvatar");
+      const greetEl = document.getElementById("dashboardUserGreeting");
+      const nameStr = (currentLoggedInAdmin && currentLoggedInAdmin.name) ? String(currentLoggedInAdmin.name).trim() : "مدیر";
+      if (avatarEl) {
+        avatarEl.innerText = nameStr.charAt(0) || "ک";
+      }
+      if (greetEl) {
+        greetEl.innerText = `خوش آمدید • ${nameStr}`;
+      }
+    }
+
     function renderDashboardMenu() {
+      updateHeaderUserIdentity();
       const container = document.getElementById("dashboardMenuGrid");
       if (!container) return;
       container.innerHTML = "";
@@ -1136,28 +1596,22 @@
         if (item.type === 'superadmin' && !isMaster) return;
         if (item.type === 'master' && !isMaster) return;
 
-        let onClickAttr = "";
-        if (item.type === 'standard') {
-          onClickAttr = `switchView('${item.id}')`;
-        } else {
-          onClickAttr = item.action;
-        }
-
+        let onClickAttr = item.type === 'standard' ? `switchView('${item.id}')` : item.action;
         let extraStyle = "";
         if (item.type === 'master') {
-          extraStyle = "background: linear-gradient(135deg, rgba(254,243,199,0.95) 0%, rgba(253,230,138,0.95) 100%); border-color: #f59e0b;";
+          extraStyle = "background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-color: #f59e0b;";
         }
 
         container.innerHTML += `
-          <div class="floating-glass-btn" style="${extraStyle}">
-            <div class="content-box" onclick="playInteractionEffect(); ${onClickAttr}">
+          <div class="floating-glass-btn" style="${extraStyle}" onclick="playInteractionEffect(); ${onClickAttr}">
+            <div class="top-card-line">
               <span class="icon">${item.icon}</span>
-              <span class="title" ${item.type === 'master' ? 'style="color:#92400e;"' : ''}>${item.title}</span>
+              <div class="menu-sort-controls" onclick="event.stopPropagation()">
+                <button type="button" class="sort-btn" onclick="playInteractionEffect(); moveMenuItem(${index}, -1)" title="بالا">⬆️</button>
+                <button type="button" class="sort-btn" onclick="playInteractionEffect(); moveMenuItem(${index}, 1)" title="پایین">⬇️</button>
+              </div>
             </div>
-            <div class="menu-sort-controls">
-              <button class="sort-btn" onclick="event.stopPropagation(); playInteractionEffect(); moveMenuItem(${index}, -1)" title="انتقال به بالا">⬆️</button>
-              <button class="sort-btn" onclick="event.stopPropagation(); playInteractionEffect(); moveMenuItem(${index}, 1)" title="انتقال به پایین">⬇️</button>
-            </div>
+            <div class="title" ${item.type === 'master' ? 'style="color:#92400e;"' : ''}>${item.title}</div>
           </div>
         `;
       });
@@ -1177,19 +1631,19 @@
     }
 
     function playInteractionEffect() {
-      if (navigator.vibrate) { navigator.vibrate(25); }
+      if (navigator.vibrate) { navigator.vibrate(20); }
       try {
         let ctx = new (window.AudioContext || window.webkitAudioContext)();
         let osc = ctx.createOscillator();
         let gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, ctx.currentTime);
-        gain.gain.setValueAtTime(0.02, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
+        osc.frequency.setValueAtTime(620, ctx.currentTime);
+        gain.gain.setValueAtTime(0.018, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.045);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.05);
+        osc.stop(ctx.currentTime + 0.045);
       } catch(e) {}
     }
 
@@ -1197,7 +1651,7 @@
       try {
         window.location.href = 'broker.html';
       } catch(e) {
-        alert("صفحه مدیریت کارگزاری‌ها در این بخش در دسترس نیست.");
+        alert("صفحه مدیریت کارگزاری‌ها در دسترس نیست.");
       }
     }
 
@@ -1217,9 +1671,7 @@
         });
 
         const data = await apiResp.json().catch(() => ({}));
-        if (apiResp.ok && data.ok !== false) {
-          return true;
-        }
+        if (apiResp.ok && data.ok !== false) return true;
 
         if (apiResp.status === 400) {
           const plainResp = await fetch('/api/send-telegram', {
@@ -1233,9 +1685,6 @@
           });
           const plainData = await plainResp.json().catch(() => ({}));
           if (plainResp.ok && plainData.ok !== false) return true;
-          console.error("خطای تلگرام:", plainData);
-        } else {
-          console.error("خطای /api/send-telegram:", data);
         }
         return false;
       } catch (err) {
@@ -1283,10 +1732,10 @@
 
       let parts = [];
       for(let curr in totalsByCurrency) {
-        let val = totalsByCurrency[curr];
-        parts.push(`▫️ ${curr}: ${formatEnMoney(val)}`);
+        parts.push(`▫️ ${curr}: ${formatEnMoney(totalsByCurrency[curr])}`);
       }
-      return parts.join('\n') || 'صفر';
+      return parts.join('
+') || 'صفر';
     }
 
     async function openMasterSettingsModal() {
@@ -1306,7 +1755,7 @@
     async function saveMasterSettings() {
       const client = await ensureRuntimeConfig();
       if (!client) {
-        alert("اتصال دیتابیس آماده نیست. متغیرهای SUPABASE_URL و SUPABASE_KEY را در ورسل بررسی کنید.");
+        alert("اتصال دیتابیس آماده نیست.");
         return;
       }
 
@@ -1335,7 +1784,7 @@
         .upsert(payload, { onConflict: 'id' });
 
       if (error) {
-        alert("خطا در ذخیره تنظیمات مالک در دیتابیس: " + error.message);
+        alert("خطا در ذخیره تنظیمات مالک: " + error.message);
         return;
       }
 
@@ -1347,7 +1796,8 @@
       }
 
       closeMasterSettingsModal();
-      alert("✅ تنظیمات مالک در دیتابیس با موفقیت ذخیره شد!");
+      renderDashboardMenu();
+      alert("✅ تنظیمات مالک در دیتابیس ذخیره شد!");
     }
 
     function getAccountLiveBalanceText(accId) {
@@ -1368,13 +1818,58 @@
         let deb = currs[curr].debit;
         let net = cred - deb;
         let status = net > 0 ? `بستانکار (+): ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار (-): ${formatEnMoney(Math.abs(net))} ${curr}` : `تسویه کامل (0)`);
-        textParts.push(`🔹 *واحد ارز: ${curr}*\n  ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}\n  ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}\n  📌 *وضعیت مانده: ${status}*`);
+        textParts.push(`🔹 *واحد ارز: ${curr}*
+  ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}
+  ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}
+  📌 *وضعیت مانده: ${status}*`);
       }
-      return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
+      return textParts.join('
+
+') || 'تراکنشی ثبت نشده است';
     }
 
     function pushModalHistory(modalId) {
       window.history.pushState({ modal: modalId }, '');
+    }
+
+    function syncFloatingControlsVisibility() {
+      const searchBtn = document.getElementById("floatingSearchBtn");
+      const backBtn = document.getElementById("fixedBackBtn");
+      const isLoggedIn = !!currentLoggedInAdmin;
+
+      if (searchBtn) {
+        searchBtn.style.display = isLoggedIn ? "flex" : "none";
+      }
+      if (backBtn) {
+        backBtn.style.display = (isLoggedIn && activeViewId !== "viewDashboard") ? "inline-flex" : "none";
+      }
+    }
+
+    function handleGlobalBackAction() {
+      if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
+      if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
+      if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
+      if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
+      if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
+      if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
+      if (document.getElementById('globalSelectAccountModal').style.display === 'flex') { closeGlobalSelectAccountModal(); return; }
+      if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
+
+      if (activeViewId === 'viewTransactionDetail') {
+        returnFromTransactionDetail();
+        return;
+      }
+      if (activeViewId === 'viewAccountDetail') {
+        switchView('viewAccounts');
+        return;
+      }
+      if (['viewTransfersReport', 'viewDebtorsReport', 'viewCreditorsReport'].includes(activeViewId)) {
+        switchView('viewGlobalStatsPage');
+        return;
+      }
+      if (activeViewId !== 'viewDashboard') {
+        switchView('viewDashboard');
+      }
     }
 
     window.onload = async function() {
@@ -1393,7 +1888,7 @@
           currentLoggedInAdmin = JSON.parse(savedSession);
           document.getElementById("authOverlay").style.display = "none";
           document.getElementById("adminContainer").style.display = "block";
-          
+          syncFloatingControlsVisibility();
           renderDashboardMenu();
           await loadDataFromSupabase(true);
         } catch(e) {
@@ -1439,7 +1934,7 @@
         const client = await ensureRuntimeConfig();
         if (!client) {
           if (indicator) indicator.style.display = "none";
-          alert("اتصال Supabase برقرار نشد. متغیرهای SUPABASE_URL و SUPABASE_KEY را در ورسل بررسی کنید.");
+          alert("اتصال Supabase برقرار نشد.");
           return;
         }
 
@@ -1460,6 +1955,7 @@
 
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("adminContainer").style.display = "block";
+            syncFloatingControlsVisibility();
             renderDashboardMenu();
             await loadDataFromSupabase(true);
             return;
@@ -1487,6 +1983,7 @@
 
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("adminContainer").style.display = "block";
+            syncFloatingControlsVisibility();
             renderDashboardMenu();
             await loadDataFromSupabase(true);
             return;
@@ -1501,22 +1998,32 @@
       }
     }
 
-    function handleLogout() { 
-      localStorage.removeItem("adminAuthSessionData"); 
-      location.reload(); 
+    function handleLogout() {
+      localStorage.removeItem("adminAuthSessionData");
+      location.reload();
     }
 
     function switchView(viewId, pushHistory = true) {
+      activeViewId = viewId;
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      document.getElementById(viewId).classList.add('active');
+      const targetEl = document.getElementById(viewId);
+      if (targetEl) targetEl.classList.add('active');
+      syncFloatingControlsVisibility();
       if (pushHistory) window.history.pushState({ view: viewId }, '');
       window.scrollTo(0, 0);
     }
 
     function openSearchDrawer() {
-      document.getElementById("searchDrawerModal").style.display = "flex";
-      document.getElementById("drawerSearchInput").focus();
+      const modal = document.getElementById("searchDrawerModal");
+      const input = document.getElementById("drawerSearchInput");
+      modal.style.display = "flex";
       pushModalHistory("searchDrawerModal");
+      setTimeout(() => {
+        if (input) {
+          input.focus();
+          handleDrawerSearch();
+        }
+      }, 60);
     }
 
     function closeSearchDrawer() {
@@ -1524,16 +2031,21 @@
       document.getElementById("drawerSearchInput").value = "";
       document.getElementById("drawerSearchResults").innerHTML = "";
     }
-    function closeSearchDrawerOnBack(e) { if(e.target.id === 'searchDrawerModal') closeSearchDrawer(); }
+
+    function closeSearchDrawerOnBack(e) {
+      if (e.target.id === 'searchDrawerModal') closeSearchDrawer();
+    }
 
     function handleDrawerSearch() {
-      playInteractionEffect();
       const input = document.getElementById("drawerSearchInput");
-      const q = formatEnNum(input.value.trim().toLowerCase());
+      const q = formatEnNum((input ? input.value : "").trim().toLowerCase());
       const container = document.getElementById("drawerSearchResults");
       container.innerHTML = "";
 
-      if (q.length === 0) return;
+      if (q.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px; font-size:0.84rem;">نام مشتری، شماره تلفن، کُد حساب یا کد تراکنش را تایپ کنید</div>`;
+        return;
+      }
 
       let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
       let filtered = [];
@@ -1551,24 +2063,28 @@
       }
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">نتیجه‌ای یافت نشد</div>`;
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">نتیجه‌ای یافت نشد</div>`;
         return;
       }
 
       filtered.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
+        let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
         let photoUrl = getVal(acc, ['Photo', 'photo']);
         let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:36px; height:36px; margin-left:8px;">` : '';
 
         container.innerHTML += `
-          <div class="account-item-card" style="padding:10px 12px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName}')">
-            <div class="flex-row">
-              ${photoHtml}
-              <div>
-                <span style="font-weight:900; font-size:1rem;">${accName}</span>
-                <span style="font-size:0.85rem; color:#64748b; margin-right:8px;">کُد: ${accId}</span>
+          <div class="account-item-card" style="padding:10px 12px;" onclick="playInteractionEffect(); closeSearchDrawer(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">
+            <div class="flex-row" style="justify-content:space-between;">
+              <div class="flex-row">
+                ${photoHtml}
+                <div>
+                  <span style="font-weight:900; font-size:0.95rem;">${accName}</span>
+                  <div style="font-size:0.78rem; color:#64748b;">کُد: ${accId} ${accPhone ? `| ${accPhone}` : ''}</div>
+                </div>
               </div>
+              <span style="color:var(--accent-green); font-weight:900; font-size:0.82rem;">مشاهده ←</span>
             </div>
           </div>
         `;
@@ -1616,7 +2132,7 @@
         let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
 
         let rawAccounts = accRes.data || [];
-        
+
         if (isMaster) {
           allAccounts = rawAccounts.filter(acc => {
             let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
@@ -1633,7 +2149,7 @@
 
         let rawTransactions = txRes.data || [];
         let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
-        
+
         allTransactions = rawTransactions.filter(tx => {
           let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
           return authorizedAccountIds.includes(txAccId);
@@ -1657,10 +2173,13 @@
 
         if (currentAccountId) {
           let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
-          if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
+          if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']), false);
         }
-      } catch (e) { console.log("خطا:", e); }
-      finally { if (indicator) indicator.style.display = "none"; }
+      } catch (e) {
+        console.log("خطا:", e);
+      } finally {
+        if (indicator) indicator.style.display = "none";
+      }
     }
 
     let txDetailReturnView = 'viewAccountDetail';
@@ -1708,8 +2227,8 @@
 
       let html = `
         <div class="ledger-picker-item ${currentSelected === 'all' ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('all', '')">
-          <span style="font-weight:900; color:var(--primary-dark); font-size:0.86rem;">📁 همه حساب‌ها (نمایش کامل)</span>
-          <span style="font-size:0.75rem; color:#64748b;">${formatEnNum(allAccounts.length)} حساب</span>
+          <span style="font-weight:900; color:var(--primary-dark); font-size:0.84rem;">📁 همه حساب‌ها (نمایش کامل)</span>
+          <span style="font-size:0.74rem; color:#64748b;">${formatEnNum(allAccounts.length)} حساب</span>
         </div>
       `;
 
@@ -1722,7 +2241,7 @@
       });
 
       if (matched.length === 0) {
-        html += `<div style="padding:12px; text-align:center; color:#64748b; font-size:0.84rem;">حسابی با این مشخصات یافت نشد</div>`;
+        html += `<div style="padding:12px; text-align:center; color:#64748b; font-size:0.84rem;">حسابی یافت نشد</div>`;
       } else {
         matched.forEach(acc => {
           let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
@@ -1730,12 +2249,12 @@
           let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
           let isSelected = String(currentSelected) === String(accId);
           html += `
-            <div class="ledger-picker-item ${isSelected ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">
+            <div class="ledger-picker-item ${isSelected ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('${accId}', '${accName.replace(/'/g, "\'")}')">
               <div>
-                <div style="font-weight:900; color:#0f172a; font-size:0.86rem;">${accName}</div>
-                <div style="font-size:0.74rem; color:#475569;" dir="ltr">📞 ${accPhone}</div>
+                <div style="font-weight:900; color:#0f172a; font-size:0.84rem;">${accName}</div>
+                <div style="font-size:0.72rem; color:#475569;" dir="ltr">📞 ${accPhone}</div>
               </div>
-              <span style="font-size:0.75rem; font-weight:800; color:var(--info-color); background:#f0f9ff; padding:2px 7px; border-radius:6px;">${accId}</span>
+              <span style="font-size:0.74rem; font-weight:800; color:var(--accent-green); background:var(--accent-green-soft); padding:2px 7px; border-radius:6px;">${accId}</span>
             </div>
           `;
         });
@@ -1750,12 +2269,8 @@
       const dd = document.getElementById("globalLedgerAccountDropdown");
 
       if (hiddenEl) hiddenEl.value = accId;
-      if (inputEl) {
-        inputEl.value = accId === "all" ? "" : `${accName} (${accId})`;
-      }
-      if (clearBtn) {
-        clearBtn.style.display = accId === "all" ? "none" : "block";
-      }
+      if (inputEl) inputEl.value = accId === "all" ? "" : `${accName} (${accId})`;
+      if (clearBtn) clearBtn.style.display = accId === "all" ? "none" : "block";
       if (dd) dd.style.display = "none";
       renderGlobalTransactionsList();
     }
@@ -1831,18 +2346,21 @@
       customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
     }
 
-    function openOpTypeManagerModal() { 
-      renderOpTypesList(); 
-      document.getElementById("opTypeManagerModal").style.display = "flex"; 
+    function openOpTypeManagerModal() {
+      renderOpTypesList();
+      document.getElementById("opTypeManagerModal").style.display = "flex";
       pushModalHistory("opTypeManagerModal");
     }
-    function closeOpTypeManagerModal() { document.getElementById("opTypeManagerModal").style.display = "none"; }
+
+    function closeOpTypeManagerModal() {
+      document.getElementById("opTypeManagerModal").style.display = "none";
+    }
 
     function renderOpTypesList() {
       const container = document.getElementById("opTypesListContainer");
       container.innerHTML = "";
       customOpTypes.forEach((op) => {
-        container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op}')">حذف</button></div>`;
+        container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button type="button" class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op}')">حذف</button></div>`;
       });
     }
 
@@ -1874,6 +2392,7 @@
       document.getElementById("adminManagerModal").style.display = "flex";
       pushModalHistory("adminManagerModal");
     }
+
     function closeAdminManagerModal() {
       document.getElementById("adminManagerModal").style.display = "none";
     }
@@ -1893,15 +2412,15 @@
         let admChatId = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || '');
 
         container.innerHTML += `
-          <div class="op-badge-item" style="background:rgba(248,250,252,0.95); border:1px solid rgba(203,213,225,0.8); margin-bottom:10px; align-items:flex-start;">
+          <div class="op-badge-item" style="align-items:flex-start;">
             <div>
-              <b style="color:var(--primary-dark); font-size:1rem;">${admName}</b><br>
-              <span style="font-size:0.85rem; color:#475569;">ایمیل: ${admEmail} | رمز: ${admPin}</span><br>
-              <span style="font-size:0.8rem; color:#0284c7;">چت‌آیدی: ${admChatId || 'ثبت نشده'}</span>
+              <b style="color:var(--primary-dark); font-size:0.94rem;">${admName}</b><br>
+              <span style="font-size:0.8rem; color:#475569;">ایمیل: ${admEmail} | رمز: ${admPin}</span><br>
+              <span style="font-size:0.76rem; color:var(--info-color);">چت‌آیدی: ${admChatId || 'ثبت نشده'}</span>
             </div>
-            <div class="flex-row" style="gap:6px;">
-              <button class="btn btn-warning btn-sm" onclick="playInteractionEffect(); editAdminAccount('${admId}')">ویرایش</button>
-              <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); deleteAdminAccount('${admId}')">حذف</button>
+            <div class="flex-row" style="gap:5px;">
+              <button type="button" class="btn btn-warning btn-sm" onclick="playInteractionEffect(); editAdminAccount('${admId}')">ویرایش</button>
+              <button type="button" class="btn btn-danger btn-sm" onclick="playInteractionEffect(); deleteAdminAccount('${admId}')">حذف</button>
             </div>
           </div>
         `;
@@ -1917,7 +2436,7 @@
       document.getElementById("newAdminEmail").value = getVal(adm, ['Email', 'email']) || "";
       document.getElementById("newAdminPin").value = formatEnNum(getVal(adm, ['Pin', 'pin']) || "");
       document.getElementById("newAdminChatId").value = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || "");
-      
+
       document.getElementById("adminSaveBtn").innerText = "💾 ذخیره تغییرات ادمین";
       document.getElementById("adminCancelEditBtn").style.display = "inline-flex";
     }
@@ -1961,18 +2480,20 @@
       if (editId) {
         const { error } = await client.from('admins').update(payload).eq('AdminID', editId);
         if (error) { alert("خطا در ویرایش: " + error.message); return; }
-        alert("✅ اطلاعات ادمین با موفقیت ویرایش شد!");
+        alert("✅ اطلاعات ادمین ویرایش شد!");
       } else {
         const { error } = await client.from('admins').insert([payload]);
         if (error) { alert("خطا در ایجاد ادمین: " + error.message); return; }
-        alert("✅ ادمین جدید با موفقیت ایجاد شد!");
+        alert("✅ ادمین جدید ایجاد شد!");
 
         if (chatId) {
-          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨\n\n` +
-                           `سلام *${name}* عزیز،\n` +
-                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.\n\n` +
-                           `📧 ایمیل ورود: \`${email}\`\n` +
-                           `🔑 رمز عبور: \`${pin}\``;
+          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨
+
+سلام *${name}* عزیز،
+پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.
+
+📧 ایمیل ورود: \`${email}\`
+🔑 رمز عبور: \`${pin}\``;
           sendTelegramMessage("", chatId, welcomeMsg);
         }
       }
@@ -2013,31 +2534,51 @@
         for(let curr in accCurrencies) {
           let net = accCurrencies[curr];
           if(net !== 0) {
-            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
+            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0, netSum: 0 };
             if(net > 0) totalsByCurrency[curr].debSum += net;
             else totalsByCurrency[curr].credSum += Math.abs(net);
+            totalsByCurrency[curr].netSum += net;
           }
         }
       });
 
       let gridHtml = '';
+      let heroHtml = '';
       for (let curr in totalsByCurrency) {
         let cred = totalsByCurrency[curr].credSum;
         let deb = totalsByCurrency[curr].debSum;
         let finalNet = cred - deb;
         let isCreditor = finalNet > 0;
-        let bgStyle = isCreditor ? "background:rgba(240,253,244,0.9); color:#15803d;" : "background:rgba(254,242,242,0.9); color:#dc2626;";
+        let bgStyle = isCreditor ? "background:#f0fdf4; color:#15803d;" : "background:#fef2f2; color:#b91c1c;";
         let label = isCreditor ? `بستانکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}` : `بدهکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}`;
 
         gridHtml += `
           <div class="stat-card">
             <div class="stat-row"><span style="font-weight:900;">ارز: ${curr}</span><span style="font-weight:900;">مانده خالص: <b>${formatEnMoney(finalNet)}</b></span></div>
-            <div class="stat-row" style="font-size:0.85rem; color:#475569;">کل بستانکاری: ${formatEnMoney(cred)} | کل بدهکاری: ${formatEnMoney(deb)}</div>
+            <div class="stat-row" style="font-size:0.82rem; color:#475569;">کل بستانکاری: ${formatEnMoney(cred)} | کل بدهکاری: ${formatEnMoney(deb)}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
+
+        heroHtml += `
+          <div class="wallet-mini-box">
+            <div class="wallet-mini-curr">${curr}</div>
+            <div class="wallet-mini-val" style="color:${isCreditor ? '#15803d' : '#b91c1c'};">${formatEnMoney(finalNet)}</div>
+          </div>
+        `;
       }
+
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
+      document.getElementById("dashboardHeroBalances").innerHTML = heroHtml || `
+        <div class="wallet-mini-box">
+          <div class="wallet-mini-curr">حساب‌های فعال</div>
+          <div class="wallet-mini-val" style="color:var(--accent-green);">${formatEnNum(allAccounts.length)} حساب</div>
+        </div>
+        <div class="wallet-mini-box">
+          <div class="wallet-mini-curr">تراکنش‌های ثبت‌شده</div>
+          <div class="wallet-mini-val" style="color:var(--primary-dark);">${formatEnNum(allTransactions.length)} مورد</div>
+        </div>
+      `;
     }
 
     function openPhoneDirectoryPage() {
@@ -2060,9 +2601,9 @@
       });
 
       summaryBox.innerHTML = `
-        <div class="stat-row">
+        <div class="stat-row" style="margin:0;">
           <span><b>تعداد کل شماره‌های ثبت‌شده:</b></span>
-          <b style="color:var(--info-color); font-size:1.05rem;">${formatEnNum(filteredList.length)} شماره</b>
+          <b style="color:var(--accent-green); font-size:1rem;">${formatEnNum(filteredList.length)} شماره</b>
         </div>
       `;
 
@@ -2074,7 +2615,6 @@
       filteredList.forEach(item => {
         let cleanPhone = item.phone.replace(/\D/g, '');
         let liveAcc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(item.accId));
-        
         let statusHtml = '';
         let balanceBadges = '';
 
@@ -2092,30 +2632,28 @@
 
           for(let curr in accCurrencies) {
             let val = accCurrencies[curr];
-            let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
+            let color = val > 0 ? '#15803d' : (val < 0 ? '#b91c1c' : '#64748b');
             let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
             balanceBadges += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
           }
 
-          statusHtml = `<span style="color:#059669; font-weight:900; font-size:0.85rem;">🟢 حساب فعال (کُد: ${formatEnNum(item.accId)})</span>`;
+          statusHtml = `<span style="color:#15803d; font-weight:800; font-size:0.8rem;">🟢 فعال (${formatEnNum(item.accId)})</span>`;
         } else {
-          statusHtml = `<span class="deleted-account-badge">❌ حساب این مشتری حذف شده است</span>`;
-          balanceBadges = `<span style="font-size:0.85rem; color:#64748b;">اطلاعات مانده حساب در دسترس نیست</span>`;
+          statusHtml = `<span class="deleted-account-badge">حذف‌شده</span>`;
+          balanceBadges = `<span style="font-size:0.8rem; color:#64748b;">حساب حذف شده است</span>`;
         }
 
         container.innerHTML += `
           <div class="phone-item-card">
             <div class="stat-row">
-              <span style="font-weight:900; font-size:1.05rem; color:var(--primary-dark);">${item.name}</span>
+              <span style="font-weight:900; font-size:0.98rem; color:var(--primary-dark);">${item.name}</span>
               ${statusHtml}
             </div>
-            <div class="stat-row" style="margin-top:4px;">
-              <span style="font-weight:900; color:#0284c7; font-size:1rem;" dir="ltr">${item.phone}</span>
-              <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">
-                📲 واتساپ (چت خالی)
-              </button>
+            <div class="stat-row" style="margin-top:2px;">
+              <span style="font-weight:800; color:var(--info-color); font-size:0.92rem;" dir="ltr">${item.phone}</span>
+              <button type="button" class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">📲 واتساپ</button>
             </div>
-            <div style="margin-top:6px;">${balanceBadges || '<span style="font-size:0.85rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
+            <div style="margin-top:4px;">${balanceBadges || '<span style="font-size:0.8rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
           </div>
         `;
       });
@@ -2127,28 +2665,22 @@
     }
 
     function filterPhonesDirectory() {
-      playInteractionEffect();
       const inputEl = document.getElementById("searchPhoneInput");
       const clearBtn = document.getElementById("clearPhoneSearchBtn");
       const q = formatEnNum(inputEl.value.trim().toLowerCase());
 
-      if (q.length > 0) clearBtn.style.display = "block";
-      else clearBtn.style.display = "none";
-
+      clearBtn.style.display = q.length > 0 ? "block" : "none";
       if (!q) { renderPhoneDirectoryList(phoneArchiveList); return; }
 
-      const filtered = phoneArchiveList.filter(item => {
-        let name = item.name.toLowerCase();
-        let phone = item.phone.toLowerCase();
-        let accId = item.accId.toLowerCase();
-        return name.includes(q) || phone.includes(q) || accId.includes(q);
-      });
-
+      const filtered = phoneArchiveList.filter(item =>
+        item.name.toLowerCase().includes(q) ||
+        item.phone.toLowerCase().includes(q) ||
+        item.accId.toLowerCase().includes(q)
+      );
       renderPhoneDirectoryList(filtered);
     }
 
     function clearPhoneSearch() {
-      playInteractionEffect();
       const inputEl = document.getElementById("searchPhoneInput");
       inputEl.value = "";
       document.getElementById("clearPhoneSearchBtn").style.display = "none";
@@ -2161,7 +2693,7 @@
       renderGlobalAccountPickerList();
       document.getElementById("globalSelectAccountModal").style.display = "flex";
       pushModalHistory("globalSelectAccountModal");
-      setTimeout(() => document.getElementById("globalAccountPickerInput").focus(), 100);
+      setTimeout(() => document.getElementById("globalAccountPickerInput").focus(), 80);
     }
 
     function closeGlobalSelectAccountModal() {
@@ -2190,10 +2722,10 @@
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
         listEl.innerHTML += `
-          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\\'")}')">
+          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="playInteractionEffect(); selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
             <div class="stat-row" style="margin:0;">
               <span style="font-weight:900; color:var(--primary-dark);">${accName}</span>
-              <span style="font-size:0.85rem; color:#475569;">کُد: ${accId} | ${accPhone}</span>
+              <span style="font-size:0.8rem; color:#475569;">${accId} | ${accPhone}</span>
             </div>
           </div>
         `;
@@ -2227,7 +2759,6 @@
 
       const searchEl = document.getElementById("globalLedgerSearchInput");
       const q = searchEl ? formatEnNum(searchEl.value.trim().toLowerCase()) : "";
-      
       const filterEl = document.getElementById("globalLedgerAccountFilter");
       const selectedAccFilter = filterEl ? filterEl.value : "all";
 
@@ -2291,10 +2822,8 @@
 
         let daySummaryParts = [];
         for (let c in dayTotals) {
-          let cCred = dayTotals[c].cred;
-          let cDeb = dayTotals[c].deb;
-          if (cCred > 0) daySummaryParts.push(`بستانکار: ${formatEnMoney(cCred)} ${c}`);
-          if (cDeb > 0) daySummaryParts.push(`بدهکار: ${formatEnMoney(cDeb)} ${c}`);
+          if (dayTotals[c].cred > 0) daySummaryParts.push(`بستانکار: ${formatEnMoney(dayTotals[c].cred)} ${c}`);
+          if (dayTotals[c].deb > 0) daySummaryParts.push(`بدهکار: ${formatEnMoney(dayTotals[c].deb)} ${c}`);
         }
         let daySummaryText = daySummaryParts.join(' | ') || 'بدون دادوستد';
 
@@ -2336,21 +2865,21 @@
           });
 
           let balStatus = sameCurrBalance > 0 ? 'بست.' : (sameCurrBalance < 0 ? 'بده.' : 'تسویه');
-          let balColor = sameCurrBalance > 0 ? '#047857' : (sameCurrBalance < 0 ? '#b91c1c' : '#475569');
+          let balColor = sameCurrBalance > 0 ? '#15803d' : (sameCurrBalance < 0 ? '#b91c1c' : '#475569');
           let balanceStr = sameCurrBalance === 0
             ? `۰ ${curr} (تسویه)`
             : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
 
           let isCreditor = dir.includes('بستانکار');
           let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
-          let dirColor = isCreditor ? '#047857' : '#b91c1c';
+          let dirColor = isCreditor ? '#15803d' : '#b91c1c';
 
           rowsHtml += `
-            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\\'")}')">
+            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
               <td style="text-align:center; font-weight:900; color:#334155;">${rowNum}</td>
               <td style="text-align:right;">
-                <div style="font-weight:900; color:var(--primary-dark); font-size:0.76rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
-                <div style="font-size:0.65rem; color:#475569;">${formatEnNum(accId)}</div>
+                <div style="font-weight:900; color:var(--primary-dark); font-size:0.75rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
+                <div style="font-size:0.64rem; color:#475569;">${formatEnNum(accId)}</div>
               </td>
               <td style="text-align:center;">
                 <div style="color:${dirColor}; font-weight:900; font-size:0.72rem;">${dir}</div>
@@ -2369,13 +2898,13 @@
         });
 
         container.innerHTML += `
-          <div style="margin-bottom:14px; border-top:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1; background:#ffffff; box-shadow:var(--shadow-sm);">
-            <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 9px 12px; display: flex; flex-direction: column; gap: 4px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 0.85rem;">
+          <div style="margin-bottom:12px; border-top:1px solid #cbd5e1; border-bottom:1px solid #cbd5e1; background:#ffffff;">
+            <div style="background: linear-gradient(135deg, #166534 0%, #14532d 100%); color: #ffffff; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 0.82rem;">
                 <span>📅 تاریخ: ${dayKey}</span>
-                <span style="font-size: 0.78rem; color: #cbd5e1;">تعداد: ${formatEnNum(dayTxs.length)} تراکنش</span>
+                <span style="font-size: 0.74rem; color: #dcfce7;">${formatEnNum(dayTxs.length)} تراکنش</span>
               </div>
-              <div style="font-size: 0.78rem; color: #047857; font-weight: 900; background: #ecfdf5; padding: 4px 8px; border-radius: 7px;">
+              <div style="font-size: 0.75rem; color: #14532d; font-weight: 800; background: #f0fdf4; padding: 4px 8px; border-radius: 7px;">
                 📊 مجموع روز ➔ ${daySummaryText}
               </div>
             </div>
@@ -2398,16 +2927,14 @@
       });
     }
 
-    function openTransfersReport() { switchView('viewTransfersReport'); renderTransfersReport(); }
+    function openTransfersReport() {
+      switchView('viewTransfersReport');
+      renderTransfersReport();
+    }
 
     function toggleCustomDateFilter() {
       const period = document.getElementById("transferFilterPeriod").value;
-      const customBox = document.getElementById("customDateRangeBox");
-      if (period === "custom") {
-        customBox.style.display = "block";
-      } else {
-        customBox.style.display = "none";
-      }
+      document.getElementById("customDateRangeBox").style.display = period === "custom" ? "block" : "none";
       renderTransfersReport();
     }
 
@@ -2415,7 +2942,8 @@
       const period = document.getElementById("transferFilterPeriod").value;
       const container = document.getElementById("transfersReportContainer");
       const headerContainer = document.getElementById("transferSummaryHeader");
-      container.innerHTML = ""; headerContainer.innerHTML = "";
+      container.innerHTML = "";
+      headerContainer.innerHTML = "";
 
       let now = new Date();
       let startDate = document.getElementById("startDateFilter").value;
@@ -2428,32 +2956,16 @@
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
         if (!txDateStr) return false;
 
-        if (period === "today") {
-          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-          return diffDays <= 1;
-        }
-        if (period === "week") {
-          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-          return diffDays <= 7;
-        }
-        if (period === "month") {
-          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-          return diffDays <= 30;
-        }
+        let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
+        if (period === "today") return diffDays <= 1;
+        if (period === "week") return diffDays <= 7;
+        if (period === "month") return diffDays <= 30;
         if (period === "custom") {
           if (startDate && txDateStr < startDate) return false;
           if (endDate && txDateStr > endDate) return false;
           return true;
         }
         return false;
-      });
-
-      filteredTxs.sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        if (isNaN(da)) da = 0;
-        if (isNaN(db)) db = 0;
-        return db - da;
       });
 
       let currencyTotals = {};
@@ -2465,10 +2977,15 @@
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل موارد:</b></span><b>${formatEnNum(filteredTxs.length)} عدد</b></div>`;
-      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع (${curr}):</span><b style="color:var(--accent-green-dark);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
+      for (let curr in currencyTotals) {
+        summaryHtml += `<div class="stat-row"><span>مجموع (${curr}):</span><b style="color:var(--accent-green);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
+      }
       headerContainer.innerHTML = summaryHtml;
 
-      if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">موردی یافت نشد</div>`; return; }
+      if (filteredTxs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">موردی یافت نشد</div>`;
+        return;
+      }
 
       filteredTxs.forEach((tx) => {
         let accId = formatEnNum(getVal(tx, ['AccountID', 'accountid']) || '');
@@ -2479,15 +2996,15 @@
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
         let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
         let dateObj = rawDate ? new Date(rawDate) : null;
-        let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
-          `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
-          formatEnNum(String(rawDate).split('T')[0]);
+        let formattedTime = dateObj && !isNaN(dateObj.getTime())
+          ? `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
+          : formatEnNum(String(rawDate).split('T')[0]);
 
         container.innerHTML += `
-          <div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
-            <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">مشتری: ${accName}</span><span style="font-size:0.85rem; color:#475569;">⏰ ${formattedTime}</span></div>
-            <div class="stat-row"><span>مبلغ:</span><b style="color:var(--primary-dark); font-size:1.05rem;">${amt} ${curr}</b></div>
-            <div style="font-size:0.9rem; color:#334155; margin-top:6px; background:rgba(255,255,255,0.8); padding:8px; border-radius:10px;"><b>شرح:</b> ${desc}</div>
+          <div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">
+            <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">مشتری: ${accName}</span><span style="font-size:0.8rem; color:#475569;">⏰ ${formattedTime}</span></div>
+            <div class="stat-row"><span>مبلغ:</span><b style="color:var(--primary-dark); font-size:1rem;">${amt} ${curr}</b></div>
+            <div style="font-size:0.86rem; color:#334155; background:#f8fafc; padding:8px; border-radius:10px;"><b>شرح:</b> ${desc || '-'}</div>
           </div>
         `;
       });
@@ -2500,7 +3017,8 @@
 
       const container = document.getElementById("debtorsContainer");
       const headerContainer = document.getElementById("debtorsSummaryHeader");
-      container.innerHTML = ""; headerContainer.innerHTML = "";
+      container.innerHTML = "";
+      headerContainer.innerHTML = "";
       let debtors = [], currencyTotals = {};
 
       allAccounts.forEach(acc => {
@@ -2529,17 +3047,20 @@
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بدهکاران:</b></span><b>${formatEnNum(debtors.length)} مورد</b></div>`;
-      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بدهکاری (${curr}):</span><b style="color:var(--danger-color);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بدهکاری (${curr}):</span><b style="color:var(--accent-red);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
-      
+      if(debtors.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بدهکاری وجود ندارد</div>`;
+        return;
+      }
+
       debtors.forEach(d => {
         container.innerHTML += `
-          <div class="tx-item-card tx-debtor" style="flex-direction:row; align-items:center; gap:12px;">
-            <input type="checkbox" onchange="toggleDebtorSelection('${d.id}', '${d.currency}', ${d.amount}, this.checked)" style="width:22px; height:22px; accent-color:var(--danger-color); cursor:pointer;">
-            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')">
-              <div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">بدهکار: ${formatEnMoney(d.amount)} ${d.currency}</span></div>
+          <div class="tx-item-card tx-debtor" style="flex-direction:row; align-items:center; gap:10px;">
+            <input type="checkbox" onchange="toggleDebtorSelection('${d.id}', '${d.currency}', ${d.amount}, this.checked)" style="width:20px; height:20px; accent-color:var(--accent-red); cursor:pointer;">
+            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name.replace(/'/g, "\'")}')">
+              <div class="stat-row" style="margin:0;"><span style="font-weight:900;">${d.name}</span><span style="color:var(--accent-red); font-weight:900;">بدهکار: ${formatEnMoney(d.amount)} ${d.currency}</span></div>
             </div>
           </div>
         `;
@@ -2548,36 +3069,24 @@
 
     function toggleDebtorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
-      if (isChecked) {
-        selectedDebtorsMap[key] = { curr, amt };
-      } else {
-        delete selectedDebtorsMap[key];
-      }
+      if (isChecked) selectedDebtorsMap[key] = { curr, amt };
+      else delete selectedDebtorsMap[key];
       updateDebtorsBatchSummary();
     }
 
     function updateDebtorsBatchSummary() {
       const box = document.getElementById("debtorsBatchSummaryBox");
       const content = document.getElementById("debtorsBatchSummaryContent");
-      
-      let currs = {};
-      let count = 0;
+      let currs = {}, count = 0;
       for (let k in selectedDebtorsMap) {
         let item = selectedDebtorsMap[k];
         if (!currs[item.curr]) currs[item.curr] = 0;
         currs[item.curr] += item.amt;
         count++;
       }
-
-      if (count === 0) {
-        box.style.display = "none";
-        return;
-      }
-
-      let html = `<div style="font-size:0.9rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
-      for (let c in currs) {
-        html += `<div style="font-weight:900; font-size:1.05rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
-      }
+      if (count === 0) { box.style.display = "none"; return; }
+      let html = `<div style="font-size:0.85rem; margin-bottom:5px; color:#cbd5e1;">تعداد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
+      for (let c in currs) html += `<div style="font-weight:900; font-size:1rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
       content.innerHTML = html;
       box.style.display = "block";
     }
@@ -2589,7 +3098,8 @@
 
       const container = document.getElementById("creditorsContainer");
       const headerContainer = document.getElementById("creditorsSummaryHeader");
-      container.innerHTML = ""; headerContainer.innerHTML = "";
+      container.innerHTML = "";
+      headerContainer.innerHTML = "";
       let creditors = [], currencyTotals = {};
 
       allAccounts.forEach(acc => {
@@ -2617,17 +3127,20 @@
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بستانکاران:</b></span><b>${formatEnNum(creditors.length)} مورد</b></div>`;
-      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بستانکاری (${curr}):</span><b style="color:var(--accent-green-dark);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
+      for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بستانکاری (${curr}):</span><b style="color:var(--accent-green);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if(creditors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بستانکاری وجود ندارد</div>`; return; }
-      
+      if(creditors.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بستانکاری وجود ندارد</div>`;
+        return;
+      }
+
       creditors.forEach(c => {
         container.innerHTML += `
-          <div class="tx-item-card tx-creditor" style="flex-direction:row; align-items:center; gap:12px;">
-            <input type="checkbox" onchange="toggleCreditorSelection('${c.id}', '${c.currency}', ${c.amount}, this.checked)" style="width:22px; height:22px; accent-color:var(--accent-green-dark); cursor:pointer;">
-            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')">
-              <div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">بستانکار: ${formatEnMoney(c.amount)} ${c.currency}</span></div>
+          <div class="tx-item-card tx-creditor" style="flex-direction:row; align-items:center; gap:10px;">
+            <input type="checkbox" onchange="toggleCreditorSelection('${c.id}', '${c.currency}', ${c.amount}, this.checked)" style="width:20px; height:20px; accent-color:var(--accent-green); cursor:pointer;">
+            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name.replace(/'/g, "\'")}')">
+              <div class="stat-row" style="margin:0;"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green); font-weight:900;">بستانکار: ${formatEnMoney(c.amount)} ${c.currency}</span></div>
             </div>
           </div>
         `;
@@ -2636,36 +3149,24 @@
 
     function toggleCreditorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
-      if (isChecked) {
-        selectedCreditorsMap[key] = { curr, amt };
-      } else {
-        delete selectedCreditorsMap[key];
-      }
+      if (isChecked) selectedCreditorsMap[key] = { curr, amt };
+      else delete selectedCreditorsMap[key];
       updateCreditorsBatchSummary();
     }
 
     function updateCreditorsBatchSummary() {
       const box = document.getElementById("creditorsBatchSummaryBox");
       const content = document.getElementById("creditorsBatchSummaryContent");
-      
-      let currs = {};
-      let count = 0;
+      let currs = {}, count = 0;
       for (let k in selectedCreditorsMap) {
         let item = selectedCreditorsMap[k];
         if (!currs[item.curr]) currs[item.curr] = 0;
         currs[item.curr] += item.amt;
         count++;
       }
-
-      if (count === 0) {
-        box.style.display = "none";
-        return;
-      }
-
-      let html = `<div style="font-size:0.9rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
-      for (let c in currs) {
-        html += `<div style="font-weight:900; font-size:1.05rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
-      }
+      if (count === 0) { box.style.display = "none"; return; }
+      let html = `<div style="font-size:0.85rem; margin-bottom:5px; color:#cbd5e1;">تعداد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
+      for (let c in currs) html += `<div style="font-weight:900; font-size:1rem; color:#86efac;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
       content.innerHTML = html;
       box.style.display = "block";
     }
@@ -2673,7 +3174,10 @@
     function renderAccountsList(accounts) {
       const container = document.getElementById("accountsListContainer");
       container.innerHTML = "";
-      if(accounts.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">حسابی یافت نشد</div>`; return; }
+      if(accounts.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:16px;">حسابی یافت نشد</div>`;
+        return;
+      }
 
       accounts.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
@@ -2696,32 +3200,31 @@
         let badgesHtml = '';
         for(let curr in accCurrencies) {
           let val = accCurrencies[curr];
-          let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
+          let color = val > 0 ? '#15803d' : (val < 0 ? '#b91c1c' : '#64748b');
           let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
           badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
         }
 
         let cleanPhone = accPhone.replace(/\D/g, '');
-        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:38px; height:38px; margin-left:8px;">` : '';
+        let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:38px; height:38px; border-color:#bbf7d0;">` : '';
 
         container.innerHTML += `
-          <div class="account-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
+          <div class="account-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">
             <div class="account-item-header">
               <div class="flex-row">
                 ${photoHtml}
                 <div>
                   <span class="account-name-title">${accName}</span>
-                  <div style="font-size:0.82rem; color:#475569;">کُد حساب: ${accId}</div>
+                  <div style="font-size:0.78rem; color:#64748b;">کُد حساب: ${accId}</div>
                 </div>
               </div>
-              <div class="flex-row" style="gap:6px;">
-                <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openDirectWhatsApp('${cleanPhone}')" title="واتساپ">💬</button>
-                <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName}')" title="پیام">✉️</button>
-                <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccountForEditQuick('${accId}')" title="ویرایش">✏️</button>
-                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); confirmDeleteAccount('${accId}')" title="حذف">🗑️</button>
+              <div class="flex-row" style="gap:5px;">
+                <button type="button" class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openDirectWhatsApp('${cleanPhone}')" title="واتساپ">💬</button>
+                <button type="button" class="btn btn-warning btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccountForEditQuick('${accId}')" title="ویرایش">✏️</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); confirmDeleteAccount('${accId}')" title="حذف">🗑️</button>
               </div>
             </div>
-            <div style="font-size:0.88rem; margin-top:6px;">${badgesHtml || 'تسویه حساب کامل'}</div>
+            <div style="font-size:0.84rem; margin-top:2px;">${badgesHtml || '<span style="color:#64748b; font-size:0.8rem;">تسویه حساب کامل</span>'}</div>
           </div>
         `;
       });
@@ -2733,18 +3236,13 @@
     }
 
     function advancedSearchAccounts() {
-      playInteractionEffect();
       const inputEl = document.getElementById("searchAccountInput");
       const clearBtn = document.getElementById("clearSearchBtn");
       const q = formatEnNum(inputEl.value.trim().toLowerCase());
-      
-      if (q.length > 0) {
-        clearBtn.style.display = "block";
-      } else {
-        clearBtn.style.display = "none";
-      }
 
+      clearBtn.style.display = q.length > 0 ? "block" : "none";
       if (!q) { renderAccountsList(allAccounts); return; }
+
       const filtered = allAccounts.filter(acc => {
         let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
         let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
@@ -2755,7 +3253,6 @@
     }
 
     function clearAccountSearch() {
-      playInteractionEffect();
       const inputEl = document.getElementById("searchAccountInput");
       inputEl.value = "";
       document.getElementById("clearSearchBtn").style.display = "none";
@@ -2793,27 +3290,25 @@
       pushModalHistory("accountModal");
     }
 
-    function closeAccountModal() { document.getElementById("accountModal").style.display = "none"; }
+    function closeAccountModal() {
+      document.getElementById("accountModal").style.display = "none";
+    }
 
     function confirmDeleteAccountModal() {
-      if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.")) return;
+      if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن در بانک شماره‌ها باقی خواهد ماند.")) return;
       deleteCurrentAccount();
     }
 
     function confirmDeleteAccount(accId) {
       currentAccountId = accId;
-      if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.")) return;
+      if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن در بانک شماره‌ها باقی خواهد ماند.")) return;
       deleteCurrentAccount();
     }
 
     function confirmDeleteTransaction() {
-      let txIdToDel = selectedTxId;
-      if (!txIdToDel) {
-        alert("کد تراکنش انتخاب نشده است.");
-        return;
-      }
-      if (!confirm("⚠️ آیا از حذف این تراکنش اطمینان دارید؟ این عمل غیرقابل بازگشت است.")) return;
-      deleteSingleTransaction(txIdToDel);
+      if (!selectedTxId) { alert("کد تراکنش انتخاب نشده است."); return; }
+      if (!confirm("⚠️ آیا از حذف این تراکنش اطمینان دارید؟")) return;
+      deleteSingleTransaction(selectedTxId);
     }
 
     async function saveAccount() {
@@ -2842,10 +3337,10 @@
       let oldChatId = oldAcc ? formatEnNum(getVal(oldAcc, ['ChatID', 'chatid']) || '').trim() : '';
       let isNewChatIdAdded = accChatId && (!oldChatId || oldChatId !== accChatId);
 
-      const payload = { 
-        AccountID: accountId, 
-        Name: accName, 
-        Phone: accPhone, 
+      const payload = {
+        AccountID: accountId,
+        Name: accName,
+        Phone: accPhone,
         ChatID: accChatId,
         Photo: photoUrl,
         CreatedBy: String(currentAdminId)
@@ -2857,14 +3352,15 @@
         await client.from('accounts').insert([payload]);
         let { token } = getCurrentAdminTokenAndChat();
         if (token && accChatId) {
-          let msg = `✨ *امانت‌داری کریمی* ✨\n\n` +
-                    `حساب شما با موفقیت ایجاد شد.\n` +
-                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.\n` +
-                    `📌 اطلاعات حساب شما:\n` +
-                    `👤 نام: ${accName}\n` +
-                    `🆔 کُد حساب: \`${accountId}\`\n` +
-                    `📞 شماره تماس: ${accPhone || '-'}\n` +
-                    `💬 چت‌آیدی: \`${accChatId}\``;
+          let msg = `✨ *امانت‌داری کریمی* ✨
+
+حساب شما با موفقیت ایجاد شد.
+مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.
+📌 اطلاعات حساب شما:
+👤 نام: ${accName}
+🆔 کُد حساب: \`${accountId}\`
+📞 شماره تماس: ${accPhone || '-'}
+💬 چت‌آیدی: \`${accChatId}\``;
           sendTelegramMessage(token, accChatId, msg);
         }
       }
@@ -2875,9 +3371,11 @@
         let { token } = getCurrentAdminTokenAndChat();
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accountId));
         if (token && accChatId) {
-          let historyHeader = `✨ *امانت‌داری کریمی* ✨\n\nسلام *${accName}* عزیز،\nچت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:\n────────────────────────`;
-          await sendTelegramMessage(token, accChatId, historyHeader);
+          let historyHeader = `✨ *امانت‌داری کریمی* ✨
 
+سلام *${accName}* عزیز،
+چت‌آیدی تلگرام شما ثبت شد. تاریخچه معاملات شما:`;
+          await sendTelegramMessage(token, accChatId, historyHeader);
           for (let tx of accTxs) {
             let tType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
             let tDir = String(getVal(tx, ['Direction', 'direction']) || '');
@@ -2885,26 +3383,25 @@
             let tCurr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
             let tDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
             let tDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-
-            let txLine = `📅 تاریخ: ${tDate}\n🔹 نوع: *${tType}* (${tDir})\n💰 مبلغ: *${tAmt} ${tCurr}*\n📝 شرح: ${tDesc || '-'}\n-------------------`;
-            await sendTelegramMessage(token, accChatId, txLine);
+            await sendTelegramMessage(token, accChatId, `📅 ${tDate}
+🔹 *${tType}* (${tDir})
+💰 *${tAmt} ${tCurr}*
+📝 ${tDesc || '-'}`);
           }
-
-          let liveBal = getAccountLiveBalanceText(accountId);
-          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*\n${liveBal}`;
-          await sendTelegramMessage(token, accChatId, balMsg);
+          await sendTelegramMessage(token, accChatId, `📊 *بیلان نهایی حساب شما:*
+${getAccountLiveBalanceText(accountId)}`);
         }
       }
 
       if (currentAccountId) {
-        selectAccount(currentAccountId, accName);
+        selectAccount(currentAccountId, accName, false);
       }
     }
 
     async function deleteCurrentAccount() {
       const client = await ensureRuntimeConfig();
       let accIdToDelete = currentAccountId;
-      
+
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
       if (archiveItem) {
         archiveItem.isDeleted = true;
@@ -2921,11 +3418,11 @@
       alert("✅ حساب با موفقیت حذف شد.");
     }
 
-    function selectAccount(accId, accName) {
+    function selectAccount(accId, accName, doSwitchView = true) {
       currentAccountId = accId;
       currentAccountName = accName;
       document.getElementById("detailAccountTitle").innerText = `حساب: ${accName}`;
-      
+
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
       let photoUrl = acc ? getVal(acc, ['Photo', 'photo']) : '';
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone'])) : '-';
@@ -2935,12 +3432,12 @@
       if (photoUrl) { photoEl.src = photoUrl; photoEl.style.display = "block"; } else { photoEl.style.display = "none"; }
 
       document.getElementById("clientFullDetailsBox").innerHTML = `
-        <div class="stat-row"><span style="font-size:0.9rem; color:#475569;">🆔 کُد حساب (Account ID):</span><b style="font-size:0.98rem; color:var(--primary-dark);">${formatEnNum(accId)}</b></div>
-        <div class="stat-row"><span style="font-size:0.9rem; color:#475569;">📞 شماره تماس:</span><b>${phone || '-'}</b></div>
-        <div class="stat-row"><span style="font-size:0.9rem; color:#475569;">💬 چت‌آیدی تلگرام:</span><b>${chatId || '-'}</b></div>
+        <div class="stat-row"><span style="font-size:0.84rem; color:#475569;">🆔 کُد حساب:</span><b style="font-size:0.92rem; color:var(--primary-dark);">${formatEnNum(accId)}</b></div>
+        <div class="stat-row"><span style="font-size:0.84rem; color:#475569;">📞 شماره تماس:</span><b dir="ltr">${phone || '-'}</b></div>
+        <div class="stat-row" style="margin:0;"><span style="font-size:0.84rem; color:#475569;">💬 چت‌آیدی تلگرام:</span><b>${chatId || '-'}</b></div>
       `;
 
-      switchView('viewAccountDetail');
+      if (doSwitchView) switchView('viewAccountDetail');
       renderAccountDetailTransactions(accId);
     }
 
@@ -3024,21 +3521,21 @@
             });
 
             let balStatus = sameCurrBalance > 0 ? 'بست.' : (sameCurrBalance < 0 ? 'بده.' : 'تسویه');
-            let balColor = sameCurrBalance > 0 ? '#047857' : (sameCurrBalance < 0 ? '#b91c1c' : '#475569');
+            let balColor = sameCurrBalance > 0 ? '#15803d' : (sameCurrBalance < 0 ? '#b91c1c' : '#475569');
             let balanceStr = sameCurrBalance === 0
               ? `۰ ${curr} (تسویه)`
               : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
 
             let isCreditor = dir.includes('بستانکار');
             let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
-            let dirColor = isCreditor ? '#047857' : '#b91c1c';
+            let dirColor = isCreditor ? '#15803d' : '#b91c1c';
 
             rowsHtml += `
               <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromAccountDetail('${txId}')">
                 <td style="text-align:center; font-weight:900; color:#334155;">${rowNum}</td>
                 <td style="text-align:center;">
                   <div style="font-weight:800; color:#0f172a; font-size:0.73rem;">${opType}</div>
-                  <div style="font-size:0.65rem; color:#475569;">⏰ ${timeOnly}</div>
+                  <div style="font-size:0.64rem; color:#475569;">⏰ ${timeOnly}</div>
                 </td>
                 <td style="text-align:center;">
                   <span style="color:${dirColor}; font-weight:900; font-size:0.72rem;">${dir}</span>
@@ -3056,10 +3553,10 @@
           });
 
           container.innerHTML += `
-            <div style="margin-bottom:12px; border-top:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1; background:#ffffff; box-shadow:var(--shadow-sm);">
-              <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 0.83rem;">
+            <div style="margin-bottom:12px; border-top:1px solid #cbd5e1; border-bottom:1px solid #cbd5e1; background:#ffffff;">
+              <div style="background: linear-gradient(135deg, #166534 0%, #14532d 100%); color: #ffffff; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 0.82rem;">
                 <span>📅 تاریخ: ${dayKey}</span>
-                <span style="font-size: 0.76rem; color: #cbd5e1;">${formatEnNum(dayTxs.length)} تراکنش</span>
+                <span style="font-size: 0.74rem; color: #dcfce7;">${formatEnNum(dayTxs.length)} تراکنش</span>
               </div>
               <div style="width:100%;">
                 <table class="compact-ledger-table">
@@ -3084,18 +3581,18 @@
       for (let curr in accCurrencies) {
         let net = accCurrencies[curr].credit - accCurrencies[curr].debit;
         let isCreditor = net > 0;
-        let bgStyle = isCreditor ? "background:rgba(240,253,244,0.9); color:#15803d;" : "background:rgba(254,242,242,0.9); color:#dc2626;";
+        let bgStyle = isCreditor ? "background:#f0fdf4; color:#15803d;" : "background:#fef2f2; color:#b91c1c;";
         let label = net > 0 ? `بستانکار: ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار: ${formatEnMoney(Math.abs(net))} ${curr}` : "تسویه حساب کامل");
 
         statsHtml += `
           <div class="stat-card">
             <div class="stat-row"><span style="font-weight:900;">ارز: ${curr}</span><span style="font-weight:900;">مانده: <b>${formatEnMoney(net)}</b></span></div>
-            <div class="stat-row" style="font-size:0.85rem; color:#475569;">کل بستانکار: ${formatEnMoney(accCurrencies[curr].credit)} | کل بدهکار: ${formatEnMoney(accCurrencies[curr].debit)}</div>
+            <div class="stat-row" style="font-size:0.8rem; color:#475569;">کل بستانکار: ${formatEnMoney(accCurrencies[curr].credit)} | کل بدهکار: ${formatEnMoney(accCurrencies[curr].debit)}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
       }
-      document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center;">بدون بیلان</div>';
+      document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center; color:#64748b; padding:10px;">بدون بیلان</div>';
     }
 
     function selectTransaction(txId) {
@@ -3113,12 +3610,12 @@
       let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-      
+
       let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
       let dateObj = rawDate ? new Date(rawDate) : null;
-      let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
-        `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
-        formatEnNum(String(rawDate).split('T')[0]);
+      let formattedTime = dateObj && !isNaN(dateObj.getTime())
+        ? `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
+        : formatEnNum(String(rawDate).split('T')[0]);
 
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
       let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
@@ -3136,7 +3633,7 @@
 
       let txIndex = accountTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
       let subTxsAfter = txIndex !== -1 ? accountTxs.slice(txIndex) : accountTxs;
-      
+
       let balanceAfter = 0;
       subTxsAfter.forEach(stx => {
         let scurr = String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -3148,11 +3645,8 @@
       });
 
       let balanceBefore = balanceAfter;
-      if (dir.includes("بستانکار")) {
-        balanceBefore -= amtNum;
-      } else if (dir.includes("بدهکار")) {
-        balanceBefore += amtNum;
-      }
+      if (dir.includes("بستانکار")) balanceBefore -= amtNum;
+      else if (dir.includes("بدهکار")) balanceBefore += amtNum;
 
       let beforeStr = balanceBefore === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balanceBefore))} ${curr} (${balanceBefore > 0 ? 'بستانکار' : 'بدهکار'})`;
       let afterStr = balanceAfter === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balanceAfter))} ${curr} (${balanceAfter > 0 ? 'بستانکار' : 'بدهکار'})`;
@@ -3162,35 +3656,33 @@
         <div class="stat-row"><span>مشتری:</span><b style="color:var(--info-color);">${accName}</b></div>
         <div class="stat-row"><span>تاریخ و زمان ثبت:</span><b>${formattedTime}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
-        <div class="stat-row"><span>جهت تراکنش:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
-        <div class="stat-row"><span>مبلغ تراکنش:</span><b style="font-size:1.1rem; color:var(--primary-dark);">${amtStr} ${curr}</b></div>
-        
-        <div style="margin-top:10px; background:rgba(241,245,249,0.95); padding:10px; border-radius:12px; border:1px solid #cbd5e1;">
-          <div class="stat-row" style="font-size:0.86rem; margin-bottom:4px;"><span>💰 مانده حساب قبل از این تراکنش:</span><b>${beforeStr}</b></div>
-          <div class="stat-row" style="font-size:0.86rem; margin-bottom:0;"><span>📊 مانده نهایی حساب پس از این تراکنش:</span><b style="color:${balanceAfter>=0?'#047857':'#b91c1c'};">${afterStr}</b></div>
+        <div class="stat-row"><span>جهت تراکنش:</span><b style="color:${dir.includes('بستانکار')?'#15803d':'#b91c1c'};">${dir}</b></div>
+        <div class="stat-row"><span>مبلغ تراکنش:</span><b style="font-size:1.05rem; color:var(--primary-dark);">${amtStr} ${curr}</b></div>
+
+        <div style="margin-top:8px; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid #e2e8f0;">
+          <div class="stat-row" style="font-size:0.84rem; margin-bottom:4px;"><span>💰 مانده قبل از تراکنش:</span><b>${beforeStr}</b></div>
+          <div class="stat-row" style="font-size:0.84rem; margin-bottom:0;"><span>📊 مانده پس از تراکنش:</span><b style="color:${balanceAfter>=0?'#15803d':'#b91c1c'};">${afterStr}</b></div>
         </div>
 
-        <div style="margin-top:8px; background:rgba(255,255,255,0.85); padding:10px; border-radius:12px;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
+        <div style="margin-top:8px; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid #e2e8f0;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
         ${receiptHtml}
       `;
 
       let btnContainer = document.getElementById("txActionButtonsContainer");
       let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
-      let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
+      let transferReceiptBtn = isTransferOrRemittance
+        ? `<button type="button" class="btn btn-info" style="margin-top:8px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>`
+        : '';
 
       btnContainer.innerHTML = `
-        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">👤 رفتن به حساب شخص (${accName})</button>
-        
-        <div class="flex-row" style="gap: 10px; margin-bottom:10px;">
-          <button class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()">
-            <span style="font-size:1.1rem;">✏️</span> ویرایش تراکنش
-          </button>
-          <button class="action-btn-modern btn-delete-pro" onclick="playInteractionEffect(); confirmDeleteTransaction()">
-            <span style="font-size:1.1rem;">🗑️</span> حذف تراکنش
-          </button>
+        <button type="button" class="btn btn-info" style="margin-bottom:8px;" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">👤 رفتن به حساب (${accName})</button>
+
+        <div class="flex-row" style="gap:8px; margin-bottom:8px;">
+          <button type="button" class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()">✏️ ویرایش</button>
+          <button type="button" class="action-btn-modern btn-delete-pro" onclick="playInteractionEffect(); confirmDeleteTransaction()">🗑️ حذف</button>
         </div>
 
-        <button class="btn btn-whatsapp" style="border-radius:14px; padding:12px;" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال این تراکنش به واتساپ</button>
+        <button type="button" class="btn btn-whatsapp" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال تراکنش به واتساپ</button>
         ${transferReceiptBtn}
       `;
 
@@ -3221,11 +3713,9 @@
       if (!tx) return;
       document.getElementById("editTransId").value = selectedTxId;
       document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
-      
-      let dirVal = getVal(tx, ['Direction', 'direction']) || "بستانکار";
-      let currVal = getVal(tx, ['Currency', 'currency']) || "AFN";
-      selectTxDirection(dirVal);
-      selectTxCurrency(currVal);
+
+      selectTxDirection(getVal(tx, ['Direction', 'direction']) || "بستانکار");
+      selectTxCurrency(getVal(tx, ['Currency', 'currency']) || "AFN");
 
       document.getElementById("txAmountInput").value = formatEnNum(getVal(tx, ['Amount', 'amount']) || "");
       document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
@@ -3236,13 +3726,16 @@
       pushModalHistory("transactionModal");
     }
 
-    function closeTransactionModal() { document.getElementById("transactionModal").style.display = "none"; }
+    function closeTransactionModal() {
+      document.getElementById("transactionModal").style.display = "none";
+    }
 
     function openCustomMessageModal() {
       document.getElementById("customWhatsAppMessageText").value = "";
       document.getElementById("customMessageModal").style.display = "flex";
       pushModalHistory("customMessageModal");
     }
+
     function closeCustomMessageModal() {
       document.getElementById("customMessageModal").style.display = "none";
     }
@@ -3254,13 +3747,8 @@
 
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
-
       let encodedMessage = encodeURIComponent(msg);
-      if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      } else {
-        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-      }
+      window.open(phone ? `https://wa.me/${phone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`, '_blank');
     }
 
     async function submitTransaction() {
@@ -3268,8 +3756,7 @@
       if (!client) return;
 
       let amt = parseFloat(formatEnNum(document.getElementById("txAmountInput").value));
-
-      if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
+      if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش را انتخاب کنید!"); return; }
       if (!selectedCurrencyValue) { alert("لطفاً واحد پول / ارز را انتخاب کنید!"); return; }
       if (!amt || isNaN(amt) || amt <= 0) { alert("لطفاً یک مبلغ معتبر وارد کنید"); return; }
 
@@ -3327,7 +3814,7 @@
 
       let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
-      
+
       if (token) {
         let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
         let liveBalance = getAccountLiveBalanceText(currentAccountId);
@@ -3339,54 +3826,64 @@
           if (customerChatId) {
             let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
             if (isTransferOrRemittance) {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
-              let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
-              let msg3 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}`;
-              
-              await sendTelegramMessage(token, customerChatId, msg1);
-              await sendTelegramMessage(token, customerChatId, msg2);
-              await sendTelegramMessage(token, customerChatId, msg3);
-            } else {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n🔹 نوع: *${opType}* (${selectedDirectionValue})\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n📅 تاریخ: ${displayDateFormatted}`;
-              let msg2 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}`;
+              await sendTelegramMessage(token, customerChatId, `✨ *امانت‌داری کریمی* ✨
 
-              await sendTelegramMessage(token, customerChatId, msg1);
-              await sendTelegramMessage(token, customerChatId, msg2);
+محترم *${currentAccountName}*،
+${actionTitle}
+
+💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})
+📅 تاریخ: ${displayDateFormatted}`);
+              await sendTelegramMessage(token, customerChatId, `📜 *رسید انتقال:*
+${desc || 'بدون مشخصات'}
+
+⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`);
+              await sendTelegramMessage(token, customerChatId, `📊 *بیلان به‌روز حساب شما:*
+${liveBalance}`);
+            } else {
+              await sendTelegramMessage(token, customerChatId, `✨ *امانت‌داری کریمی* ✨
+
+محترم *${currentAccountName}*،
+${actionTitle}
+
+🔹 نوع: *${opType}* (${selectedDirectionValue})
+💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
+📅 تاریخ: ${displayDateFormatted}`);
+              await sendTelegramMessage(token, customerChatId, `📊 *بیلان به‌روز حساب شما:*
+${liveBalance}`);
             }
           }
         }
 
         if (adminChatId) {
-          let adminMsg = `🔔 *گزارش مدیریتی سیستم*\n\n` +
-                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
-                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})\n` +
-                         `${actionTitle} (${opType} - ${selectedDirectionValue})\n` +
-                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n` +
-                         `📅 تاریخ: ${displayDateFormatted}\n` +
-                         `📝 شرح: ${desc || '-'}\n\n` +
-                         `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
+          let adminMsg = `🔔 *گزارش مدیریتی سیستم*
+
+👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
+👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})
+${actionTitle} (${opType} - ${selectedDirectionValue})
+💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
+📅 تاریخ: ${displayDateFormatted}
+📝 شرح: ${desc || '-'}
+
+📊 *موجودی کل سیستم به تفکیک ارز:*
+${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminMsg);
         }
       }
 
-      selectAccount(currentAccountId, currentAccountName);
+      selectAccount(currentAccountId, currentAccountName, false);
     }
 
     async function deleteSingleTransaction(txIdToDelete) {
       const client = await ensureRuntimeConfig();
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
-      
+
       if (client) {
         const { error } = await client.from('transactions').delete().eq('TransID', targetId);
-        if (error) {
-          alert("خطا در حذف تراکنش: " + error.message);
-          return;
-        }
+        if (error) { alert("خطا در حذف تراکنش: " + error.message); return; }
       }
 
       allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
-
       await loadDataFromSupabase(false);
       alert("✅ تراکنش با موفقیت حذف شد.");
 
@@ -3402,21 +3899,25 @@
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
           if (customerChatId) {
-            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*\n\n` +
-                         `محترم *${currentAccountName}*،\n` +
-                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.\n\n` +
-                         `📊 *بیلان جدید حساب شما:*\n${liveBalance}`;
-            sendTelegramMessage(token, customerChatId, delMsg);
+            sendTelegramMessage(token, customerChatId, `🗑️ *اخطار: تراکنش شما حذف شد!*
+
+محترم *${currentAccountName}*،
+یک تراکنش با مبلغ *${tAmt} ${tCurr}* حذف گردید.
+
+📊 *بیلان جدید حساب شما:*
+${liveBalance}`);
           }
         }
 
         if (adminChatId) {
-          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*\n\n` +
-                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
-                            `👥 مشتری: *${currentAccountName}*\n` +
-                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*\n\n` +
-                            `📊 *موجودی کل سیستم:*\n${globalSystemBalance}`;
-          sendTelegramMessage(token, adminChatId, adminDelMsg);
+          sendTelegramMessage(token, adminChatId, `🗑️ *گزارش حذف تراکنش*
+
+👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
+👥 مشتری: *${currentAccountName}*
+مبلغ حذف‌شده: *${tAmt} ${tCurr}*
+
+📊 *موجودی کل سیستم:*
+${globalSystemBalance}`);
         }
       }
 
@@ -3431,9 +3932,7 @@
     function shareTransferReceiptWhatsApp(targetTxId) {
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
-
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-
       let receiptLines = [
         `✨ *رسید انتقال* ✨`,
         ``,
@@ -3441,7 +3940,6 @@
         ``,
         `⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`
       ];
-
       let encodedMessage = receiptLines.map(line => encodeURIComponent(line)).join('%0A');
       window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
     }
@@ -3459,16 +3957,14 @@
       let txDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
-
       let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
         `────────────────────────`,
         `محترم آقای *${currentAccountName}*`,
-        `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
+        `تراکنش جدیدی در حساب شما به ثبت رسید:`,
         ``,
-        `📌 *جزئیات تراکنش:*`,
         `🔹 نوع عملیات: *${opType}* (${dirVal})`,
         `💰 مبلغ: *${amtVal} ${currVal}*`,
         `📅 تاریخ: ${txDate}`,
@@ -3481,11 +3977,7 @@
       ];
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      } else {
-        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-      }
+      window.open(phone ? `https://wa.me/${phone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`, '_blank');
     }
 
     function sendGeneralWhatsAppReport() {
@@ -3515,17 +4007,9 @@
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
         if (!txDateStr) return true;
         let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-
-        if (period === 'today') {
-          periodTitle = "گزارش روزانه (امروز)";
-          return diffDays <= 1;
-        } else if (period === 'week') {
-          periodTitle = "گزارش هفتگی (۷ روز گذشته)";
-          return diffDays <= 7;
-        } else if (period === 'month') {
-          periodTitle = "گزارش ماهانه (۳۰ روز گذشته)";
-          return diffDays <= 30;
-        }
+        if (period === 'today') { periodTitle = "گزارش روزانه (امروز)"; return diffDays <= 1; }
+        if (period === 'week') { periodTitle = "گزارش هفتگی (۷ روز گذشته)"; return diffDays <= 7; }
+        if (period === 'month') { periodTitle = "گزارش ماهانه (۳۰ روز گذشته)"; return diffDays <= 30; }
         return true;
       });
 
@@ -3547,29 +4031,13 @@
       let finalTransactions = filtered;
       if (period === 'all' && lastSettlementIdx !== -1) {
         finalTransactions = accTxs.slice(lastSettlementIdx + 1);
-        if (finalTransactions.length === 0) {
-          finalTransactions = [accTxs[lastSettlementIdx]];
-        }
-      }
-
-      let settlementSummaryLine = "";
-      if (lastSettlementIdx !== -1 && period === 'all') {
-        let sTx = accTxs[lastSettlementIdx];
-        let sDate = formatEnNum(String(getVal(sTx, ['Date', 'date']) || '').split('T')[0]);
-        let sAmt = formatEnMoney(getVal(sTx, ['Amount', 'amount']));
-        let sCurr = String(getVal(sTx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-        let sDir = String(getVal(sTx, ['Direction', 'direction']) || '');
-        settlementSummaryLine = `📌 آخرین تسویه در تاریخ ${sDate} (مبلغ ${sAmt} ${sCurr} - ${sDir}) انجام شد. تراکنش‌های جدید پس از آن:`;
-      } else {
-        settlementSummaryLine = `📌 لیست تراکنش‌ها (به ترتیب از قدیم به جدید):`;
+        if (finalTransactions.length === 0) finalTransactions = [accTxs[lastSettlementIdx]];
       }
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
         `👤 مشتری: *${currentAccountName}*`,
         `📅 *${periodTitle}*`,
-        `────────────────────────`,
-        settlementSummaryLine,
         `────────────────────────`
       ];
 
@@ -3590,26 +4058,21 @@
         let balText = balVal === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balVal))} ${curr} (${balVal > 0 ? 'بستانکار' : 'بدهکار'})`;
 
         let lineItem = `${formatEnNum(idx + 1)}. [${date}] *${opType}* (${dir}) | ${formatEnMoney(amt)} ${curr} | مانده: ${balText}`;
-        if (desc && desc !== '-') {
-          lineItem += ` | ${desc}`;
-        }
+        if (desc && desc !== '-') lineItem += ` | ${desc}`;
         lines.push(lineItem);
       });
 
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
       lines.push(
         `────────────────────────`,
-        `📊 *مانده نهایی حساب شما:*\n${liveBalText}`,
+        `📊 *مانده نهایی حساب شما:*
+${liveBalText}`,
         `────────────────────────`,
         `با تشکر از اعتماد شما 🙏`
       );
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      } else {
-        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-      }
+      window.open(phone ? `https://wa.me/${phone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`, '_blank');
     }
 
     function sendAccountBalanceWhatsApp() {
@@ -3617,14 +4080,12 @@
       if (!acc) return;
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
-
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
         `────────────────────────`,
-        `👤 *مشخصات حساب مشتری:*`,
-        `▫️ نام: *${currentAccountName}*`,
+        `👤 نام: *${currentAccountName}*`,
         `🆔 کُد حساب: \`${formatEnNum(currentAccountId)}\``,
         `📞 شماره تماس: ${phone || '-'}`,
         `💬 چت‌آیدی: \`${chatId}\``,
@@ -3638,124 +4099,8 @@
       ];
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      } else {
-        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-      }
+      window.open(phone ? `https://wa.me/${phone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`, '_blank');
     }
-  
-    // --- مدیریت جابه‌جایی دکمه شناور جستجو + دکمه بازگشت زیر آن ---
-    (function initFloatingSearchDock() {
-      const dock = document.getElementById("floatingSearchDock");
-      const searchBtn = document.getElementById("floatingSearchBtn");
-      if (!dock || !searchBtn) return;
-
-      const savedPos = localStorage.getItem("karimiAdminSearchDockPos");
-      if (savedPos) {
-        try {
-          const pos = JSON.parse(savedPos);
-          if (typeof pos.left === "number" && typeof pos.top === "number") {
-            const maxLeft = Math.max(8, window.innerWidth - 68);
-            const maxTop = Math.max(8, window.innerHeight - 120);
-            dock.style.left = Math.min(Math.max(8, pos.left), maxLeft) + "px";
-            dock.style.top = Math.min(Math.max(8, pos.top), maxTop) + "px";
-            dock.style.right = "auto";
-          }
-        } catch (e) {}
-      }
-
-      let isDragging = false;
-      let movedDuringDrag = false;
-      let startX = 0, startY = 0;
-      let origLeft = 0, origTop = 0;
-
-      function onPointerDown(e) {
-        const pt = e.touches ? e.touches[0] : e;
-        const rect = dock.getBoundingClientRect();
-        isDragging = true;
-        movedDuringDrag = false;
-        startX = pt.clientX;
-        startY = pt.clientY;
-        origLeft = rect.left;
-        origTop = rect.top;
-        dock.style.left = rect.left + "px";
-        dock.style.top = rect.top + "px";
-        dock.style.right = "auto";
-      }
-
-      function onPointerMove(e) {
-        if (!isDragging) return;
-        const pt = e.touches ? e.touches[0] : e;
-        const dx = pt.clientX - startX;
-        const dy = pt.clientY - startY;
-        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
-          movedDuringDrag = true;
-        }
-        if (movedDuringDrag) {
-          if (e.cancelable) e.preventDefault();
-          const maxLeft = Math.max(8, window.innerWidth - dock.offsetWidth - 8);
-          const maxTop = Math.max(8, window.innerHeight - dock.offsetHeight - 8);
-          const nextLeft = Math.min(Math.max(8, origLeft + dx), maxLeft);
-          const nextTop = Math.min(Math.max(8, origTop + dy), maxTop);
-          dock.style.left = nextLeft + "px";
-          dock.style.top = nextTop + "px";
-        }
-      }
-
-      function onPointerUp() {
-        if (!isDragging) return;
-        isDragging = false;
-        if (movedDuringDrag) {
-          const rect = dock.getBoundingClientRect();
-          localStorage.setItem("karimiAdminSearchDockPos", JSON.stringify({
-            left: Math.round(rect.left),
-            top: Math.round(rect.top)
-          }));
-        } else {
-          playInteractionEffect();
-          openSearchDrawer();
-        }
-      }
-
-      searchBtn.addEventListener("mousedown", onPointerDown);
-      document.addEventListener("mousemove", onPointerMove, { passive: false });
-      document.addEventListener("mouseup", onPointerUp);
-
-      searchBtn.addEventListener("touchstart", onPointerDown, { passive: true });
-      document.addEventListener("touchmove", onPointerMove, { passive: false });
-      document.addEventListener("touchend", onPointerUp);
-    })();
-
-    function handleFloatingBackAction() {
-      if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
-      if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
-      if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
-      if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
-      if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
-      if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
-      if (document.getElementById('globalSelectAccountModal').style.display === 'flex') { closeGlobalSelectAccountModal(); return; }
-      if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
-
-      const activeView = document.querySelector('.view-section.active');
-      const activeId = activeView ? activeView.id : 'viewDashboard';
-
-      if (activeId === 'viewDashboard') return;
-      if (activeId === 'viewTransactionDetail') {
-        returnFromTransactionDetail();
-        return;
-      }
-      if (activeId === 'viewAccountDetail') {
-        switchView('viewAccounts');
-        return;
-      }
-      if (['viewTransfersReport', 'viewDebtorsReport', 'viewCreditorsReport'].includes(activeId)) {
-        switchView('viewGlobalStatsPage');
-        return;
-      }
-      switchView('viewDashboard');
-    }
-
   </script>
 </body>
 </html>
