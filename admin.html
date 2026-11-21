@@ -7,15 +7,6 @@
   
   <!-- کتابخانه Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- پیکربندی اتصال از ورسل -->
-  window.__ENV__ = window.__ENV__ || {};
-window.__ENV__.MASTER_OWNER = window.__ENV__.MASTER_OWNER || "محمد شریف کریمی";
-
-window.KARIMI_CONFIG = {
-  SUPABASE_URL: window.__ENV__.SUPABASE_URL || "",
-  SUPABASE_KEY: window.__ENV__.SUPABASE_KEY || "",
-  MASTER_OWNER: window.__ENV__.MASTER_OWNER
-};
   
   <!-- فونت وزیرمتن -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -301,6 +292,7 @@ window.KARIMI_CONFIG = {
     .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
     .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 10px; }
 
+    /* دکمه‌های ویرایش و حذف تراکنش کاملاً اصلاح‌شده و تمیز */
     .action-btn-modern {
       padding: 13px 18px;
       border-radius: 16px;
@@ -529,7 +521,7 @@ window.KARIMI_CONFIG = {
       <div class="auth-title">🔐 مدیریت امانت‌داری کریمی</div>
       <div class="form-group"><label>ایمیل ادمین:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور..."></div>
-      <button class="btn" id="loginSubmitBtn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
+      <button class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
       <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
     </div>
   </div>
@@ -801,17 +793,16 @@ window.KARIMI_CONFIG = {
   <div id="masterSettingsModal">
     <div class="modal-card-box">
       <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را در دیتابیس ویرایش کنید.</p>
+      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را ویرایش کنید.</p>
       
-      <div class="form-group"><label>نام مالک:</label><input type="text" id="masterNameInput" placeholder="نام مالک..."></div>
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
-      <div class="form-group"><label>رمز عبور (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
+      <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توکن ربات..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
       
       <div class="flex-row" style="justify-content: flex-end; gap:10px; margin-top: 16px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
-        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک در دیتابیس</button>
+        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
       </div>
     </div>
   </div>
@@ -903,7 +894,7 @@ window.KARIMI_CONFIG = {
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="123456:ABC-DEF..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="چت‌آیدی تلگرام..."></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="802655440"></div>
       
       <div class="flex-row" style="gap:10px; margin-bottom:14px;">
         <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
@@ -938,49 +929,67 @@ window.KARIMI_CONFIG = {
 
   <!-- کدهای جاوااسکریپت برنامه -->
   <script>
-    // دریافت تنظیمات اتصال صرفاً از ورسل (/api/config.js یا window.__VERCEL_CONFIG__ یا meta)
-    function resolveVercelRuntimeConfig() {
-      const vercelCfg = window.__VERCEL_CONFIG__ || window.VERCEL_CONFIG || window.RUNTIME_CONFIG || {};
-      const metaUrl = document.querySelector('meta[name="supabase-url"]')?.getAttribute('content') || '';
-      const metaKey = document.querySelector('meta[name="supabase-key"]')?.getAttribute('content') || '';
+    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
+    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+    const MASTER_OWNER_ID = "master_owner";
+    const MASTER_OWNER_NAME = "محمد شریف کریمی";
+    const MASTER_OWNER_EMAIL = "mohammadsharifkarimi4@gmail.com";
 
-      const supabaseUrl = String(
-        vercelCfg.SUPABASE_URL ||
-        vercelCfg.supabaseUrl ||
-        vercelCfg.NEXT_PUBLIC_SUPABASE_URL ||
-        vercelCfg.VITE_SUPABASE_URL ||
-        metaUrl ||
-        ''
-      ).trim();
+    window.__ENV__ = Object.assign({
+      SUPABASE_URL: SUPABASE_URL,
+      SUPABASE_KEY: SUPABASE_KEY,
+      MASTER_OWNER: MASTER_OWNER_NAME,
+      MASTER_OWNER_ID: MASTER_OWNER_ID,
+      MASTER_OWNER_EMAIL: MASTER_OWNER_EMAIL
+    }, window.__ENV__ || {});
 
-      const supabaseKey = String(
-        vercelCfg.SUPABASE_KEY ||
-        vercelCfg.SUPABASE_ANON_KEY ||
-        vercelCfg.supabaseKey ||
-        vercelCfg.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-        vercelCfg.VITE_SUPABASE_ANON_KEY ||
-        metaKey ||
-        ''
-      ).trim();
+    window.KARIMI_CONFIG = {
+      SUPABASE_URL: window.__ENV__.SUPABASE_URL || SUPABASE_URL,
+      SUPABASE_KEY: window.__ENV__.SUPABASE_KEY || SUPABASE_KEY,
+      MASTER_OWNER: window.__ENV__.MASTER_OWNER || MASTER_OWNER_NAME,
+      MASTER_OWNER_ID: window.__ENV__.MASTER_OWNER_ID || MASTER_OWNER_ID,
+      MASTER_OWNER_EMAIL: window.__ENV__.MASTER_OWNER_EMAIL || MASTER_OWNER_EMAIL
+    };
 
-      return { supabaseUrl, supabaseKey };
+    const _supabase = supabase.createClient(
+      window.KARIMI_CONFIG.SUPABASE_URL,
+      window.KARIMI_CONFIG.SUPABASE_KEY
+    );
+
+    let MASTER_ADMIN_EMAIL = localStorage.getItem("masterEmail") || MASTER_OWNER_EMAIL;
+    let MASTER_ADMIN_PIN = localStorage.getItem("masterPin") || "77218731";
+    let MASTER_ADMIN_TOKEN = localStorage.getItem("masterToken") || "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
+    let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || "802655440";
+    const MASTER_ADMIN_ID = MASTER_OWNER_ID;
+
+    function resolveMasterOwner(value) {
+      if (typeof value === "string") {
+        const trimmed = value.trim();
+        if (trimmed === "" || trimmed.toLowerCase() === "null" || trimmed.toLowerCase() === "undefined" || trimmed === MASTER_OWNER_ID || trimmed === MASTER_OWNER_NAME) {
+          return MASTER_OWNER_NAME;
+        }
+        return trimmed;
+      }
+      return MASTER_OWNER_NAME;
     }
 
-    const { supabaseUrl: SUPABASE_URL, supabaseKey: SUPABASE_KEY } = resolveVercelRuntimeConfig();
-    if (!SUPABASE_URL || !SUPABASE_KEY) {
-      console.error("پیکربندی اتصال سوپابیس از سمت ورسل یافت نشد.");
+    function isOwnerRecord(creatorValue) {
+      const val = String(creatorValue === undefined || creatorValue === null ? "" : creatorValue).trim();
+      return (
+        val === "" ||
+        val.toLowerCase() === "null" ||
+        val.toLowerCase() === "undefined" ||
+        val === MASTER_OWNER_ID ||
+        val === MASTER_OWNER_NAME ||
+        val.toLowerCase() === MASTER_OWNER_EMAIL.toLowerCase()
+      );
     }
-    const _supabase = (SUPABASE_URL && SUPABASE_KEY && window.supabase)
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-      : null;
 
-    // اطلاعات مالک و ادمین‌ها کاملاً از دیتابیس خوانده می‌شود (بدون کدگذاری ثابت در کلاینت)
-    let ownerRecord = null;
     let allAccounts = [];
     let allTransactions = [];
     let allAdmins = [];
     let phoneArchiveList = [];
-    let customOpTypes = [];
+    let customOpTypes = ["امانت", "حواله", "انتقال", "دریافت", "پرداخت", "تسویه"];
     let currentAccountId = null;
     let currentAccountName = "";
     let selectedTxId = null;
@@ -1036,27 +1045,20 @@ window.KARIMI_CONFIG = {
       renderDashboardMenu();
     }
 
-    function isCurrentUserOwner() {
-      if (!currentLoggedInAdmin) return false;
-      if (currentLoggedInAdmin.isOwner === true) return true;
-      if (ownerRecord) {
-        const ownerId = String(getVal(ownerRecord, ['AdminID', 'adminid', 'id']) || '').trim();
-        const ownerEmail = String(getVal(ownerRecord, ['Email', 'email']) || '').trim().toLowerCase();
-        if (ownerId && String(currentLoggedInAdmin.id).trim() === ownerId) return true;
-        if (ownerEmail && String(currentLoggedInAdmin.email || '').trim().toLowerCase() === ownerEmail) return true;
-      }
-      return false;
-    }
-
     function renderDashboardMenu() {
       const container = document.getElementById("dashboardMenuGrid");
       if (!container) return;
       container.innerHTML = "";
 
-      const isMaster = isCurrentUserOwner();
+      let isMaster = currentLoggedInAdmin && (
+        currentLoggedInAdmin.id === MASTER_OWNER_ID ||
+        currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase() ||
+        currentLoggedInAdmin.email.toLowerCase() === MASTER_OWNER_EMAIL.toLowerCase()
+      );
 
       dashboardMenuItems.forEach((item, index) => {
-        if ((item.type === 'superadmin' || item.type === 'master') && !isMaster) return;
+        if (item.type === 'superadmin' && !isMaster) return;
+        if (item.type === 'master' && !isMaster) return;
 
         let onClickAttr = "";
         if (item.type === 'standard') {
@@ -1141,36 +1143,14 @@ window.KARIMI_CONFIG = {
       }
     }
 
-    // شناسایی رکورد مالک از جدول admins (اولین رکورد یا رکوردی که AdminID/ایمیلش نقش مالک دارد)
-    function resolveOwnerAdminRecord(adminsList) {
-      if (!Array.isArray(adminsList) || adminsList.length === 0) return null;
-      const explicitOwner = adminsList.find(a => {
-        const idVal = String(getVal(a, ['AdminID', 'adminid', 'id']) || '').trim().toLowerCase();
-        const roleVal = String(getVal(a, ['Role', 'role', 'Type', 'type']) || '').trim().toLowerCase();
-        return idVal.includes('owner') || idVal.includes('master') || roleVal === 'owner' || roleVal === 'master';
-      });
-      return explicitOwner || adminsList[0];
-    }
-
     function getCurrentAdminTokenAndChat() {
-      const ownerToken = ownerRecord ? String(getVal(ownerRecord, ['BotToken', 'bottoken', 'Token', 'token']) || '').trim() : '';
-      const ownerChatId = ownerRecord ? formatEnNum(getVal(ownerRecord, ['ChatID', 'chatid']) || '').trim() : '';
-
-      if (!currentLoggedInAdmin) {
-        return { token: ownerToken, chatId: ownerChatId };
+      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
+        return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
       }
-
-      if (isCurrentUserOwner()) {
-        return { token: ownerToken, chatId: ownerChatId };
-      }
-
-      const found = allAdmins.find(a =>
-        String(getVal(a, ['AdminID', 'adminid', 'id']) || '').trim() === String(currentLoggedInAdmin.id).trim() ||
-        String(getVal(a, ['Email', 'email']) || '').trim().toLowerCase() === String(currentLoggedInAdmin.email || '').trim().toLowerCase()
-      );
-
-      const token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || '').trim() : '';
-      const chatId = found ? formatEnNum(getVal(found, ['ChatID', 'chatid']) || '').trim() : '';
+      let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
+      let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
+      let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
       return { token, chatId };
     }
 
@@ -1209,20 +1189,11 @@ window.KARIMI_CONFIG = {
       return parts.join('\n') || 'صفر';
     }
 
-    async function openMasterSettingsModal() {
-      if (!ownerRecord && _supabase) {
-        const { data } = await _supabase.from('admins').select('*');
-        if (data && data.length > 0) {
-          allAdmins = data;
-          ownerRecord = resolveOwnerAdminRecord(data);
-        }
-      }
-
-      document.getElementById("masterNameInput").value = ownerRecord ? (getVal(ownerRecord, ['Name', 'name']) || '') : '';
-      document.getElementById("masterEmailInput").value = ownerRecord ? (getVal(ownerRecord, ['Email', 'email']) || '') : '';
-      document.getElementById("masterPinInput").value = ownerRecord ? formatEnNum(getVal(ownerRecord, ['Pin', 'pin']) || '') : '';
-      document.getElementById("masterTokenInput").value = ownerRecord ? (getVal(ownerRecord, ['BotToken', 'bottoken']) || '') : '';
-      document.getElementById("masterChatIdInput").value = ownerRecord ? formatEnNum(getVal(ownerRecord, ['ChatID', 'chatid']) || '') : '';
+    function openMasterSettingsModal() {
+      document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
+      document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
+      document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
+      document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
       document.getElementById("masterSettingsModal").style.display = "flex";
       pushModalHistory("masterSettingsModal");
     }
@@ -1231,58 +1202,29 @@ window.KARIMI_CONFIG = {
       document.getElementById("masterSettingsModal").style.display = "none";
     }
 
-    async function saveMasterSettings() {
-      if (!_supabase) {
-        alert("اتصال دیتابیس برقرار نیست.");
-        return;
-      }
-      const name = document.getElementById("masterNameInput").value.trim() || "مالک سیستم";
-      const email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
-      const pin = formatEnNum(document.getElementById("masterPinInput").value.trim());
-      const token = document.getElementById("masterTokenInput").value.trim();
-      const chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
+    function saveMasterSettings() {
+      let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
+      let pin = document.getElementById("masterPinInput").value.trim();
+      let token = document.getElementById("masterTokenInput").value.trim();
+      let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
 
       if (!email || !pin) {
         alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
         return;
       }
 
-      const ownerId = ownerRecord
-        ? String(getVal(ownerRecord, ['AdminID', 'adminid', 'id']) || 'OWNER')
-        : 'OWNER';
+      MASTER_ADMIN_EMAIL = email;
+      MASTER_ADMIN_PIN = pin;
+      MASTER_ADMIN_TOKEN = token;
+      MASTER_ADMIN_CHATID = chatId;
 
-      const payload = {
-        AdminID: ownerId,
-        Name: name,
-        Email: email,
-        Pin: pin,
-        BotToken: token,
-        ChatID: chatId
-      };
-
-      const { error } = ownerRecord
-        ? await _supabase.from('admins').update(payload).eq('AdminID', ownerId)
-        : await _supabase.from('admins').insert([payload]);
-
-      if (error) {
-        alert("خطا در ذخیره تنظیمات مالک در دیتابیس: " + error.message);
-        return;
-      }
-
-      const { data: refreshedAdmins } = await _supabase.from('admins').select('*');
-      if (refreshedAdmins && refreshedAdmins.length > 0) {
-        allAdmins = refreshedAdmins;
-        ownerRecord = resolveOwnerAdminRecord(refreshedAdmins);
-      }
-
-      if (currentLoggedInAdmin && currentLoggedInAdmin.isOwner) {
-        currentLoggedInAdmin.name = name;
-        currentLoggedInAdmin.email = email;
-        localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
-      }
+      localStorage.setItem("masterEmail", email);
+      localStorage.setItem("masterPin", pin);
+      localStorage.setItem("masterToken", token);
+      localStorage.setItem("masterChatId", chatId);
 
       closeMasterSettingsModal();
-      alert("✅ تنظیمات مالک با موفقیت در دیتابیس ذخیره شد!");
+      alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
     }
 
     function getAccountLiveBalanceText(accId) {
@@ -1352,70 +1294,61 @@ window.KARIMI_CONFIG = {
       };
     };
 
-    // احراز هویت مستقیم از جدول admins در دیتابیس
     async function handleLogin() {
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-      const pin = formatEnNum(document.getElementById("loginPin").value.trim());
+      const pin = document.getElementById("loginPin").value.trim();
 
       if (!email || !pin) {
         alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
         return;
       }
 
-      if (!_supabase) {
-        alert("اتصال به دیتابیس از طریق تنظیمات ورسل برقرار نیست.");
+      const validOwnerEmails = [MASTER_ADMIN_EMAIL.toLowerCase(), MASTER_OWNER_EMAIL.toLowerCase()];
+      if (validOwnerEmails.includes(email) && pin === MASTER_ADMIN_PIN) {
+        currentLoggedInAdmin = {
+          id: MASTER_OWNER_ID,
+          master_owner: MASTER_OWNER_NAME,
+          name: `${MASTER_OWNER_NAME} (مالک)`,
+          email: email
+        };
+        localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+        
+        document.getElementById("authOverlay").style.display = "none";
+        document.getElementById("adminContainer").style.display = "block";
+        renderDashboardMenu();
+        await loadDataFromSupabase(true);
         return;
       }
 
-      const btn = document.getElementById("loginSubmitBtn");
-      if (btn) btn.disabled = true;
-
       try {
-        const { data: adminsData, error } = await _supabase.from('admins').select('*');
-        if (error) {
-          console.error("خطا در خواندن جدول admins:", error);
-          alert("خطا در ارتباط با دیتابیس هنگام بررسی اطلاعات ورود!");
-          return;
+        const { data: adminsData } = await _supabase.from('admins').select('*');
+        if (adminsData) {
+          allAdmins = adminsData;
+          let foundAdmin = adminsData.find(adm => {
+            let admEmail = String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase();
+            let admPin = String(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '').trim();
+            return admEmail === email && admPin === pin;
+          });
+
+          if (foundAdmin) {
+            let adminId = String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || foundAdmin.id);
+            let adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'همکار');
+
+            currentLoggedInAdmin = { id: adminId, name: adminName, email: email };
+            localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+
+            document.getElementById("authOverlay").style.display = "none";
+            document.getElementById("adminContainer").style.display = "block";
+            renderDashboardMenu();
+            await loadDataFromSupabase(true);
+            return;
+          }
         }
-
-        allAdmins = Array.isArray(adminsData) ? adminsData : [];
-        ownerRecord = resolveOwnerAdminRecord(allAdmins);
-
-        const foundAdmin = allAdmins.find(adm => {
-          const admEmail = String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase();
-          const admPin = formatEnNum(getVal(adm, ['Pin', 'pin']) || '').trim();
-          return admEmail === email && admPin === pin;
-        });
-
-        if (foundAdmin) {
-          const adminId = String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || '').trim();
-          const adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'ادمین').trim();
-          const ownerId = ownerRecord ? String(getVal(ownerRecord, ['AdminID', 'adminid', 'id']) || '').trim() : '';
-          const ownerEmail = ownerRecord ? String(getVal(ownerRecord, ['Email', 'email']) || '').trim().toLowerCase() : '';
-          const isOwner = (ownerId && adminId === ownerId) || (ownerEmail && adminEmail === ownerEmail);
-
-          currentLoggedInAdmin = {
-            id: adminId,
-            name: adminName,
-            email: email,
-            isOwner: Boolean(isOwner)
-          };
-          localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
-
-          document.getElementById("authOverlay").style.display = "none";
-          document.getElementById("adminContainer").style.display = "block";
-          renderDashboardMenu();
-          await loadDataFromSupabase(true);
-          return;
-        }
-
-        alert("ایمیل یا رمز عبور اشتباه است!");
-      } catch (e) {
-        console.error("خطا در ورود:", e);
-        alert("خطا در برقراری ارتباط با دیتابیس!");
-      } finally {
-        if (btn) btn.disabled = false;
+      } catch(e) {
+        console.log("خطا در بررسی ادمین‌ها:", e);
       }
+
+      alert("ایمیل یا رمز عبور اشتباه است!");
     }
 
     function handleLogout() { 
@@ -1507,23 +1440,7 @@ window.KARIMI_CONFIG = {
       if (map[curr]) document.getElementById(map[curr]).classList.add('selected-currency');
     }
 
-    // بررسی مالکیت رکورد: خالی بودن = مال مالک | پر بودن با شناسه/ایمیل ادمین = مال همان ادمین
-    function matchesOwnerOrAdminScope(creatorValue, adminRecord) {
-      const val = String(creatorValue ?? '').trim();
-      const isMaster = isCurrentUserOwner();
-      const adminId = String(adminRecord?.id ?? '').trim().toLowerCase();
-      const adminEmail = String(adminRecord?.email ?? '').trim().toLowerCase();
-
-      if (isMaster) {
-        return val === "" || val.toLowerCase() === "null" || (adminId && val.toLowerCase() === adminId) || (adminEmail && val.toLowerCase() === adminEmail);
-      }
-
-      if (!val || val.toLowerCase() === "null") return false;
-      return (adminId && val.toLowerCase() === adminId) || (adminEmail && val.toLowerCase() === adminEmail);
-    }
-
     async function loadDataFromSupabase(showLoader = true) {
-      if (!_supabase) return;
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
         indicator.innerText = "🔄 در حال دریافت اطلاعات...";
@@ -1531,53 +1448,55 @@ window.KARIMI_CONFIG = {
       }
 
       try {
-        const [accRes, txRes, admRes] = await Promise.all([
+        const [accRes, txRes, opRes, admRes] = await Promise.all([
           _supabase.from('accounts').select('*'),
           _supabase.from('transactions').select('*'),
+          _supabase.from('operation_types').select('*'),
           _supabase.from('admins').select('*')
         ]);
 
-        if (admRes.data) {
-          allAdmins = admRes.data;
-          ownerRecord = resolveOwnerAdminRecord(allAdmins);
-        }
+        if (admRes.data) allAdmins = admRes.data;
 
-        const rawAccounts = accRes.data || [];
-        allAccounts = rawAccounts.filter(acc => {
-          const creator = getVal(acc, ['CreatedBy', 'createdby']);
-          return matchesOwnerOrAdminScope(creator, currentLoggedInAdmin);
-        });
+        let isMaster = currentLoggedInAdmin && (
+          currentLoggedInAdmin.id === MASTER_OWNER_ID ||
+          currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase() ||
+          currentLoggedInAdmin.email.toLowerCase() === MASTER_OWNER_EMAIL.toLowerCase()
+        );
+        let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_OWNER_ID;
+
+        let rawAccounts = accRes.data || [];
+        
+        if (isMaster) {
+          allAccounts = rawAccounts.filter(acc => {
+            let creator = getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid', 'master_owner', 'MasterOwner']);
+            return isOwnerRecord(creator);
+          });
+        } else {
+          allAccounts = rawAccounts.filter(acc => {
+            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
+            return creator === String(currentAdminId);
+          });
+        }
 
         updatePhoneDirectoryArchive();
 
-        const rawTransactions = txRes.data || [];
-        const authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
-        const currentAdminEmail = String(currentLoggedInAdmin?.email || '').trim().toLowerCase();
-        const isMaster = isCurrentUserOwner();
-
+        let rawTransactions = txRes.data || [];
+        let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
+        
         allTransactions = rawTransactions.filter(tx => {
-          const txAccId = String(getVal(tx, ['AccountID', 'accountid']));
-          if (authorizedAccountIds.includes(txAccId)) return true;
-          const assignedEmail = String(getVal(tx, ['AssignedUserEmail', 'assigneduseremail']) || '').trim().toLowerCase();
-          if (!isMaster && currentAdminEmail && assignedEmail === currentAdminEmail) return true;
-          return false;
+          let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
+          return authorizedAccountIds.includes(txAccId);
         });
 
         allTransactions.sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
           return db - da;
         });
 
-        // استخراج انواع عملیات موجود از تراکنش‌های دیتابیس بدون کدگذاری ثابت اضافی
-        const dbOpTypes = Array.from(new Set(
-          allTransactions
-            .map(t => String(getVal(t, ['OperationType', 'operationtype']) || '').trim())
-            .filter(Boolean)
-        ));
-        customOpTypes = dbOpTypes;
+        if (opRes.data && opRes.data.length > 0) customOpTypes = opRes.data.map(o => o.title);
 
         renderDashboardStats();
         renderAccountsList(allAccounts);
@@ -1660,7 +1579,7 @@ window.KARIMI_CONFIG = {
           let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
           let isSelected = String(currentSelected) === String(accId);
           html += `
-            <div class="ledger-picker-item ${isSelected ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">
+            <div class="ledger-picker-item ${isSelected ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('${accId}', '${accName.replace(/'/g, "\'")}')">
               <div>
                 <div style="font-weight:900; color:#0f172a; font-size:0.86rem;">${accName}</div>
                 <div style="font-size:0.74rem; color:#475569;" dir="ltr">📞 ${accPhone}</div>
@@ -1707,7 +1626,7 @@ window.KARIMI_CONFIG = {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let name = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
-        let creator = String(getVal(acc, ['CreatedBy', 'createdby']) || '').trim();
+        let creator = resolveMasterOwner(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid', 'master_owner']));
 
         if (phone) {
           let existing = phoneArchiveList.find(p => p.accId === accId || p.phone === phone);
@@ -1744,7 +1663,7 @@ window.KARIMI_CONFIG = {
     }
 
     async function uploadFileToSupabase(file, bucketName) {
-      if (!file || !_supabase) return null;
+      if (!file) return null;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       const { error } = await _supabase.storage.from(bucketName).upload(fileName, file);
@@ -1756,12 +1675,8 @@ window.KARIMI_CONFIG = {
     function populateOpTypeSelect() {
       const select = document.getElementById("txOpType");
       if(!select) return;
-      const currentVal = select.value;
       select.innerHTML = "";
       customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
-      if (currentVal && customOpTypes.includes(currentVal)) {
-        select.value = currentVal;
-      }
     }
 
     function openOpTypeManagerModal() { 
@@ -1774,16 +1689,12 @@ window.KARIMI_CONFIG = {
     function renderOpTypesList() {
       const container = document.getElementById("opTypesListContainer");
       container.innerHTML = "";
-      if (customOpTypes.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">نوع عملیاتی ثبت نشده است</div>`;
-        return;
-      }
       customOpTypes.forEach((op) => {
-        container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op.replace(/'/g, "\\'")}')">حذف</button></div>`;
+        container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op}')">حذف</button></div>`;
       });
     }
 
-    function addNewOperationType() {
+    async function addNewOperationType() {
       const input = document.getElementById("newOpTypeInput");
       const title = input.value.trim();
       if (!title) return;
@@ -1792,13 +1703,15 @@ window.KARIMI_CONFIG = {
         populateOpTypeSelect();
         renderOpTypesList();
         input.value = "";
+        await _supabase.from('operation_types').insert([{ title: title }]);
       }
     }
 
-    function removeOperationType(title) {
+    async function removeOperationType(title) {
       customOpTypes = customOpTypes.filter(o => o !== title);
       populateOpTypeSelect();
       renderOpTypesList();
+      await _supabase.from('operation_types').delete().eq('title', title);
     }
 
     function openAdminManagerModal() {
@@ -1819,10 +1732,10 @@ window.KARIMI_CONFIG = {
         return;
       }
       allAdmins.forEach(adm => {
-        let admId = formatEnNum(getVal(adm, ['AdminID', 'adminid', 'id']) || '');
+        let admId = formatEnNum(getVal(adm, ['AdminID', 'adminid', 'id']) || adm.id);
         let admName = String(getVal(adm, ['Name', 'name']) || 'بدون نام');
         let admEmail = String(getVal(adm, ['Email', 'email']) || '');
-        let admPin = formatEnNum(getVal(adm, ['Pin', 'pin']) || '');
+        let admPin = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '');
         let admChatId = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || '');
 
         container.innerHTML += `
@@ -1848,8 +1761,8 @@ window.KARIMI_CONFIG = {
       document.getElementById("adminModalMainTitle").innerText = "✏️ ویرایش ادمین همکار";
       document.getElementById("newAdminName").value = getVal(adm, ['Name', 'name']) || "";
       document.getElementById("newAdminEmail").value = getVal(adm, ['Email', 'email']) || "";
-      document.getElementById("newAdminPin").value = formatEnNum(getVal(adm, ['Pin', 'pin']) || "");
-      document.getElementById("newAdminBotToken").value = getVal(adm, ['BotToken', 'bottoken']) || "";
+      document.getElementById("newAdminPin").value = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || "");
+      document.getElementById("newAdminBotToken").value = getVal(adm, ['BotToken', 'bottoken', 'Token', 'token']) || "";
       document.getElementById("newAdminChatId").value = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || "");
       
       document.getElementById("adminSaveBtn").innerText = "💾 ذخیره تغییرات ادمین";
@@ -1869,7 +1782,6 @@ window.KARIMI_CONFIG = {
     }
 
     async function saveAdminAccount() {
-      if (!_supabase) return;
       let editId = document.getElementById("editAdminId").value;
       let name = document.getElementById("newAdminName").value.trim();
       let email = document.getElementById("newAdminEmail").value.trim().toLowerCase();
@@ -1902,7 +1814,7 @@ window.KARIMI_CONFIG = {
         alert("✅ ادمین جدید با موفقیت ایجاد شد!");
 
         if (botToken && chatId) {
-          let siteLink = window.location.origin;
+          let siteLink = "https://karimi-trust-app.vercel.app/";
           let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨\n\n` +
                            `سلام *${name}* عزیز،\n` +
                            `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.\n\n` +
@@ -1915,22 +1827,15 @@ window.KARIMI_CONFIG = {
 
       cancelEditAdmin();
       const { data } = await _supabase.from('admins').select('*');
-      if (data) {
-        allAdmins = data;
-        ownerRecord = resolveOwnerAdminRecord(allAdmins);
-      }
+      if (data) allAdmins = data;
       renderAdminsList();
     }
 
     async function deleteAdminAccount(admId) {
-      if (!_supabase) return;
       if (!confirm("آیا از حذف دسترسی این ادمین مطمئن هستید؟")) return;
       await _supabase.from('admins').delete().eq('AdminID', admId);
       const { data } = await _supabase.from('admins').select('*');
-      if (data) {
-        allAdmins = data;
-        ownerRecord = resolveOwnerAdminRecord(allAdmins);
-      }
+      if (data) allAdmins = data;
       renderAdminsList();
     }
 
@@ -1992,7 +1897,18 @@ window.KARIMI_CONFIG = {
       const summaryBox = document.getElementById("phoneDirectorySummary");
       container.innerHTML = "";
 
-      let filteredList = list.filter(item => matchesOwnerOrAdminScope(item.creator, currentLoggedInAdmin));
+      let isMaster = currentLoggedInAdmin && (
+        currentLoggedInAdmin.id === MASTER_OWNER_ID ||
+        currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase() ||
+        currentLoggedInAdmin.email.toLowerCase() === MASTER_OWNER_EMAIL.toLowerCase()
+      );
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_OWNER_ID;
+
+      let filteredList = list.filter(item => {
+        if (isMaster) return true;
+        let creator = String(item.creator || '').trim();
+        return creator === String(currentAdminId);
+      });
 
       summaryBox.innerHTML = `
         <div class="stat-row">
@@ -2125,7 +2041,7 @@ window.KARIMI_CONFIG = {
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
         listEl.innerHTML += `
-          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\\'")}')">
+          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
             <div class="stat-row" style="margin:0;">
               <span style="font-weight:900; color:var(--primary-dark);">${accName}</span>
               <span style="font-size:0.85rem; color:#475569;">کُد: ${accId} | ${accPhone}</span>
@@ -2167,8 +2083,8 @@ window.KARIMI_CONFIG = {
       const selectedAccFilter = filterEl ? filterEl.value : "all";
 
       let sortedTxs = allTransactions.slice().sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
         if (isNaN(da)) da = 0;
         if (isNaN(db)) db = 0;
         return db - da;
@@ -2198,7 +2114,7 @@ window.KARIMI_CONFIG = {
 
       const groupsByDay = {};
       sortedTxs.forEach(tx => {
-        let rawDate = getVal(tx, ['Date', 'date']) || '';
+        let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
         let dateObj = rawDate ? new Date(rawDate) : null;
         let dayKey = (dateObj && !isNaN(dateObj.getTime()))
           ? formatEnNum(dateObj.toISOString().split('T')[0])
@@ -2237,7 +2153,7 @@ window.KARIMI_CONFIG = {
           const rowNum = formatEnNum(totalCount - globalCounter);
           globalCounter++;
 
-          let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+          let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
           let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
           let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
           let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
@@ -2245,19 +2161,19 @@ window.KARIMI_CONFIG = {
           let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
 
           let currentAccTxs = allTransactions
             .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId)
             .slice()
             .sort((a, b) => {
-              let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
-              let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
+              let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+              let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
               if (isNaN(da)) da = 0;
               if (isNaN(db)) db = 0;
               return db - da;
             });
-          let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === txId);
+          let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === txId);
           let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
 
           let sameCurrBalance = 0;
@@ -2281,7 +2197,7 @@ window.KARIMI_CONFIG = {
           let dirColor = isCreditor ? '#047857' : '#b91c1c';
 
           rowsHtml += `
-            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\\'")}')">
+            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
               <td style="text-align:center; font-weight:900; color:#334155;">${rowNum}</td>
               <td style="text-align:right;">
                 <div style="font-weight:900; color:var(--primary-dark); font-size:0.76rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
@@ -2358,7 +2274,7 @@ window.KARIMI_CONFIG = {
 
       let filteredTxs = allTransactions.filter(tx => {
         let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
-        if (!opType.includes("حواله") && !opType.includes("انتقال")) return false;
+        if (opType !== "حواله" && opType !== "انتقال") return false;
         if (period === "all") return true;
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
         if (!txDateStr) return false;
@@ -2384,8 +2300,8 @@ window.KARIMI_CONFIG = {
       });
 
       filteredTxs.sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
+        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
         if (isNaN(da)) da = 0;
         if (isNaN(db)) db = 0;
         return db - da;
@@ -2412,7 +2328,7 @@ window.KARIMI_CONFIG = {
         let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
         let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-        let rawDate = getVal(tx, ['Date', 'date']) || '';
+        let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
         let dateObj = rawDate ? new Date(rawDate) : null;
         let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
           `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
@@ -2752,7 +2668,6 @@ window.KARIMI_CONFIG = {
     }
 
     async function saveAccount() {
-      if (!_supabase) return;
       let editId = document.getElementById("editAccountId").value;
       let accName = document.getElementById("modalAccountName").value;
       let accPhone = formatEnNum(document.getElementById("modalAccountPhone").value);
@@ -2769,14 +2684,12 @@ window.KARIMI_CONFIG = {
       }
 
       let accountId = editId ? editId : "ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000));
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_OWNER_ID;
+      let ownerName = resolveMasterOwner(currentLoggedInAdmin && currentLoggedInAdmin.master_owner);
+
       let oldAcc = editId ? allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId)) : null;
       let oldChatId = oldAcc ? formatEnNum(getVal(oldAcc, ['ChatID', 'chatid']) || '').trim() : '';
       let isNewChatIdAdded = accChatId && (!oldChatId || oldChatId !== accChatId);
-
-      // منطق مالکیت: اگر کاربر مالک است CreatedBy خالی (null) ثبت شود، اگر ادمین دیگر است AdminID او ثبت شود
-      const createdByValue = isCurrentUserOwner()
-        ? null
-        : String(currentLoggedInAdmin?.id || '').trim();
 
       const payload = { 
         AccountID: accountId, 
@@ -2784,7 +2697,8 @@ window.KARIMI_CONFIG = {
         Phone: accPhone, 
         ChatID: accChatId,
         Photo: photoUrl,
-        CreatedBy: createdByValue
+        CreatedBy: String(currentAdminId),
+        master_owner: ownerName
       };
 
       if (editId) {
@@ -2793,7 +2707,7 @@ window.KARIMI_CONFIG = {
         await _supabase.from('accounts').insert([payload]);
         let { token } = getCurrentAdminTokenAndChat();
         if (token && accChatId) {
-          let siteLink = window.location.origin;
+          let siteLink = "https://karimi-trust-app.vercel.app/";
           let msg = `✨ *امانت‌داری کریمی* ✨\n\n` +
                     `حساب شما با موفقیت ایجاد شد.\n` +
                     `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.\n` +
@@ -2817,7 +2731,7 @@ window.KARIMI_CONFIG = {
           await sendTelegramMessage(token, accChatId, historyHeader);
 
           for (let tx of accTxs) {
-            let tType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+            let tType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
             let tDir = String(getVal(tx, ['Direction', 'direction']) || '');
             let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
             let tCurr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
@@ -2840,7 +2754,6 @@ window.KARIMI_CONFIG = {
     }
 
     async function deleteCurrentAccount() {
-      if (!_supabase) return;
       let accIdToDelete = currentAccountId;
       
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
@@ -2890,8 +2803,8 @@ window.KARIMI_CONFIG = {
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
         .slice()
         .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
           return db - da;
@@ -2915,7 +2828,7 @@ window.KARIMI_CONFIG = {
       } else {
         const groupsByDay = {};
         txs.forEach(tx => {
-          let rawDate = getVal(tx, ['Date', 'date']) || '';
+          let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
           let dateObj = rawDate ? new Date(rawDate) : null;
           let dayKey = (dateObj && !isNaN(dateObj.getTime()))
             ? formatEnNum(dateObj.toISOString().split('T')[0])
@@ -2936,13 +2849,13 @@ window.KARIMI_CONFIG = {
             const currentIdxInTxs = globalCounter;
             globalCounter++;
 
-            let txId = String(getVal(tx, ['TransID', 'transid']) || '');
+            let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
             let dir = String(getVal(tx, ['Direction', 'direction']) || '');
             let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
             let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-            let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+            let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
 
-            let rawDate = getVal(tx, ['Date', 'date']) || '';
+            let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
             let dateObj = rawDate ? new Date(rawDate) : null;
             let timeOnly = (dateObj && !isNaN(dateObj.getTime()))
               ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
@@ -3036,7 +2949,7 @@ window.KARIMI_CONFIG = {
 
     function selectTransaction(txId) {
       selectedTxId = txId;
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
       if(!tx) return;
 
       let accId = String(getVal(tx, ['AccountID', 'accountid']) || currentAccountId);
@@ -3050,27 +2963,27 @@ window.KARIMI_CONFIG = {
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       
-      let rawDate = getVal(tx, ['Date', 'date']) || '';
+      let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
       let dateObj = rawDate ? new Date(rawDate) : null;
       let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
         `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
         formatEnNum(String(rawDate).split('T')[0]);
 
-      let receiptUrl = getVal(tx, ['receipt_url']);
+      let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
       let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
       let accountTxs = allTransactions
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
         .slice()
         .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
           return db - da;
         });
 
-      let txIndex = accountTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
+      let txIndex = accountTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
       let subTxsAfter = txIndex !== -1 ? accountTxs.slice(txIndex) : accountTxs;
       
       let balanceAfter = 0;
@@ -3111,11 +3024,11 @@ window.KARIMI_CONFIG = {
       `;
 
       let btnContainer = document.getElementById("txActionButtonsContainer");
-      let isTransferOrRemittance = (opType.includes("حواله") || opType.includes("انتقال"));
+      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
       let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
 
       btnContainer.innerHTML = `
-        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">👤 رفتن به حساب شخص (${accName})</button>
+        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">👤 رفتن به حساب شخص (${accName})</button>
         
         <div class="flex-row" style="gap: 10px; margin-bottom:10px;">
           <button class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()">
@@ -3153,7 +3066,7 @@ window.KARIMI_CONFIG = {
     }
 
     function openEditTransactionModal() {
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(selectedTxId));
       if (!tx) return;
       document.getElementById("editTransId").value = selectedTxId;
       document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
@@ -3164,10 +3077,10 @@ window.KARIMI_CONFIG = {
       selectTxCurrency(currVal);
 
       document.getElementById("txAmountInput").value = formatEnNum(getVal(tx, ['Amount', 'amount']) || "");
-      document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "";
+      document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
       document.getElementById("txDateInput").value = String(getVal(tx, ['Date', 'date']) || new Date().toISOString()).split('T')[0];
       document.getElementById("txDesc").value = (getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-      document.getElementById("existingReceiptUrl").value = getVal(tx, ['receipt_url']) || "";
+      document.getElementById("existingReceiptUrl").value = getVal(tx, ['receipt_url', 'Receipt_URL']) || "";
       document.getElementById("transactionModal").style.display = "flex";
       pushModalHistory("transactionModal");
     }
@@ -3200,7 +3113,6 @@ window.KARIMI_CONFIG = {
     }
 
     async function submitTransaction() {
-      if (!_supabase) return;
       let amt = parseFloat(formatEnNum(document.getElementById("txAmountInput").value));
 
       if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
@@ -3225,8 +3137,8 @@ window.KARIMI_CONFIG = {
 
       let dateIsoString;
       if (editTransId) {
-        let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
-        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date']) || new Date().toISOString()) : new Date().toISOString();
+        let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(editTransId));
+        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || new Date().toISOString()) : new Date().toISOString();
       } else {
         let now = new Date();
         if (txDateInputVal) {
@@ -3239,9 +3151,6 @@ window.KARIMI_CONFIG = {
       }
 
       let transIdToSave = editTransId || ("TX-" + formatEnNum(Math.floor(10000000 + Math.random() * 90000000)));
-      const accObj = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
-      const assignedEmail = accObj ? String(getVal(accObj, ['AssignedUserEmail', 'assigneduseremail']) || currentLoggedInAdmin?.email || '').trim() : String(currentLoggedInAdmin?.email || '').trim();
-
       const payload = {
         TransID: transIdToSave,
         AccountID: currentAccountId,
@@ -3250,7 +3159,6 @@ window.KARIMI_CONFIG = {
         Currency: selectedCurrencyValue,
         OperationType: opType,
         Description: desc,
-        AssignedUserEmail: assignedEmail || null,
         receipt_url: receiptUrl,
         Date: dateIsoString
       };
@@ -3267,7 +3175,7 @@ window.KARIMI_CONFIG = {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       
       if (token) {
-        let siteLink = window.location.origin;
+        let siteLink = "https://karimi-trust-app.vercel.app/";
         let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
         let liveBalance = getAccountLiveBalanceText(currentAccountId);
         let globalSystemBalance = getSystemGlobalBalanceText();
@@ -3276,7 +3184,7 @@ window.KARIMI_CONFIG = {
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
           if (customerChatId) {
-            let isTransferOrRemittance = (opType.includes("حواله") || opType.includes("انتقال"));
+            let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
             if (isTransferOrRemittance) {
               let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
               let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
@@ -3312,9 +3220,8 @@ window.KARIMI_CONFIG = {
     }
 
     async function deleteSingleTransaction(txIdToDelete) {
-      if (!_supabase) return;
       let targetId = txIdToDelete || selectedTxId;
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
       const { error } = await _supabase.from('transactions').delete().eq('TransID', targetId);
       if (error) {
@@ -3322,7 +3229,7 @@ window.KARIMI_CONFIG = {
         return;
       }
 
-      allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid'])) !== String(targetId));
+      allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
 
       await loadDataFromSupabase(false);
       alert("✅ تراکنش با موفقیت حذف شد.");
@@ -3366,7 +3273,7 @@ window.KARIMI_CONFIG = {
     }
 
     function shareTransferReceiptWhatsApp(targetTxId) {
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId || selectedTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
 
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
@@ -3386,7 +3293,7 @@ window.KARIMI_CONFIG = {
     function sendSingleTxWhatsApp(targetTxId) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId));
       if(!tx) return;
 
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
@@ -3397,7 +3304,7 @@ window.KARIMI_CONFIG = {
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
-      let isTransferOrRemittance = (opType.includes("حواله") || opType.includes("انتقال"));
+      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
@@ -3438,8 +3345,8 @@ window.KARIMI_CONFIG = {
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId))
         .slice()
         .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
           return da - db;
@@ -3475,7 +3382,7 @@ window.KARIMI_CONFIG = {
       for (let i = accTxs.length - 1; i >= 0; i--) {
         let op = String(getVal(accTxs[i], ['OperationType', 'operationtype']) || '').trim();
         let desc = String(getVal(accTxs[i], ['Description', 'description']) || '').trim();
-        if (op.includes('تسویه') || desc.includes('تسویه')) {
+        if (op === 'تسویه' || desc.includes('تسویه')) {
           lastSettlementIdx = i;
           break;
         }
@@ -3513,7 +3420,7 @@ window.KARIMI_CONFIG = {
       let runningBalances = {};
       finalTransactions.forEach((tx, idx) => {
         let date = formatEnNum(String(getVal(tx, ['Date', 'date']) || '').split('T')[0]);
-        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
+        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
         let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -3554,7 +3461,7 @@ window.KARIMI_CONFIG = {
       if (!acc) return;
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
-      let siteLink = window.location.origin;
+      let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
