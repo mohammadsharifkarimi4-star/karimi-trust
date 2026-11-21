@@ -1,15 +1,265 @@
-<button type="button" class="btn btn-info" onclick="playInteractionEffect(); toggleMaintenanceBox()">
-  ⏳ در حال بروزرسانی
-</button>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منوی مدیریت | در حال توسعه</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', system-ui, sans-serif;
+    }
 
-<div id="maintenanceBox" style="display:none; margin-top:12px; padding:14px; border-radius:16px; background:#eff6ff; border:1px solid #93c5fd; color:#1e3a8a; font-weight:800; text-align:center;">
-  🔄 برنامه در حال کار و بروزرسانی است؛ به‌زودی آماده می‌شود.
-</div>
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #090d16 100%);
+      color: #ffffff;
+      padding: 20px;
+    }
 
-<script>
-  function toggleMaintenanceBox() {
-    const box = document.getElementById("maintenanceBox");
-    if (!box) return;
-    box.style.display = box.style.display === "none" ? "block" : "none";
-  }
-</script>
+    .menu-wrapper {
+      max-width: 480px;
+      margin: 0 auto 24px;
+    }
+
+    .menu-trigger-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      padding: 16px 18px;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .locked-submenus {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .locked-item {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.75);
+      padding: 13px 16px;
+      border-radius: 16px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .maintenance-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #090d16 100%);
+    }
+
+    .box {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      border-radius: 28px;
+      padding: 38px 24px;
+      text-align: center;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.55);
+    }
+
+    .big-loader-wrap {
+      position: relative;
+      width: 136px;
+      height: 136px;
+      margin: 0 auto 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .big-spinner {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 8px solid rgba(255, 255, 255, 0.12);
+      border-top-color: #38bdf8;
+      border-right-color: #10b981;
+      border-bottom-color: #f59e0b;
+      animation: spin 1.1s linear infinite;
+    }
+
+    .big-loader-center {
+      width: 98px;
+      height: 98px;
+      border-radius: 50%;
+      background: rgba(30, 41, 59, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .big-loader-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .big-loader-label {
+      font-size: 0.74rem;
+      font-weight: 900;
+      color: #7dd3fc;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status-pill {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fcd34d;
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    p {
+      font-size: 0.96rem;
+      line-height: 1.9;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 26px;
+    }
+
+    .bar-move {
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #10b981, #f59e0b);
+      border-radius: 999px;
+      animation: moveBar 1.7s ease-in-out infinite;
+    }
+
+    @keyframes moveBar {
+      0% { transform: translateX(120%); }
+      50% { transform: translateX(-15%); }
+      100% { transform: translateX(-140%); }
+    }
+
+    .back-link {
+      display: inline-block;
+      text-decoration: none;
+      color: #ffffff;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      padding: 12px 24px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <!-- منوی مسدودشده (هیچ بخشی در دسترس نیست) -->
+  <div class="menu-wrapper" id="menuBlock">
+    <button type="button" class="menu-trigger-btn" onclick="openUnderDevelopmentScreen()">
+      <span>📋 منوی مدیریت</span>
+      <span>🔒 غیرفعال</span>
+    </button>
+
+    <div class="locked-submenus">
+      <button type="button" class="locked-item" onclick="openUnderDevelopmentScreen()">
+        <span>📊 گزارشات و آمارها</span>
+        <span>🔒</span>
+      </button>
+      <button type="button" class="locked-item" onclick="openUnderDevelopmentScreen()">
+        <span>👥 حساب‌ها و تراکنش‌ها</span>
+        <span>🔒</span>
+      </button>
+      <button type="button" class="locked-item" onclick="openUnderDevelopmentScreen()">
+        <span>⚙️ تنظیمات سیستم</span>
+        <span>🔒</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- صفحه عذرخواهی و لودینگ بزرگ در حال کار بودن -->
+  <div class="maintenance-overlay" id="underDevScreen">
+    <div class="box">
+      <div class="big-loader-wrap">
+        <div class="big-spinner"></div>
+        <div class="big-loader-center">
+          <span class="big-loader-icon">🛠️</span>
+          <span class="big-loader-label">در حال کار</span>
+        </div>
+      </div>
+
+      <div class="status-pill">عذرخواهی بابت تأخیر</div>
+      <h1>با پوزش؛ این برنامه برای توسعه در حال کار است</h1>
+      <p>
+        از شما عذرخواهی می‌کنیم؛ در حال حاضر هیچ بخشی در دسترس نیست و این برنامه برای توسعه و بهبود بخش‌های مختلف در حال کار است. لطفاً کمی شکیبا باشید.
+      </p>
+
+      <div class="bar-track">
+        <div class="bar-move"></div>
+      </div>
+
+      <a href="index.html" class="back-link">← بازگشت به صفحه اصلی</a>
+    </div>
+  </div>
+
+  <script>
+    function openUnderDevelopmentScreen() {
+      const screen = document.getElementById("underDevScreen");
+      if (screen) {
+        screen.style.display = "flex";
+      }
+    }
+
+    document.addEventListener("click", function (e) {
+      const backLink = e.target.closest("a.back-link");
+      if (!backLink) {
+        e.preventDefault();
+        openUnderDevelopmentScreen();
+      }
+    }, true);
+  </script>
+</body>
+</html>
