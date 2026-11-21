@@ -15,30 +15,50 @@
 
   <style>
     :root {
-      --primary-dark: #0f291e;
-      --primary-gradient: linear-gradient(135deg, #16a34a 0%, #059669 100%);
-      --mint-canvas: #eef7f1;
-      --mint-soft: #e3f3e8;
-      --mint-tint: #f4fbf6;
-      --glass-bg: rgba(255, 255, 255, 0.92);
-      --glass-border: rgba(16, 185, 129, 0.16);
-      --glass-shadow: 0 10px 28px rgba(15, 41, 30, 0.06);
-      --accent-green: #16a34a;
-      --accent-green-dark: #15803d;
-      --card-bg: #ffffff;
-      --text-main: #0f291e;
-      --text-muted: #52685e;
-      --border-color: #d8ece0;
-      --danger-color: #dc2626;
-      --warning-color: #d97706;
-      --info-color: #0284c7;
-      --whatsapp-color: #16a34a;
-      --whatsapp-dark: #15803d;
-      --shadow-sm: 0 4px 14px rgba(15, 41, 30, 0.05);
-      --shadow-md: 0 12px 28px rgba(15, 41, 30, 0.08);
-      --radius-md: 20px;
-      --radius-lg: 24px;
+      /* پالت الهام‌گرفته از کیف‌پول مالی با سفیدی کنترل‌شده و طیف سبز زمردی و سنگ مرمر ملایم */
+      --bg-canvas: #e9efe9;
+      --bg-canvas-grad: linear-gradient(160deg, #e5ede6 0%, #edf2ed 45%, #e3ebe6 100%);
+      --surface-soft: #f4f7f4;
+      --surface-card: #f8faf8;
+      --surface-elevated: #ffffff;
+      --surface-tint-green: #e3f0e7;
+      --surface-tint-mint: #ebf4ee;
+
+      --emerald-primary: #14965c;
+      --emerald-dark: #0c6e43;
+      --emerald-deep: #084d2e;
+      --emerald-soft: rgba(20, 150, 92, 0.12);
+      --emerald-glow: 0 10px 26px rgba(12, 110, 67, 0.22);
+
+      --ink-primary: #13221b;
+      --ink-secondary: #46584f;
+      --ink-muted: #6d7f76;
+      --border-subtle: #d4e0d8;
+      --border-card: #dce7e0;
+
+      --credit-green: #0d8a52;
+      --credit-bg: #e7f6ee;
+      --credit-border: #b8e3cb;
+
+      --debit-red: #d63b3b;
+      --debit-bg: #fdf0f0;
+      --debit-border: #f5c6c6;
+
+      --info-blue: #1673b8;
+      --info-bg: #eaf4fc;
+      --warning-amber: #d48806;
+      --warning-bg: #fef7e6;
+      --whatsapp-green: #22c55e;
+      --whatsapp-dark: #128c7e;
+
+      --shadow-card: 0 6px 20px rgba(19, 34, 27, 0.06);
+      --shadow-float: 0 12px 28px rgba(19, 34, 27, 0.14);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
     }
+
 
     * {
       box-sizing: border-box;
@@ -51,465 +71,1041 @@
       font-variant-numeric: tabular-nums;
     }
 
-    body {
-      background: linear-gradient(180deg, #e7f5ec 0%, #f3faf6 45%, #eaf6ef 100%);
+
+    html, body {
+      background: var(--bg-canvas);
+      background-image: var(--bg-canvas-grad);
       background-attachment: fixed;
-      color: var(--text-main);
-      padding: 0;
-      margin: 0;
+      color: var(--ink-primary);
       font-size: 14px;
       min-height: 100vh;
-      width: 100vw;
+      width: 100%;
+      max-width: 100vw;
       overflow-x: hidden;
-      padding-bottom: 84px;
+      padding-bottom: 88px;
     }
 
-    @keyframes fadeInUp {
+
+    @keyframes fadeSlideIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.35); }
-      70% { box-shadow: 0 0 0 14px rgba(22, 163, 74, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+
+    @keyframes softPulse {
+      0% { box-shadow: 0 0 0 0 rgba(20, 150, 92, 0.35); }
+      70% { box-shadow: 0 0 0 12px rgba(20, 150, 92, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(20, 150, 92, 0); }
     }
 
+
+    /* صفحه ورود الهام‌گرفته از تم سبز ملایم */
     #authOverlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: linear-gradient(160deg, rgba(220, 245, 229, 0.94) 0%, rgba(240, 250, 244, 0.96) 100%);
-      backdrop-filter: blur(14px);
-      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 16px;
-    }
-    .auth-card {
-      background: #ffffff;
-      width: 100%; max-width: 400px; padding: 26px 22px; border-radius: 26px;
-      box-shadow: 0 20px 45px rgba(15, 41, 30, 0.12); display: flex; flex-direction: column; gap: 14px;
-      border: 1.5px solid #d4ecdc;
-      animation: fadeInUp 0.28s ease-out;
-    }
-    .auth-title {
-      font-size: 1.2rem; font-weight: 900; text-align: center; color: var(--primary-dark);
-      background: #e8f7ed; padding: 12px 14px; border-radius: 16px; border: 1px solid #ccead7;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(155deg, #0d6e43 0%, #143628 55%, #102019 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 16px;
     }
 
-    .container { max-width: 100%; width: 100%; display: none; margin: 0; padding: 0; }
+
+    .auth-card {
+      background: var(--surface-card);
+      width: 100%;
+      max-width: 400px;
+      padding: 24px 20px;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 24px 54px rgba(0, 0, 0, 0.32);
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      border: 1.5px solid var(--border-subtle);
+      animation: fadeSlideIn 0.28s ease-out;
+    }
+
+
+    .auth-brand-badge {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 2px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.65rem;
+      box-shadow: var(--emerald-glow);
+    }
+
+
+    .auth-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      text-align: center;
+      color: var(--ink-primary);
+    }
+
+
+    .auth-subtitle {
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--ink-secondary);
+      margin-top: -6px;
+    }
+
+
+    .container {
+      max-width: 680px;
+      width: 100%;
+      display: none;
+      margin: 0 auto;
+      padding: 0;
+    }
+
 
     .card {
-      background: var(--card-bg);
+      background: var(--surface-card);
       border-radius: 0;
-      padding: 16px;
-      box-shadow: var(--shadow-sm);
+      padding: 14px 14px 24px;
+      box-shadow: none;
       border: none;
-      margin-bottom: 0;
       width: 100%;
       min-height: 100vh;
-      animation: fadeInUp 0.24s ease-out;
+      animation: fadeSlideIn 0.22s ease-out;
     }
 
+
+    /* هدر بالای صفحات داخلی و داشبورد */
     .card-header-styled {
-      background: linear-gradient(135deg, #dcf3e4 0%, #eef9f2 100%);
-      color: var(--primary-dark);
-      padding: 13px 16px;
-      border-radius: 18px;
-      margin: -16px -16px 16px -16px;
+      background: linear-gradient(135deg, var(--emerald-dark) 0%, var(--emerald-primary) 100%);
+      color: #ffffff;
+      padding: 13px 14px;
+      border-radius: var(--radius-lg);
+      margin: 0 0 14px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 14px rgba(15, 41, 30, 0.05);
-      border: 1px solid #c9e8d5;
+      gap: 8px;
+      box-shadow: var(--emerald-glow);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-    .card-header-styled h3 { color: var(--primary-dark) !important; margin: 0 !important; font-size: 1.02rem; font-weight: 900; }
 
-    #viewDashboard .card-header-styled {
-      margin: 0 0 14px 0;
-      border-radius: 0 0 24px 24px;
+
+    .card-header-styled h3 {
+      color: #ffffff !important;
+      margin: 0 !important;
+      font-size: 0.98rem;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+
+    /* هدر ویژه داشبورد شبیه کارت کیف‌پول تصویر */
+    /* --- هدر و کارت شاخص کیف‌پول --- */
+    .wallet-top-bar {
+      background: var(--surface-tint-mint);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: var(--shadow-card);
+    }
+
+
+    .wallet-user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+
+    .wallet-avatar-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(20, 150, 92, 0.25);
+    }
+
+
+    .wallet-greeting {
+      font-size: 0.74rem;
+      color: var(--ink-secondary);
+      font-weight: 700;
+    }
+
+
+    .wallet-brand-name {
+      font-size: 0.98rem;
+      font-weight: 900;
+      color: var(--ink-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+
+    .wallet-hero-card {
+      background: linear-gradient(135deg, #d7ede0 0%, #e7f3ec 60%, #dcebe2 100%);
+      border: 1.5px solid #b9dac7;
+      border-radius: var(--radius-xl);
       padding: 16px;
-      background: linear-gradient(135deg, #d7f0e0 0%, #eaf8ef 100%);
-      border-top: none;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
     }
 
+
+    .wallet-hero-card::after {
+      content: "ک";
+      position: absolute;
+      left: -14px;
+      bottom: -24px;
+      font-size: 7.5rem;
+      font-weight: 900;
+      color: rgba(20, 150, 92, 0.08);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+
+    .wallet-hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+
+    .wallet-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-elevated);
+      color: var(--emerald-dark);
+      border: 1px solid #c5e0d0;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+
+    .wallet-quick-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+
+    .wallet-quick-tile {
+      background: var(--surface-tint-mint);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.16s ease, background 0.16s ease;
+      box-shadow: 0 3px 10px rgba(19, 34, 27, 0.04);
+    }
+
+
+    .wallet-quick-tile:active {
+      transform: scale(0.96);
+      background: var(--surface-tint-green);
+    }
+
+
+    .wallet-quick-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--surface-tint-green);
+      color: var(--emerald-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 900;
+    }
+
+
+    .wallet-quick-label {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--ink-primary);
+      text-align: center;
+      line-height: 1.25;
+    }
+
+
+    .section-kicker-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 4px 2px 10px;
+    }
+
+
+    .section-kicker-title {
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: var(--ink-primary);
+    }
+
+
+    .section-kicker-sub {
+      font-size: 0.74rem;
+      color: var(--ink-muted);
+      font-weight: 700;
+    }
+
+
+    /* ردیف‌های منوی داشبورد با سفیدی متعادل */
     .dashboard-floating-grid {
       display: flex;
       flex-direction: column;
-      gap: 11px;
-      padding: 4px 14px 12px 14px;
+      gap: 10px;
+      padding: 2px 0 8px;
     }
 
+
     .floating-glass-btn {
-      background: #ffffff;
-      border: 1.5px solid #dceee2;
-      box-shadow: 0 4px 14px rgba(15, 41, 30, 0.04);
-      border-radius: 20px;
-      padding: 13px 14px;
+      background: var(--surface-card);
+      border: 1.5px solid var(--border-card);
+      box-shadow: var(--shadow-card);
+      border-radius: var(--radius-lg);
+      padding: 12px 13px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
       text-align: right;
       user-select: none;
       position: relative;
     }
-    .floating-glass-btn:hover {
-      border-color: #9dd8b3;
-      box-shadow: 0 8px 20px rgba(22, 163, 74, 0.09);
-    }
+
+
     .floating-glass-btn:active {
-      transform: scale(0.985);
-      background: #f5fcf7;
+      transform: scale(0.98);
+      background: var(--surface-tint-mint);
+      border-color: var(--emerald-primary);
     }
+
 
     .floating-glass-btn .content-box {
       display: flex;
       align-items: center;
       gap: 12px;
       flex: 1;
+      min-width: 0;
     }
 
+
     .floating-glass-btn .icon {
-      font-size: 1.45rem;
-      background: #e7f6ec;
-      color: var(--accent-green-dark);
-      width: 44px;
-      height: 44px;
-      display: inline-flex;
+      font-size: 1.35rem;
+      background: var(--surface-tint-green);
+      color: var(--emerald-dark);
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 14px;
-      border: 1px solid #cde9d7;
       flex-shrink: 0;
     }
-    .floating-glass-btn .title { font-weight: 800; font-size: 0.96rem; color: var(--primary-dark); }
+
+
+    .floating-glass-btn .title {
+      font-weight: 900;
+      font-size: 0.9rem;
+      color: var(--ink-primary);
+      line-height: 1.35;
+    }
+
 
     .menu-sort-controls {
       display: flex;
       gap: 5px;
+      flex-shrink: 0;
     }
+
+
     .sort-btn {
-      background: #edf7f0;
-      border: 1px solid #d2e9da;
+      background: var(--surface-soft);
+      border: 1px solid var(--border-subtle);
       width: 30px;
       height: 30px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 0.8rem;
+      border-radius: 9px;
+      font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--primary-dark);
-      transition: all 0.18s;
+      color: var(--ink-primary);
+      font-size: 0.78rem;
+      transition: all 0.15s;
     }
-    .sort-btn:active { background: #d6efe0; transform: scale(0.92); }
 
+
+    .sort-btn:active {
+      background: var(--surface-tint-green);
+      transform: scale(0.92);
+    }
+
+
+    /* کنترل دایره‌ای عملیات در جزئیات حساب */
+    /* --- کنترل دایره‌ای عملیات حساب --- */
     .nokia-nav-container {
       position: relative;
       width: 100%;
-      max-width: 328px;
-      height: 226px;
-      margin: 16px auto;
+      max-width: 332px;
+      height: 224px;
+      margin: 14px auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f3faf5;
-      border-radius: 26px;
-      border: 1.5px solid #d8ede0;
+      background: var(--surface-tint-mint);
+      border: 1px solid var(--border-subtle);
+      border-radius: 28px;
       padding: 8px;
     }
 
+
     .nokia-center-btn {
       position: absolute;
-      width: 92px;
-      height: 92px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      background: linear-gradient(145deg, #22c55e 0%, #15803d 100%);
+      background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
       color: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       text-align: center;
-      box-shadow: 0 8px 22px rgba(22, 163, 74, 0.32);
-      border: 4px solid #ffffff;
+      box-shadow: var(--emerald-glow);
+      border: 3.5px solid var(--surface-elevated);
       cursor: pointer;
       z-index: 10;
-      animation: pulseGlow 2.4s infinite;
-      transition: transform 0.2s ease;
+      animation: softPulse 2.4s infinite;
+      transition: transform 0.16s ease;
+      gap: 2px;
     }
+
+
     .nokia-center-btn:active { transform: scale(0.93); }
 
     .nokia-corner-btn {
       position: absolute;
-      width: 124px;
+      width: 122px;
       height: 74px;
-      background: #ffffff;
-      border: 1.5px solid #d7ece0;
-      box-shadow: 0 4px 12px rgba(15, 41, 30, 0.05);
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border-subtle);
+      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 0.79rem;
+      font-size: 0.76rem;
       font-weight: 800;
       cursor: pointer;
-      color: var(--primary-dark);
-      transition: all 0.18s ease;
+      color: var(--ink-primary);
+      transition: all 0.16s ease;
       padding: 6px;
-      gap: 4px;
+      gap: 3px;
     }
-    .nokia-corner-btn:active { transform: scale(0.96); background: #f2fbf5; }
 
-    .nokia-btn-top-right { top: 10px; right: 10px; border-radius: 18px 18px 34px 18px; }
-    .nokia-btn-top-left { top: 10px; left: 10px; border-radius: 18px 18px 18px 34px; }
-    .nokia-btn-bottom-right { bottom: 10px; right: 10px; border-radius: 18px 34px 18px 18px; }
-    .nokia-btn-bottom-left { bottom: 10px; left: 10px; border-radius: 34px 18px 18px 18px; }
 
-    h3 { font-size: 1.02rem; font-weight: 900; color: var(--primary-dark); margin-bottom: 12px; }
-    .form-group { margin-bottom: 13px; }
-    label { display: block; font-size: 0.88rem; font-weight: 800; margin-bottom: 6px; color: #1e3a2d; }
+    .nokia-corner-btn:active {
+      transform: scale(0.95);
+      background: var(--surface-tint-green);
+    }
+
+
+    .nokia-btn-top-right { top: 10px; right: 10px; border-radius: 16px 16px 34px 16px; }
+    .nokia-btn-top-left { top: 10px; left: 10px; border-radius: 16px 16px 16px 34px; }
+    .nokia-btn-bottom-right { bottom: 10px; right: 10px; border-radius: 16px 34px 16px 16px; }
+    .nokia-btn-bottom-left { bottom: 10px; left: 10px; border-radius: 34px 16px 16px 16px; }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--ink-primary);
+      margin-bottom: 10px;
+    }
+
+
+    .form-group { margin-bottom: 12px; }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+      color: var(--ink-primary);
+    }
+
 
     input, select, textarea {
-      width: 100%; padding: 11px 14px; border: 1.5px solid #cfe6d8; border-radius: 15px;
-      font-size: 0.96rem; background: #f9fcfa;
-      outline: none; transition: all 0.2s ease; font-weight: 700; color: #0f291e;
+      width: 100%;
+      padding: 11px 13px;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      background: var(--surface-elevated);
+      outline: none;
+      transition: all 0.18s ease;
+      font-weight: 700;
+      color: var(--ink-primary);
     }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent-green);
-      background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
-    }
-    textarea { resize: vertical; min-height: 80px; }
 
-    .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--emerald-primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(20, 150, 92, 0.15);
+    }
+
+
+    textarea { resize: vertical; min-height: 76px; }
+
+    .radio-group { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 5px; }
+
     .btn-select-option {
-      flex: 1; min-width: 70px; padding: 10px 6px; text-align: center; background: #f4faf6;
-      border: 1.5px solid #cfe6d8; border-radius: 14px; font-size: 0.9rem;
-      font-weight: 800; cursor: pointer; transition: all 0.18s ease; user-select: none; color: #2b473a;
+      flex: 1;
+      min-width: 68px;
+      padding: 10px 6px;
+      text-align: center;
+      background: var(--surface-soft);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 0.86rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      user-select: none;
+      color: var(--ink-secondary);
     }
+
+
     .btn-select-option.selected-creditor {
-      background: #e5f8ec !important; border-color: var(--accent-green) !important; color: var(--accent-green-dark) !important;
-      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.16);
+      background: var(--credit-bg) !important;
+      border-color: var(--credit-green) !important;
+      color: var(--credit-green) !important;
     }
+
+
     .btn-select-option.selected-debtor {
-      background: #fef2f2 !important; border-color: var(--danger-color) !important; color: var(--danger-color) !important;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+      background: var(--debit-bg) !important;
+      border-color: var(--debit-red) !important;
+      color: var(--debit-red) !important;
     }
+
+
     .btn-select-option.selected-currency {
-      background: #e6f6ec !important; border-color: #0d9488 !important; color: #0f766e !important;
-      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.16);
+      background: var(--info-bg) !important;
+      border-color: var(--info-blue) !important;
+      color: var(--info-blue) !important;
     }
+
 
     .btn {
-      padding: 11px 16px; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none;
-      border-radius: 15px; font-weight: 800; cursor: pointer; font-size: 0.9rem;
-      display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 100%;
-      box-shadow: 0 5px 15px rgba(21, 128, 61, 0.22); transition: all 0.15s ease; user-select: none;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      box-shadow: 0 4px 14px rgba(12, 110, 67, 0.24);
+      transition: transform 0.14s ease, opacity 0.14s ease;
+      user-select: none;
     }
+
+
     .btn:active { transform: scale(0.97); }
-    .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 5px 15px rgba(220, 38, 38, 0.22); }
-    .btn-secondary { background: #e6f2ea; color: #1b3b2b; border: 1px solid #c6e2d0; box-shadow: none; }
-    .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; box-shadow: 0 5px 15px rgba(217, 119, 6, 0.22); }
-    .btn-info { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); box-shadow: 0 5px 15px rgba(2, 132, 199, 0.22); }
-    .btn-whatsapp { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); color: #ffffff; box-shadow: 0 5px 15px rgba(22, 163, 74, 0.24); }
-    .btn-sm { padding: 7px 13px; font-size: 0.8rem; width: auto; box-shadow: none; border-radius: 12px; }
+    .btn-danger { background: linear-gradient(135deg, #e04343 0%, #b82929 100%); box-shadow: 0 4px 14px rgba(214, 59, 59, 0.24); }
+    .btn-secondary { background: linear-gradient(135deg, #4b5d54 0%, #33423b 100%); box-shadow: 0 4px 12px rgba(51, 66, 59, 0.2); }
+    .btn-warning { background: linear-gradient(135deg, #e09612 0%, #b87606 100%); color: #ffffff; box-shadow: 0 4px 14px rgba(212, 136, 6, 0.24); }
+    .btn-info { background: linear-gradient(135deg, #1673b8 0%, #0f568c 100%); box-shadow: 0 4px 14px rgba(22, 115, 184, 0.24); }
+    .btn-whatsapp { background: linear-gradient(135deg, #1ea854 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 4px 14px rgba(18, 140, 126, 0.24); }
+    .btn-sm { padding: 6px 11px; font-size: 0.78rem; width: auto; box-shadow: none; border-radius: 10px; }
 
     .action-btn-modern {
-      padding: 12px 16px;
-      border-radius: 16px;
-      font-weight: 800;
-      font-size: 0.92rem;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-weight: 900;
+      font-size: 0.88rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       cursor: pointer;
       border: none;
-      transition: all 0.18s ease;
+      transition: transform 0.15s ease;
       width: 100%;
       user-select: none;
     }
+
+
     .action-btn-modern:active { transform: scale(0.97); }
-    .btn-edit-pro {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    .btn-edit-pro { background: linear-gradient(135deg, #e09612 0%, #b87606 100%); color: #ffffff; }
+    .btn-delete-pro { background: linear-gradient(135deg, #e04343 0%, #b82929 100%); color: #ffffff; }
+
+    /* دکمه شناور ایجاد حساب جدید (بالای نوار پایین در سمت چپ) */
+    .floating-create-account-btn {
+      position: fixed;
+      bottom: 72px;
+      left: 14px;
+      background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
       color: #ffffff;
-      box-shadow: 0 6px 16px rgba(217, 119, 6, 0.24);
-    }
-    .btn-delete-pro {
-      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-      color: #ffffff;
-      box-shadow: 0 6px 16px rgba(185, 28, 28, 0.24);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.84rem;
+      box-shadow: var(--shadow-float);
+      z-index: 4500;
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .floating-create-account-btn {
-      position: fixed; bottom: 18px; left: 16px; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white;
-      padding: 11px 18px; border-radius: 28px; font-weight: 900; font-size: 0.9rem;
-      box-shadow: 0 8px 22px rgba(21, 128, 61, 0.32); z-index: 5000; border: 2px solid #ffffff; cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-    }
+
     .floating-create-account-btn:active { transform: scale(0.95); }
 
-    /* دکمه بازگشت ثابت کوچک در پایین سمت راست */
-    .floating-fixed-back-btn {
+    /* دکمه سرچ کوچک و قابل تحرک در هر جای صفحه (همراه با دکمه کشو/پنل کنار صفحه) */
+    /* --- ابزارک سرچ قابل‌تحرک و دکمه بازگشت ریز --- */
+    .draggable-search-dock {
       position: fixed;
-      bottom: 16px;
-      right: 16px;
-      width: 42px;
-      height: 42px;
-      background: #ffffff;
-      color: var(--primary-dark);
-      border-radius: 50%;
-      display: flex;
+      top: 58%;
+      left: 12px;
+      z-index: 6200;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1.05rem;
-      font-weight: 900;
-      box-shadow: 0 6px 18px rgba(15, 41, 30, 0.16);
-      z-index: 5900;
-      cursor: pointer;
-      border: 1.5px solid #bfe3cd;
-      transition: transform 0.16s ease, background 0.16s ease;
+      gap: 4px;
+      background: var(--surface-card);
+      border: 1.5px solid var(--emerald-primary);
+      border-radius: 999px;
+      padding: 4px 6px;
+      box-shadow: var(--shadow-float);
+      touch-action: none;
       user-select: none;
     }
-    .floating-fixed-back-btn:hover {
-      background: #eaf7ef;
-    }
-    .floating-fixed-back-btn:active {
-      transform: scale(0.92);
+
+
+    .draggable-search-dock.dragging {
+      opacity: 0.92;
+      transform: scale(1.04);
+      border-color: var(--info-blue);
     }
 
-    /* دکمه سرچ کوچک و متحرک (قابل کشیدن به هر جای صفحه و ماندگار در همان‌جا) */
+
     .floating-search-trigger {
-      position: fixed;
-      bottom: 68px;
-      right: 16px;
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, #16a34a 0%, #059669 100%);
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
       color: #ffffff;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.12rem;
-      box-shadow: 0 8px 22px rgba(21, 128, 61, 0.32);
-      z-index: 6100;
-      cursor: grab;
-      border: 2px solid #ffffff;
-      user-select: none;
-      touch-action: none;
-      transition: box-shadow 0.18s ease, transform 0.15s ease;
-    }
-    .floating-search-trigger.dragging {
-      cursor: grabbing;
-      transform: scale(1.06);
-      box-shadow: 0 14px 28px rgba(15, 41, 30, 0.28);
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
+
+    .side-search-sheet-btn {
+      width: 30px;
+      height: 30px;
+      background: var(--surface-tint-green);
+      color: var(--emerald-dark);
+      border: 1px solid #b9dac7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 900;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+
+    /* دکمه بسیار ریز و کوچک بازگشت به مرحله عقب در پایین ثابت به سمت راست (نزدیک بازگشت اصلی گوشی) */
+    .tiny-back-step-btn {
+      position: fixed;
+      bottom: 8px;
+      right: 10px;
+      width: 30px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(19, 34, 27, 0.78);
+      color: #e9efe9;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      font-size: 0.76rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 6500;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+      transition: transform 0.14s ease, background 0.14s ease;
+    }
+
+
+    .tiny-back-step-btn:active {
+      transform: scale(0.9);
+      background: var(--emerald-dark);
+    }
+
+
+    /* نوار ناوبری پایینی الهام‌گرفته از اپ کیف‌پول */
+    /* --- نوار ناوبری پایین --- */
+    .wallet-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--surface-card);
+      border-top: 1px solid var(--border-subtle);
+      display: none;
+      align-items: center;
+      justify-content: space-around;
+      padding: 4px 44px 4px 8px;
+      z-index: 4000;
+      box-shadow: 0 -4px 16px rgba(19, 34, 27, 0.06);
+    }
+
+
+    .wallet-bottom-nav.visible {
+      display: flex;
+    }
+
+
+    .wallet-nav-item {
+      flex: 1;
+      height: 48px;
+      border-radius: 14px;
+      border: none;
+      background: transparent;
+      color: var(--ink-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+
+    .wallet-nav-item.active-nav {
+      background: var(--surface-tint-green);
+      color: var(--emerald-dark);
+      font-weight: 900;
+    }
+
+
+    .wallet-nav-icon {
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+
+    /* کشوی کناری / مدال جستجو */
     #searchDrawerModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(15, 41, 30, 0.45); backdrop-filter: blur(6px);
-      z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 27, 21, 0.65);
+      backdrop-filter: blur(5px);
+      z-index: 99999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
       overflow-y: auto;
     }
-    .modal-card-box {
-      background: #ffffff;
-      width: 100%; max-width: 420px; border-radius: 24px; padding: 20px;
-      box-shadow: 0 22px 50px rgba(15, 41, 30, 0.22); max-height: 90vh; overflow-y: auto;
-      border: 1.5px solid #d7ece0;
-      animation: fadeInUp 0.22s ease-out;
+
+
+    #searchDrawerModal.side-docked {
+      justify-content: flex-start;
+      align-items: stretch;
+      padding: 0;
     }
 
-    .stats-grid { display: flex; flex-direction: column; gap: 10px; }
-    .stat-card {
-      background: #f9fcfa; border: 1.5px solid #d8ede0; 
-      border-radius: var(--radius-md); padding: 12px 14px; box-shadow: var(--shadow-sm);
+
+    #searchDrawerModal.side-docked .modal-card-box {
+      max-width: 340px;
+      width: 86%;
+      height: 100vh;
+      max-height: 100vh;
+      border-radius: 0 22px 22px 0;
+      margin-top: 0;
     }
-    .stat-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; align-items: center; }
-    .stat-badge { text-align: center; padding: 8px 12px; border-radius: 13px; font-weight: 900; font-size: 0.92rem; margin-top: 8px; }
+
+
+    .modal-card-box {
+      background: var(--surface-card);
+      width: 100%;
+      max-width: 420px;
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      box-shadow: 0 22px 54px rgba(0, 0, 0, 0.28);
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1.5px solid var(--border-subtle);
+      animation: fadeSlideIn 0.2s ease-out;
+    }
+
+
+    .stats-grid { display: flex; flex-direction: column; gap: 9px; }
+
+    .stat-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 11px 13px;
+      box-shadow: var(--shadow-card);
+    }
+
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      margin-bottom: 4px;
+      align-items: center;
+      gap: 8px;
+    }
+
+
+    .stat-badge {
+      text-align: center;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-weight: 900;
+      font-size: 0.88rem;
+      margin-top: 6px;
+    }
+
 
     .account-item-card, .tx-item-card, .phone-item-card {
-      background: #ffffff; border: 1.5px solid #dceee2; 
-      border-radius: var(--radius-md); padding: 13px 14px; margin-bottom: 11px; box-shadow: var(--shadow-sm); 
-      display: flex; flex-direction: column; gap: 7px; cursor: pointer; user-select: none; transition: all 0.15s ease; width: 100%;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.15s ease, transform 0.14s ease;
+      width: 100%;
     }
-    .account-item-card:hover, .phone-item-card:hover { border-color: #9dd8b3; }
-    .account-item-card:active, .tx-item-card:active, .phone-item-card:active { border-color: var(--accent-green); background: #f5fcf7; }
 
-    .tx-item-card.tx-creditor { background: #f2fbf5; border-color: #bfe7cd; }
-    .tx-item-card.tx-debtor { background: #fff6f6; border-color: #f8caca; }
 
-    .account-item-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .account-name-title { font-size: 1.04rem; font-weight: 900; color: var(--primary-dark); }
+    .account-item-card:active, .tx-item-card:active, .phone-item-card:active {
+      border-color: var(--emerald-primary);
+      background: var(--surface-tint-mint);
+    }
 
-    .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .back-home { display: block; text-align: center; margin-top: 18px; color: #355847; text-decoration: none; font-size: 0.86rem; font-weight: 800; }
-    .currency-badge { display: inline-block; padding: 4px 10px; background: #eef8f2; border: 1px solid #cce7d6; border-radius: 10px; font-size: 0.8rem; margin: 2px; font-weight: 800; }
+
+    .tx-item-card.tx-creditor { background: var(--credit-bg); border-color: var(--credit-border); }
+    .tx-item-card.tx-debtor { background: var(--debit-bg); border-color: var(--debit-border); }
+
+    .account-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+
+    .account-name-title {
+      font-size: 0.98rem;
+      font-weight: 900;
+      color: var(--ink-primary);
+    }
+
+
+    .flex-row { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+
+    .back-home {
+      display: block;
+      text-align: center;
+      margin-top: 14px;
+      color: var(--ink-secondary);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+
+    .currency-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      margin: 2px;
+      font-weight: 900;
+    }
+
 
     .view-section { display: none; }
     .view-section.active { display: block; }
 
     #syncIndicator {
-      position: fixed; bottom: 18px; left: 16px; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white;
-      padding: 8px 16px; border-radius: 26px; font-size: 0.83rem; font-weight: 800;
-      box-shadow: 0 8px 20px rgba(15, 41, 30, 0.22); display: none; z-index: 8000; border: 1.5px solid #ffffff;
+      position: fixed;
+      bottom: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink-primary);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      box-shadow: var(--shadow-float);
+      display: none;
+      z-index: 8000;
+      border: 1px solid rgba(255, 255, 255, 0.16);
     }
 
-    .profile-img-preview { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--accent-green); background: #ffffff; }
-    .receipt-img-preview { width: 100%; max-height: 240px; object-fit: contain; border-radius: 14px; border: 1.5px solid #d5eadc; margin-top: 10px; background: #f9fcfa; }
-    .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f6fbf8; border-radius: 13px; margin-bottom: 8px; border: 1px solid #d6ebdd; }
+
+    .profile-img-preview {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--emerald-primary);
+      background: var(--surface-elevated);
+    }
+
+
+    .receipt-img-preview {
+      width: 100%;
+      max-height: 230px;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-subtle);
+      margin-top: 8px;
+      background: var(--surface-soft);
+    }
+
+
+    .op-badge-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 12px;
+      background: var(--surface-soft);
+      border-radius: 12px;
+      margin-bottom: 7px;
+      border: 1px solid var(--border-subtle);
+    }
+
 
     .client-info-header-box {
-      background: linear-gradient(135deg, #f3faf5 0%, #ffffff 100%);
-      border: 1.5px solid #d5eadc;
+      background: var(--surface-tint-mint);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 14px;
-      margin-bottom: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      box-shadow: var(--shadow-sm);
+      gap: 6px;
     }
 
+
     .batch-summary-card {
-      background: linear-gradient(135deg, #133827 0%, #0d261b 100%);
+      background: linear-gradient(135deg, #163024 0%, #0e1f17 100%);
       color: #ffffff;
-      padding: 14px;
-      border-radius: 18px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid #2b6349;
+      padding: 13px;
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
     }
+
 
     .deleted-account-badge {
       display: inline-block;
-      background: #fef2f2;
-      color: #dc2626;
-      border: 1px solid #fecaca;
-      padding: 3px 10px;
-      border-radius: 9px;
-      font-size: 0.78rem;
-      font-weight: 800;
+      background: var(--debit-bg);
+      color: var(--debit-red);
+      border: 1px solid var(--debit-border);
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 900;
     }
 
+
     .edge-to-edge-wrapper {
-      margin-left: -16px;
-      margin-right: -16px;
-      width: calc(100% + 32px);
+      margin-left: -14px;
+      margin-right: -14px;
+      width: calc(100% + 28px);
     }
+
+
     .compact-ledger-table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
       font-size: 0.74rem;
     }
+
+
     .compact-ledger-table th {
-      background: #eaf6ee;
-      color: var(--primary-dark);
-      border-bottom: 2px solid #c6e4d2;
-      border-left: 1px solid #d7ece0;
+      background: var(--surface-soft);
+      color: var(--ink-primary);
+      border-bottom: 2px solid var(--border-subtle);
+      border-left: 1px solid var(--border-card);
       padding: 7px 3px;
       font-weight: 900;
       font-size: 0.71rem;
@@ -517,71 +1113,77 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+
     .compact-ledger-table th:last-child,
     .compact-ledger-table td:last-child {
       border-left: none;
     }
+
+
     .compact-ledger-table td {
       padding: 7px 3px;
-      border-bottom: 1px solid #d7ece0;
-      border-left: 1px solid #e3f2e8;
+      border-bottom: 1px solid var(--border-card);
+      border-left: 1px solid var(--border-card);
       vertical-align: middle;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .compact-ledger-table tr:active {
-      filter: brightness(0.96);
-    }
-    .ledger-customer-picker {
-      position: relative;
-      margin-bottom: 10px;
-    }
+
+
+    .compact-ledger-table tr:active { filter: brightness(0.96); }
+
+    .ledger-customer-picker { position: relative; margin-bottom: 10px; }
+
     .ledger-picker-dropdown {
       position: absolute;
       top: 100%;
       left: 0;
       right: 0;
-      background: #ffffff;
-      border: 1.5px solid #c7e5d2;
-      border-radius: 15px;
-      box-shadow: 0 12px 28px rgba(15, 41, 30, 0.14);
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-float);
       z-index: 500;
       max-height: 240px;
       overflow-y: auto;
       margin-top: 4px;
       display: none;
     }
+
+
     .ledger-picker-item {
       padding: 9px 12px;
-      border-bottom: 1px solid #eef7f1;
+      border-bottom: 1px solid var(--border-card);
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.15s;
+      transition: background 0.14s;
     }
-    .ledger-picker-item:last-child {
-      border-bottom: none;
-    }
-    .ledger-picker-item:hover, .ledger-picker-item.active-opt {
-      background: #eaf8ef;
-    }
+
+
+    .ledger-picker-item:last-child { border-bottom: none; }
+    .ledger-picker-item:hover, .ledger-picker-item.active-opt { background: var(--surface-tint-mint); }
   </style>
 </head>
 <body>
 
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
 
-  <!-- دکمه بازگشت ثابت کوچک در پایین سمت راست -->
-  <div id="floatingFixedBackBtn" class="floating-fixed-back-btn" onclick="playInteractionEffect(); handleFloatingFixedBack()" title="بازگشت">↩</div>
+  <!-- دکمه سرچ کوچک و قابل تحرک در هر جای صفحه + باز کردن کشو در کنار صفحه -->
+  <div id="draggableSearchDock" class="draggable-search-dock" title="بکشید تا جابه‌جا شود یا برای جستجو بزنید">
+    <button type="button" class="floating-search-trigger" onclick="handleSearchDockClick('modal')" title="جستجوی سریع">🔍</button>
+    <button type="button" class="side-search-sheet-btn" onclick="handleSearchDockClick('side')" title="باز کردن جستجو در کنار صفحه">◧</button>
+  </div>
 
-  <!-- دکمه سرچ کوچک و متحرک (قابل کشیدن به هر جای صفحه) -->
-  <div class="floating-search-trigger" id="draggableSearchBtn" title="جستجوی سریع (قابل جابه‌جایی)">🔍</div>
+  <!-- دکمه بسیار ریز بازگشت به مرحله عقب در پایین ثابت به سمت راست -->
+  <button type="button" id="tinyBackStepBtn" class="tiny-back-step-btn" onclick="playInteractionEffect(); stepBackNavigation()" title="بازگشت به مرحله قبل">↩</button>
 
-  <!-- کشوی جستجو -->
+  <!-- کشو / مودال جستجو -->
   <div id="searchDrawerModal" onclick="closeSearchDrawerOnBack(event)">
-    <div class="modal-card-box" style="margin-top: 20px;" onclick="event.stopPropagation()">
+    <div class="modal-card-box" style="margin-top: 16px;" onclick="event.stopPropagation()">
       <div class="flex-row" style="justify-content: space-between; margin-bottom: 10px;">
         <h3>🔍 جستجوی هوشمند</h3>
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeSearchDrawer()">✕ بستن</button>
@@ -596,7 +1198,9 @@
   <!-- صفحه ورود -->
   <div id="authOverlay">
     <div class="auth-card">
-      <div class="auth-title">🔐 مدیریت امانت‌داری کریمی</div>
+      <div class="auth-brand-badge">🏛️</div>
+      <div class="auth-title">مدیریت امانت‌داری کریمی</div>
+      <div class="auth-subtitle">ورود امن به سامانه حسابداری و حواله</div>
       <div class="form-group"><label>ایمیل ادمین:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور..."></div>
       <button class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
@@ -606,15 +1210,53 @@
 
   <!-- کانتینر اصلی -->
   <div class="container" id="adminContainer">
-    <!-- داشبورد اصلی -->
+    <!-- داشبورد اصلی با چینش الهام‌گرفته از کیف‌پول مالی -->
     <div id="viewDashboard" class="view-section active">
-      <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0; min-height: auto;">
-        <div class="card-header-styled">
-          <h3>🏛️ مدیریت امانت‌داری کریمی</h3>
-          <div class="flex-row">
+      <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 12px 12px 20px; min-height: auto;">
+        <div class="wallet-top-bar">
+          <div class="wallet-user-info">
+            <div class="wallet-avatar-circle" id="walletHeaderAvatar">ک</div>
+            <div>
+              <div class="wallet-greeting">خوش آمدید</div>
+              <div class="wallet-brand-name" id="walletHeaderTitle">امانت‌داری کریمی</div>
+            </div>
+          </div>
+          <div class="flex-row" style="gap: 6px;">
             <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); loadDataFromSupabase(true)">🔄 همگام‌سازی</button>
             <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); handleLogout()">خروج</button>
           </div>
+        </div>
+
+        <div class="wallet-hero-card">
+          <div class="wallet-hero-top">
+            <span class="wallet-pill-badge">💼 نمای کلی مانده حساب‌ها</span>
+            <button class="btn btn-sm" style="width:auto;" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">گزارش کامل ←</button>
+          </div>
+          <div id="walletHeroTotalsBox" style="font-size:0.86rem; font-weight:800; color:var(--ink-primary);">در حال محاسبه موجودی‌ها...</div>
+        </div>
+
+        <div class="wallet-quick-actions">
+          <div class="wallet-quick-tile" onclick="playInteractionEffect(); openAccountModal()">
+            <div class="wallet-quick-icon">➕</div>
+            <div class="wallet-quick-label">حساب جدید</div>
+          </div>
+          <div class="wallet-quick-tile" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">
+            <div class="wallet-quick-icon">💳</div>
+            <div class="wallet-quick-label">ثبت تراکنش</div>
+          </div>
+          <div class="wallet-quick-tile" onclick="playInteractionEffect(); openAllTransactionsPage()">
+            <div class="wallet-quick-icon">📜</div>
+            <div class="wallet-quick-label">دفتر کل</div>
+          </div>
+          <div class="wallet-quick-tile" onclick="playInteractionEffect(); switchView('viewAccounts')">
+            <div class="wallet-quick-icon">👥</div>
+            <div class="wallet-quick-label">حساب‌ها</div>
+          </div>
+        </div>
+
+        <div class="section-kicker-row">
+          <span class="section-kicker-title">بخش‌ها و مراحل مدیریت</span>
+          <span class="section-kicker-sub">امکان مرتب‌سازی با ⬆️ ⬇️</span>
         </div>
 
         <div class="dashboard-floating-grid" id="dashboardMenuGrid"></div>
@@ -623,17 +1265,17 @@
 
     <!-- آمار کلی -->
     <div id="viewGlobalStatsPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>📊 آمار و گزارشات کلی سیستم</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
-        <h3 style="font-size:1rem; margin-bottom:8px;">موجودی‌های فعال (مانده زنده)</h3>
+        <h3 style="font-size:0.96rem; margin-bottom:8px;">موجودی‌های فعال (مانده زنده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
       
-        <div style="margin-top: 20px;">
+        <div style="margin-top: 18px;">
           <h3>🚀 منوی گزارشات تفکیکی</h3>
-          <div class="flex-row" style="gap: 10px; flex-direction: column;">
+          <div class="flex-row" style="gap: 8px; flex-direction: column;">
             <button class="btn btn-info" onclick="playInteractionEffect(); openTransfersReport()">📜 آمار و لیست حواله‌ها / انتقال‌ها</button>
             <button class="btn btn-danger" onclick="playInteractionEffect(); openDebtorsReport()">🔴 لیست حساب‌های بدهکار (انتخاب چندتایی)</button>
             <button class="btn btn-warning" onclick="playInteractionEffect(); openCreditorsReport()">🟢 لیست حساب‌های بستانکار (انتخاب چندتایی)</button>
@@ -644,7 +1286,7 @@
 
     <!-- دفترچه و بانک شماره‌ها -->
     <div id="viewPhoneDirectoryPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>📞 بانک کامل شماره‌ها و مخاطبین</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
@@ -655,24 +1297,24 @@
           <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
         </div>
 
-        <div id="phoneDirectorySummary" class="stat-card" style="background:#f2fbf6; border-color:#9fd8b5; margin-bottom:12px;"></div>
+        <div id="phoneDirectorySummary" class="stat-card" style="background:var(--surface-tint-mint); border-color:var(--border-subtle); margin-bottom:12px;"></div>
         <div id="phoneDirectoryContainer"></div>
       </div>
     </div>
 
     <!-- دفتر کل مرکزی تمامی تراکنش‌ها -->
     <div id="viewAllTransactionsPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>📜 دفتر کل مرکزی تراکنش‌ها</h3>
           <div class="flex-row" style="gap:6px;">
-            <button class="btn btn-sm" style="background:var(--accent-green);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ ایجاد تراکنش</button>
+            <button class="btn btn-sm" style="background:var(--emerald-deep);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ ایجاد تراکنش</button>
             <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
           </div>
         </div>
 
         <div class="form-group ledger-customer-picker" id="globalLedgerPickerWrapper" style="margin-bottom: 10px;">
-          <label style="font-size: 0.85rem; color: #1e3a2d;">جستجو و انتخاب حساب مشتری (نام، تلفن یا کُد حساب):</label>
+          <label style="font-size: 0.84rem; color: var(--ink-secondary);">جستجو و انتخاب حساب مشتری (نام، تلفن یا کُد حساب):</label>
           <input type="hidden" id="globalLedgerAccountFilter" value="all">
           <div style="position: relative;">
             <input type="text" id="globalLedgerAccountSearchInput" placeholder="📁 همه حساب‌ها — تایپ نام، شماره یا ACC..." onfocus="openGlobalLedgerAccountDropdown()" oninput="filterGlobalLedgerAccountDropdown()" autocomplete="off" style="padding-left: 36px;">
@@ -691,7 +1333,7 @@
 
     <!-- گزارش حواله‌ها / انتقال‌ها -->
     <div id="viewTransfersReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>📜 گزارش پیشرفته حواله‌ها / انتقال‌ها</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
@@ -707,63 +1349,63 @@
           </select>
         </div>
 
-        <div id="customDateRangeBox" style="display: none; background: #f4faf6; border: 1.5px solid #d5eadc; padding: 12px; border-radius: 14px; margin-bottom: 12px;">
+        <div id="customDateRangeBox" style="display: none; background: var(--surface-soft); border: 1.5px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-md); margin-bottom: 12px;">
           <div class="flex-row" style="gap: 10px;">
             <div style="flex:1;">
-              <label style="font-size: 0.85rem;">از تاریخ:</label>
+              <label style="font-size: 0.84rem;">از تاریخ:</label>
               <input type="date" id="startDateFilter" onchange="renderTransfersReport()">
             </div>
             <div style="flex:1;">
-              <label style="font-size: 0.85rem;">تا تاریخ:</label>
+              <label style="font-size: 0.84rem;">تا تاریخ:</label>
               <input type="date" id="endDateFilter" onchange="renderTransfersReport()">
             </div>
           </div>
         </div>
 
-        <div id="transferSummaryHeader" class="stat-card" style="background:#eef9f2; border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
+        <div id="transferSummaryHeader" class="stat-card" style="background:var(--credit-bg); border-color:var(--credit-border); margin-bottom:10px;"></div>
         <div id="transfersReportContainer"></div>
       </div>
     </div>
 
     <!-- گزارش بدهکاران با قابلیت انتخاب چندتایی -->
     <div id="viewDebtorsReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>🔴 لیست و فیلتر بدهکاران (انتخاب چندتایی)</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
 
         <div id="debtorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
-          <h4 style="margin-bottom:8px; font-size:1rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
+          <h4 style="margin-bottom:8px; font-size:0.96rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
           <div id="debtorsBatchSummaryContent"></div>
         </div>
 
-        <div id="debtorsSummaryHeader" class="stat-card" style="background:#fff6f6; border-color:var(--danger-color); margin-bottom:10px;"></div>
+        <div id="debtorsSummaryHeader" class="stat-card" style="background:var(--debit-bg); border-color:var(--debit-border); margin-bottom:10px;"></div>
         <div id="debtorsContainer"></div>
       </div>
     </div>
 
     <!-- گزارش بستانکاران با قابلیت انتخاب چندتایی -->
     <div id="viewCreditorsReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>🟢 لیست و فیلتر بستانکاران (انتخاب چندتایی)</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
 
         <div id="creditorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
-          <h4 style="margin-bottom:8px; font-size:1rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
+          <h4 style="margin-bottom:8px; font-size:0.96rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
           <div id="creditorsBatchSummaryContent"></div>
         </div>
 
-        <div id="creditorsSummaryHeader" class="stat-card" style="background:#f2fbf5; border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
+        <div id="creditorsSummaryHeader" class="stat-card" style="background:var(--credit-bg); border-color:var(--credit-border); margin-bottom:10px;"></div>
         <div id="creditorsContainer"></div>
       </div>
     </div>
 
     <!-- لیست کامل حساب‌ها -->
     <div id="viewAccounts" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>👥 لیست کامل حساب‌ها</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
@@ -782,7 +1424,7 @@
 
     <!-- جزئیات حساب مشتری -->
     <div id="viewAccountDetail" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <div class="flex-row">
             <img id="detailAccountPhoto" src="" class="profile-img-preview" style="display:none;">
@@ -793,8 +1435,8 @@
 
         <div class="client-info-header-box" id="clientFullDetailsBox"></div>
 
-        <div class="stat-card" style="background: #f2fbf5; border-color: #bfe7cd; margin-bottom: 14px;">
-          <label style="font-size:0.86rem; color:#15803d; margin-bottom:8px;"><b>📲 ارسال گزارش تراکنش‌های شخص به واتساپ خودش:</b></label>
+        <div class="stat-card" style="background: var(--surface-tint-mint); border-color: var(--border-subtle); margin-bottom: 12px;">
+          <label style="font-size:0.84rem; color:var(--emerald-dark); margin-bottom:7px;"><b>📲 ارسال گزارش تراکنش‌های شخص به واتساپ خودش:</b></label>
           <div class="flex-row" style="gap:6px; flex-wrap:wrap;">
             <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('today')">☀️ روزانه</button>
             <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('week')">📅 هفتگی</button>
@@ -807,39 +1449,39 @@
 
         <div class="nokia-nav-container">
           <button class="nokia-center-btn" onclick="playInteractionEffect(); openAddTransactionModal()">
-            <span style="font-size:1.35rem;">➕</span>
+            <span style="font-size:1.25rem;">➕</span>
             <span>ثبت تراکنش</span>
           </button>
 
           <button class="nokia-corner-btn nokia-btn-top-right" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">
-            <span style="font-size:1.25rem; color:var(--whatsapp-color);">💬</span>
+            <span style="font-size:1.15rem; color:var(--whatsapp-dark);">💬</span>
             <span>بیلان واتساپ</span>
           </button>
 
           <button class="nokia-corner-btn nokia-btn-top-left" onclick="playInteractionEffect(); openCustomMessageModal()">
-            <span style="font-size:1.25rem; color:var(--info-color);">✉️</span>
+            <span style="font-size:1.15rem; color:var(--info-blue);">✉️</span>
             <span>ارسال پیام</span>
           </button>
 
           <button class="nokia-corner-btn nokia-btn-bottom-right" onclick="playInteractionEffect(); openEditAccountModal()">
-            <span style="font-size:1.25rem; color:var(--warning-color);">✏️</span>
+            <span style="font-size:1.15rem; color:var(--warning-amber);">✏️</span>
             <span>ویرایش حساب</span>
           </button>
 
           <button class="nokia-corner-btn nokia-btn-bottom-left" onclick="playInteractionEffect(); confirmDeleteAccountModal()">
-            <span style="font-size:1.25rem; color:var(--danger-color);">🗑️</span>
+            <span style="font-size:1.15rem; color:var(--debit-red);">🗑️</span>
             <span>حذف حساب</span>
           </button>
         </div>
 
-        <h3 style="margin-top: 16px;">📜 تراکنش‌های این حساب</h3>
-        <div id="transactionsListContainer" class="edge-to-edge-wrapper" style="margin-top: 10px;"></div>
+        <h3 style="margin-top: 14px;">📜 تراکنش‌های این حساب</h3>
+        <div id="transactionsListContainer" class="edge-to-edge-wrapper" style="margin-top: 8px;"></div>
       </div>
     </div>
 
     <!-- جزئیات کامل یک تراکنش -->
     <div id="viewTransactionDetail" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>🔍 جزئیات کامل تراکنش</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); returnFromTransactionDetail()">← بازگشت</button>
@@ -852,15 +1494,35 @@
     <a href="index.html" class="back-home">← بازگشت به صفحه اصلی سایت</a>
   </div>
 
+  <!-- نوار ناوبری پایین شبیه اپ کیف‌پول -->
+  <nav id="walletBottomNav" class="wallet-bottom-nav" aria-label="ناوبری سریع">
+    <button type="button" class="wallet-nav-item active-nav" id="navBtnDashboard" onclick="playInteractionEffect(); switchView('viewDashboard')">
+      <span class="wallet-nav-icon">🏠</span>
+      <span>صفحه اصلی</span>
+    </button>
+    <button type="button" class="wallet-nav-item" id="navBtnAccounts" onclick="playInteractionEffect(); switchView('viewAccounts')">
+      <span class="wallet-nav-icon">👥</span>
+      <span>حساب‌ها</span>
+    </button>
+    <button type="button" class="wallet-nav-item" id="navBtnLedger" onclick="playInteractionEffect(); openAllTransactionsPage()">
+      <span class="wallet-nav-icon">📜</span>
+      <span>دفتر کل</span>
+    </button>
+    <button type="button" class="wallet-nav-item" id="navBtnStats" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">
+      <span class="wallet-nav-icon">📊</span>
+      <span>گزارشات</span>
+    </button>
+  </nav>
+
   <!-- مودال پیام سفارشی -->
   <div id="customMessageModal">
     <div class="modal-card-box">
       <h3>✉️ ارسال پیام دستی به مشتری</h3>
-      <p style="font-size:0.9rem; color:#4b685a; margin-bottom:12px; font-weight:700;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
+      <p style="font-size:0.86rem; color:var(--ink-secondary); margin-bottom:10px; font-weight:700;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
       <div class="form-group">
-        <textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 120px;"></textarea>
+        <textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 110px;"></textarea>
       </div>
-      <div class="flex-row" style="justify-content: flex-end; gap:10px;">
+      <div class="flex-row" style="justify-content: flex-end; gap:8px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeCustomMessageModal()">انصراف</button>
         <button class="btn btn-whatsapp btn-sm" onclick="playInteractionEffect(); sendCustomWhatsAppMessage()">📲 ارسال به واتساپ</button>
       </div>
@@ -871,16 +1533,16 @@
   <div id="masterSettingsModal">
     <div class="modal-card-box">
       <h3>⚙️ تنظیمات اختصاصی مالک</h3>
-      <p style="font-size: 0.9rem; color: #4b685a; margin-bottom: 14px; font-weight:700;">اطلاعات ورود و چت‌آیدی مالک مستقیم در جدول <code>owner_settings</code> ذخیره می‌شوند (توکن ربات از متغیر محیطی <code>TELEGRAM_BOT_TOKEN</code> ورسل خوانده می‌شود).</p>
+      <p style="font-size: 0.85rem; color: var(--ink-secondary); margin-bottom: 12px; font-weight:700;">اطلاعات ورود و چت‌آیدی مالک مستقیم در جدول <code>owner_settings</code> ذخیره می‌شوند (توکن ربات از متغیر محیطی <code>TELEGRAM_BOT_TOKEN</code> ورسل خوانده می‌شود).</p>
       
       <div class="form-group"><label>نام مالک:</label><input type="text" id="masterNameInput" placeholder="نام مالک..."></div>
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
       
-      <div class="flex-row" style="justify-content: flex-end; gap:10px; margin-top: 16px;">
+      <div class="flex-row" style="justify-content: flex-end; gap:8px; margin-top: 14px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
-        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
+        <button class="btn btn-sm" style="background: var(--warning-amber); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
       </div>
     </div>
   </div>
@@ -888,7 +1550,7 @@
   <!-- مودال ثبت / ویرایش تراکنش -->
   <div id="transactionModal">
     <div class="modal-card-box">
-      <h3 id="txModalTitle" style="margin-bottom:12px;">ثبت تراکنش جدید</h3>
+      <h3 id="txModalTitle" style="margin-bottom:10px;">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
 
       <div class="form-group"><label>۱. تاریخ تراکنش:</label><input type="date" id="txDateInput"></div>
@@ -913,14 +1575,14 @@
 
       <div class="form-group">
         <label>۴. مبلغ تراکنش:</label>
-        <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.2rem; color:var(--accent-green-dark);">
+        <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.15rem; color:var(--emerald-dark);">
       </div>
 
       <div class="form-group"><label>۵. توضیحات / شرح تراکنش (رسید انتقال):</label><textarea id="txDesc" placeholder="توضیحات تراکنش یا شرح حواله..."></textarea></div>
       <div class="form-group"><label>۶. نوع عملیات:</label><select id="txOpType"></select></div>
       <div class="form-group"><label>۷. تصویر رسید:</label><input type="file" id="txReceiptInput" accept="image/*"><input type="hidden" id="existingReceiptUrl"></div>
 
-      <div class="flex-row" style="gap:10px; margin-top:16px;">
+      <div class="flex-row" style="gap:8px; margin-top:14px;">
         <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeTransactionModal()">انصراف</button>
         <button class="btn btn-sm" style="flex:2;" onclick="playInteractionEffect(); submitTransaction()">💾 ثبت و ذخیره تراکنش</button>
       </div>
@@ -952,7 +1614,7 @@
           <button class="btn btn-sm" style="width: auto;" onclick="playInteractionEffect(); addNewOperationType()">+ افزودن</button>
         </div>
       </div>
-      <hr style="margin: 12px 0; border: none; border-top: 1px solid #d8ede0;">
+      <hr style="margin: 12px 0; border-color: var(--border-subtle);">
       <label>لیست انواع عملیات فعال:</label>
       <div id="opTypesListContainer" style="margin-top:8px;"></div>
       <div class="flex-row" style="justify-content: flex-end; margin-top:12px;">
@@ -966,19 +1628,19 @@
     <div class="modal-card-box">
       <h3 id="adminModalMainTitle">🛡️ ایجاد و مدیریت ادمین‌های همکار</h3>
       <input type="hidden" id="editAdminId">
-      <p style="font-size: 0.9rem; color: #4b685a; margin-bottom: 12px; font-weight:700;">در این بخش می‌توانید برای همکاران ایمیل، رمز عبور و چت‌آیدی اختصاصی بسازید (توکن ربات از متغیر محیطی ورسل استفاده می‌شود).</p>
+      <p style="font-size: 0.85rem; color: var(--ink-secondary); margin-bottom: 10px; font-weight:700;">در این بخش می‌توانید برای همکاران ایمیل، رمز عبور و چت‌آیدی اختصاصی بسازید (توکن ربات از متغیر محیطی ورسل استفاده می‌شود).</p>
       
       <div class="form-group"><label>نام ادمین / همکار:</label><input type="text" id="newAdminName" placeholder="نام ادمین..."></div>
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="802655440"></div>
       
-      <div class="flex-row" style="gap:10px; margin-bottom:14px;">
-        <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
+      <div class="flex-row" style="gap:8px; margin-bottom:12px;">
+        <button class="btn" style="background: var(--emerald-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
         <button class="btn btn-secondary btn-sm" style="flex:1; display:none;" id="adminCancelEditBtn" onclick="playInteractionEffect(); cancelEditAdmin()">انصراف</button>
       </div>
 
-      <hr style="margin: 12px 0; border: none; border-top: 1px solid #d8ede0;">
+      <hr style="margin: 12px 0; border-color: var(--border-subtle);">
       <label><b>لیست ادمین‌های همکار فعال در سیستم:</b></label>
       <div id="adminsListContainer" style="margin-top:8px;"></div>
 
@@ -997,14 +1659,14 @@
       <div class="form-group"><label>تلفن:</label><input type="text" id="modalAccountPhone" dir="ltr" placeholder="07..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مشتری:</label><input type="text" id="modalAccountChatId" dir="ltr" placeholder="چت‌آیدی جهت ارسال خودکار تراکنش‌ها..."></div>
       <div class="form-group"><label>عکس صاحب حساب:</label><input type="file" id="modalAccountPhotoInput" accept="image/*"><input type="hidden" id="existingAccountPhotoUrl"></div>
-      <div class="flex-row" style="justify-content: flex-end; gap:10px;">
+      <div class="flex-row" style="justify-content: flex-end; gap:8px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAccountModal()">انصراف</button>
         <button class="btn btn-sm" onclick="playInteractionEffect(); saveAccount()">ذخیره</button>
       </div>
     </div>
   </div>
 
-  <!-- کدهای جاوااسکریپت برنامه -->
+  <!-- کدهای جاوااسکریپت برنامه (حفظ کامل منطق و توابع اصلی + قابلیت جابه‌جایی دکمه سرچ و بازگشت ریز) -->
   <script>
     let SUPABASE_URL = "";
     let SUPABASE_KEY = "";
@@ -1050,115 +1712,9 @@
       { id: 'ownerBrokerMenu', title: 'مدیریت کارگزاری‌ها و دفاتر همکار', icon: '🏢', type: 'broker', action: 'handleBrokerNavigation()' }
     ];
 
-    function handleFloatingFixedBack() {
-      if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
-      if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
-      if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
-      if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
-      if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
-      if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
-      if (document.getElementById('globalSelectAccountModal').style.display === 'flex') { closeGlobalSelectAccountModal(); return; }
-      if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
-
-      const activeView = document.querySelector('.view-section.active');
-      const activeId = activeView ? activeView.id : 'viewDashboard';
-
-      if (activeId === 'viewTransactionDetail') {
-        returnFromTransactionDetail();
-      } else if (activeId === 'viewAccountDetail') {
-        switchView('viewAccounts');
-      } else if (activeId === 'viewTransfersReport' || activeId === 'viewDebtorsReport' || activeId === 'viewCreditorsReport') {
-        switchView('viewGlobalStatsPage');
-      } else if (activeId !== 'viewDashboard') {
-        switchView('viewDashboard');
-      } else {
-        window.location.href = 'index.html';
-      }
-    }
-
-    function initDraggableSearchButton() {
-      const btn = document.getElementById("draggableSearchBtn");
-      if (!btn) return;
-
-      const savedPos = localStorage.getItem("floatingSearchPos");
-      if (savedPos) {
-        try {
-          const pos = JSON.parse(savedPos);
-          const maxX = Math.max(8, window.innerWidth - btn.offsetWidth - 8);
-          const maxY = Math.max(8, window.innerHeight - btn.offsetHeight - 8);
-          const clampedX = Math.min(Math.max(8, pos.left), maxX);
-          const clampedY = Math.min(Math.max(8, pos.top), maxY);
-          btn.style.left = clampedX + "px";
-          btn.style.top = clampedY + "px";
-          btn.style.right = "auto";
-          btn.style.bottom = "auto";
-        } catch (e) {}
-      }
-
-      let isPointerDown = false;
-      let hasMoved = false;
-      let startClientX = 0;
-      let startClientY = 0;
-      let startLeft = 0;
-      let startTop = 0;
-
-      btn.addEventListener("pointerdown", function(e) {
-        if (e.button !== undefined && e.button !== 0 && e.pointerType === "mouse") return;
-        isPointerDown = true;
-        hasMoved = false;
-        const rect = btn.getBoundingClientRect();
-        startClientX = e.clientX;
-        startClientY = e.clientY;
-        startLeft = rect.left;
-        startTop = rect.top;
-        btn.style.left = startLeft + "px";
-        btn.style.top = startTop + "px";
-        btn.style.right = "auto";
-        btn.style.bottom = "auto";
-        btn.classList.add("dragging");
-        try { btn.setPointerCapture(e.pointerId); } catch (err) {}
-      });
-
-      btn.addEventListener("pointermove", function(e) {
-        if (!isPointerDown) return;
-        const dx = e.clientX - startClientX;
-        const dy = e.clientY - startClientY;
-        if (Math.hypot(dx, dy) > 5) {
-          hasMoved = true;
-        }
-        if (!hasMoved) return;
-
-        const maxX = Math.max(8, window.innerWidth - btn.offsetWidth - 8);
-        const maxY = Math.max(8, window.innerHeight - btn.offsetHeight - 8);
-        const nextLeft = Math.min(Math.max(8, startLeft + dx), maxX);
-        const nextTop = Math.min(Math.max(8, startTop + dy), maxY);
-
-        btn.style.left = nextLeft + "px";
-        btn.style.top = nextTop + "px";
-      });
-
-      function finishDrag(e) {
-        if (!isPointerDown) return;
-        isPointerDown = false;
-        btn.classList.remove("dragging");
-        try { if (e && e.pointerId !== undefined) btn.releasePointerCapture(e.pointerId); } catch (err) {}
-
-        if (hasMoved) {
-          const rect = btn.getBoundingClientRect();
-          localStorage.setItem("floatingSearchPos", JSON.stringify({
-            left: rect.left,
-            top: rect.top
-          }));
-        } else {
-          playInteractionEffect();
-          openSearchDrawer();
-        }
-      }
-
-      btn.addEventListener("pointerup", finishDrag);
-      btn.addEventListener("pointercancel", finishDrag);
-    }
-
+    // ==========================================================================
+    // ماژول ۱: پیکربندی محیطی، اتصال Supabase و تنظیمات مالک
+    // ==========================================================================
     async function ensureRuntimeConfig() {
       if (!envReadyPromise) {
         envReadyPromise = (async () => {
@@ -1170,18 +1726,23 @@
               SUPABASE_KEY = String(cfg.supabaseKey || "").trim();
               VERCEL_BOT_TOKEN = String(cfg.telegramBotToken || "").trim();
             }
+
           } catch (e) {
             console.log("خطا در دریافت تنظیمات از /api/env:", e);
           }
 
+
           if (SUPABASE_URL && SUPABASE_KEY && window.supabase) {
             _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           }
+
           return _supabase;
         })();
       }
+
       return await envReadyPromise;
     }
+
 
     async function fetchOwnerSettingsFromDB() {
       const client = await ensureRuntimeConfig();
@@ -1204,11 +1765,14 @@
             chat_id: formatEnNum(String(getVal(data, ['chat_id']) || '')).trim()
           };
         }
+
       } catch (e) {
         console.log("خطا در خواندن owner_settings:", e);
       }
+
       return ownerSettings;
     }
+
 
     function isMasterUser(adminObj = currentLoggedInAdmin) {
       if (!adminObj) return false;
@@ -1216,9 +1780,14 @@
       if (ownerSettings.email && adminObj.email) {
         return String(adminObj.email).trim().toLowerCase() === String(ownerSettings.email).trim().toLowerCase();
       }
+
       return false;
     }
 
+
+    // ==========================================================================
+    // ماژول ۲: مدیریت منوی داشبورد و مرتب‌سازی آیتم‌ها
+    // ==========================================================================
     function loadDashboardMenuOrder() {
       let savedOrder = localStorage.getItem("dashboardMenuOrder");
       if (savedOrder) {
@@ -1235,12 +1804,15 @@
           dashboardMenuItems = reordered;
         } catch(e) {}
       }
+
     }
+
 
     function saveDashboardMenuOrder() {
       let ids = dashboardMenuItems.map(m => m.id);
       localStorage.setItem("dashboardMenuOrder", JSON.stringify(ids));
     }
+
 
     function moveMenuItem(index, direction) {
       let newIdx = index + direction;
@@ -1251,6 +1823,7 @@
       saveDashboardMenuOrder();
       renderDashboardMenu();
     }
+
 
     function renderDashboardMenu() {
       const container = document.getElementById("dashboardMenuGrid");
@@ -1270,10 +1843,12 @@
           onClickAttr = item.action;
         }
 
+
         let extraStyle = "";
         if (item.type === 'master') {
-          extraStyle = "background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-color: #f59e0b;";
+          extraStyle = "background: linear-gradient(135deg, rgba(254,243,199,0.95) 0%, rgba(253,230,138,0.95) 100%); border-color: #f59e0b;";
         }
+
 
         container.innerHTML += `
           <div class="floating-glass-btn" style="${extraStyle}">
@@ -1290,6 +1865,7 @@
       });
     }
 
+
     function formatEnNum(str) {
       if (str === null || str === undefined) return '';
       return String(str)
@@ -1297,11 +1873,13 @@
         .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
     }
 
+
     function formatEnMoney(amount) {
       let num = parseFloat(amount);
       if (isNaN(num)) return '0';
       return formatEnNum(num.toLocaleString('en-US'));
     }
+
 
     function playInteractionEffect() {
       if (navigator.vibrate) { navigator.vibrate(25); }
@@ -1320,13 +1898,16 @@
       } catch(e) {}
     }
 
+
     function handleBrokerNavigation() {
       try {
         window.location.href = 'broker.html';
       } catch(e) {
         alert("صفحه مدیریت کارگزاری‌ها در این بخش در دسترس نیست.");
       }
+
     }
+
 
     async function sendTelegramMessage(_botToken, chatId, messageText) {
       const resolvedChatId = formatEnNum(chatId || "").trim();
@@ -1348,6 +1929,7 @@
           return true;
         }
 
+
         if (apiResp.status === 400) {
           const plainResp = await fetch('/api/send-telegram', {
             method: 'POST',
@@ -1364,22 +1946,27 @@
         } else {
           console.error("خطای /api/send-telegram:", data);
         }
+
         return false;
       } catch (err) {
         console.error("خطای شبکه در ارسال پیام تلگرام:", err);
         return false;
       }
+
     }
+
 
     function getCurrentAdminTokenAndChat() {
       const ownerChat = formatEnNum(ownerSettings.chat_id || "").trim();
       if (!currentLoggedInAdmin || isMasterUser(currentLoggedInAdmin)) {
         return { token: "SERVER_ENV", chatId: ownerChat };
       }
+
       let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
       let chatId = found ? formatEnNum(String(getVal(found, ['ChatID', 'chatid']) || "")).trim() : ownerChat;
       return { token: "SERVER_ENV", chatId };
     }
+
 
     function getSystemGlobalBalanceText() {
       let totalsByCurrency = {};
@@ -1405,7 +1992,9 @@
             if(!totalsByCurrency[curr]) totalsByCurrency[curr] = 0;
             totalsByCurrency[curr] += net;
           }
+
         }
+
       });
 
       let parts = [];
@@ -1413,8 +2002,10 @@
         let val = totalsByCurrency[curr];
         parts.push(`▫️ ${curr}: ${formatEnMoney(val)}`);
       }
+
       return parts.join('\n') || 'صفر';
     }
+
 
     async function openMasterSettingsModal() {
       await fetchOwnerSettingsFromDB();
@@ -1426,9 +2017,11 @@
       pushModalHistory("masterSettingsModal");
     }
 
+
     function closeMasterSettingsModal() {
       document.getElementById("masterSettingsModal").style.display = "none";
     }
+
 
     async function saveMasterSettings() {
       const client = await ensureRuntimeConfig();
@@ -1436,6 +2029,7 @@
         alert("اتصال دیتابیس آماده نیست. متغیرهای SUPABASE_URL و SUPABASE_KEY را در ورسل بررسی کنید.");
         return;
       }
+
 
       let name = document.getElementById("masterNameInput").value.trim() || "محمد شریف کریمی (مالک)";
       let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
@@ -1446,6 +2040,7 @@
         alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
         return;
       }
+
 
       const payload = {
         id: MASTER_ADMIN_ID,
@@ -1466,6 +2061,7 @@
         return;
       }
 
+
       ownerSettings = { ...ownerSettings, ...payload };
       if (currentLoggedInAdmin && isMasterUser(currentLoggedInAdmin)) {
         currentLoggedInAdmin.name = name;
@@ -1473,9 +2069,11 @@
         localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
       }
 
+
       closeMasterSettingsModal();
       alert("✅ تنظیمات مالک در دیتابیس با موفقیت ذخیره شد!");
     }
+
 
     function getAccountLiveBalanceText(accId) {
       let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId));
@@ -1497,15 +2095,17 @@
         let status = net > 0 ? `بستانکار (+): ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار (-): ${formatEnMoney(Math.abs(net))} ${curr}` : `تسویه کامل (0)`);
         textParts.push(`🔹 *واحد ارز: ${curr}*\n  ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}\n  ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}\n  📌 *وضعیت مانده: ${status}*`);
       }
+
       return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
     }
+
 
     function pushModalHistory(modalId) {
       window.history.pushState({ modal: modalId }, '');
     }
 
+
     window.onload = async function() {
-      initDraggableSearchButton();
       loadDashboardMenuOrder();
       await ensureRuntimeConfig();
       await fetchOwnerSettingsFromDB();
@@ -1516,6 +2116,7 @@
         try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {}
       }
 
+
       if (savedSession) {
         try {
           currentLoggedInAdmin = JSON.parse(savedSession);
@@ -1523,11 +2124,14 @@
           document.getElementById("adminContainer").style.display = "block";
           
           renderDashboardMenu();
+          updateBottomNavActive('viewDashboard');
           await loadDataFromSupabase(true);
         } catch(e) {
           localStorage.removeItem("adminAuthSessionData");
         }
+
       }
+
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
@@ -1545,9 +2149,13 @@
         } else {
           switchView('viewDashboard', false);
         }
+
       };
     };
 
+    // ==========================================================================
+    // ماژول ۳: احراز هویت، مدیریت نشست و جابه‌جایی بین نماها
+    // ==========================================================================
     async function handleLogin() {
       const indicator = document.getElementById("syncIndicator");
       try {
@@ -1559,10 +2167,12 @@
           return;
         }
 
+
         if (indicator) {
           indicator.innerText = "🔄 در حال اتصال به دیتابیس...";
           indicator.style.display = "block";
         }
+
 
         const client = await ensureRuntimeConfig();
         if (!client) {
@@ -1570,6 +2180,7 @@
           alert("اتصال Supabase برقرار نشد. متغیرهای SUPABASE_URL و SUPABASE_KEY را در ورسل بررسی کنید.");
           return;
         }
+
 
         await fetchOwnerSettingsFromDB();
 
@@ -1589,13 +2200,16 @@
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("adminContainer").style.display = "block";
             renderDashboardMenu();
+            updateBottomNavActive('viewDashboard');
             await loadDataFromSupabase(true);
             return;
           }
+
           if (indicator) indicator.style.display = "none";
           alert("ایمیل یا رمز عبور اشتباه است!");
           return;
         }
+
 
         const { data: adminsData, error: adminsErr } = await client.from('admins').select('*');
         if (!adminsErr && adminsData) {
@@ -1616,10 +2230,13 @@
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("adminContainer").style.display = "block";
             renderDashboardMenu();
+            updateBottomNavActive('viewDashboard');
             await loadDataFromSupabase(true);
             return;
           }
+
         }
+
 
         if (indicator) indicator.style.display = "none";
         alert("ایمیل یا رمز عبور اشتباه است!");
@@ -1627,31 +2244,25 @@
         if (indicator) indicator.style.display = "none";
         alert("خطا در ورود: " + (e.message || e));
       }
+
     }
+
 
     function handleLogout() { 
       localStorage.removeItem("adminAuthSessionData"); 
       location.reload(); 
     }
 
+
     function switchView(viewId, pushHistory = true) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
+      updateBottomNavActive(viewId);
       if (pushHistory) window.history.pushState({ view: viewId }, '');
       window.scrollTo(0, 0);
     }
 
-    function openSearchDrawer() {
-      document.getElementById("searchDrawerModal").style.display = "flex";
-      document.getElementById("drawerSearchInput").focus();
-      pushModalHistory("searchDrawerModal");
-    }
 
-    function closeSearchDrawer() {
-      document.getElementById("searchDrawerModal").style.display = "none";
-      document.getElementById("drawerSearchInput").value = "";
-      document.getElementById("drawerSearchResults").innerHTML = "";
-    }
     function closeSearchDrawerOnBack(e) { if(e.target.id === 'searchDrawerModal') closeSearchDrawer(); }
 
     function handleDrawerSearch() {
@@ -1678,10 +2289,12 @@
         });
       }
 
+
       if (filtered.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">نتیجه‌ای یافت نشد</div>`;
         return;
       }
+
 
       filtered.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
@@ -1703,12 +2316,14 @@
       });
     }
 
+
     function selectTxDirection(dir) {
       playInteractionEffect();
       selectedDirectionValue = dir;
       document.getElementById("btnDirCreditor").className = "btn-select-option" + (dir === 'بستانکار' ? " selected-creditor" : "");
       document.getElementById("btnDirDebtor").className = "btn-select-option" + (dir === 'بدهکار' ? " selected-debtor" : "");
     }
+
 
     function selectTxCurrency(curr) {
       playInteractionEffect();
@@ -1718,12 +2333,17 @@
       if (map[curr]) document.getElementById(map[curr]).classList.add('selected-currency');
     }
 
+
+    // ==========================================================================
+    // ماژول ۴: بارگذاری داده‌ها، همگام‌سازی و دفتر کل مرکزی
+    // ==========================================================================
     async function loadDataFromSupabase(showLoader = true) {
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
         indicator.innerText = "🔄 در حال دریافت اطلاعات...";
         indicator.style.display = "block";
       }
+
 
       try {
         const client = await ensureRuntimeConfig();
@@ -1757,6 +2377,7 @@
           });
         }
 
+
         updatePhoneDirectoryArchive();
 
         let rawTransactions = txRes.data || [];
@@ -1787,9 +2408,11 @@
           let found = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
           if (found) selectAccount(currentAccountId, getVal(found, ['Name', 'name']));
         }
+
       } catch (e) { console.log("خطا:", e); }
       finally { if (indicator) indicator.style.display = "none"; }
     }
+
 
     let txDetailReturnView = 'viewAccountDetail';
 
@@ -1800,11 +2423,14 @@
       } else {
         selectAccount(currentAccountId, currentAccountName);
       }
+
     }
+
 
     function populateGlobalLedgerAccountFilterOptions() {
       renderGlobalLedgerAccountDropdownList("");
     }
+
 
     function openGlobalLedgerAccountDropdown() {
       const inputEl = document.getElementById("globalLedgerAccountSearchInput");
@@ -1813,6 +2439,7 @@
       const dd = document.getElementById("globalLedgerAccountDropdown");
       if (dd) dd.style.display = "block";
     }
+
 
     function filterGlobalLedgerAccountDropdown() {
       const inputEl = document.getElementById("globalLedgerAccountSearchInput");
@@ -1823,10 +2450,12 @@
         document.getElementById("globalLedgerAccountFilter").value = "all";
         renderGlobalTransactionsList();
       }
+
       renderGlobalLedgerAccountDropdownList(q);
       const dd = document.getElementById("globalLedgerAccountDropdown");
       if (dd) dd.style.display = "block";
     }
+
 
     function renderGlobalLedgerAccountDropdownList(rawQuery) {
       const dd = document.getElementById("globalLedgerAccountDropdown");
@@ -1868,8 +2497,10 @@
           `;
         });
       }
+
       dd.innerHTML = html;
     }
+
 
     function selectGlobalLedgerAccount(accId, accName) {
       const hiddenEl = document.getElementById("globalLedgerAccountFilter");
@@ -1881,16 +2512,20 @@
       if (inputEl) {
         inputEl.value = accId === "all" ? "" : `${accName} (${accId})`;
       }
+
       if (clearBtn) {
         clearBtn.style.display = accId === "all" ? "none" : "block";
       }
+
       if (dd) dd.style.display = "none";
       renderGlobalTransactionsList();
     }
 
+
     function clearGlobalLedgerAccountFilter() {
       selectGlobalLedgerAccount("all", "");
     }
+
 
     document.addEventListener("click", function(e) {
       const wrapper = document.getElementById("globalLedgerPickerWrapper");
@@ -1898,6 +2533,7 @@
       if (wrapper && dd && !wrapper.contains(e.target)) {
         dd.style.display = "none";
       }
+
     });
 
     function updatePhoneDirectoryArchive() {
@@ -1923,11 +2559,14 @@
               creator: creator
             });
           }
+
         }
+
       });
 
       localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
     }
+
 
     function getVal(obj, keys) {
       if(!obj) return '';
@@ -1937,9 +2576,12 @@
         for (let prop in obj) {
           if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") return obj[prop];
         }
+
       }
+
       return '';
     }
+
 
     async function uploadFileToSupabase(file, bucketName) {
       const client = await ensureRuntimeConfig();
@@ -1952,6 +2594,7 @@
       return publicUrlData.publicUrl;
     }
 
+
     function populateOpTypeSelect() {
       const select = document.getElementById("txOpType");
       if(!select) return;
@@ -1959,11 +2602,13 @@
       customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
     }
 
+
     function openOpTypeManagerModal() { 
       renderOpTypesList(); 
       document.getElementById("opTypeManagerModal").style.display = "flex"; 
       pushModalHistory("opTypeManagerModal");
     }
+
     function closeOpTypeManagerModal() { document.getElementById("opTypeManagerModal").style.display = "none"; }
 
     function renderOpTypesList() {
@@ -1973,6 +2618,7 @@
         container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op}')">حذف</button></div>`;
       });
     }
+
 
     async function addNewOperationType() {
       const client = await ensureRuntimeConfig();
@@ -1986,7 +2632,9 @@
         input.value = "";
         if (client) await client.from('operation_types').insert([{ title: title }]);
       }
+
     }
+
 
     async function removeOperationType(title) {
       const client = await ensureRuntimeConfig();
@@ -1996,15 +2644,18 @@
       if (client) await client.from('operation_types').delete().eq('title', title);
     }
 
+
     function openAdminManagerModal() {
       cancelEditAdmin();
       renderAdminsList();
       document.getElementById("adminManagerModal").style.display = "flex";
       pushModalHistory("adminManagerModal");
     }
+
     function closeAdminManagerModal() {
       document.getElementById("adminManagerModal").style.display = "none";
     }
+
 
     function renderAdminsList() {
       const container = document.getElementById("adminsListContainer");
@@ -2013,6 +2664,7 @@
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ ادمین همکاری تعریف نشده است</div>`;
         return;
       }
+
       allAdmins.forEach(adm => {
         let admId = formatEnNum(getVal(adm, ['AdminID', 'adminid', 'id']) || adm.id);
         let admName = String(getVal(adm, ['Name', 'name']) || 'بدون نام');
@@ -2021,7 +2673,7 @@
         let admChatId = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || '');
 
         container.innerHTML += `
-          <div class="op-badge-item" style="background:#f9fcfa; border:1px solid #d6ebdd; margin-bottom:10px; align-items:flex-start;">
+          <div class="op-badge-item" style="background:rgba(248,250,252,0.95); border:1px solid rgba(203,213,225,0.8); margin-bottom:10px; align-items:flex-start;">
             <div>
               <b style="color:var(--primary-dark); font-size:1rem;">${admName}</b><br>
               <span style="font-size:0.85rem; color:#475569;">ایمیل: ${admEmail} | رمز: ${admPin}</span><br>
@@ -2035,6 +2687,7 @@
         `;
       });
     }
+
 
     function editAdminAccount(admId) {
       let adm = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(admId));
@@ -2050,6 +2703,7 @@
       document.getElementById("adminCancelEditBtn").style.display = "inline-flex";
     }
 
+
     function cancelEditAdmin() {
       document.getElementById("editAdminId").value = "";
       document.getElementById("adminModalMainTitle").innerText = "🛡️ ایجاد و مدیریت ادمین‌های همکار";
@@ -2060,6 +2714,7 @@
       document.getElementById("adminSaveBtn").innerText = "➕ ثبت و ایجاد ادمین جدید";
       document.getElementById("adminCancelEditBtn").style.display = "none";
     }
+
 
     async function saveAdminAccount() {
       const client = await ensureRuntimeConfig();
@@ -2075,6 +2730,7 @@
         alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید.");
         return;
       }
+
 
       let adminId = editId ? editId : ("ADM-" + Math.floor(1000 + Math.random() * 9000));
       const payload = {
@@ -2103,13 +2759,16 @@
                            `🔑 رمز عبور: \`${pin}\``;
           sendTelegramMessage("", chatId, welcomeMsg);
         }
+
       }
+
 
       cancelEditAdmin();
       const { data } = await client.from('admins').select('*');
       if (data) allAdmins = data;
       renderAdminsList();
     }
+
 
     async function deleteAdminAccount(admId) {
       const client = await ensureRuntimeConfig();
@@ -2119,6 +2778,7 @@
       if (data) allAdmins = data;
       renderAdminsList();
     }
+
 
     function renderDashboardStats() {
       let totalsByCurrency = {};
@@ -2145,7 +2805,9 @@
             if(net > 0) totalsByCurrency[curr].debSum += net;
             else totalsByCurrency[curr].credSum += Math.abs(net);
           }
+
         }
+
       });
 
       let gridHtml = '';
@@ -2154,7 +2816,7 @@
         let deb = totalsByCurrency[curr].debSum;
         let finalNet = cred - deb;
         let isCreditor = finalNet > 0;
-        let bgStyle = isCreditor ? "background:#e8f8ee; color:#15803d;" : "background:#fef2f2; color:#dc2626;";
+        let bgStyle = isCreditor ? "background:rgba(240,253,244,0.9); color:#15803d;" : "background:rgba(254,242,242,0.9); color:#dc2626;";
         let label = isCreditor ? `بستانکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}` : `بدهکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}`;
 
         gridHtml += `
@@ -2165,13 +2827,17 @@
           </div>
         `;
       }
+
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
+      syncWalletHeroSummary();
     }
+
 
     function openPhoneDirectoryPage() {
       switchView('viewPhoneDirectoryPage');
       renderPhoneDirectoryList(phoneArchiveList);
     }
+
 
     function renderPhoneDirectoryList(list) {
       const container = document.getElementById("phoneDirectoryContainer");
@@ -2190,7 +2856,7 @@
       summaryBox.innerHTML = `
         <div class="stat-row">
           <span><b>تعداد کل شماره‌های ثبت‌شده:</b></span>
-          <b style="color:var(--accent-green-dark); font-size:1.05rem;">${formatEnNum(filteredList.length)} شماره</b>
+          <b style="color:var(--info-color); font-size:1.05rem;">${formatEnNum(filteredList.length)} شماره</b>
         </div>
       `;
 
@@ -2198,6 +2864,7 @@
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ شماره‌ای در بانک اطلاعاتی موجود نیست</div>`;
         return;
       }
+
 
       filteredList.forEach(item => {
         let cleanPhone = item.phone.replace(/\D/g, '');
@@ -2225,11 +2892,13 @@
             balanceBadges += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
           }
 
+
           statusHtml = `<span style="color:#059669; font-weight:900; font-size:0.85rem;">🟢 حساب فعال (کُد: ${formatEnNum(item.accId)})</span>`;
         } else {
           statusHtml = `<span class="deleted-account-badge">❌ حساب این مشتری حذف شده است</span>`;
           balanceBadges = `<span style="font-size:0.85rem; color:#64748b;">اطلاعات مانده حساب در دسترس نیست</span>`;
         }
+
 
         container.innerHTML += `
           <div class="phone-item-card">
@@ -2238,7 +2907,7 @@
               ${statusHtml}
             </div>
             <div class="stat-row" style="margin-top:4px;">
-              <span style="font-weight:900; color:#15803d; font-size:1rem;" dir="ltr">${item.phone}</span>
+              <span style="font-weight:900; color:#0284c7; font-size:1rem;" dir="ltr">${item.phone}</span>
               <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">
                 📲 واتساپ (چت خالی)
               </button>
@@ -2249,10 +2918,12 @@
       });
     }
 
+
     function openWhatsAppBlank(phone) {
       if (!phone) { alert("شماره تلفن موجود نیست."); return; }
       window.open(`https://wa.me/${phone}`, '_blank');
     }
+
 
     function filterPhonesDirectory() {
       playInteractionEffect();
@@ -2275,6 +2946,7 @@
       renderPhoneDirectoryList(filtered);
     }
 
+
     function clearPhoneSearch() {
       playInteractionEffect();
       const inputEl = document.getElementById("searchPhoneInput");
@@ -2284,6 +2956,7 @@
       inputEl.focus();
     }
 
+
     function openGlobalSelectAccountModal() {
       document.getElementById("globalAccountPickerInput").value = "";
       renderGlobalAccountPickerList();
@@ -2292,9 +2965,11 @@
       setTimeout(() => document.getElementById("globalAccountPickerInput").focus(), 100);
     }
 
+
     function closeGlobalSelectAccountModal() {
       document.getElementById("globalSelectAccountModal").style.display = "none";
     }
+
 
     function renderGlobalAccountPickerList() {
       const q = formatEnNum((document.getElementById("globalAccountPickerInput").value || "").trim().toLowerCase());
@@ -2313,6 +2988,7 @@
         return;
       }
 
+
       filtered.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
@@ -2328,12 +3004,14 @@
       });
     }
 
+
     function selectAccountAndOpenNewTx(accId, accName) {
       closeGlobalSelectAccountModal();
       currentAccountId = accId;
       currentAccountName = accName;
       openAddTransactionModal();
     }
+
 
     function openAllTransactionsPage() {
       switchView('viewAllTransactionsPage');
@@ -2342,12 +3020,14 @@
       selectGlobalLedgerAccount("all", "");
     }
 
+
     function openTxFromGlobalLedger(txId, accId, accName) {
       txDetailReturnView = 'viewAllTransactionsPage';
       currentAccountId = accId;
       currentAccountName = accName;
       selectTransaction(txId);
     }
+
 
     function renderGlobalTransactionsList() {
       const container = document.getElementById("globalTransactionsListContainer");
@@ -2371,6 +3051,7 @@
         sortedTxs = sortedTxs.filter(tx => String(getVal(tx, ['AccountID', 'accountid'])) === String(selectedAccFilter));
       }
 
+
       if (q) {
         sortedTxs = sortedTxs.filter(tx => {
           let txId = String(getVal(tx, ['TransID', 'transid']) || '').toLowerCase();
@@ -2384,10 +3065,12 @@
         });
       }
 
+
       if (sortedTxs.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">تراکنشی یافت نشد</div>`;
         return;
       }
+
 
       const groupsByDay = {};
       sortedTxs.forEach(tx => {
@@ -2424,6 +3107,7 @@
           if (cCred > 0) daySummaryParts.push(`بستانکار: ${formatEnMoney(cCred)} ${c}`);
           if (cDeb > 0) daySummaryParts.push(`بدهکار: ${formatEnMoney(cDeb)} ${c}`);
         }
+
         let daySummaryText = daySummaryParts.join(' | ') || 'بدون دادوستد';
 
         dayTxs.forEach(tx => {
@@ -2470,7 +3154,7 @@
             : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
 
           let isCreditor = dir.includes('بستانکار');
-          let rowBg = isCreditor ? '#f3fcf6' : '#fff7f7';
+          let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
           let dirColor = isCreditor ? '#047857' : '#b91c1c';
 
           rowsHtml += `
@@ -2497,11 +3181,11 @@
         });
 
         container.innerHTML += `
-          <div style="margin-bottom:14px; border-top:2px solid #c9e7d5; border-bottom:2px solid #c9e7d5; background:#ffffff; box-shadow:var(--shadow-sm);">
-            <div style="background: linear-gradient(135deg, #164732 0%, #0d2b1e 100%); color: #ffffff; padding: 9px 12px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="margin-bottom:14px; border-top:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1; background:#ffffff; box-shadow:var(--shadow-sm);">
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 9px 12px; display: flex; flex-direction: column; gap: 4px;">
               <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 0.85rem;">
                 <span>📅 تاریخ: ${dayKey}</span>
-                <span style="font-size: 0.78rem; color: #cdebd8;">تعداد: ${formatEnNum(dayTxs.length)} تراکنش</span>
+                <span style="font-size: 0.78rem; color: #cbd5e1;">تعداد: ${formatEnNum(dayTxs.length)} تراکنش</span>
               </div>
               <div style="font-size: 0.78rem; color: #047857; font-weight: 900; background: #ecfdf5; padding: 4px 8px; border-radius: 7px;">
                 📊 مجموع روز ➔ ${daySummaryText}
@@ -2526,6 +3210,10 @@
       });
     }
 
+
+    // ==========================================================================
+    // ماژول ۵: گزارشات حواله، بدهکاران، بستانکاران و بانک شماره‌ها
+    // ==========================================================================
     function openTransfersReport() { switchView('viewTransfersReport'); renderTransfersReport(); }
 
     function toggleCustomDateFilter() {
@@ -2536,8 +3224,10 @@
       } else {
         customBox.style.display = "none";
       }
+
       renderTransfersReport();
     }
+
 
     function renderTransfersReport() {
       const period = document.getElementById("transferFilterPeriod").value;
@@ -2560,19 +3250,23 @@
           let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
           return diffDays <= 1;
         }
+
         if (period === "week") {
           let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
           return diffDays <= 7;
         }
+
         if (period === "month") {
           let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
           return diffDays <= 30;
         }
+
         if (period === "custom") {
           if (startDate && txDateStr < startDate) return false;
           if (endDate && txDateStr > endDate) return false;
           return true;
         }
+
         return false;
       });
 
@@ -2613,13 +3307,14 @@
 
         container.innerHTML += `
           <div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
-            <div class="stat-row"><span style="font-weight:900; color:var(--accent-green-dark);">مشتری: ${accName}</span><span style="font-size:0.85rem; color:#475569;">⏰ ${formattedTime}</span></div>
+            <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">مشتری: ${accName}</span><span style="font-size:0.85rem; color:#475569;">⏰ ${formattedTime}</span></div>
             <div class="stat-row"><span>مبلغ:</span><b style="color:var(--primary-dark); font-size:1.05rem;">${amt} ${curr}</b></div>
-            <div style="font-size:0.9rem; color:#334155; margin-top:6px; background:#f4faf6; padding:8px; border-radius:10px;"><b>شرح:</b> ${desc}</div>
+            <div style="font-size:0.9rem; color:#334155; margin-top:6px; background:rgba(255,255,255,0.8); padding:8px; border-radius:10px;"><b>شرح:</b> ${desc}</div>
           </div>
         `;
       });
     }
+
 
     function openDebtorsReport() {
       switchView('viewDebtorsReport');
@@ -2653,7 +3348,9 @@
             if (!currencyTotals[curr]) currencyTotals[curr] = 0;
             currencyTotals[curr] += absVal;
           }
+
         }
+
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بدهکاران:</b></span><b>${formatEnNum(debtors.length)} مورد</b></div>`;
@@ -2674,6 +3371,7 @@
       });
     }
 
+
     function toggleDebtorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
       if (isChecked) {
@@ -2681,8 +3379,10 @@
       } else {
         delete selectedDebtorsMap[key];
       }
+
       updateDebtorsBatchSummary();
     }
+
 
     function updateDebtorsBatchSummary() {
       const box = document.getElementById("debtorsBatchSummaryBox");
@@ -2697,18 +3397,22 @@
         count++;
       }
 
+
       if (count === 0) {
         box.style.display = "none";
         return;
       }
 
+
       let html = `<div style="font-size:0.9rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
       for (let c in currs) {
         html += `<div style="font-weight:900; font-size:1.05rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
       }
+
       content.innerHTML = html;
       box.style.display = "block";
     }
+
 
     function openCreditorsReport() {
       switchView('viewCreditorsReport');
@@ -2741,7 +3445,9 @@
             if (!currencyTotals[curr]) currencyTotals[curr] = 0;
             currencyTotals[curr] += val;
           }
+
         }
+
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل بستانکاران:</b></span><b>${formatEnNum(creditors.length)} مورد</b></div>`;
@@ -2762,6 +3468,7 @@
       });
     }
 
+
     function toggleCreditorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
       if (isChecked) {
@@ -2769,8 +3476,10 @@
       } else {
         delete selectedCreditorsMap[key];
       }
+
       updateCreditorsBatchSummary();
     }
+
 
     function updateCreditorsBatchSummary() {
       const box = document.getElementById("creditorsBatchSummaryBox");
@@ -2785,18 +3494,22 @@
         count++;
       }
 
+
       if (count === 0) {
         box.style.display = "none";
         return;
       }
 
+
       let html = `<div style="font-size:0.9rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
       for (let c in currs) {
         html += `<div style="font-weight:900; font-size:1.05rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
       }
+
       content.innerHTML = html;
       box.style.display = "block";
     }
+
 
     function renderAccountsList(accounts) {
       const container = document.getElementById("accountsListContainer");
@@ -2829,6 +3542,7 @@
           badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
         }
 
+
         let cleanPhone = accPhone.replace(/\D/g, '');
         let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:38px; height:38px; margin-left:8px;">` : '';
 
@@ -2855,10 +3569,12 @@
       });
     }
 
+
     function openDirectWhatsApp(phone) {
       if(!phone) { alert("شماره تلفن مشتری موجود نیست"); return; }
       window.open(`https://wa.me/${phone}`, '_blank');
     }
+
 
     function advancedSearchAccounts() {
       playInteractionEffect();
@@ -2872,6 +3588,7 @@
         clearBtn.style.display = "none";
       }
 
+
       if (!q) { renderAccountsList(allAccounts); return; }
       const filtered = allAccounts.filter(acc => {
         let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
@@ -2882,6 +3599,7 @@
       renderAccountsList(filtered);
     }
 
+
     function clearAccountSearch() {
       playInteractionEffect();
       const inputEl = document.getElementById("searchAccountInput");
@@ -2890,6 +3608,7 @@
       renderAccountsList(allAccounts);
       inputEl.focus();
     }
+
 
     function openAccountModal() {
       document.getElementById("editAccountId").value = "";
@@ -2903,10 +3622,12 @@
       pushModalHistory("accountModal");
     }
 
+
     function selectAccountForEditQuick(accId) {
       currentAccountId = accId;
       openEditAccountModal();
     }
+
 
     function openEditAccountModal() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -2921,6 +3642,7 @@
       pushModalHistory("accountModal");
     }
 
+
     function closeAccountModal() { document.getElementById("accountModal").style.display = "none"; }
 
     function confirmDeleteAccountModal() {
@@ -2928,11 +3650,13 @@
       deleteCurrentAccount();
     }
 
+
     function confirmDeleteAccount(accId) {
       currentAccountId = accId;
       if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.")) return;
       deleteCurrentAccount();
     }
+
 
     function confirmDeleteTransaction() {
       let txIdToDel = selectedTxId;
@@ -2940,9 +3664,11 @@
         alert("کد تراکنش انتخاب نشده است.");
         return;
       }
+
       if (!confirm("⚠️ آیا از حذف این تراکنش اطمینان دارید؟ این عمل غیرقابل بازگشت است.")) return;
       deleteSingleTransaction(txIdToDel);
     }
+
 
     async function saveAccount() {
       const client = await ensureRuntimeConfig();
@@ -2962,6 +3688,7 @@
         const uploadedUrl = await uploadFileToSupabase(fileInput.files[0], 'Accounts_Images');
         if (uploadedUrl) photoUrl = uploadedUrl;
       }
+
 
       let accountId = editId ? editId : "ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000));
       let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
@@ -2995,7 +3722,9 @@
                     `💬 چت‌آیدی: \`${accChatId}\``;
           sendTelegramMessage(token, accChatId, msg);
         }
+
       }
+
 
       await loadDataFromSupabase(false);
 
@@ -3018,16 +3747,21 @@
             await sendTelegramMessage(token, accChatId, txLine);
           }
 
+
           let liveBal = getAccountLiveBalanceText(accountId);
           let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*\n${liveBal}`;
           await sendTelegramMessage(token, accChatId, balMsg);
         }
+
       }
+
 
       if (currentAccountId) {
         selectAccount(currentAccountId, accName);
       }
+
     }
+
 
     async function deleteCurrentAccount() {
       const client = await ensureRuntimeConfig();
@@ -3039,15 +3773,18 @@
         localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
       }
 
+
       currentAccountId = null;
       switchView('viewAccounts');
       if (client) {
         await client.from('accounts').delete().eq('AccountID', accIdToDelete);
         await client.from('transactions').delete().eq('AccountID', accIdToDelete);
       }
+
       await loadDataFromSupabase(true);
       alert("✅ حساب با موفقیت حذف شد.");
     }
+
 
     function selectAccount(accId, accName) {
       currentAccountId = accId;
@@ -3072,10 +3809,12 @@
       renderAccountDetailTransactions(accId);
     }
 
+
     function openTxFromAccountDetail(txId) {
       txDetailReturnView = 'viewAccountDetail';
       selectTransaction(txId);
     }
+
 
     function renderAccountDetailTransactions(accId) {
       const txs = allTransactions
@@ -3158,7 +3897,7 @@
               : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
 
             let isCreditor = dir.includes('بستانکار');
-            let rowBg = isCreditor ? '#f3fcf6' : '#fff7f7';
+            let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
             let dirColor = isCreditor ? '#047857' : '#b91c1c';
 
             rowsHtml += `
@@ -3184,10 +3923,10 @@
           });
 
           container.innerHTML += `
-            <div style="margin-bottom:12px; border-top:2px solid #c9e7d5; border-bottom:2px solid #c9e7d5; background:#ffffff; box-shadow:var(--shadow-sm);">
-              <div style="background: linear-gradient(135deg, #164732 0%, #0d2b1e 100%); color: #ffffff; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 0.83rem;">
+            <div style="margin-bottom:12px; border-top:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1; background:#ffffff; box-shadow:var(--shadow-sm);">
+              <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 0.83rem;">
                 <span>📅 تاریخ: ${dayKey}</span>
-                <span style="font-size: 0.76rem; color: #cdebd8;">${formatEnNum(dayTxs.length)} تراکنش</span>
+                <span style="font-size: 0.76rem; color: #cbd5e1;">${formatEnNum(dayTxs.length)} تراکنش</span>
               </div>
               <div style="width:100%;">
                 <table class="compact-ledger-table">
@@ -3208,11 +3947,12 @@
         });
       }
 
+
       let statsHtml = '';
       for (let curr in accCurrencies) {
         let net = accCurrencies[curr].credit - accCurrencies[curr].debit;
         let isCreditor = net > 0;
-        let bgStyle = isCreditor ? "background:#e8f8ee; color:#15803d;" : "background:#fef2f2; color:#dc2626;";
+        let bgStyle = isCreditor ? "background:rgba(240,253,244,0.9); color:#15803d;" : "background:rgba(254,242,242,0.9); color:#dc2626;";
         let label = net > 0 ? `بستانکار: ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار: ${formatEnMoney(Math.abs(net))} ${curr}` : "تسویه حساب کامل");
 
         statsHtml += `
@@ -3223,8 +3963,10 @@
           </div>
         `;
       }
+
       document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center;">بدون بیلان</div>';
     }
+
 
     function selectTransaction(txId) {
       selectedTxId = txId;
@@ -3282,23 +4024,24 @@
         balanceBefore += amtNum;
       }
 
+
       let beforeStr = balanceBefore === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balanceBefore))} ${curr} (${balanceBefore > 0 ? 'بستانکار' : 'بدهکار'})`;
       let afterStr = balanceAfter === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balanceAfter))} ${curr} (${balanceAfter > 0 ? 'بستانکار' : 'بدهکار'})`;
 
       document.getElementById("txDetailCard").innerHTML = `
         <div class="stat-row"><span>کُد تراکنش:</span><b>${txId}</b></div>
-        <div class="stat-row"><span>مشتری:</span><b style="color:var(--accent-green-dark);">${accName}</b></div>
+        <div class="stat-row"><span>مشتری:</span><b style="color:var(--info-color);">${accName}</b></div>
         <div class="stat-row"><span>تاریخ و زمان ثبت:</span><b>${formattedTime}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
         <div class="stat-row"><span>جهت تراکنش:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
         <div class="stat-row"><span>مبلغ تراکنش:</span><b style="font-size:1.1rem; color:var(--primary-dark);">${amtStr} ${curr}</b></div>
         
-        <div style="margin-top:10px; background:#f3faf5; padding:10px; border-radius:14px; border:1px solid #d5eadc;">
+        <div style="margin-top:10px; background:rgba(241,245,249,0.95); padding:10px; border-radius:12px; border:1px solid #cbd5e1;">
           <div class="stat-row" style="font-size:0.86rem; margin-bottom:4px;"><span>💰 مانده حساب قبل از این تراکنش:</span><b>${beforeStr}</b></div>
           <div class="stat-row" style="font-size:0.86rem; margin-bottom:0;"><span>📊 مانده نهایی حساب پس از این تراکنش:</span><b style="color:${balanceAfter>=0?'#047857':'#b91c1c'};">${afterStr}</b></div>
         </div>
 
-        <div style="margin-top:8px; background:#f9fcfa; border:1px solid #dceee2; padding:10px; border-radius:14px;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
+        <div style="margin-top:8px; background:rgba(255,255,255,0.85); padding:10px; border-radius:12px;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
         ${receiptHtml}
       `;
 
@@ -3307,7 +4050,7 @@
       let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
 
       btnContainer.innerHTML = `
-        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">👤 رفتن به حساب شخص (${accName})</button>
+        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">👤 رفتن به حساب شخص (${accName})</button>
         
         <div class="flex-row" style="gap: 10px; margin-bottom:10px;">
           <button class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()">
@@ -3324,6 +4067,7 @@
 
       switchView('viewTransactionDetail');
     }
+
 
     function openAddTransactionModal() {
       document.getElementById("editTransId").value = "";
@@ -3343,6 +4087,7 @@
       document.getElementById("transactionModal").style.display = "flex";
       pushModalHistory("transactionModal");
     }
+
 
     function openEditTransactionModal() {
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(selectedTxId));
@@ -3364,6 +4109,7 @@
       pushModalHistory("transactionModal");
     }
 
+
     function closeTransactionModal() { document.getElementById("transactionModal").style.display = "none"; }
 
     function openCustomMessageModal() {
@@ -3371,9 +4117,11 @@
       document.getElementById("customMessageModal").style.display = "flex";
       pushModalHistory("customMessageModal");
     }
+
     function closeCustomMessageModal() {
       document.getElementById("customMessageModal").style.display = "none";
     }
+
 
     function sendCustomWhatsAppMessage() {
       let msg = document.getElementById("customWhatsAppMessageText").value.trim();
@@ -3389,8 +4137,13 @@
       } else {
         window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
       }
+
     }
 
+
+    // ==========================================================================
+    // ماژول ۶: ثبت، ویرایش، حذف و ارسال گزارش‌های واتساپ و تلگرام
+    // ==========================================================================
     async function submitTransaction() {
       const client = await ensureRuntimeConfig();
       if (!client) return;
@@ -3417,6 +4170,7 @@
         if (uploadedUrl) receiptUrl = uploadedUrl;
       }
 
+
       let dateIsoString;
       if (editTransId) {
         let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(editTransId));
@@ -3430,7 +4184,9 @@
         } else {
           dateIsoString = now.toISOString();
         }
+
       }
+
 
       let transIdToSave = editTransId || ("TX-" + formatEnNum(Math.floor(10000000 + Math.random() * 90000000)));
       const payload = {
@@ -3450,6 +4206,7 @@
       } else {
         await client.from('transactions').insert([payload]);
       }
+
 
       await loadDataFromSupabase(false);
 
@@ -3481,8 +4238,11 @@
               await sendTelegramMessage(token, customerChatId, msg1);
               await sendTelegramMessage(token, customerChatId, msg2);
             }
+
           }
+
         }
+
 
         if (adminChatId) {
           let adminMsg = `🔔 *گزارش مدیریتی سیستم*\n\n` +
@@ -3495,10 +4255,13 @@
                          `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminMsg);
         }
+
       }
+
 
       selectAccount(currentAccountId, currentAccountName);
     }
+
 
     async function deleteSingleTransaction(txIdToDelete) {
       const client = await ensureRuntimeConfig();
@@ -3511,7 +4274,9 @@
           alert("خطا در حذف تراکنش: " + error.message);
           return;
         }
+
       }
+
 
       allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
 
@@ -3536,7 +4301,9 @@
                          `📊 *بیلان جدید حساب شما:*\n${liveBalance}`;
             sendTelegramMessage(token, customerChatId, delMsg);
           }
+
         }
+
 
         if (adminChatId) {
           let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*\n\n` +
@@ -3546,7 +4313,9 @@
                             `📊 *موجودی کل سیستم:*\n${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminDelMsg);
         }
+
       }
+
 
       if (currentAccountId) {
         selectAccount(currentAccountId, currentAccountName);
@@ -3554,7 +4323,9 @@
         switchView('viewAllTransactionsPage');
         renderGlobalTransactionsList();
       }
+
     }
+
 
     function shareTransferReceiptWhatsApp(targetTxId) {
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId || selectedTxId));
@@ -3573,6 +4344,7 @@
       let encodedMessage = receiptLines.map(line => encodeURIComponent(line)).join('%0A');
       window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
     }
+
 
     function sendSingleTxWhatsApp(targetTxId) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -3614,11 +4386,14 @@
       } else {
         window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
       }
+
     }
+
 
     function sendGeneralWhatsAppReport() {
       sendSingleTxWhatsApp(selectedTxId);
     }
+
 
     function sendPeriodicTransactionsWhatsApp(period) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -3654,6 +4429,7 @@
           periodTitle = "گزارش ماهانه (۳۰ روز گذشته)";
           return diffDays <= 30;
         }
+
         return true;
       });
 
@@ -3661,6 +4437,7 @@
         alert("هیچ تراکنشی در این بازه زمانی برای این شخص یافت نشد.");
         return;
       }
+
 
       let lastSettlementIdx = -1;
       for (let i = accTxs.length - 1; i >= 0; i--) {
@@ -3670,7 +4447,9 @@
           lastSettlementIdx = i;
           break;
         }
+
       }
+
 
       let finalTransactions = filtered;
       if (period === 'all' && lastSettlementIdx !== -1) {
@@ -3678,7 +4457,9 @@
         if (finalTransactions.length === 0) {
           finalTransactions = [accTxs[lastSettlementIdx]];
         }
+
       }
+
 
       let settlementSummaryLine = "";
       if (lastSettlementIdx !== -1 && period === 'all') {
@@ -3691,6 +4472,7 @@
       } else {
         settlementSummaryLine = `📌 لیست تراکنش‌ها (به ترتیب از قدیم به جدید):`;
       }
+
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
@@ -3721,6 +4503,7 @@
         if (desc && desc !== '-') {
           lineItem += ` | ${desc}`;
         }
+
         lines.push(lineItem);
       });
 
@@ -3738,7 +4521,9 @@
       } else {
         window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
       }
+
     }
+
 
     function sendAccountBalanceWhatsApp() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -3771,7 +4556,186 @@
       } else {
         window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
       }
+
     }
+
+  
+
+    function syncWalletHeroSummary() {
+      const heroBox = document.getElementById("walletHeroTotalsBox");
+      const titleEl = document.getElementById("walletHeaderTitle");
+      const avatarEl = document.getElementById("walletHeaderAvatar");
+      if (currentLoggedInAdmin && currentLoggedInAdmin.name) {
+        if (titleEl) titleEl.innerText = currentLoggedInAdmin.name;
+        if (avatarEl) avatarEl.innerText = String(currentLoggedInAdmin.name).trim().charAt(0) || "ک";
+      }
+
+      if (!heroBox) return;
+      const summaryText = getSystemGlobalBalanceText();
+      if (!summaryText || summaryText === "صفر") {
+        heroBox.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><span>مانده خالص فعال کل حساب‌ها:</span><span style="color:var(--emerald-dark); font-weight:900;">0</span></div>`;
+        return;
+      }
+
+      const lines = summaryText.split("\n").filter(Boolean);
+      heroBox.innerHTML = lines.map(line => `<div style="padding:2px 0; font-size:0.84rem; color:var(--ink-primary);">${line}</div>`).join("");
+    }
+
+
+    function updateBottomNavActive(viewId) {
+      const nav = document.getElementById("walletBottomNav");
+      const adminVisible = document.getElementById("adminContainer")?.style.display === "block";
+      if (nav) {
+        if (adminVisible) nav.classList.add("visible");
+        else nav.classList.remove("visible");
+      }
+
+      document.querySelectorAll(".wallet-nav-item").forEach(btn => btn.classList.remove("active-nav"));
+      if (viewId === "viewDashboard") document.getElementById("navBtnDashboard")?.classList.add("active-nav");
+      else if (viewId === "viewAccounts" || viewId === "viewAccountDetail") document.getElementById("navBtnAccounts")?.classList.add("active-nav");
+      else if (viewId === "viewAllTransactionsPage" || viewId === "viewTransactionDetail") document.getElementById("navBtnLedger")?.classList.add("active-nav");
+      else if (viewId === "viewGlobalStatsPage" || viewId === "viewTransfersReport" || viewId === "viewDebtorsReport" || viewId === "viewCreditorsReport") document.getElementById("navBtnStats")?.classList.add("active-nav");
+    }
+
+
+    function stepBackNavigation() {
+      const openModals = [
+        ['searchDrawerModal', closeSearchDrawer],
+        ['opTypeManagerModal', closeOpTypeManagerModal],
+        ['adminManagerModal', closeAdminManagerModal],
+        ['masterSettingsModal', closeMasterSettingsModal],
+        ['accountModal', closeAccountModal],
+        ['transactionModal', closeTransactionModal],
+        ['globalSelectAccountModal', closeGlobalSelectAccountModal],
+        ['customMessageModal', closeCustomMessageModal]
+      ];
+      for (const [id, closeFn] of openModals) {
+        const el = document.getElementById(id);
+        if (el && el.style.display === 'flex') {
+          closeFn();
+          return;
+        }
+
+      }
+
+
+      const activeView = document.querySelector('.view-section.active')?.id;
+      if (!activeView || activeView === 'viewDashboard') {
+        if (window.history.length > 1) window.history.back();
+        return;
+      }
+
+
+      const parentMap = {
+        'viewAccountDetail': 'viewAccounts',
+        'viewTransactionDetail': txDetailReturnView || 'viewAccountDetail',
+        'viewTransfersReport': 'viewGlobalStatsPage',
+        'viewDebtorsReport': 'viewGlobalStatsPage',
+        'viewCreditorsReport': 'viewGlobalStatsPage'
+      };
+      const targetView = parentMap[activeView] || 'viewDashboard';
+      switchView(targetView, true);
+    }
+
+
+    let searchDockDragged = false;
+
+    function openSearchDrawer(mode = 'modal') {
+      const modal = document.getElementById("searchDrawerModal");
+      if (mode === 'side') modal.classList.add("side-docked");
+      else modal.classList.remove("side-docked");
+      modal.style.display = "flex";
+      setTimeout(() => document.getElementById("drawerSearchInput")?.focus(), 60);
+      pushModalHistory("searchDrawerModal");
+    }
+
+
+    function closeSearchDrawer() {
+      const modal = document.getElementById("searchDrawerModal");
+      modal.style.display = "none";
+      modal.classList.remove("side-docked");
+      document.getElementById("drawerSearchInput").value = "";
+      document.getElementById("drawerSearchResults").innerHTML = "";
+    }
+
+
+    function handleSearchDockClick(mode) {
+      if (searchDockDragged) {
+        searchDockDragged = false;
+        return;
+      }
+
+      playInteractionEffect();
+      openSearchDrawer(mode);
+    }
+
+
+    (function initDraggableSearchDock() {
+      const dock = document.getElementById("draggableSearchDock");
+      if (!dock) return;
+
+      const savedPos = localStorage.getItem("floatingSearchDockPos");
+      if (savedPos) {
+        try {
+          const p = JSON.parse(savedPos);
+          if (typeof p.left === "number" && typeof p.top === "number") {
+            dock.style.left = Math.max(6, Math.min(window.innerWidth - 92, p.left)) + "px";
+            dock.style.top = Math.max(12, Math.min(window.innerHeight - 110, p.top)) + "px";
+            dock.style.right = "auto";
+            dock.style.bottom = "auto";
+          }
+
+        } catch (e) {}
+      }
+
+
+      let isPointerDown = false;
+      let startX = 0, startY = 0, origLeft = 0, origTop = 0;
+
+      dock.addEventListener("pointerdown", (e) => {
+        if (e.button !== undefined && e.button !== 0 && e.pointerType === "mouse") return;
+        isPointerDown = true;
+        searchDockDragged = false;
+        const rect = dock.getBoundingClientRect();
+        origLeft = rect.left;
+        origTop = rect.top;
+        startX = e.clientX;
+        startY = e.clientY;
+        dock.classList.add("dragging");
+      });
+
+      window.addEventListener("pointermove", (e) => {
+        if (!isPointerDown) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.hypot(dx, dy) > 6) {
+          searchDockDragged = true;
+        }
+
+        if (searchDockDragged) {
+          const maxLeft = Math.max(6, window.innerWidth - dock.offsetWidth - 6);
+          const maxTop = Math.max(8, window.innerHeight - dock.offsetHeight - 42);
+          const nextLeft = Math.max(6, Math.min(maxLeft, origLeft + dx));
+          const nextTop = Math.max(8, Math.min(maxTop, origTop + dy));
+          dock.style.left = nextLeft + "px";
+          dock.style.top = nextTop + "px";
+          dock.style.right = "auto";
+          dock.style.bottom = "auto";
+        }
+
+      });
+
+      window.addEventListener("pointerup", () => {
+        if (!isPointerDown) return;
+        isPointerDown = false;
+        dock.classList.remove("dragging");
+        if (searchDockDragged) {
+          const rect = dock.getBoundingClientRect();
+          localStorage.setItem("floatingSearchDockPos", JSON.stringify({ left: rect.left, top: rect.top }));
+        }
+
+      });
+    })();
   </script>
 </body>
 </html>
