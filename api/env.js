@@ -1,29 +1,16 @@
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
+export default function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+
+  if (req.method !== "GET" && req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
-  try {
-    const { chat_id, text, parse_mode = "Markdown", fallback_token = "" } = req.body || {};
-    const token = (process.env.TELEGRAM_BOT_TOKEN || fallback_token || "").trim();
+  const supabaseUrl = (process.env.SUPABASE_URL || "").trim();
+  const supabaseKey = (process.env.SUPABASE_KEY || "").trim();
 
-    if (!token || !chat_id || !text) {
-      return res.status(400).json({ ok: false, error: "Missing token, chat_id, or text" });
-    }
-
-    const tgResp = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: String(chat_id).trim(),
-        text: String(text),
-        parse_mode
-      })
-    });
-
-    const data = await tgResp.json();
-    return res.status(tgResp.status).json(data);
-  } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || "Telegram send error" });
-  }
+  return res.status(200).json({
+    ok: true,
+    supabaseUrl,
+    supabaseKey
+  });
 }
