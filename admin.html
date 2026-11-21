@@ -4,11 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مدیریت امانت‌داری کریمی</title>
-  
-  <!-- کتابخانه Supabase -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <!-- فونت وزیرمتن -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -16,20 +13,16 @@
   <style>
     :root {
       --primary-dark: #0f172a;
-      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
       --glass-bg: rgba(255, 255, 255, 0.25);
-      --glass-border: rgba(255, 255, 255, 0.4);
-      --glass-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.45);
       --accent-green: #10b981;
       --accent-green-dark: #059669;
-      --card-bg: rgba(255, 255, 255, 0.88);
+      --card-bg: rgba(255, 255, 255, 0.9);
       --text-main: #0f172a;
-      --border-color: rgba(255, 255, 255, 0.6);
       --danger-color: #ef4444;
       --warning-color: #f59e0b;
       --info-color: #0284c7;
       --whatsapp-color: #25d366;
-      --whatsapp-dark: #128c7e;
       --shadow-sm: 0 8px 25px rgba(0, 0, 0, 0.08);
       --shadow-md: 0 15px 35px rgba(0, 0, 0, 0.12);
       --radius-md: 20px;
@@ -52,8 +45,6 @@
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
       color: var(--text-main);
-      padding: 0;
-      margin: 0;
       font-size: 14px;
       min-height: 100vh;
       width: 100vw;
@@ -87,157 +78,71 @@
       background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
       width: 100%; max-width: 400px; padding: 26px; border-radius: 24px;
       box-shadow: 0 25px 50px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      animation: fadeInUp 0.3s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.8); animation: fadeInUp 0.3s ease-out;
     }
     .auth-title { font-size: 1.25rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
 
     .container { max-width: 100%; width: 100%; display: none; margin: 0; padding: 0; }
 
     .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 0;
-      padding: 16px;
-      box-shadow: var(--shadow-md);
-      border: none;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-      margin-bottom: 0;
-      width: 100%;
-      min-height: 100vh;
+      background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-radius: 0; padding: 16px; box-shadow: var(--shadow-md);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5); width: 100%; min-height: 100vh;
       animation: fadeInUp 0.25s ease-out;
     }
 
     .card-header-styled {
       background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-      color: #ffffff;
-      padding: 14px 16px;
-      border-radius: 16px;
-      margin: -16px -16px 16px -16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff; padding: 14px 16px; border-radius: 16px; margin: -16px -16px 16px -16px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15); border: 1px solid rgba(255, 255, 255, 0.15);
     }
     .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 1.05rem; font-weight: 800; }
 
-    .dashboard-floating-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      padding: 10px 0;
-    }
+    .dashboard-floating-grid { display: flex; flex-direction: column; gap: 14px; padding: 10px 0; }
 
     .floating-glass-btn {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 2px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      border-radius: 20px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      text-align: right;
-      user-select: none;
-      position: relative;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.82) 100%);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 2px solid rgba(255, 255, 255, 0.9); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 20px; padding: 16px; display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; transition: all 0.25s ease; text-align: right; user-select: none;
     }
-    .floating-glass-btn:active {
-      transform: scale(0.97);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .floating-glass-btn .content-box {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex: 1;
-    }
-
+    .floating-glass-btn:active { transform: scale(0.97); }
+    .floating-glass-btn .content-box { display: flex; align-items: center; gap: 14px; flex: 1; }
     .floating-glass-btn .icon { font-size: 1.8rem; background: rgba(59, 130, 246, 0.12); padding: 10px; border-radius: 14px; }
     .floating-glass-btn .title { font-weight: 900; font-size: 1rem; color: var(--primary-dark); }
 
-    .menu-sort-controls {
-      display: flex;
-      gap: 6px;
-    }
+    .menu-sort-controls { display: flex; gap: 6px; }
     .sort-btn {
-      background: rgba(15, 23, 42, 0.1);
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      font-weight: 900;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary-dark);
-      transition: all 0.2s;
+      background: rgba(15, 23, 42, 0.1); border: none; width: 32px; height: 32px; border-radius: 10px;
+      font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--primary-dark); transition: all 0.2s;
     }
     .sort-btn:active { background: rgba(15, 23, 42, 0.2); transform: scale(0.9); }
 
     .nokia-nav-container {
-      position: relative;
-      width: 100%;
-      max-width: 320px;
-      height: 220px;
-      margin: 15px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative; width: 100%; max-width: 320px; height: 220px;
+      margin: 15px auto; display: flex; align-items: center; justify-content: center;
     }
-
     .nokia-center-btn {
-      position: absolute;
-      width: 92px;
-      height: 92px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 0.82rem;
-      text-align: center;
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
-      border: 4px solid #ffffff;
-      cursor: pointer;
-      z-index: 10;
-      animation: pulseGlow 2s infinite;
-      transition: transform 0.2s ease;
+      position: absolute; width: 92px; height: 92px; border-radius: 50%;
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: #ffffff;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 0.82rem; text-align: center;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5); border: 4px solid #ffffff;
+      cursor: pointer; z-index: 10; animation: pulseGlow 2s infinite; transition: transform 0.2s ease;
     }
     .nokia-center-btn:active { transform: scale(0.92); }
 
     .nokia-corner-btn {
-      position: absolute;
-      width: 125px;
-      height: 75px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border: 1.5px solid rgba(255, 255, 255, 0.9);
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 800;
-      cursor: pointer;
-      color: var(--primary-dark);
-      transition: all 0.2s ease;
-      padding: 6px;
-      gap: 4px;
+      position: absolute; width: 125px; height: 75px; background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px); border: 1.5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-sm); display: flex; flex-direction: column; align-items: center;
+      justify-content: center; font-size: 0.8rem; font-weight: 800; cursor: pointer;
+      color: var(--primary-dark); transition: all 0.2s ease; padding: 6px; gap: 4px;
     }
     .nokia-corner-btn:active { transform: scale(0.95); background: #ffffff; }
-
     .nokia-btn-top-right { top: 10px; right: 10px; border-radius: 18px 18px 40px 18px; }
     .nokia-btn-top-left { top: 10px; left: 10px; border-radius: 18px 18px 18px 40px; }
     .nokia-btn-bottom-right { bottom: 10px; right: 10px; border-radius: 18px 40px 18px 18px; }
@@ -253,8 +158,7 @@
       outline: none; transition: all 0.2s ease; font-weight: 700; color: #0f172a;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: var(--info-color);
-      background: #ffffff;
+      border-color: var(--info-color); background: #ffffff;
       box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2);
     }
     textarea { resize: vertical; min-height: 80px; }
@@ -262,20 +166,21 @@
     .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
     .btn-select-option {
       flex: 1; min-width: 70px; padding: 11px 6px; text-align: center; background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px); border: 2px solid rgba(203, 213, 225, 0.9); border-radius: 14px; font-size: 0.92rem;
-      font-weight: 900; cursor: pointer; transition: all 0.2s ease; user-select: none; color: #334155;
+      backdrop-filter: blur(10px); border: 2px solid rgba(203, 213, 225, 0.9); border-radius: 14px;
+      font-size: 0.92rem; font-weight: 900; cursor: pointer; transition: all 0.2s ease;
+      user-select: none; color: #334155;
     }
     .btn-select-option.selected-creditor {
-      background: #ecfdf5 !important; border-color: var(--accent-green) !important; color: var(--accent-green-dark) !important;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      background: #ecfdf5 !important; border-color: var(--accent-green) !important;
+      color: var(--accent-green-dark) !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     }
     .btn-select-option.selected-debtor {
-      background: #fef2f2 !important; border-color: var(--danger-color) !important; color: var(--danger-color) !important;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      background: #fef2f2 !important; border-color: var(--danger-color) !important;
+      color: var(--danger-color) !important; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
     }
     .btn-select-option.selected-currency {
-      background: #f0f9ff !important; border-color: var(--info-color) !important; color: var(--info-color) !important;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
+      background: #f0f9ff !important; border-color: var(--info-color) !important;
+      color: var(--info-color) !important; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
     }
 
     .btn {
@@ -293,37 +198,19 @@
     .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 10px; }
 
     .action-btn-modern {
-      padding: 13px 18px;
-      border-radius: 16px;
-      font-weight: 900;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-      width: 100%;
-      user-select: none;
+      padding: 13px 18px; border-radius: 16px; font-weight: 900; font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+      border: none; transition: all 0.2s ease; width: 100%; user-select: none;
     }
     .action-btn-modern:active { transform: scale(0.97); }
-    .btn-edit-pro {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #ffffff;
-      box-shadow: 0 8px 22px rgba(245, 158, 11, 0.4);
-    }
-    .btn-delete-pro {
-      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-      color: #ffffff;
-      box-shadow: 0 8px 22px rgba(239, 68, 68, 0.4);
-    }
+    .btn-edit-pro { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; box-shadow: 0 8px 22px rgba(245, 158, 11, 0.4); }
+    .btn-delete-pro { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: #ffffff; box-shadow: 0 8px 22px rgba(239, 68, 68, 0.4); }
 
     .floating-create-account-btn {
       position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white;
       padding: 13px 22px; border-radius: 35px; font-weight: 900; font-size: 0.98rem;
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5); z-index: 5000; border: 2px solid rgba(255,255,255,0.6); cursor: pointer;
-      display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5); z-index: 5000; border: 2px solid rgba(255,255,255,0.6);
+      cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
     }
     .floating-create-account-btn:active { transform: scale(0.95); }
 
@@ -331,38 +218,43 @@
       position: fixed; bottom: 20px; right: 20px; width: 54px; height: 54px;
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border-radius: 50%;
       display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5); z-index: 6000; cursor: pointer; border: 2px solid rgba(255,255,255,0.6);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5); z-index: 6000; cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.6);
     }
 
-    #searchDrawerModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
+    #searchDrawerModal, #transactionModal, #customMessageModal, #masterSettingsModal,
+    #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px);
-      z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
-      overflow-y: auto;
+      z-index: 99999; display: none; justify-content: center; align-items: center;
+      padding: 12px; overflow-y: auto;
     }
     .modal-card-box {
-      background: #ffffff;
-      width: 100%; max-width: 420px; border-radius: 24px; padding: 20px;
+      background: #ffffff; width: 100%; max-width: 420px; border-radius: 24px; padding: 20px;
       box-shadow: 0 25px 60px rgba(0,0,0,0.35); max-height: 90vh; overflow-y: auto;
-      border: 1px solid rgba(255,255,255,0.8);
-      animation: fadeInUp 0.25s ease-out;
+      border: 1px solid rgba(255,255,255,0.8); animation: fadeInUp 0.25s ease-out;
     }
 
     .stats-grid { display: flex; flex-direction: column; gap: 10px; }
     .stat-card {
-      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
-      border-radius: var(--radius-md); padding: 12px 14px; box-shadow: var(--shadow-sm);
+      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95); border-radius: var(--radius-md);
+      padding: 12px 14px; box-shadow: var(--shadow-sm);
     }
     .stat-row { display: flex; justify-content: space-between; font-size: 0.92rem; margin-bottom: 4px; align-items: center; }
-    .stat-badge { text-align: center; padding: 8px 12px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .stat-badge {
+      text-align: center; padding: 8px 12px; border-radius: 12px; font-weight: 900;
+      font-size: 0.95rem; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
 
     .account-item-card, .tx-item-card, .phone-item-card {
-      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
-      border-radius: var(--radius-md); padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow-sm); 
-      display: flex; flex-direction: column; gap: 8px; cursor: pointer; user-select: none; transition: all 0.15s ease; width: 100%;
+      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95); border-radius: var(--radius-md);
+      padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; gap: 8px; cursor: pointer;
+      user-select: none; transition: all 0.15s ease; width: 100%;
     }
     .account-item-card:active, .tx-item-card:active, .phone-item-card:active { border-color: var(--info-color); background: #ffffff; }
-
     .tx-item-card.tx-creditor { background: rgba(240, 253, 244, 0.95); border-color: #a7f3d0; }
     .tx-item-card.tx-debtor { background: rgba(254, 242, 242, 0.95); border-color: #fecaca; }
 
@@ -377,8 +269,8 @@
     .view-section.active { display: block; }
 
     #syncIndicator {
-      position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white;
-      padding: 9px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 900;
+      position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: white; padding: 9px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 900;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: none; z-index: 8000; border: 1px solid rgba(255,255,255,0.5);
     }
 
@@ -388,116 +280,54 @@
 
     .client-info-header-box {
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%);
-      backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      margin-bottom: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95);
+      border-radius: var(--radius-md); padding: 14px; margin-bottom: 14px;
+      display: flex; flex-direction: column; gap: 8px;
     }
 
     .batch-summary-card {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      color: #ffffff;
-      padding: 14px;
-      border-radius: 16px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff;
+      padding: 14px; border-radius: 16px; margin-bottom: 14px;
+      box-shadow: var(--shadow-sm); border: 1px solid rgba(255,255,255,0.2);
     }
 
     .deleted-account-badge {
-      display: inline-block;
-      background: #fef2f2;
-      color: #ef4444;
-      border: 1px solid #fecaca;
-      padding: 3px 10px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 900;
+      display: inline-block; background: #fef2f2; color: #ef4444; border: 1px solid #fecaca;
+      padding: 3px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 900;
     }
 
-    .edge-to-edge-wrapper {
-      margin-left: -16px;
-      margin-right: -16px;
-      width: calc(100% + 32px);
-    }
-    .compact-ledger-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      font-size: 0.74rem;
-    }
+    .edge-to-edge-wrapper { margin-left: -16px; margin-right: -16px; width: calc(100% + 32px); }
+    .compact-ledger-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.74rem; }
     .compact-ledger-table th {
-      background: #f1f5f9;
-      color: #1e293b;
-      border-bottom: 2px solid #cbd5e1;
-      border-left: 1px solid #e2e8f0;
-      padding: 7px 3px;
-      font-weight: 900;
-      font-size: 0.71rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      background: #f1f5f9; color: #1e293b; border-bottom: 2px solid #cbd5e1;
+      border-left: 1px solid #e2e8f0; padding: 7px 3px; font-weight: 900;
+      font-size: 0.71rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .compact-ledger-table th:last-child,
-    .compact-ledger-table td:last-child {
-      border-left: none;
-    }
+    .compact-ledger-table th:last-child, .compact-ledger-table td:last-child { border-left: none; }
     .compact-ledger-table td {
-      padding: 7px 3px;
-      border-bottom: 1px solid #cbd5e1;
-      border-left: 1px solid #e2e8f0;
-      vertical-align: middle;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      padding: 7px 3px; border-bottom: 1px solid #cbd5e1; border-left: 1px solid #e2e8f0;
+      vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .compact-ledger-table tr:active {
-      filter: brightness(0.95);
-    }
-    .ledger-customer-picker {
-      position: relative;
-      margin-bottom: 10px;
-    }
+    .compact-ledger-table tr:active { filter: brightness(0.95); }
+
+    .ledger-customer-picker { position: relative; margin-bottom: 10px; }
     .ledger-picker-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 14px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
-      z-index: 500;
-      max-height: 240px;
-      overflow-y: auto;
-      margin-top: 4px;
-      display: none;
+      position: absolute; top: 100%; left: 0; right: 0; background: #ffffff;
+      border: 1.5px solid #cbd5e1; border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22); z-index: 500;
+      max-height: 240px; overflow-y: auto; margin-top: 4px; display: none;
     }
     .ledger-picker-item {
-      padding: 9px 12px;
-      border-bottom: 1px solid #f1f5f9;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background 0.15s;
+      padding: 9px 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; transition: background 0.15s;
     }
-    .ledger-picker-item:last-child {
-      border-bottom: none;
-    }
-    .ledger-picker-item:hover, .ledger-picker-item.active-opt {
-      background: #eff6ff;
-    }
+    .ledger-picker-item:last-child { border-bottom: none; }
+    .ledger-picker-item:hover, .ledger-picker-item.active-opt { background: #eff6ff; }
   </style>
 </head>
 <body>
 
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
-
   <div class="floating-search-trigger" onclick="playInteractionEffect(); openSearchDrawer()" title="جستجوی سریع">🔍</div>
 
   <!-- کشوی جستجو -->
@@ -527,7 +357,6 @@
 
   <!-- کانتینر اصلی -->
   <div class="container" id="adminContainer">
-    <!-- داشبورد اصلی -->
     <div id="viewDashboard" class="view-section active">
       <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0; min-height: auto;">
         <div class="card-header-styled">
@@ -537,21 +366,18 @@
             <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); handleLogout()">خروج</button>
           </div>
         </div>
-
         <div class="dashboard-floating-grid" id="dashboardMenuGrid"></div>
       </div>
     </div>
 
-    <!-- آمار کلی -->
     <div id="viewGlobalStatsPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>📊 آمار و گزارشات کلی سیستم</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
         <h3 style="font-size:1rem; margin-bottom:8px;">موجودی‌های فعال (مانده زنده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
-      
         <div style="margin-top: 20px;">
           <h3>🚀 منوی گزارشات تفکیکی</h3>
           <div class="flex-row" style="gap: 10px; flex-direction: column;">
@@ -563,27 +389,23 @@
       </div>
     </div>
 
-    <!-- دفترچه و بانک شماره‌ها -->
     <div id="viewPhoneDirectoryPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>📞 بانک کامل شماره‌ها و مخاطبین</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
         </div>
-
         <div class="form-group" style="position: relative; margin-bottom: 12px;">
           <input type="text" id="searchPhoneInput" placeholder="🔍 جستجو در شماره‌ها، اسامی یا کُد حساب..." oninput="filterPhonesDirectory()" style="padding-left: 38px;">
           <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
         </div>
-
         <div id="phoneDirectorySummary" class="stat-card" style="background:rgba(240,249,255,0.9); border-color:var(--info-color); margin-bottom:12px;"></div>
         <div id="phoneDirectoryContainer"></div>
       </div>
     </div>
 
-    <!-- دفتر کل مرکزی تمامی تراکنش‌ها -->
     <div id="viewAllTransactionsPage" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>📜 دفتر کل مرکزی تراکنش‌ها</h3>
           <div class="flex-row" style="gap:6px;">
@@ -610,9 +432,8 @@
       </div>
     </div>
 
-    <!-- گزارش حواله‌ها / انتقال‌ها -->
     <div id="viewTransfersReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>📜 گزارش پیشرفته حواله‌ها / انتقال‌ها</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
@@ -630,14 +451,8 @@
 
         <div id="customDateRangeBox" style="display: none; background: rgba(248,250,252,0.9); border: 1.5px solid rgba(255,255,255,0.8); padding: 12px; border-radius: 14px; margin-bottom: 12px;">
           <div class="flex-row" style="gap: 10px;">
-            <div style="flex:1;">
-              <label style="font-size: 0.85rem;">از تاریخ:</label>
-              <input type="date" id="startDateFilter" onchange="renderTransfersReport()">
-            </div>
-            <div style="flex:1;">
-              <label style="font-size: 0.85rem;">تا تاریخ:</label>
-              <input type="date" id="endDateFilter" onchange="renderTransfersReport()">
-            </div>
+            <div style="flex:1;"><label style="font-size: 0.85rem;">از تاریخ:</label><input type="date" id="startDateFilter" onchange="renderTransfersReport()"></div>
+            <div style="flex:1;"><label style="font-size: 0.85rem;">تا تاریخ:</label><input type="date" id="endDateFilter" onchange="renderTransfersReport()"></div>
           </div>
         </div>
 
@@ -646,45 +461,38 @@
       </div>
     </div>
 
-    <!-- گزارش بدهکاران با قابلیت انتخاب چندتایی -->
     <div id="viewDebtorsReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>🔴 لیست و فیلتر بدهکاران (انتخاب چندتایی)</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
-
         <div id="debtorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
           <h4 style="margin-bottom:8px; font-size:1rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
           <div id="debtorsBatchSummaryContent"></div>
         </div>
-
         <div id="debtorsSummaryHeader" class="stat-card" style="background:rgba(254,242,242,0.9); border-color:var(--danger-color); margin-bottom:10px;"></div>
         <div id="debtorsContainer"></div>
       </div>
     </div>
 
-    <!-- گزارش بستانکاران با قابلیت انتخاب چندتایی -->
     <div id="viewCreditorsReport" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>🟢 لیست و فیلتر بستانکاران (انتخاب چندتایی)</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
         </div>
-
         <div id="creditorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
           <h4 style="margin-bottom:8px; font-size:1rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
           <div id="creditorsBatchSummaryContent"></div>
         </div>
-
         <div id="creditorsSummaryHeader" class="stat-card" style="background:rgba(240,253,244,0.9); border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
         <div id="creditorsContainer"></div>
       </div>
     </div>
 
-    <!-- لیست کامل حساب‌ها -->
     <div id="viewAccounts" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>👥 لیست کامل حساب‌ها</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
@@ -701,9 +509,8 @@
       </button>
     </div>
 
-    <!-- جزئیات حساب مشتری -->
     <div id="viewAccountDetail" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <div class="flex-row">
             <img id="detailAccountPhoto" src="" class="profile-img-preview" style="display:none;">
@@ -731,22 +538,18 @@
             <span style="font-size:1.35rem;">➕</span>
             <span>ثبت تراکنش</span>
           </button>
-
           <button class="nokia-corner-btn nokia-btn-top-right" onclick="playInteractionEffect(); sendAccountBalanceWhatsApp()">
             <span style="font-size:1.25rem; color:var(--whatsapp-color);">💬</span>
             <span>بیلان واتساپ</span>
           </button>
-
           <button class="nokia-corner-btn nokia-btn-top-left" onclick="playInteractionEffect(); openCustomMessageModal()">
             <span style="font-size:1.25rem; color:var(--info-color);">✉️</span>
             <span>ارسال پیام</span>
           </button>
-
           <button class="nokia-corner-btn nokia-btn-bottom-right" onclick="playInteractionEffect(); openEditAccountModal()">
             <span style="font-size:1.25rem; color:var(--warning-color);">✏️</span>
             <span>ویرایش حساب</span>
           </button>
-
           <button class="nokia-corner-btn nokia-btn-bottom-left" onclick="playInteractionEffect(); confirmDeleteAccountModal()">
             <span style="font-size:1.25rem; color:var(--danger-color);">🗑️</span>
             <span>حذف حساب</span>
@@ -758,9 +561,8 @@
       </div>
     </div>
 
-    <!-- جزئیات کامل یک تراکنش -->
     <div id="viewTransactionDetail" class="view-section">
-      <div class="card" style="min-height: 100vh;">
+      <div class="card">
         <div class="card-header-styled">
           <h3>🔍 جزئیات کامل تراکنش</h3>
           <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); returnFromTransactionDetail()">← بازگشت</button>
@@ -773,14 +575,12 @@
     <a href="index.html" class="back-home">← بازگشت به صفحه اصلی سایت</a>
   </div>
 
-  <!-- مودال پیام سفارشی -->
+  <!-- مودال‌ها -->
   <div id="customMessageModal">
     <div class="modal-card-box">
       <h3>✉️ ارسال پیام دستی به مشتری</h3>
       <p style="font-size:0.9rem; color:#475569; margin-bottom:12px; font-weight:700;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
-      <div class="form-group">
-        <textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 120px;"></textarea>
-      </div>
+      <div class="form-group"><textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 120px;"></textarea></div>
       <div class="flex-row" style="justify-content: flex-end; gap:10px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeCustomMessageModal()">انصراف</button>
         <button class="btn btn-whatsapp btn-sm" onclick="playInteractionEffect(); sendCustomWhatsAppMessage()">📲 ارسال به واتساپ</button>
@@ -788,33 +588,26 @@
     </div>
   </div>
 
-  <!-- مودال تنظیمات و توکن مالک (خواندن و ذخیره مستقیم از دیتابیس) -->
   <div id="masterSettingsModal">
     <div class="modal-card-box">
       <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">اطلاعات ورود، توکن ربات تلگرام، چت‌آیدی و لینک سایت مستقیماً از دیتابیس خوانده و ذخیره می‌شوند.</p>
-      
+      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را ویرایش کنید.</p>
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توکن ربات..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
-      <div class="form-group"><label>لینک سایت / پورتال:</label><input type="url" id="masterSiteUrlInput" dir="ltr" placeholder="https://..."></div>
-      
       <div class="flex-row" style="justify-content: flex-end; gap:10px; margin-top: 16px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
-        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره در دیتابیس</button>
+        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
       </div>
     </div>
   </div>
 
-  <!-- مودال ثبت / ویرایش تراکنش -->
   <div id="transactionModal">
     <div class="modal-card-box">
       <h3 id="txModalTitle" style="margin-bottom:12px;">ثبت تراکنش جدید</h3>
       <input type="hidden" id="editTransId">
-
       <div class="form-group"><label>۱. تاریخ تراکنش:</label><input type="date" id="txDateInput"></div>
-
       <div class="form-group">
         <label>۲. جهت تراکنش (حتماً انتخاب کنید):</label>
         <div class="radio-group">
@@ -822,7 +615,6 @@
           <div class="btn-select-option" id="btnDirDebtor" onclick="selectTxDirection('بدهکار')">بدهکار (-)</div>
         </div>
       </div>
-
       <div class="form-group">
         <label>۳. واحد پول / ارز (حتماً انتخاب کنید):</label>
         <div class="radio-group">
@@ -832,16 +624,13 @@
           <div class="btn-select-option btn-curr-opt" id="btnCurrTom" onclick="selectTxCurrency('تومان')">تومان</div>
         </div>
       </div>
-
       <div class="form-group">
         <label>۴. مبلغ تراکنش:</label>
         <input type="number" inputmode="numeric" id="txAmountInput" placeholder="ورود عدد..." dir="ltr" style="text-align:right; font-weight:900; font-size:1.2rem; color:var(--accent-green-dark);">
       </div>
-
       <div class="form-group"><label>۵. توضیحات / شرح تراکنش (رسید انتقال):</label><textarea id="txDesc" placeholder="توضیحات تراکنش یا شرح حواله..."></textarea></div>
       <div class="form-group"><label>۶. نوع عملیات:</label><select id="txOpType"></select></div>
       <div class="form-group"><label>۷. تصویر رسید:</label><input type="file" id="txReceiptInput" accept="image/*"><input type="hidden" id="existingReceiptUrl"></div>
-
       <div class="flex-row" style="gap:10px; margin-top:16px;">
         <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="playInteractionEffect(); closeTransactionModal()">انصراف</button>
         <button class="btn btn-sm" style="flex:2;" onclick="playInteractionEffect(); submitTransaction()">💾 ثبت و ذخیره تراکنش</button>
@@ -849,21 +638,17 @@
     </div>
   </div>
 
-  <!-- مودال انتخاب حساب قابل جستجو جهت ثبت تراکنش از دفتر کل -->
   <div id="globalSelectAccountModal">
     <div class="modal-card-box">
       <div class="flex-row" style="justify-content:space-between; margin-bottom:10px;">
         <h3>👤 انتخاب حساب مشتری</h3>
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">✕ بستن</button>
       </div>
-      <div class="form-group">
-        <input type="text" id="globalAccountPickerInput" placeholder="🔍 جستجوی سریع نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()">
-      </div>
+      <div class="form-group"><input type="text" id="globalAccountPickerInput" placeholder="🔍 جستجوی سریع نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()"></div>
       <div id="globalAccountPickerList" style="max-height:55vh; overflow-y:auto;"></div>
     </div>
   </div>
 
-  <!-- مودال مدیریت انواع عملیات -->
   <div id="opTypeManagerModal">
     <div class="modal-card-box">
       <h3>⚙️ مدیریت انواع عملیات</h3>
@@ -883,35 +668,29 @@
     </div>
   </div>
 
-  <!-- مودال مدیریت ادمین‌های همکار -->
   <div id="adminManagerModal">
     <div class="modal-card-box">
       <h3 id="adminModalMainTitle">🛡️ ایجاد و مدیریت ادمین‌های همکار</h3>
       <input type="hidden" id="editAdminId">
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px; font-weight:700;">در این بخش می‌توانید برای همکاران ایمیل، رمز عبور، توکن ربات و چت‌آیدی اختصاصی بسازید.</p>
-      
+      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px; font-weight:700;">برای همکاران ایمیل، رمز عبور، توکن ربات و چت‌آیدی اختصاصی بسازید.</p>
       <div class="form-group"><label>نام ادمین / همکار:</label><input type="text" id="newAdminName" placeholder="نام ادمین..."></div>
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
-      <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="Bot Token..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="Chat ID..."></div>
-      
+      <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="123456:ABC-DEF..."></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="802655440"></div>
       <div class="flex-row" style="gap:10px; margin-bottom:14px;">
         <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
         <button class="btn btn-secondary btn-sm" style="flex:1; display:none;" id="adminCancelEditBtn" onclick="playInteractionEffect(); cancelEditAdmin()">انصراف</button>
       </div>
-
       <hr style="margin: 12px 0;">
       <label><b>لیست ادمین‌های همکار فعال در سیستم:</b></label>
       <div id="adminsListContainer" style="margin-top:8px;"></div>
-
       <div class="flex-row" style="justify-content: flex-end; margin-top:12px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeAdminManagerModal()">بستن</button>
       </div>
     </div>
   </div>
 
-  <!-- مودال حساب جدید / ویرایش حساب -->
   <div id="accountModal">
     <div class="modal-card-box">
       <h3 id="modalAccountTitle">حساب جدید</h3>
@@ -927,44 +706,17 @@
     </div>
   </div>
 
-  <!-- کدهای جاوااسکریپت برنامه (بدون مقادیر حساس هاردکدشده و خوانش مستقیم از دیتابیس) -->
   <script>
-    function resolveRuntimeConfig() {
-      const winCfg = (typeof window !== 'undefined' && window.__APP_CONFIG__) ? window.__APP_CONFIG__ : {};
-      const urlParams = new URLSearchParams(window.location.search);
+    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
+    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      const supabaseUrl = (
-        winCfg.SUPABASE_URL ||
-        urlParams.get('sb_url') ||
-        sessionStorage.getItem('runtime_sb_url') ||
-        ''
-      ).trim();
-
-      const supabaseKey = (
-        winCfg.SUPABASE_KEY ||
-        urlParams.get('sb_key') ||
-        sessionStorage.getItem('runtime_sb_key') ||
-        ''
-      ).trim();
-
-      if (supabaseUrl) sessionStorage.setItem('runtime_sb_url', supabaseUrl);
-      if (supabaseKey) sessionStorage.setItem('runtime_sb_key', supabaseKey);
-
-      return { supabaseUrl, supabaseKey };
-    }
-
-    const runtimeCfg = resolveRuntimeConfig();
-    const _supabase = (runtimeCfg.supabaseUrl && runtimeCfg.supabaseKey && typeof supabase !== 'undefined')
-      ? supabase.createClient(runtimeCfg.supabaseUrl, runtimeCfg.supabaseKey)
-      : null;
-
-    let masterConfigRecordId = null;
-    let MASTER_ADMIN_EMAIL = "";
-    let MASTER_ADMIN_PIN = "";
-    let MASTER_ADMIN_TOKEN = "";
-    let MASTER_ADMIN_CHATID = "";
-    let PORTAL_SITE_URL = "";
-    const MASTER_ADMIN_ID = "master_owner";
+    const OWNER_ALIAS_IDS = ["ADM-0001", "master_owner", "owner"];
+    let MASTER_ADMIN_ID = localStorage.getItem("masterAdminId") || "ADM-0001";
+    let MASTER_ADMIN_EMAIL = localStorage.getItem("masterEmail") || "mohammadsharifkarimi4@gmail.com";
+    let MASTER_ADMIN_PIN = localStorage.getItem("masterPin") || "77218741";
+    let MASTER_ADMIN_TOKEN = localStorage.getItem("masterToken") || "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
+    let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || "573434346";
 
     let allAccounts = [];
     let allTransactions = [];
@@ -978,6 +730,7 @@
     let selectedDirectionValue = null;
     let selectedCurrencyValue = null;
     let currentLoggedInAdmin = null;
+    let txDetailReturnView = 'viewAccountDetail';
 
     let selectedDebtorsMap = {};
     let selectedCreditorsMap = {};
@@ -993,27 +746,62 @@
       { id: 'ownerBrokerMenu', title: 'مدیریت کارگزاری‌ها و دفاتر همکار', icon: '🏢', type: 'broker', action: 'handleBrokerNavigation()' }
     ];
 
-    function loadDashboardMenuOrder() {
-      let savedOrder = sessionStorage.getItem("dashboardMenuOrder");
-      if (savedOrder) {
-        try {
-          let ids = JSON.parse(savedOrder);
-          let reordered = [];
-          ids.forEach(id => {
-            let found = dashboardMenuItems.find(m => m.id === id);
-            if (found) reordered.push(found);
-          });
-          dashboardMenuItems.forEach(m => {
-            if (!reordered.find(r => r.id === m.id)) reordered.push(m);
-          });
-          dashboardMenuItems = reordered;
-        } catch(e) {}
+    function getVal(obj, keys) {
+      if (!obj) return '';
+      for (let k of keys) {
+        if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
+        let lower = k.toLowerCase();
+        for (let prop in obj) {
+          if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") return obj[prop];
+        }
       }
+      return '';
+    }
+
+    function isOwnerUser(userObj = currentLoggedInAdmin) {
+      if (!userObj) return false;
+      let emailMatch = String(userObj.email || '').trim().toLowerCase() === String(MASTER_ADMIN_EMAIL || '').trim().toLowerCase();
+      let idMatch = OWNER_ALIAS_IDS.includes(String(userObj.id || '').trim()) || String(userObj.id || '').trim() === String(MASTER_ADMIN_ID).trim();
+      return emailMatch || idMatch;
+    }
+
+    function isRecordBelongsToOwner(creatorVal) {
+      let c = String(creatorVal || '').trim().toLowerCase();
+      let ownerIdsLower = [...OWNER_ALIAS_IDS, MASTER_ADMIN_ID].map(x => String(x || '').trim().toLowerCase());
+      return c === "" || c === "null" || c === "undefined" || c === "empty" || ownerIdsLower.includes(c);
+    }
+
+    function isRecordBelongsToCurrentUser(creatorVal) {
+      if (isOwnerUser()) return isRecordBelongsToOwner(creatorVal);
+      let c = String(creatorVal || '').trim();
+      let curId = String((currentLoggedInAdmin && currentLoggedInAdmin.id) || '').trim();
+      return c !== "" && c === curId;
+    }
+
+    function getActiveCreatorIdForNewRecord() {
+      if (isOwnerUser()) return MASTER_ADMIN_ID || "ADM-0001";
+      return String((currentLoggedInAdmin && currentLoggedInAdmin.id) || "").trim();
+    }
+
+    function loadDashboardMenuOrder() {
+      let savedOrder = localStorage.getItem("dashboardMenuOrder");
+      if (!savedOrder) return;
+      try {
+        let ids = JSON.parse(savedOrder);
+        let reordered = [];
+        ids.forEach(id => {
+          let found = dashboardMenuItems.find(m => m.id === id);
+          if (found) reordered.push(found);
+        });
+        dashboardMenuItems.forEach(m => {
+          if (!reordered.find(r => r.id === m.id)) reordered.push(m);
+        });
+        dashboardMenuItems = reordered;
+      } catch (e) {}
     }
 
     function saveDashboardMenuOrder() {
-      let ids = dashboardMenuItems.map(m => m.id);
-      sessionStorage.setItem("dashboardMenuOrder", JSON.stringify(ids));
+      localStorage.setItem("dashboardMenuOrder", JSON.stringify(dashboardMenuItems.map(m => m.id)));
     }
 
     function moveMenuItem(index, direction) {
@@ -1030,30 +818,14 @@
       const container = document.getElementById("dashboardMenuGrid");
       if (!container) return;
       container.innerHTML = "";
-
-      let isMaster = Boolean(
-        currentLoggedInAdmin &&
-        (
-          currentLoggedInAdmin.id === MASTER_ADMIN_ID ||
-          (MASTER_ADMIN_EMAIL && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase())
-        )
-      );
+      let isMaster = isOwnerUser();
 
       dashboardMenuItems.forEach((item, index) => {
-        if (item.type === 'superadmin' && !isMaster) return;
-        if (item.type === 'master' && !isMaster) return;
-
-        let onClickAttr = "";
-        if (item.type === 'standard') {
-          onClickAttr = `switchView('${item.id}')`;
-        } else {
-          onClickAttr = item.action;
-        }
-
-        let extraStyle = "";
-        if (item.type === 'master') {
-          extraStyle = "background: linear-gradient(135deg, rgba(254,243,199,0.95) 0%, rgba(253,230,138,0.95) 100%); border-color: #f59e0b;";
-        }
+        if ((item.type === 'superadmin' || item.type === 'master') && !isMaster) return;
+        let onClickAttr = item.type === 'standard' ? `switchView('${item.id}')` : item.action;
+        let extraStyle = item.type === 'master'
+          ? "background: linear-gradient(135deg, rgba(254,243,199,0.95) 0%, rgba(253,230,138,0.95) 100%); border-color: #f59e0b;"
+          : "";
 
         container.innerHTML += `
           <div class="floating-glass-btn" style="${extraStyle}">
@@ -1084,7 +856,7 @@
     }
 
     function playInteractionEffect() {
-      if (navigator.vibrate) { navigator.vibrate(25); }
+      if (navigator.vibrate) navigator.vibrate(25);
       try {
         let ctx = new (window.AudioContext || window.webkitAudioContext)();
         let osc = ctx.createOscillator();
@@ -1093,168 +865,63 @@
         osc.frequency.setValueAtTime(600, ctx.currentTime);
         gain.gain.setValueAtTime(0.02, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.05);
-      } catch(e) {}
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.05);
+      } catch (e) {}
     }
 
     function handleBrokerNavigation() {
-      try {
-        window.location.href = 'broker.html';
-      } catch(e) {
-        alert("صفحه مدیریت کارگزاری‌ها در این بخش در دسترس نیست.");
-      }
-    }
-
-    async function fetchMasterConfigFromDatabase() {
-      if (!_supabase) return null;
-      const candidateTables = ['owner_settings', 'system_settings', 'app_settings', 'master_config'];
-      for (const tbl of candidateTables) {
-        try {
-          const { data, error } = await _supabase.from(tbl).select('*').limit(1);
-          if (!error && Array.isArray(data) && data.length > 0) {
-            const row = data[0];
-            masterConfigRecordId = { table: tbl, id: row.id ?? row.ID ?? row.Id ?? null };
-            MASTER_ADMIN_EMAIL = String(getVal(row, ['MasterEmail', 'master_email', 'email', 'Email']) || '').trim().toLowerCase();
-            MASTER_ADMIN_PIN = String(getVal(row, ['MasterPin', 'master_pin', 'pin', 'Pin', 'password', 'Password']) || '').trim();
-            MASTER_ADMIN_TOKEN = String(getVal(row, ['MasterToken', 'master_token', 'bot_token', 'BotToken', 'token', 'Token']) || '').trim();
-            MASTER_ADMIN_CHATID = formatEnNum(String(getVal(row, ['MasterChatID', 'master_chat_id', 'chat_id', 'ChatID']) || '').trim());
-            PORTAL_SITE_URL = String(getVal(row, ['SiteUrl', 'site_url', 'PortalUrl', 'portal_url', 'url']) || '').trim();
-            return row;
-          }
-        } catch (e) {}
-      }
-      return null;
+      try { window.location.href = 'broker.html'; }
+      catch (e) { alert("صفحه مدیریت کارگزاری‌ها در این بخش در دسترس نیست."); }
     }
 
     async function sendTelegramMessage(botToken, chatId, messageText) {
-      if (!botToken || !chatId) return;
+      if (!botToken || !chatId || botToken === "EMPTY") return;
       try {
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-        await fetch(url, {
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: messageText,
-            parse_mode: 'Markdown'
-          })
+          body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: 'Markdown' })
         });
-      } catch (err) {
-        console.log("خطا در ارسال تلگرام:", err);
-      }
+      } catch (err) { console.log("خطا در ارسال تلگرام:", err); }
     }
 
     function getCurrentAdminTokenAndChat() {
-      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
-      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
+      if (!currentLoggedInAdmin || isOwnerUser()) {
         return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
       }
       let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
-      let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || '') : '';
-      let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || '') : '';
-      return { token, chatId };
+      return {
+        token: (found && getVal(found, ['BotToken', 'bottoken', 'Token', 'token'])) || MASTER_ADMIN_TOKEN,
+        chatId: (found && getVal(found, ['ChatID', 'chatid'])) || MASTER_ADMIN_CHATID
+      };
     }
 
     function getSystemGlobalBalanceText() {
       let totalsByCurrency = {};
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
-        if(!accId) return;
+        if (!accId) return;
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
         let accCurrencies = {};
-
         accTxs.forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-
-          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+          if (!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if (dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if (dir.includes("بدهکار")) accCurrencies[curr] -= amt;
         });
-
-        for(let curr in accCurrencies) {
+        for (let curr in accCurrencies) {
           let net = accCurrencies[curr];
-          if(net !== 0) {
-            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = 0;
-            totalsByCurrency[curr] += net;
+          if (net !== 0) {
+            totalsByCurrency[curr] = (totalsByCurrency[curr] || 0) + net;
           }
         }
       });
-
-      let parts = [];
-      for(let curr in totalsByCurrency) {
-        let val = totalsByCurrency[curr];
-        parts.push(`▫️ ${curr}: ${formatEnMoney(val)}`);
-      }
+      let parts = Object.keys(totalsByCurrency).map(curr => `▫️ ${curr}: ${formatEnMoney(totalsByCurrency[curr])}`);
       return parts.join('
 ') || 'صفر';
-    }
-
-    async function openMasterSettingsModal() {
-      await fetchMasterConfigFromDatabase();
-      document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
-      document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
-      document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
-      document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
-      document.getElementById("masterSiteUrlInput").value = PORTAL_SITE_URL;
-      document.getElementById("masterSettingsModal").style.display = "flex";
-      pushModalHistory("masterSettingsModal");
-    }
-
-    function closeMasterSettingsModal() {
-      document.getElementById("masterSettingsModal").style.display = "none";
-    }
-
-    async function saveMasterSettings() {
-      if (!_supabase) {
-        alert("اتصال دیتابیس برقرار نیست.");
-        return;
-      }
-      let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
-      let pin = document.getElementById("masterPinInput").value.trim();
-      let token = document.getElementById("masterTokenInput").value.trim();
-      let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
-      let siteUrl = document.getElementById("masterSiteUrlInput").value.trim();
-
-      if (!email || !pin) {
-        alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
-        return;
-      }
-
-      const targetTable = masterConfigRecordId ? masterConfigRecordId.table : 'owner_settings';
-      const payload = {
-        master_email: email,
-        master_pin: pin,
-        bot_token: token,
-        chat_id: chatId,
-        site_url: siteUrl
-      };
-
-      let saveRes;
-      if (masterConfigRecordId && masterConfigRecordId.id !== null) {
-        saveRes = await _supabase.from(targetTable).update(payload).eq('id', masterConfigRecordId.id);
-      } else {
-        saveRes = await _supabase.from(targetTable).insert([payload]);
-      }
-
-      if (saveRes.error) {
-        alert("خطا در ذخیره تنظیمات در دیتابیس: " + saveRes.error.message);
-        return;
-      }
-
-      MASTER_ADMIN_EMAIL = email;
-      MASTER_ADMIN_PIN = pin;
-      MASTER_ADMIN_TOKEN = token;
-      MASTER_ADMIN_CHATID = chatId;
-      PORTAL_SITE_URL = siteUrl;
-
-      await fetchMasterConfigFromDatabase();
-      closeMasterSettingsModal();
-      alert("✅ تنظیمات مالک مستقیماً در دیتابیس ذخیره شد!");
     }
 
     function getAccountLiveBalanceText(accId) {
@@ -1264,25 +931,84 @@
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
         let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-        if(!currs[curr]) currs[curr] = { credit: 0, debit: 0 };
-        if(dir.includes("بستانکار")) currs[curr].credit += amt;
-        if(dir.includes("بدهکار")) currs[curr].debit += amt;
+        if (!currs[curr]) currs[curr] = { credit: 0, debit: 0 };
+        if (dir.includes("بستانکار")) currs[curr].credit += amt;
+        if (dir.includes("بدهکار")) currs[curr].debit += amt;
       });
 
-      let textParts = [];
-      for(let curr in currs) {
+      let textParts = Object.keys(currs).map(curr => {
         let cred = currs[curr].credit;
         let deb = currs[curr].debit;
         let net = cred - deb;
-        let status = net > 0 ? `بستانکار (+): ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار (-): ${formatEnMoney(Math.abs(net))} ${curr}` : `تسویه کامل (0)`);
-        textParts.push(`🔹 *واحد ارز: ${curr}*
+        let status = net > 0
+          ? `بستانکار (+): ${formatEnMoney(Math.abs(net))} ${curr}`
+          : (net < 0 ? `بدهکار (-): ${formatEnMoney(Math.abs(net))} ${curr}` : `تسویه کامل (0)`);
+        return `🔹 *واحد ارز: ${curr}*
   ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}
   ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}
-  📌 *وضعیت مانده: ${status}*`);
-      }
+  📌 *وضعیت مانده: ${status}*`;
+      });
       return textParts.join('
 
 ') || 'تراکنشی ثبت نشده است';
+    }
+
+    function openMasterSettingsModal() {
+      document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
+      document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
+      document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
+      document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
+      document.getElementById("masterSettingsModal").style.display = "flex";
+      pushModalHistory("masterSettingsModal");
+    }
+
+    function closeMasterSettingsModal() {
+      document.getElementById("masterSettingsModal").style.display = "none";
+    }
+
+    async function saveMasterSettings() {
+      let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
+      let pin = formatEnNum(document.getElementById("masterPinInput").value.trim());
+      let token = document.getElementById("masterTokenInput").value.trim();
+      let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
+
+      if (!email || !pin) { alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد."); return; }
+
+      MASTER_ADMIN_EMAIL = email;
+      MASTER_ADMIN_PIN = pin;
+      MASTER_ADMIN_TOKEN = token;
+      MASTER_ADMIN_CHATID = chatId;
+
+      localStorage.setItem("masterEmail", email);
+      localStorage.setItem("masterPin", pin);
+      localStorage.setItem("masterToken", token);
+      localStorage.setItem("masterChatId", chatId);
+
+      try {
+        let ownerRow = allAdmins.find(a =>
+          OWNER_ALIAS_IDS.includes(String(getVal(a, ['AdminID', 'adminid']) || '').trim()) ||
+          String(getVal(a, ['Email', 'email']) || '').trim().toLowerCase() === email
+        );
+        if (ownerRow) {
+          let targetAdminId = String(getVal(ownerRow, ['AdminID', 'adminid']) || MASTER_ADMIN_ID);
+          MASTER_ADMIN_ID = targetAdminId;
+          localStorage.setItem("masterAdminId", targetAdminId);
+          await _supabase.from('admins').update({
+            Email: email,
+            Pin: pin,
+            BotToken: token || 'EMPTY',
+            ChatID: chatId
+          }).eq('AdminID', targetAdminId);
+        }
+      } catch (e) {}
+
+      if (currentLoggedInAdmin && isOwnerUser()) {
+        currentLoggedInAdmin.email = email;
+        localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+      }
+
+      closeMasterSettingsModal();
+      alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
     }
 
     function pushModalHistory(modalId) {
@@ -1291,106 +1017,107 @@
 
     window.onload = async function() {
       loadDashboardMenuOrder();
-      let savedSession = sessionStorage.getItem("adminAuthSessionData");
-      let savedArchive = sessionStorage.getItem("phoneArchiveData");
+      let savedSession = localStorage.getItem("adminAuthSessionData");
+      let savedArchive = localStorage.getItem("phoneArchiveData");
       if (savedArchive) {
-        try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {}
+        try { phoneArchiveList = JSON.parse(savedArchive); } catch (e) {}
       }
 
       if (savedSession) {
         try {
           currentLoggedInAdmin = JSON.parse(savedSession);
+          if (isOwnerUser(currentLoggedInAdmin)) {
+            currentLoggedInAdmin.id = MASTER_ADMIN_ID;
+            localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+          }
           document.getElementById("authOverlay").style.display = "none";
           document.getElementById("adminContainer").style.display = "block";
-          
-          await fetchMasterConfigFromDatabase();
           renderDashboardMenu();
           await loadDataFromSupabase(true);
-        } catch(e) {
-          sessionStorage.removeItem("adminAuthSessionData");
+        } catch (e) {
+          localStorage.removeItem("adminAuthSessionData");
         }
       }
 
       window.history.replaceState({ view: 'viewDashboard' }, '');
       window.onpopstate = function(event) {
-        if (document.getElementById('searchDrawerModal').style.display === 'flex') { closeSearchDrawer(); return; }
-        if (document.getElementById('opTypeManagerModal').style.display === 'flex') { closeOpTypeManagerModal(); return; }
-        if (document.getElementById('adminManagerModal').style.display === 'flex') { closeAdminManagerModal(); return; }
-        if (document.getElementById('masterSettingsModal').style.display === 'flex') { closeMasterSettingsModal(); return; }
-        if (document.getElementById('accountModal').style.display === 'flex') { closeAccountModal(); return; }
-        if (document.getElementById('transactionModal').style.display === 'flex') { closeTransactionModal(); return; }
-        if (document.getElementById('globalSelectAccountModal').style.display === 'flex') { closeGlobalSelectAccountModal(); return; }
-        if (document.getElementById('customMessageModal').style.display === 'flex') { closeCustomMessageModal(); return; }
-
-        if (event.state && event.state.view) {
-          switchView(event.state.view, false);
-        } else {
-          switchView('viewDashboard', false);
+        const modals = [
+          'searchDrawerModal', 'opTypeManagerModal', 'adminManagerModal',
+          'masterSettingsModal', 'accountModal', 'transactionModal',
+          'globalSelectAccountModal', 'customMessageModal'
+        ];
+        for (let mId of modals) {
+          let el = document.getElementById(mId);
+          if (el && el.style.display === 'flex') { el.style.display = 'none'; return; }
         }
+        switchView((event.state && event.state.view) || 'viewDashboard', false);
       };
     };
 
     async function handleLogin() {
-      if (!_supabase) {
-        alert("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد.");
-        return;
-      }
-
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-      const pin = document.getElementById("loginPin").value.trim();
+      const pin = formatEnNum(document.getElementById("loginPin").value.trim());
 
-      if (!email || !pin) {
-        alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
-        return;
-      }
-
-      await fetchMasterConfigFromDatabase();
-
-      if (MASTER_ADMIN_EMAIL && MASTER_ADMIN_PIN && email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
-        currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "مالک سیستم", email: MASTER_ADMIN_EMAIL };
-        sessionStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
-        
-        document.getElementById("authOverlay").style.display = "none";
-        document.getElementById("adminContainer").style.display = "block";
-        renderDashboardMenu();
-        await loadDataFromSupabase(true);
-        return;
-      }
+      if (!email || !pin) { alert("لطفاً ایمیل و رمز عبور را وارد کنید."); return; }
 
       try {
         const { data: adminsData } = await _supabase.from('admins').select('*');
-        if (adminsData) {
-          allAdmins = adminsData;
-          let foundAdmin = adminsData.find(adm => {
-            let admEmail = String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase();
-            let admPin = String(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '').trim();
-            return admEmail === email && admPin === pin;
-          });
+        if (adminsData) allAdmins = adminsData;
 
-          if (foundAdmin) {
-            let adminId = String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || foundAdmin.id);
-            let adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'همکار');
-
-            currentLoggedInAdmin = { id: adminId, name: adminName, email: email };
-            sessionStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
-
-            document.getElementById("authOverlay").style.display = "none";
-            document.getElementById("adminContainer").style.display = "block";
-            renderDashboardMenu();
-            await loadDataFromSupabase(true);
-            return;
-          }
+        let dbOwner = allAdmins.find(adm =>
+          OWNER_ALIAS_IDS.includes(String(getVal(adm, ['AdminID', 'adminid']) || '').trim()) ||
+          String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase()
+        );
+        if (dbOwner) {
+          MASTER_ADMIN_ID = String(getVal(dbOwner, ['AdminID', 'adminid']) || MASTER_ADMIN_ID);
+          MASTER_ADMIN_EMAIL = String(getVal(dbOwner, ['Email', 'email']) || MASTER_ADMIN_EMAIL).trim().toLowerCase();
+          MASTER_ADMIN_PIN = formatEnNum(getVal(dbOwner, ['Pin', 'pin', 'Password', 'password']) || MASTER_ADMIN_PIN).trim();
+          let dbToken = String(getVal(dbOwner, ['BotToken', 'bottoken', 'Token', 'token']) || '').trim();
+          let dbChatId = formatEnNum(getVal(dbOwner, ['ChatID', 'chatid']) || '').trim();
+          if (dbToken && dbToken !== "EMPTY") MASTER_ADMIN_TOKEN = dbToken;
+          if (dbChatId) MASTER_ADMIN_CHATID = dbChatId;
+          localStorage.setItem("masterAdminId", MASTER_ADMIN_ID);
+          localStorage.setItem("masterEmail", MASTER_ADMIN_EMAIL);
+          localStorage.setItem("masterPin", MASTER_ADMIN_PIN);
         }
-      } catch(e) {
-        console.log("خطا در بررسی ادمین‌ها:", e);
-      }
+
+        if (email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
+          let ownerName = (dbOwner && getVal(dbOwner, ['Name', 'name'])) || "محمد شریف کریمی";
+          currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: ownerName, email: MASTER_ADMIN_EMAIL, role: 'owner' };
+          localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+          document.getElementById("authOverlay").style.display = "none";
+          document.getElementById("adminContainer").style.display = "block";
+          renderDashboardMenu();
+          await loadDataFromSupabase(true);
+          return;
+        }
+
+        let foundAdmin = allAdmins.find(adm => {
+          let admEmail = String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase();
+          let admPin = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '').trim();
+          return admEmail === email && admPin === pin;
+        });
+
+        if (foundAdmin) {
+          let adminId = String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || foundAdmin.id);
+          let adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'همکار');
+          let role = OWNER_ALIAS_IDS.includes(adminId) ? 'owner' : 'admin';
+          currentLoggedInAdmin = { id: adminId, name: adminName, email: email, role: role };
+          localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+          document.getElementById("authOverlay").style.display = "none";
+          document.getElementById("adminContainer").style.display = "block";
+          renderDashboardMenu();
+          await loadDataFromSupabase(true);
+          return;
+        }
+      } catch (e) { console.log("خطا در بررسی ادمین‌ها:", e); }
 
       alert("ایمیل یا رمز عبور اشتباه است!");
     }
 
-    function handleLogout() { 
-      sessionStorage.removeItem("adminAuthSessionData"); 
-      location.reload(); 
+    function handleLogout() {
+      localStorage.removeItem("adminAuthSessionData");
+      location.reload();
     }
 
     function switchView(viewId, pushHistory = true) {
@@ -1411,33 +1138,26 @@
       document.getElementById("drawerSearchInput").value = "";
       document.getElementById("drawerSearchResults").innerHTML = "";
     }
-    function closeSearchDrawerOnBack(e) { if(e.target.id === 'searchDrawerModal') closeSearchDrawer(); }
+    function closeSearchDrawerOnBack(e) { if (e.target.id === 'searchDrawerModal') closeSearchDrawer(); }
 
     function handleDrawerSearch() {
       playInteractionEffect();
-      const input = document.getElementById("drawerSearchInput");
-      const q = formatEnNum(input.value.trim().toLowerCase());
+      const q = formatEnNum(document.getElementById("drawerSearchInput").value.trim().toLowerCase());
       const container = document.getElementById("drawerSearchResults");
       container.innerHTML = "";
-
-      if (q.length === 0) return;
+      if (!q) return;
 
       let matchedTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])).toLowerCase() === q);
-      let filtered = [];
+      let filtered = matchedTx
+        ? allAccounts.filter(acc => String(getVal(acc, ['AccountID', 'accountid'])) === String(getVal(matchedTx, ['AccountID', 'accountid'])))
+        : allAccounts.filter(acc => {
+            let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
+            let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
+            let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
+            return name.includes(q) || phone.includes(q) || accId.includes(q);
+          });
 
-      if (matchedTx) {
-        let matchedAccId = getVal(matchedTx, ['AccountID', 'accountid']);
-        filtered = allAccounts.filter(acc => String(getVal(acc, ['AccountID', 'accountid'])) === String(matchedAccId));
-      } else {
-        filtered = allAccounts.filter(acc => {
-          let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
-          let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
-          let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
-          return name.includes(q) || phone.includes(q) || accId.includes(q);
-        });
-      }
-
-      if (filtered.length === 0) {
+      if (!filtered.length) {
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">نتیجه‌ای یافت نشد</div>`;
         return;
       }
@@ -1447,16 +1167,9 @@
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let photoUrl = getVal(acc, ['Photo', 'photo']);
         let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:36px; height:36px; margin-left:8px;">` : '';
-
         container.innerHTML += `
-          <div class="account-item-card" style="padding:10px 12px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName}')">
-            <div class="flex-row">
-              ${photoHtml}
-              <div>
-                <span style="font-weight:900; font-size:1rem;">${accName}</span>
-                <span style="font-size:0.85rem; color:#64748b; margin-right:8px;">کُد: ${accId}</span>
-              </div>
-            </div>
+          <div class="account-item-card" style="padding:10px 12px;" onclick="closeSearchDrawer(); selectAccount('${accId}', '${accName.replace(/'/g, "'")}')">
+            <div class="flex-row">${photoHtml}<div><span style="font-weight:900; font-size:1rem;">${accName}</span><span style="font-size:0.85rem; color:#64748b; margin-right:8px;">کُد: ${accId}</span></div></div>
           </div>
         `;
       });
@@ -1478,7 +1191,6 @@
     }
 
     async function loadDataFromSupabase(showLoader = true) {
-      if (!_supabase) return;
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
         indicator.innerText = "🔄 در حال دریافت اطلاعات...";
@@ -1486,8 +1198,6 @@
       }
 
       try {
-        await fetchMasterConfigFromDatabase();
-
         const [accRes, txRes, opRes, admRes] = await Promise.all([
           _supabase.from('accounts').select('*'),
           _supabase.from('transactions').select('*'),
@@ -1497,44 +1207,18 @@
 
         if (admRes.data) allAdmins = admRes.data;
 
-        let isMaster = Boolean(
-          currentLoggedInAdmin &&
-          (
-            currentLoggedInAdmin.id === MASTER_ADMIN_ID ||
-            (MASTER_ADMIN_EMAIL && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase())
-          )
-        );
-        let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
-
         let rawAccounts = accRes.data || [];
-        
-        if (isMaster) {
-          allAccounts = rawAccounts.filter(acc => {
-            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner" || creator === "null";
-          });
-        } else {
-          allAccounts = rawAccounts.filter(acc => {
-            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-            return creator === String(currentAdminId);
-          });
-        }
+        allAccounts = rawAccounts.filter(acc => isRecordBelongsToCurrentUser(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid'])));
 
         updatePhoneDirectoryArchive();
 
         let rawTransactions = txRes.data || [];
         let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
-        
-        allTransactions = rawTransactions.filter(tx => {
-          let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
-          return authorizedAccountIds.includes(txAccId);
-        });
+        allTransactions = rawTransactions.filter(tx => authorizedAccountIds.includes(String(getVal(tx, ['AccountID', 'accountid']))));
 
         allTransactions.sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0;
-          if (isNaN(db)) db = 0;
+          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime() || 0;
+          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime() || 0;
           return db - da;
         });
 
@@ -1554,8 +1238,6 @@
       finally { if (indicator) indicator.style.display = "none"; }
     }
 
-    let txDetailReturnView = 'viewAccountDetail';
-
     function returnFromTransactionDetail() {
       if (txDetailReturnView === 'viewAllTransactionsPage') {
         switchView('viewAllTransactionsPage');
@@ -1565,30 +1247,23 @@
       }
     }
 
-    function populateGlobalLedgerAccountFilterOptions() {
-      renderGlobalLedgerAccountDropdownList("");
-    }
+    function populateGlobalLedgerAccountFilterOptions() { renderGlobalLedgerAccountDropdownList(""); }
 
     function openGlobalLedgerAccountDropdown() {
-      const inputEl = document.getElementById("globalLedgerAccountSearchInput");
-      const q = inputEl ? inputEl.value.trim() : "";
+      const q = (document.getElementById("globalLedgerAccountSearchInput").value || "").trim();
       renderGlobalLedgerAccountDropdownList(q);
-      const dd = document.getElementById("globalLedgerAccountDropdown");
-      if (dd) dd.style.display = "block";
+      document.getElementById("globalLedgerAccountDropdown").style.display = "block";
     }
 
     function filterGlobalLedgerAccountDropdown() {
-      const inputEl = document.getElementById("globalLedgerAccountSearchInput");
-      const clearBtn = document.getElementById("clearGlobalLedgerAccBtn");
-      const q = inputEl ? inputEl.value.trim() : "";
-      if (clearBtn) clearBtn.style.display = q.length > 0 ? "block" : "none";
+      const q = (document.getElementById("globalLedgerAccountSearchInput").value || "").trim();
+      document.getElementById("clearGlobalLedgerAccBtn").style.display = q.length > 0 ? "block" : "none";
       if (!q) {
         document.getElementById("globalLedgerAccountFilter").value = "all";
         renderGlobalTransactionsList();
       }
       renderGlobalLedgerAccountDropdownList(q);
-      const dd = document.getElementById("globalLedgerAccountDropdown");
-      if (dd) dd.style.display = "block";
+      document.getElementById("globalLedgerAccountDropdown").style.display = "block";
     }
 
     function renderGlobalLedgerAccountDropdownList(rawQuery) {
@@ -1612,7 +1287,7 @@
         return name.includes(q) || phone.includes(q) || accId.includes(q);
       });
 
-      if (matched.length === 0) {
+      if (!matched.length) {
         html += `<div style="padding:12px; text-align:center; color:#64748b; font-size:0.84rem;">حسابی با این مشخصات یافت نشد</div>`;
       } else {
         matched.forEach(acc => {
@@ -1621,7 +1296,7 @@
           let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
           let isSelected = String(currentSelected) === String(accId);
           html += `
-            <div class="ledger-picker-item ${isSelected ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('${accId}', '${accName.replace(/'/g, "\'")}')">
+            <div class="ledger-picker-item ${isSelected ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('${accId}', '${accName.replace(/'/g, "'")}')">
               <div>
                 <div style="font-weight:900; color:#0f172a; font-size:0.86rem;">${accName}</div>
                 <div style="font-size:0.74rem; color:#475569;" dir="ltr">📞 ${accPhone}</div>
@@ -1635,32 +1310,19 @@
     }
 
     function selectGlobalLedgerAccount(accId, accName) {
-      const hiddenEl = document.getElementById("globalLedgerAccountFilter");
-      const inputEl = document.getElementById("globalLedgerAccountSearchInput");
-      const clearBtn = document.getElementById("clearGlobalLedgerAccBtn");
-      const dd = document.getElementById("globalLedgerAccountDropdown");
-
-      if (hiddenEl) hiddenEl.value = accId;
-      if (inputEl) {
-        inputEl.value = accId === "all" ? "" : `${accName} (${accId})`;
-      }
-      if (clearBtn) {
-        clearBtn.style.display = accId === "all" ? "none" : "block";
-      }
-      if (dd) dd.style.display = "none";
+      document.getElementById("globalLedgerAccountFilter").value = accId;
+      document.getElementById("globalLedgerAccountSearchInput").value = accId === "all" ? "" : `${accName} (${accId})`;
+      document.getElementById("clearGlobalLedgerAccBtn").style.display = accId === "all" ? "none" : "block";
+      document.getElementById("globalLedgerAccountDropdown").style.display = "none";
       renderGlobalTransactionsList();
     }
 
-    function clearGlobalLedgerAccountFilter() {
-      selectGlobalLedgerAccount("all", "");
-    }
+    function clearGlobalLedgerAccountFilter() { selectGlobalLedgerAccount("all", ""); }
 
     document.addEventListener("click", function(e) {
       const wrapper = document.getElementById("globalLedgerPickerWrapper");
       const dd = document.getElementById("globalLedgerAccountDropdown");
-      if (wrapper && dd && !wrapper.contains(e.target)) {
-        dd.style.display = "none";
-      }
+      if (wrapper && dd && !wrapper.contains(e.target)) dd.style.display = "none";
     });
 
     function updatePhoneDirectoryArchive() {
@@ -1669,43 +1331,20 @@
         let name = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
         let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-
         if (phone) {
           let existing = phoneArchiveList.find(p => p.accId === accId || p.phone === phone);
           if (existing) {
-            existing.name = name;
-            existing.phone = phone;
-            existing.isDeleted = false;
-            existing.creator = creator;
+            existing.name = name; existing.phone = phone; existing.isDeleted = false; existing.creator = creator;
           } else {
-            phoneArchiveList.push({
-              accId: accId,
-              name: name,
-              phone: phone,
-              isDeleted: false,
-              creator: creator
-            });
+            phoneArchiveList.push({ accId, name, phone, isDeleted: false, creator });
           }
         }
       });
-
-      sessionStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
-    }
-
-    function getVal(obj, keys) {
-      if(!obj) return '';
-      for (let k of keys) {
-        if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
-        let lower = k.toLowerCase();
-        for (let prop in obj) {
-          if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") return obj[prop];
-        }
-      }
-      return '';
+      localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
     }
 
     async function uploadFileToSupabase(file, bucketName) {
-      if (!file || !_supabase) return null;
+      if (!file) return null;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       const { error } = await _supabase.storage.from(bucketName).upload(fileName, file);
@@ -1716,14 +1355,14 @@
 
     function populateOpTypeSelect() {
       const select = document.getElementById("txOpType");
-      if(!select) return;
+      if (!select) return;
       select.innerHTML = "";
       customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
     }
 
-    function openOpTypeManagerModal() { 
-      renderOpTypesList(); 
-      document.getElementById("opTypeManagerModal").style.display = "flex"; 
+    function openOpTypeManagerModal() {
+      renderOpTypesList();
+      document.getElementById("opTypeManagerModal").style.display = "flex";
       pushModalHistory("opTypeManagerModal");
     }
     function closeOpTypeManagerModal() { document.getElementById("opTypeManagerModal").style.display = "none"; }
@@ -1731,7 +1370,7 @@
     function renderOpTypesList() {
       const container = document.getElementById("opTypesListContainer");
       container.innerHTML = "";
-      customOpTypes.forEach((op) => {
+      customOpTypes.forEach(op => {
         container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op}')">حذف</button></div>`;
       });
     }
@@ -1739,38 +1378,31 @@
     async function addNewOperationType() {
       const input = document.getElementById("newOpTypeInput");
       const title = input.value.trim();
-      if (!title || !_supabase) return;
+      if (!title) return;
       if (!customOpTypes.includes(title)) {
         customOpTypes.push(title);
-        populateOpTypeSelect();
-        renderOpTypesList();
-        input.value = "";
-        await _supabase.from('operation_types').insert([{ title: title }]);
+        populateOpTypeSelect(); renderOpTypesList(); input.value = "";
+        await _supabase.from('operation_types').insert([{ title }]);
       }
     }
 
     async function removeOperationType(title) {
-      if (!_supabase) return;
       customOpTypes = customOpTypes.filter(o => o !== title);
-      populateOpTypeSelect();
-      renderOpTypesList();
+      populateOpTypeSelect(); renderOpTypesList();
       await _supabase.from('operation_types').delete().eq('title', title);
     }
 
     function openAdminManagerModal() {
-      cancelEditAdmin();
-      renderAdminsList();
+      cancelEditAdmin(); renderAdminsList();
       document.getElementById("adminManagerModal").style.display = "flex";
       pushModalHistory("adminManagerModal");
     }
-    function closeAdminManagerModal() {
-      document.getElementById("adminManagerModal").style.display = "none";
-    }
+    function closeAdminManagerModal() { document.getElementById("adminManagerModal").style.display = "none"; }
 
     function renderAdminsList() {
       const container = document.getElementById("adminsListContainer");
       container.innerHTML = "";
-      if (allAdmins.length === 0) {
+      if (!allAdmins.length) {
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">هیچ ادمین همکاری تعریف نشده است</div>`;
         return;
       }
@@ -1780,11 +1412,10 @@
         let admEmail = String(getVal(adm, ['Email', 'email']) || '');
         let admPin = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '');
         let admChatId = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || '');
-
         container.innerHTML += `
           <div class="op-badge-item" style="background:rgba(248,250,252,0.95); border:1px solid rgba(203,213,225,0.8); margin-bottom:10px; align-items:flex-start;">
             <div>
-              <b style="color:var(--primary-dark); font-size:1rem;">${admName}</b><br>
+              <b style="color:var(--primary-dark); font-size:1rem;">${admName}</b> <span style="font-size:0.75rem; color:#64748b;">(${admId})</span><br>
               <span style="font-size:0.85rem; color:#475569;">ایمیل: ${admEmail} | رمز: ${admPin}</span><br>
               <span style="font-size:0.8rem; color:#0284c7;">چت‌آیدی: ${admChatId || 'ثبت نشده'}</span>
             </div>
@@ -1807,7 +1438,6 @@
       document.getElementById("newAdminPin").value = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || "");
       document.getElementById("newAdminBotToken").value = getVal(adm, ['BotToken', 'bottoken', 'Token', 'token']) || "";
       document.getElementById("newAdminChatId").value = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || "");
-      
       document.getElementById("adminSaveBtn").innerText = "💾 ذخیره تغییرات ادمین";
       document.getElementById("adminCancelEditBtn").style.display = "inline-flex";
     }
@@ -1815,38 +1445,23 @@
     function cancelEditAdmin() {
       document.getElementById("editAdminId").value = "";
       document.getElementById("adminModalMainTitle").innerText = "🛡️ ایجاد و مدیریت ادمین‌های همکار";
-      document.getElementById("newAdminName").value = "";
-      document.getElementById("newAdminEmail").value = "";
-      document.getElementById("newAdminPin").value = "";
-      document.getElementById("newAdminBotToken").value = "";
-      document.getElementById("newAdminChatId").value = "";
+      ["newAdminName", "newAdminEmail", "newAdminPin", "newAdminBotToken", "newAdminChatId"].forEach(id => document.getElementById(id).value = "");
       document.getElementById("adminSaveBtn").innerText = "➕ ثبت و ایجاد ادمین جدید";
       document.getElementById("adminCancelEditBtn").style.display = "none";
     }
 
     async function saveAdminAccount() {
-      if (!_supabase) return;
       let editId = document.getElementById("editAdminId").value;
       let name = document.getElementById("newAdminName").value.trim();
       let email = document.getElementById("newAdminEmail").value.trim().toLowerCase();
       let pin = formatEnNum(document.getElementById("newAdminPin").value.trim());
-      let botToken = document.getElementById("newAdminBotToken").value.trim();
+      let botToken = document.getElementById("newAdminBotToken").value.trim() || "EMPTY";
       let chatId = formatEnNum(document.getElementById("newAdminChatId").value.trim());
 
-      if (!name || !email || !pin) {
-        alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید.");
-        return;
-      }
+      if (!name || !email || !pin) { alert("لطفاً نام، ایمیل و رمز عبور ادمین را کامل وارد کنید."); return; }
 
-      let adminId = editId ? editId : ("ADM-" + Math.floor(1000 + Math.random() * 9000));
-      const payload = {
-        AdminID: adminId,
-        Name: name,
-        Email: email,
-        Pin: pin,
-        BotToken: botToken,
-        ChatID: chatId
-      };
+      let adminId = editId || ("ADM-" + Math.floor(1000 + Math.random() * 9000));
+      const payload = { AdminID: adminId, Name: name, Email: email, Pin: pin, BotToken: botToken, ChatID: chatId };
 
       if (editId) {
         const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
@@ -1856,23 +1471,17 @@
         const { error } = await _supabase.from('admins').insert([payload]);
         if (error) { alert("خطا در ایجاد ادمین: " + error.message); return; }
         alert("✅ ادمین جدید با موفقیت ایجاد شد!");
-
-        if (botToken && chatId) {
+        if (botToken && botToken !== "EMPTY" && chatId) {
           let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨
 
-` +
-                           `سلام *${name}* عزیز،
-` +
-                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.
+سلام *${name}* عزیز،
+پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.
 
-` +
-                           `📧 ایمیل ورود: \`${email}\`
-` +
-                           `🔑 رمز عبور: \`${pin}\`` +
-                           (PORTAL_SITE_URL ? `
+📧 ایمیل ورود: \`${email}\`
+🔑 رمز عبور: \`${pin}\`
 
 🌐 لینک ورود به سایت:
-${PORTAL_SITE_URL}` : '');
+https://karimi-trust-app.vercel.app/`;
           sendTelegramMessage(botToken, chatId, welcomeMsg);
         }
       }
@@ -1884,7 +1493,6 @@ ${PORTAL_SITE_URL}` : '');
     }
 
     async function deleteAdminAccount(admId) {
-      if (!_supabase) return;
       if (!confirm("آیا از حذف دسترسی این ادمین مطمئن هستید؟")) return;
       await _supabase.from('admins').delete().eq('AdminID', admId);
       const { data } = await _supabase.from('admins').select('*');
@@ -1896,83 +1504,57 @@ ${PORTAL_SITE_URL}` : '');
       let totalsByCurrency = {};
       allAccounts.forEach(acc => {
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
-        if(!accId) return;
+        if (!accId) return;
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
         let accCurrencies = {};
-
         accTxs.forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-
-          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+          if (!accCurrencies[curr]) accCurrencies[curr] = 0;
+          if (dir.includes("بستانکار")) accCurrencies[curr] += amt;
+          if (dir.includes("بدهکار")) accCurrencies[curr] -= amt;
         });
-
-        for(let curr in accCurrencies) {
+        for (let curr in accCurrencies) {
           let net = accCurrencies[curr];
-          if(net !== 0) {
-            if(!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
-            if(net > 0) totalsByCurrency[curr].debSum += net;
+          if (net !== 0) {
+            if (!totalsByCurrency[curr]) totalsByCurrency[curr] = { credSum: 0, debSum: 0 };
+            if (net > 0) totalsByCurrency[curr].debSum += net;
             else totalsByCurrency[curr].credSum += Math.abs(net);
           }
         }
       });
 
-      let gridHtml = '';
-      for (let curr in totalsByCurrency) {
+      let gridHtml = Object.keys(totalsByCurrency).map(curr => {
         let cred = totalsByCurrency[curr].credSum;
         let deb = totalsByCurrency[curr].debSum;
         let finalNet = cred - deb;
         let isCreditor = finalNet > 0;
         let bgStyle = isCreditor ? "background:rgba(240,253,244,0.9); color:#15803d;" : "background:rgba(254,242,242,0.9); color:#dc2626;";
         let label = isCreditor ? `بستانکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}` : `بدهکار: ${formatEnMoney(Math.abs(finalNet))} ${curr}`;
-
-        gridHtml += `
+        return `
           <div class="stat-card">
             <div class="stat-row"><span style="font-weight:900;">ارز: ${curr}</span><span style="font-weight:900;">مانده خالص: <b>${formatEnMoney(finalNet)}</b></span></div>
             <div class="stat-row" style="font-size:0.85rem; color:#475569;">کل بستانکاری: ${formatEnMoney(cred)} | کل بدهکاری: ${formatEnMoney(deb)}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
-      }
+      }).join('');
+
       document.getElementById("globalStatsGrid").innerHTML = gridHtml || '<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب دارای مانده فعالی وجود ندارد</div>';
     }
 
-    function openPhoneDirectoryPage() {
-      switchView('viewPhoneDirectoryPage');
-      renderPhoneDirectoryList(phoneArchiveList);
-    }
+    function openPhoneDirectoryPage() { switchView('viewPhoneDirectoryPage'); renderPhoneDirectoryList(phoneArchiveList); }
 
     function renderPhoneDirectoryList(list) {
       const container = document.getElementById("phoneDirectoryContainer");
       const summaryBox = document.getElementById("phoneDirectorySummary");
       container.innerHTML = "";
 
-      let isMaster = Boolean(
-        currentLoggedInAdmin &&
-        (
-          currentLoggedInAdmin.id === MASTER_ADMIN_ID ||
-          (MASTER_ADMIN_EMAIL && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase())
-        )
-      );
-      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
+      let filteredList = list.filter(item => isRecordBelongsToCurrentUser(item.creator));
+      summaryBox.innerHTML = `<div class="stat-row"><span><b>تعداد کل شماره‌های ثبت‌شده:</b></span><b style="color:var(--info-color); font-size:1.05rem;">${formatEnNum(filteredList.length)} شماره</b></div>`;
 
-      let filteredList = list.filter(item => {
-        if (isMaster) return true;
-        let creator = String(item.creator || '').trim();
-        return creator === String(currentAdminId);
-      });
-
-      summaryBox.innerHTML = `
-        <div class="stat-row">
-          <span><b>تعداد کل شماره‌های ثبت‌شده:</b></span>
-          <b style="color:var(--info-color); font-size:1.05rem;">${formatEnNum(filteredList.length)} شماره</b>
-        </div>
-      `;
-
-      if (filteredList.length === 0) {
+      if (!filteredList.length) {
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">هیچ شماره‌ای در بانک اطلاعاتی موجود نیست</div>`;
         return;
       }
@@ -1980,7 +1562,6 @@ ${PORTAL_SITE_URL}` : '');
       filteredList.forEach(item => {
         let cleanPhone = item.phone.replace(/\D/g, '');
         let liveAcc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(item.accId));
-        
         let statusHtml = '';
         let balanceBadges = '';
 
@@ -1991,18 +1572,16 @@ ${PORTAL_SITE_URL}` : '');
             let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
             let dir = String(getVal(tx, ['Direction', 'direction']) || '');
             let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-            if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-            if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-            if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+            if (!accCurrencies[curr]) accCurrencies[curr] = 0;
+            if (dir.includes("بستانکار")) accCurrencies[curr] += amt;
+            if (dir.includes("بدهکار")) accCurrencies[curr] -= amt;
           });
-
-          for(let curr in accCurrencies) {
+          for (let curr in accCurrencies) {
             let val = accCurrencies[curr];
             let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
             let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
             balanceBadges += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
           }
-
           statusHtml = `<span style="color:#059669; font-weight:900; font-size:0.85rem;">🟢 حساب فعال (کُد: ${formatEnNum(item.accId)})</span>`;
         } else {
           statusHtml = `<span class="deleted-account-badge">❌ حساب این مشتری حذف شده است</span>`;
@@ -2011,15 +1590,10 @@ ${PORTAL_SITE_URL}` : '');
 
         container.innerHTML += `
           <div class="phone-item-card">
-            <div class="stat-row">
-              <span style="font-weight:900; font-size:1.05rem; color:var(--primary-dark);">${item.name}</span>
-              ${statusHtml}
-            </div>
+            <div class="stat-row"><span style="font-weight:900; font-size:1.05rem; color:var(--primary-dark);">${item.name}</span>${statusHtml}</div>
             <div class="stat-row" style="margin-top:4px;">
               <span style="font-weight:900; color:#0284c7; font-size:1rem;" dir="ltr">${item.phone}</span>
-              <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">
-                📲 واتساپ (چت خالی)
-              </button>
+              <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openWhatsAppBlank('${cleanPhone}')">📲 واتساپ (چت خالی)</button>
             </div>
             <div style="margin-top:6px;">${balanceBadges || '<span style="font-size:0.85rem; color:#64748b;">تسویه حساب کامل</span>'}</div>
           </div>
@@ -2034,23 +1608,12 @@ ${PORTAL_SITE_URL}` : '');
 
     function filterPhonesDirectory() {
       playInteractionEffect();
-      const inputEl = document.getElementById("searchPhoneInput");
-      const clearBtn = document.getElementById("clearPhoneSearchBtn");
-      const q = formatEnNum(inputEl.value.trim().toLowerCase());
-
-      if (q.length > 0) clearBtn.style.display = "block";
-      else clearBtn.style.display = "none";
-
+      const q = formatEnNum(document.getElementById("searchPhoneInput").value.trim().toLowerCase());
+      document.getElementById("clearPhoneSearchBtn").style.display = q.length > 0 ? "block" : "none";
       if (!q) { renderPhoneDirectoryList(phoneArchiveList); return; }
-
-      const filtered = phoneArchiveList.filter(item => {
-        let name = item.name.toLowerCase();
-        let phone = item.phone.toLowerCase();
-        let accId = item.accId.toLowerCase();
-        return name.includes(q) || phone.includes(q) || accId.includes(q);
-      });
-
-      renderPhoneDirectoryList(filtered);
+      renderPhoneDirectoryList(phoneArchiveList.filter(item =>
+        item.name.toLowerCase().includes(q) || item.phone.toLowerCase().includes(q) || item.accId.toLowerCase().includes(q)
+      ));
     }
 
     function clearPhoneSearch() {
@@ -2070,37 +1633,26 @@ ${PORTAL_SITE_URL}` : '');
       setTimeout(() => document.getElementById("globalAccountPickerInput").focus(), 100);
     }
 
-    function closeGlobalSelectAccountModal() {
-      document.getElementById("globalSelectAccountModal").style.display = "none";
-    }
+    function closeGlobalSelectAccountModal() { document.getElementById("globalSelectAccountModal").style.display = "none"; }
 
     function renderGlobalAccountPickerList() {
       const q = formatEnNum((document.getElementById("globalAccountPickerInput").value || "").trim().toLowerCase());
       const listEl = document.getElementById("globalAccountPickerList");
       listEl.innerHTML = "";
-
       const filtered = allAccounts.filter(acc => {
         let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
         let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
         let id = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
         return !q || name.includes(q) || phone.includes(q) || id.includes(q);
       });
-
-      if (filtered.length === 0) {
-        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding:14px;">حسابی یافت نشد</div>`;
-        return;
-      }
-
+      if (!filtered.length) { listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding:14px;">حسابی یافت نشد</div>`; return; }
       filtered.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
         listEl.innerHTML += `
-          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
-            <div class="stat-row" style="margin:0;">
-              <span style="font-weight:900; color:var(--primary-dark);">${accName}</span>
-              <span style="font-size:0.85rem; color:#475569;">کُد: ${accId} | ${accPhone}</span>
-            </div>
+          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "'")}')">
+            <div class="stat-row" style="margin:0;"><span style="font-weight:900; color:var(--primary-dark);">${accName}</span><span style="font-size:0.85rem; color:#475569;">کُد: ${accId} | ${accPhone}</span></div>
           </div>
         `;
       });
@@ -2108,8 +1660,7 @@ ${PORTAL_SITE_URL}` : '');
 
     function selectAccountAndOpenNewTx(accId, accName) {
       closeGlobalSelectAccountModal();
-      currentAccountId = accId;
-      currentAccountName = accName;
+      currentAccountId = accId; currentAccountName = accName;
       openAddTransactionModal();
     }
 
@@ -2122,33 +1673,18 @@ ${PORTAL_SITE_URL}` : '');
 
     function openTxFromGlobalLedger(txId, accId, accName) {
       txDetailReturnView = 'viewAllTransactionsPage';
-      currentAccountId = accId;
-      currentAccountName = accName;
+      currentAccountId = accId; currentAccountName = accName;
       selectTransaction(txId);
     }
 
     function renderGlobalTransactionsList() {
       const container = document.getElementById("globalTransactionsListContainer");
       container.innerHTML = "";
+      const q = formatEnNum((document.getElementById("globalLedgerSearchInput").value || "").trim().toLowerCase());
+      const selectedAccFilter = document.getElementById("globalLedgerAccountFilter").value;
 
-      const searchEl = document.getElementById("globalLedgerSearchInput");
-      const q = searchEl ? formatEnNum(searchEl.value.trim().toLowerCase()) : "";
-      
-      const filterEl = document.getElementById("globalLedgerAccountFilter");
-      const selectedAccFilter = filterEl ? filterEl.value : "all";
-
-      let sortedTxs = allTransactions.slice().sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        if (isNaN(da)) da = 0;
-        if (isNaN(db)) db = 0;
-        return db - da;
-      });
-
-      if (selectedAccFilter !== "all") {
-        sortedTxs = sortedTxs.filter(tx => String(getVal(tx, ['AccountID', 'accountid'])) === String(selectedAccFilter));
-      }
-
+      let sortedTxs = allTransactions.slice().sort((a, b) => (new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime() || 0) - (new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime() || 0));
+      if (selectedAccFilter !== "all") sortedTxs = sortedTxs.filter(tx => String(getVal(tx, ['AccountID', 'accountid'])) === String(selectedAccFilter));
       if (q) {
         sortedTxs = sortedTxs.filter(tx => {
           let txId = String(getVal(tx, ['TransID', 'transid']) || '').toLowerCase();
@@ -2162,18 +1698,13 @@ ${PORTAL_SITE_URL}` : '');
         });
       }
 
-      if (sortedTxs.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">تراکنشی یافت نشد</div>`;
-        return;
-      }
+      if (!sortedTxs.length) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px;">تراکنشی یافت نشد</div>`; return; }
 
       const groupsByDay = {};
       sortedTxs.forEach(tx => {
         let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
         let dateObj = rawDate ? new Date(rawDate) : null;
-        let dayKey = (dateObj && !isNaN(dateObj.getTime()))
-          ? formatEnNum(dateObj.toISOString().split('T')[0])
-          : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
+        let dayKey = (dateObj && !isNaN(dateObj.getTime())) ? formatEnNum(dateObj.toISOString().split('T')[0]) : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
         if (!groupsByDay[dayKey]) groupsByDay[dayKey] = [];
         groupsByDay[dayKey].push(tx);
       });
@@ -2183,8 +1714,6 @@ ${PORTAL_SITE_URL}` : '');
 
       Object.keys(groupsByDay).forEach(dayKey => {
         const dayTxs = groupsByDay[dayKey];
-        let rowsHtml = "";
-
         let dayTotals = {};
         dayTxs.forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -2197,44 +1726,29 @@ ${PORTAL_SITE_URL}` : '');
 
         let daySummaryParts = [];
         for (let c in dayTotals) {
-          let cCred = dayTotals[c].cred;
-          let cDeb = dayTotals[c].deb;
-          if (cCred > 0) daySummaryParts.push(`بستانکار: ${formatEnMoney(cCred)} ${c}`);
-          if (cDeb > 0) daySummaryParts.push(`بدهکار: ${formatEnMoney(cDeb)} ${c}`);
+          if (dayTotals[c].cred > 0) daySummaryParts.push(`بستانکار: ${formatEnMoney(dayTotals[c].cred)} ${c}`);
+          if (dayTotals[c].deb > 0) daySummaryParts.push(`بدهکار: ${formatEnMoney(dayTotals[c].deb)} ${c}`);
         }
         let daySummaryText = daySummaryParts.join(' | ') || 'بدون دادوستد';
 
-        dayTxs.forEach(tx => {
-          const rowNum = formatEnNum(totalCount - globalCounter);
-          globalCounter++;
-
+        let rowsHtml = dayTxs.map(tx => {
+          const rowNum = formatEnNum(totalCount - globalCounter++);
           let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
           let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
           let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
           let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
-
           let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
 
-          let currentAccTxs = allTransactions
-            .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId)
-            .slice()
-            .sort((a, b) => {
-              let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-              let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-              if (isNaN(da)) da = 0;
-              if (isNaN(db)) db = 0;
-              return db - da;
-            });
+          let currentAccTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId).slice().sort((a, b) => (new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime() || 0) - (new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime() || 0));
           let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === txId);
           let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
 
           let sameCurrBalance = 0;
           subTxs.forEach(stx => {
-            let scurr = String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-            if (scurr !== curr) return;
+            if (String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase() !== curr) return;
             let sdir = String(getVal(stx, ['Direction', 'direction']) || '');
             let samt = parseFloat(getVal(stx, ['Amount', 'amount'])) || 0;
             if (sdir.includes("بستانکار")) sameCurrBalance += samt;
@@ -2243,77 +1757,40 @@ ${PORTAL_SITE_URL}` : '');
 
           let balStatus = sameCurrBalance > 0 ? 'بست.' : (sameCurrBalance < 0 ? 'بده.' : 'تسویه');
           let balColor = sameCurrBalance > 0 ? '#047857' : (sameCurrBalance < 0 ? '#b91c1c' : '#475569');
-          let balanceStr = sameCurrBalance === 0
-            ? `۰ ${curr} (تسویه)`
-            : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
-
+          let balanceStr = sameCurrBalance === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
           let isCreditor = dir.includes('بستانکار');
-          let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
-          let dirColor = isCreditor ? '#047857' : '#b91c1c';
 
-          rowsHtml += `
-            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
+          return `
+            <tr style="background:${isCreditor ? '#f0fdf4' : '#fff5f5'}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "'")}')">
               <td style="text-align:center; font-weight:900; color:#334155;">${rowNum}</td>
-              <td style="text-align:right;">
-                <div style="font-weight:900; color:var(--primary-dark); font-size:0.76rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
-                <div style="font-size:0.65rem; color:#475569;">${formatEnNum(accId)}</div>
-              </td>
-              <td style="text-align:center;">
-                <div style="color:${dirColor}; font-weight:900; font-size:0.72rem;">${dir}</div>
-                <div style="font-size:0.64rem; color:#334155;">${opType}</div>
-              </td>
-              <td style="text-align:right; font-weight:900; color:${dirColor}; font-size:0.75rem;">
-                <div>${amt}</div>
-                <div style="font-size:0.64rem; color:#334155;">${curr}</div>
-              </td>
-              <td style="text-align:right; font-weight:900; color:${balColor}; font-size:0.74rem;">
-                <div>${balanceStr}</div>
-                <div style="font-size:0.64rem;">${sameCurrBalance !== 0 ? balStatus : ''}</div>
-              </td>
+              <td style="text-align:right;"><div style="font-weight:900; color:var(--primary-dark); font-size:0.76rem;">${accName}</div><div style="font-size:0.65rem; color:#475569;">${formatEnNum(accId)}</div></td>
+              <td style="text-align:center;"><div style="color:${isCreditor ? '#047857' : '#b91c1c'}; font-weight:900; font-size:0.72rem;">${dir}</div><div style="font-size:0.64rem; color:#334155;">${opType}</div></td>
+              <td style="text-align:right; font-weight:900; color:${isCreditor ? '#047857' : '#b91c1c'}; font-size:0.75rem;"><div>${amt}</div><div style="font-size:0.64rem; color:#334155;">${curr}</div></td>
+              <td style="text-align:right; font-weight:900; color:${balColor}; font-size:0.74rem;"><div>${balanceStr}</div><div style="font-size:0.64rem;">${sameCurrBalance !== 0 ? balStatus : ''}</div></td>
             </tr>
           `;
-        });
+        }).join('');
 
         container.innerHTML += `
           <div style="margin-bottom:14px; border-top:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1; background:#ffffff; box-shadow:var(--shadow-sm);">
             <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 9px 12px; display: flex; flex-direction: column; gap: 4px;">
               <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 0.85rem;">
-                <span>📅 تاریخ: ${dayKey}</span>
-                <span style="font-size: 0.78rem; color: #cbd5e1;">تعداد: ${formatEnNum(dayTxs.length)} تراکنش</span>
+                <span>📅 تاریخ: ${dayKey}</span><span style="font-size: 0.78rem; color: #cbd5e1;">تعداد: ${formatEnNum(dayTxs.length)} تراکنش</span>
               </div>
-              <div style="font-size: 0.78rem; color: #047857; font-weight: 900; background: #ecfdf5; padding: 4px 8px; border-radius: 7px;">
-                📊 مجموع روز ➔ ${daySummaryText}
-              </div>
+              <div style="font-size: 0.78rem; color: #047857; font-weight: 900; background: #ecfdf5; padding: 4px 8px; border-radius: 7px;">📊 مجموع روز ➔ ${daySummaryText}</div>
             </div>
-            <div style="width:100%;">
-              <table class="compact-ledger-table">
-                <thead>
-                  <tr>
-                    <th style="width:9%; text-align:center;">#</th>
-                    <th style="width:26%; text-align:right;">مشتری</th>
-                    <th style="width:17%; text-align:center;">جهت</th>
-                    <th style="width:24%; text-align:right;">مبلغ</th>
-                    <th style="width:24%; text-align:right;">مانده حساب</th>
-                  </tr>
-                </thead>
-                <tbody>${rowsHtml}</tbody>
-              </table>
-            </div>
+            <table class="compact-ledger-table">
+              <thead><tr><th style="width:9%; text-align:center;">#</th><th style="width:26%; text-align:right;">مشتری</th><th style="width:17%; text-align:center;">جهت</th><th style="width:24%; text-align:right;">مبلغ</th><th style="width:24%; text-align:right;">مانده حساب</th></tr></thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
           </div>
         `;
       });
     }
 
     function openTransfersReport() { switchView('viewTransfersReport'); renderTransfersReport(); }
-
     function toggleCustomDateFilter() {
-      const period = document.getElementById("transferFilterPeriod").value;
-      const customBox = document.getElementById("customDateRangeBox");
-      if (period === "custom") {
-        customBox.style.display = "block";
-      } else {
-        customBox.style.display = "none";
-      }
+      document.getElementById("customDateRangeBox").style.display = document.getElementById("transferFilterPeriod").value === "custom" ? "block" : "none";
       renderTransfersReport();
     }
 
@@ -2321,8 +1798,6 @@ ${PORTAL_SITE_URL}` : '');
       const period = document.getElementById("transferFilterPeriod").value;
       const container = document.getElementById("transfersReportContainer");
       const headerContainer = document.getElementById("transferSummaryHeader");
-      container.innerHTML = ""; headerContainer.innerHTML = "";
-
       let now = new Date();
       let startDate = document.getElementById("startDateFilter").value;
       let endDate = document.getElementById("endDateFilter").value;
@@ -2333,50 +1808,30 @@ ${PORTAL_SITE_URL}` : '');
         if (period === "all") return true;
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
         if (!txDateStr) return false;
-
-        if (period === "today") {
-          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-          return diffDays <= 1;
-        }
-        if (period === "week") {
-          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-          return diffDays <= 7;
-        }
-        if (period === "month") {
-          let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-          return diffDays <= 30;
-        }
+        let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
+        if (period === "today") return diffDays <= 1;
+        if (period === "week") return diffDays <= 7;
+        if (period === "month") return diffDays <= 30;
         if (period === "custom") {
           if (startDate && txDateStr < startDate) return false;
           if (endDate && txDateStr > endDate) return false;
           return true;
         }
         return false;
-      });
-
-      filteredTxs.sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-        if (isNaN(da)) da = 0;
-        if (isNaN(db)) db = 0;
-        return db - da;
-      });
+      }).sort((a, b) => (new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime() || 0) - (new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime() || 0));
 
       let currencyTotals = {};
       filteredTxs.forEach(tx => {
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-        let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-        if (!currencyTotals[curr]) currencyTotals[curr] = 0;
-        currencyTotals[curr] += amt;
+        currencyTotals[curr] = (currencyTotals[curr] || 0) + (parseFloat(getVal(tx, ['Amount', 'amount'])) || 0);
       });
 
       let summaryHtml = `<div class="stat-row"><span><b>تعداد کل موارد:</b></span><b>${formatEnNum(filteredTxs.length)} عدد</b></div>`;
       for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع (${curr}):</span><b style="color:var(--accent-green-dark);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if (filteredTxs.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">موردی یافت نشد</div>`; return; }
-
-      filteredTxs.forEach((tx) => {
+      if (!filteredTxs.length) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">موردی یافت نشد</div>`; return; }
+      container.innerHTML = filteredTxs.map(tx => {
         let accId = formatEnNum(getVal(tx, ['AccountID', 'accountid']) || '');
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
         let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "نامشخص";
@@ -2385,51 +1840,41 @@ ${PORTAL_SITE_URL}` : '');
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
         let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
         let dateObj = rawDate ? new Date(rawDate) : null;
-        let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
-          `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
-          formatEnNum(String(rawDate).split('T')[0]);
-
-        container.innerHTML += `
-          <div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
+        let formattedTime = (dateObj && !isNaN(dateObj.getTime())) ? `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : formatEnNum(String(rawDate).split('T')[0]);
+        return `
+          <div class="tx-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "'")}')">
             <div class="stat-row"><span style="font-weight:900; color:var(--info-color);">مشتری: ${accName}</span><span style="font-size:0.85rem; color:#475569;">⏰ ${formattedTime}</span></div>
             <div class="stat-row"><span>مبلغ:</span><b style="color:var(--primary-dark); font-size:1.05rem;">${amt} ${curr}</b></div>
             <div style="font-size:0.9rem; color:#334155; margin-top:6px; background:rgba(255,255,255,0.8); padding:8px; border-radius:10px;"><b>شرح:</b> ${desc}</div>
           </div>
         `;
-      });
+      }).join('');
     }
 
     function openDebtorsReport() {
       switchView('viewDebtorsReport');
       selectedDebtorsMap = {};
       document.getElementById("debtorsBatchSummaryBox").style.display = "none";
-
       const container = document.getElementById("debtorsContainer");
       const headerContainer = document.getElementById("debtorsSummaryHeader");
-      container.innerHTML = ""; headerContainer.innerHTML = "";
       let debtors = [], currencyTotals = {};
 
       allAccounts.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
-        if(!accId) return;
-        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        if (!accId) return;
         let accCurrencies = {};
-        accTxs.forEach(tx => {
+        allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId).forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+          accCurrencies[curr] = (accCurrencies[curr] || 0) + (dir.includes("بستانکار") ? amt : (dir.includes("بدهکار") ? -amt : 0));
         });
-        for(let curr in accCurrencies) {
-          let val = accCurrencies[curr];
-          if(val < 0) {
-            let absVal = Math.abs(val);
+        for (let curr in accCurrencies) {
+          if (accCurrencies[curr] < 0) {
+            let absVal = Math.abs(accCurrencies[curr]);
             debtors.push({ name: accName, id: accId, amount: absVal, currency: curr });
-            if (!currencyTotals[curr]) currencyTotals[curr] = 0;
-            currencyTotals[curr] += absVal;
+            currencyTotals[curr] = (currencyTotals[curr] || 0) + absVal;
           }
         }
       });
@@ -2438,86 +1883,45 @@ ${PORTAL_SITE_URL}` : '');
       for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بدهکاری (${curr}):</span><b style="color:var(--danger-color);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if(debtors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بدهکاری وجود ندارد</div>`; return; }
-      
-      debtors.forEach(d => {
-        container.innerHTML += `
-          <div class="tx-item-card tx-debtor" style="flex-direction:row; align-items:center; gap:12px;">
-            <input type="checkbox" onchange="toggleDebtorSelection('${d.id}', '${d.currency}', ${d.amount}, this.checked)" style="width:22px; height:22px; accent-color:var(--danger-color); cursor:pointer;">
-            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name}')">
-              <div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">بدهکار: ${formatEnMoney(d.amount)} ${d.currency}</span></div>
-            </div>
+      container.innerHTML = debtors.length ? debtors.map(d => `
+        <div class="tx-item-card tx-debtor" style="flex-direction:row; align-items:center; gap:12px;">
+          <input type="checkbox" onchange="toggleDebtorSelection('${d.id}', '${d.currency}', ${d.amount}, this.checked)" style="width:22px; height:22px; accent-color:var(--danger-color); cursor:pointer;">
+          <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${d.id}', '${d.name.replace(/'/g, "'")}')">
+            <div class="stat-row"><span style="font-weight:900;">${d.name}</span><span style="color:var(--danger-color); font-weight:900;">بدهکار: ${formatEnMoney(d.amount)} ${d.currency}</span></div>
           </div>
-        `;
-      });
+        </div>
+      `).join('') : `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بدهکاری وجود ندارد</div>`;
     }
 
     function toggleDebtorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
-      if (isChecked) {
-        selectedDebtorsMap[key] = { curr, amt };
-      } else {
-        delete selectedDebtorsMap[key];
-      }
-      updateDebtorsBatchSummary();
-    }
-
-    function updateDebtorsBatchSummary() {
-      const box = document.getElementById("debtorsBatchSummaryBox");
-      const content = document.getElementById("debtorsBatchSummaryContent");
-      
-      let currs = {};
-      let count = 0;
-      for (let k in selectedDebtorsMap) {
-        let item = selectedDebtorsMap[k];
-        if (!currs[item.curr]) currs[item.curr] = 0;
-        currs[item.curr] += item.amt;
-        count++;
-      }
-
-      if (count === 0) {
-        box.style.display = "none";
-        return;
-      }
-
-      let html = `<div style="font-size:0.9rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
-      for (let c in currs) {
-        html += `<div style="font-weight:900; font-size:1.05rem; color:#fca5a5;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
-      }
-      content.innerHTML = html;
-      box.style.display = "block";
+      if (isChecked) selectedDebtorsMap[key] = { curr, amt }; else delete selectedDebtorsMap[key];
+      updateBatchSummary("debtors", selectedDebtorsMap, "#fca5a5");
     }
 
     function openCreditorsReport() {
       switchView('viewCreditorsReport');
       selectedCreditorsMap = {};
       document.getElementById("creditorsBatchSummaryBox").style.display = "none";
-
       const container = document.getElementById("creditorsContainer");
       const headerContainer = document.getElementById("creditorsSummaryHeader");
-      container.innerHTML = ""; headerContainer.innerHTML = "";
       let creditors = [], currencyTotals = {};
 
       allAccounts.forEach(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
-        if(!accId) return;
-        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
+        if (!accId) return;
         let accCurrencies = {};
-        accTxs.forEach(tx => {
+        allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId).forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+          accCurrencies[curr] = (accCurrencies[curr] || 0) + (dir.includes("بستانکار") ? amt : (dir.includes("بدهکار") ? -amt : 0));
         });
-        for(let curr in accCurrencies) {
-          let val = accCurrencies[curr];
-          if(val > 0) {
-            creditors.push({ name: accName, id: accId, amount: val, currency: curr });
-            if (!currencyTotals[curr]) currencyTotals[curr] = 0;
-            currencyTotals[curr] += val;
+        for (let curr in accCurrencies) {
+          if (accCurrencies[curr] > 0) {
+            creditors.push({ name: accName, id: accId, amount: accCurrencies[curr], currency: curr });
+            currencyTotals[curr] = (currencyTotals[curr] || 0) + accCurrencies[curr];
           }
         }
       });
@@ -2526,103 +1930,74 @@ ${PORTAL_SITE_URL}` : '');
       for (let curr in currencyTotals) summaryHtml += `<div class="stat-row"><span>مجموع بستانکاری (${curr}):</span><b style="color:var(--accent-green-dark);">${formatEnMoney(currencyTotals[curr])} ${curr}</b></div>`;
       headerContainer.innerHTML = summaryHtml;
 
-      if(creditors.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بستانکاری وجود ندارد</div>`; return; }
-      
-      creditors.forEach(c => {
-        container.innerHTML += `
-          <div class="tx-item-card tx-creditor" style="flex-direction:row; align-items:center; gap:12px;">
-            <input type="checkbox" onchange="toggleCreditorSelection('${c.id}', '${c.currency}', ${c.amount}, this.checked)" style="width:22px; height:22px; accent-color:var(--accent-green-dark); cursor:pointer;">
-            <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name}')">
-              <div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">بستانکار: ${formatEnMoney(c.amount)} ${c.currency}</span></div>
-            </div>
+      container.innerHTML = creditors.length ? creditors.map(c => `
+        <div class="tx-item-card tx-creditor" style="flex-direction:row; align-items:center; gap:12px;">
+          <input type="checkbox" onchange="toggleCreditorSelection('${c.id}', '${c.currency}', ${c.amount}, this.checked)" style="width:22px; height:22px; accent-color:var(--accent-green-dark); cursor:pointer;">
+          <div style="flex:1;" onclick="playInteractionEffect(); selectAccount('${c.id}', '${c.name.replace(/'/g, "'")}')">
+            <div class="stat-row"><span style="font-weight:900;">${c.name}</span><span style="color:var(--accent-green-dark); font-weight:900;">بستانکار: ${formatEnMoney(c.amount)} ${c.currency}</span></div>
           </div>
-        `;
-      });
+        </div>
+      `).join('') : `<div style="text-align:center; color:#64748b; padding:12px;">هیچ حساب بستانکاری وجود ندارد</div>`;
     }
 
     function toggleCreditorSelection(accId, curr, amt, isChecked) {
       let key = `${accId}_${curr}`;
-      if (isChecked) {
-        selectedCreditorsMap[key] = { curr, amt };
-      } else {
-        delete selectedCreditorsMap[key];
-      }
-      updateCreditorsBatchSummary();
+      if (isChecked) selectedCreditorsMap[key] = { curr, amt }; else delete selectedCreditorsMap[key];
+      updateBatchSummary("creditors", selectedCreditorsMap, "#6ee7b7");
     }
 
-    function updateCreditorsBatchSummary() {
-      const box = document.getElementById("creditorsBatchSummaryBox");
-      const content = document.getElementById("creditorsBatchSummaryContent");
-      
-      let currs = {};
-      let count = 0;
-      for (let k in selectedCreditorsMap) {
-        let item = selectedCreditorsMap[k];
-        if (!currs[item.curr]) currs[item.curr] = 0;
-        currs[item.curr] += item.amt;
+    function updateBatchSummary(prefix, mapObj, colorHex) {
+      const box = document.getElementById(`${prefix}BatchSummaryBox`);
+      const content = document.getElementById(`${prefix}BatchSummaryContent`);
+      let currs = {}, count = 0;
+      for (let k in mapObj) {
+        let item = mapObj[k];
+        currs[item.curr] = (currs[item.curr] || 0) + item.amt;
         count++;
       }
-
-      if (count === 0) {
-        box.style.display = "none";
-        return;
-      }
-
+      if (!count) { box.style.display = "none"; return; }
       let html = `<div style="font-size:0.9rem; margin-bottom:6px; color:#cbd5e1;">تعداد افراد انتخاب‌شده: ${formatEnNum(count)} نفر</div>`;
-      for (let c in currs) {
-        html += `<div style="font-weight:900; font-size:1.05rem; color:#6ee7b7;">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
-      }
+      for (let c in currs) html += `<div style="font-weight:900; font-size:1.05rem; color:${colorHex};">▫️ ${c}: ${formatEnMoney(currs[c])}</div>`;
       content.innerHTML = html;
       box.style.display = "block";
     }
 
     function renderAccountsList(accounts) {
       const container = document.getElementById("accountsListContainer");
-      container.innerHTML = "";
-      if(accounts.length === 0) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">حسابی یافت نشد</div>`; return; }
+      if (!accounts.length) { container.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px;">حسابی یافت نشد</div>`; return; }
 
-      accounts.forEach(acc => {
+      container.innerHTML = accounts.map(acc => {
         let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '');
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
         let photoUrl = getVal(acc, ['Photo', 'photo']);
-        if (!accId) return;
+        if (!accId) return '';
 
-        let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId);
         let accCurrencies = {};
-        accTxs.forEach(tx => {
+        allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId).forEach(tx => {
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
           let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-          if(!accCurrencies[curr]) accCurrencies[curr] = 0;
-          if(dir.includes("بستانکار")) accCurrencies[curr] += amt;
-          if(dir.includes("بدهکار")) accCurrencies[curr] -= amt;
+          accCurrencies[curr] = (accCurrencies[curr] || 0) + (dir.includes("بستانکار") ? amt : (dir.includes("بدهکار") ? -amt : 0));
         });
 
-        let badgesHtml = '';
-        for(let curr in accCurrencies) {
+        let badgesHtml = Object.keys(accCurrencies).map(curr => {
           let val = accCurrencies[curr];
           let color = val > 0 ? '#059669' : (val < 0 ? '#dc2626' : '#64748b');
           let label = val > 0 ? `بستانکار:${formatEnMoney(Math.abs(val))}` : (val < 0 ? `بدهکار:${formatEnMoney(Math.abs(val))}` : `تسویه`);
-          badgesHtml += `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
-        }
+          return `<span class="currency-badge" style="color:${color};">${curr}:${label}</span>`;
+        }).join('');
 
         let cleanPhone = accPhone.replace(/\D/g, '');
         let photoHtml = photoUrl ? `<img src="${photoUrl}" class="profile-img-preview" style="width:38px; height:38px; margin-left:8px;">` : '';
 
-        container.innerHTML += `
-          <div class="account-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName}')">
+        return `
+          <div class="account-item-card" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "'")}')">
             <div class="account-item-header">
-              <div class="flex-row">
-                ${photoHtml}
-                <div>
-                  <span class="account-name-title">${accName}</span>
-                  <div style="font-size:0.82rem; color:#475569;">کُد حساب: ${accId}</div>
-                </div>
-              </div>
+              <div class="flex-row">${photoHtml}<div><span class="account-name-title">${accName}</span><div style="font-size:0.82rem; color:#475569;">کُد حساب: ${accId}</div></div></div>
               <div class="flex-row" style="gap:6px;">
                 <button class="btn btn-whatsapp btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); openDirectWhatsApp('${cleanPhone}')" title="واتساپ">💬</button>
-                <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName}')" title="پیام">✉️</button>
+                <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "'")}')" title="پیام">✉️</button>
                 <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); selectAccountForEditQuick('${accId}')" title="ویرایش">✏️</button>
                 <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); playInteractionEffect(); confirmDeleteAccount('${accId}')" title="حذف">🗑️</button>
               </div>
@@ -2630,34 +2005,24 @@ ${PORTAL_SITE_URL}` : '');
             <div style="font-size:0.88rem; margin-top:6px;">${badgesHtml || 'تسویه حساب کامل'}</div>
           </div>
         `;
-      });
+      }).join('');
     }
 
     function openDirectWhatsApp(phone) {
-      if(!phone) { alert("شماره تلفن مشتری موجود نیست"); return; }
+      if (!phone) { alert("شماره تلفن مشتری موجود نیست"); return; }
       window.open(`https://wa.me/${phone}`, '_blank');
     }
 
     function advancedSearchAccounts() {
       playInteractionEffect();
-      const inputEl = document.getElementById("searchAccountInput");
-      const clearBtn = document.getElementById("clearSearchBtn");
-      const q = formatEnNum(inputEl.value.trim().toLowerCase());
-      
-      if (q.length > 0) {
-        clearBtn.style.display = "block";
-      } else {
-        clearBtn.style.display = "none";
-      }
-
+      const q = formatEnNum(document.getElementById("searchAccountInput").value.trim().toLowerCase());
+      document.getElementById("clearSearchBtn").style.display = q.length > 0 ? "block" : "none";
       if (!q) { renderAccountsList(allAccounts); return; }
-      const filtered = allAccounts.filter(acc => {
-        let name = String(getVal(acc, ['Name', 'name']) || '').toLowerCase();
-        let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase();
-        let accId = formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase();
-        return name.includes(q) || phone.includes(q) || accId.includes(q);
-      });
-      renderAccountsList(filtered);
+      renderAccountsList(allAccounts.filter(acc =>
+        String(getVal(acc, ['Name', 'name']) || '').toLowerCase().includes(q) ||
+        formatEnNum(getVal(acc, ['Phone', 'phone']) || '').toLowerCase().includes(q) ||
+        formatEnNum(getVal(acc, ['AccountID', 'accountid']) || '').toLowerCase().includes(q)
+      ));
     }
 
     function clearAccountSearch() {
@@ -2672,19 +2037,12 @@ ${PORTAL_SITE_URL}` : '');
     function openAccountModal() {
       document.getElementById("editAccountId").value = "";
       document.getElementById("modalAccountTitle").innerText = "ایجاد حساب جدید";
-      document.getElementById("modalAccountName").value = "";
-      document.getElementById("modalAccountPhone").value = "";
-      document.getElementById("modalAccountChatId").value = "";
-      document.getElementById("modalAccountPhotoInput").value = "";
-      document.getElementById("existingAccountPhotoUrl").value = "";
+      ["modalAccountName", "modalAccountPhone", "modalAccountChatId", "modalAccountPhotoInput", "existingAccountPhotoUrl"].forEach(id => document.getElementById(id).value = "");
       document.getElementById("accountModal").style.display = "flex";
       pushModalHistory("accountModal");
     }
 
-    function selectAccountForEditQuick(accId) {
-      currentAccountId = accId;
-      openEditAccountModal();
-    }
+    function selectAccountForEditQuick(accId) { currentAccountId = accId; openEditAccountModal(); }
 
     function openEditAccountModal() {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
@@ -2713,20 +2071,15 @@ ${PORTAL_SITE_URL}` : '');
     }
 
     function confirmDeleteTransaction() {
-      let txIdToDel = selectedTxId;
-      if (!txIdToDel) {
-        alert("کد تراکنش انتخاب نشده است.");
-        return;
-      }
+      if (!selectedTxId) { alert("کد تراکنش انتخاب نشده است."); return; }
       if (!confirm("⚠️ آیا از حذف این تراکنش اطمینان دارید؟ این عمل غیرقابل بازگشت است.")) return;
-      deleteSingleTransaction(txIdToDel);
+      deleteSingleTransaction(selectedTxId);
     }
 
     async function saveAccount() {
-      if (!_supabase) return;
       let editId = document.getElementById("editAccountId").value;
-      let accName = document.getElementById("modalAccountName").value;
-      let accPhone = formatEnNum(document.getElementById("modalAccountPhone").value);
+      let accName = document.getElementById("modalAccountName").value.trim();
+      let accPhone = formatEnNum(document.getElementById("modalAccountPhone").value.trim());
       let accChatId = formatEnNum(document.getElementById("modalAccountChatId").value.trim());
       let fileInput = document.getElementById("modalAccountPhotoInput");
       let photoUrl = document.getElementById("existingAccountPhotoUrl").value;
@@ -2739,21 +2092,16 @@ ${PORTAL_SITE_URL}` : '');
         if (uploadedUrl) photoUrl = uploadedUrl;
       }
 
-      let accountId = editId ? editId : "ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000));
-      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
+      let accountId = editId || ("ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000)));
+      let creatorIdToSave = editId
+        ? (String(getVal(allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId)), ['CreatedBy', 'createdby']) || '').trim() || getActiveCreatorIdForNewRecord())
+        : getActiveCreatorIdForNewRecord();
 
       let oldAcc = editId ? allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId)) : null;
       let oldChatId = oldAcc ? formatEnNum(getVal(oldAcc, ['ChatID', 'chatid']) || '').trim() : '';
       let isNewChatIdAdded = accChatId && (!oldChatId || oldChatId !== accChatId);
 
-      const payload = { 
-        AccountID: accountId, 
-        Name: accName, 
-        Phone: accPhone, 
-        ChatID: accChatId,
-        Photo: photoUrl,
-        CreatedBy: String(currentAdminId)
-      };
+      const payload = { AccountID: accountId, Name: accName, Phone: accPhone, ChatID: accChatId, Photo: photoUrl, CreatedBy: creatorIdToSave };
 
       if (editId) {
         await _supabase.from('accounts').update(payload).eq('AccountID', editId);
@@ -2763,24 +2111,16 @@ ${PORTAL_SITE_URL}` : '');
         if (token && accChatId) {
           let msg = `✨ *امانت‌داری کریمی* ✨
 
-` +
-                    `حساب شما با موفقیت ایجاد شد.
-` +
-                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.
-` +
-                    `📌 اطلاعات حساب شما:
-` +
-                    `👤 نام: ${accName}
-` +
-                    `🆔 کُد حساب: \`${accountId}\`
-` +
-                    `📞 شماره تماس: ${accPhone || '-'}
-` +
-                    `💬 چت‌آیدی: \`${accChatId}\`` +
-                    (PORTAL_SITE_URL ? `
+حساب شما با موفقیت ایجاد شد.
+مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.
+📌 اطلاعات حساب شما:
+👤 نام: ${accName}
+🆔 کُد حساب: \`${accountId}\`
+📞 شماره تماس: ${accPhone || '-'}
+💬 چت‌آیدی: \`${accChatId}\`
 
 🌐 لینک بررسی حساب:
-${PORTAL_SITE_URL}` : '');
+https://karimi-trust-app.vercel.app/`;
           sendTelegramMessage(token, accChatId, msg);
         }
       }
@@ -2791,13 +2131,11 @@ ${PORTAL_SITE_URL}` : '');
         let { token } = getCurrentAdminTokenAndChat();
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accountId));
         if (token && accChatId) {
-          let historyHeader = `✨ *امانت‌داری کریمی* ✨
+          await sendTelegramMessage(token, accChatId, `✨ *امانت‌داری کریمی* ✨
 
 سلام *${accName}* عزیز،
 چت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:
-────────────────────────`;
-          await sendTelegramMessage(token, accChatId, historyHeader);
-
+────────────────────────`);
           for (let tx of accTxs) {
             let tType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
             let tDir = String(getVal(tx, ['Direction', 'direction']) || '');
@@ -2805,37 +2143,24 @@ ${PORTAL_SITE_URL}` : '');
             let tCurr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
             let tDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
             let tDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-
-            let txLine = `📅 تاریخ: ${tDate}
+            await sendTelegramMessage(token, accChatId, `📅 تاریخ: ${tDate}
 🔹 نوع: *${tType}* (${tDir})
 💰 مبلغ: *${tAmt} ${tCurr}*
 📝 شرح: ${tDesc || '-'}
--------------------`;
-            await sendTelegramMessage(token, accChatId, txLine);
+-------------------`);
           }
-
-          let liveBal = getAccountLiveBalanceText(accountId);
-          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*
-${liveBal}`;
-          await sendTelegramMessage(token, accChatId, balMsg);
+          await sendTelegramMessage(token, accChatId, `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*
+${getAccountLiveBalanceText(accountId)}`);
         }
       }
 
-      if (currentAccountId) {
-        selectAccount(currentAccountId, accName);
-      }
+      if (currentAccountId) selectAccount(currentAccountId, accName);
     }
 
     async function deleteCurrentAccount() {
-      if (!_supabase) return;
       let accIdToDelete = currentAccountId;
-      
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
-      if (archiveItem) {
-        archiveItem.isDeleted = true;
-        sessionStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
-      }
-
+      if (archiveItem) { archiveItem.isDeleted = true; localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList)); }
       currentAccountId = null;
       switchView('viewAccounts');
       await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
@@ -2845,10 +2170,8 @@ ${liveBal}`;
     }
 
     function selectAccount(accId, accName) {
-      currentAccountId = accId;
-      currentAccountName = accName;
+      currentAccountId = accId; currentAccountName = accName;
       document.getElementById("detailAccountTitle").innerText = `حساب: ${accName}`;
-      
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
       let photoUrl = acc ? getVal(acc, ['Photo', 'photo']) : '';
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone'])) : '-';
@@ -2862,28 +2185,14 @@ ${liveBal}`;
         <div class="stat-row"><span style="font-size:0.9rem; color:#475569;">📞 شماره تماس:</span><b>${phone || '-'}</b></div>
         <div class="stat-row"><span style="font-size:0.9rem; color:#475569;">💬 چت‌آیدی تلگرام:</span><b>${chatId || '-'}</b></div>
       `;
-
       switchView('viewAccountDetail');
       renderAccountDetailTransactions(accId);
     }
 
-    function openTxFromAccountDetail(txId) {
-      txDetailReturnView = 'viewAccountDetail';
-      selectTransaction(txId);
-    }
+    function openTxFromAccountDetail(txId) { txDetailReturnView = 'viewAccountDetail'; selectTransaction(txId); }
 
     function renderAccountDetailTransactions(accId) {
-      const txs = allTransactions
-        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
-        .slice()
-        .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0;
-          if (isNaN(db)) db = 0;
-          return db - da;
-        });
-
+      const txs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).slice().sort((a, b) => (new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime() || 0) - (new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime() || 0));
       const container = document.getElementById("transactionsListContainer");
       container.innerHTML = "";
       let accCurrencies = {};
@@ -2892,21 +2201,19 @@ ${liveBal}`;
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
         let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
-        if(!accCurrencies[curr]) accCurrencies[curr] = { credit: 0, debit: 0 };
-        if(dir.includes("بستانکار")) accCurrencies[curr].credit += amt;
-        if(dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
+        if (!accCurrencies[curr]) accCurrencies[curr] = { credit: 0, debit: 0 };
+        if (dir.includes("بستانکار")) accCurrencies[curr].credit += amt;
+        if (dir.includes("بدهکار")) accCurrencies[curr].debit += amt;
       });
 
-      if (txs.length === 0) {
+      if (!txs.length) {
         container.innerHTML = `<div style="text-align:center; color:#64748b; padding:16px;">تراکنشی ثبت نشده است</div>`;
       } else {
         const groupsByDay = {};
         txs.forEach(tx => {
           let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
           let dateObj = rawDate ? new Date(rawDate) : null;
-          let dayKey = (dateObj && !isNaN(dateObj.getTime()))
-            ? formatEnNum(dateObj.toISOString().split('T')[0])
-            : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
+          let dayKey = (dateObj && !isNaN(dateObj.getTime())) ? formatEnNum(dateObj.toISOString().split('T')[0]) : (formatEnNum(String(rawDate).split('T')[0]) || 'نامشخص');
           if (!groupsByDay[dayKey]) groupsByDay[dayKey] = [];
           groupsByDay[dayKey].push(tx);
         });
@@ -2916,30 +2223,21 @@ ${liveBal}`;
 
         Object.keys(groupsByDay).forEach(dayKey => {
           const dayTxs = groupsByDay[dayKey];
-          let rowsHtml = "";
-
-          dayTxs.forEach(tx => {
+          let rowsHtml = dayTxs.map(tx => {
             const rowNum = formatEnNum(totalCount - globalCounter);
-            const currentIdxInTxs = globalCounter;
-            globalCounter++;
-
+            const currentIdxInTxs = globalCounter++;
             let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
             let dir = String(getVal(tx, ['Direction', 'direction']) || '');
             let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
             let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
             let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
-
             let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
             let dateObj = rawDate ? new Date(rawDate) : null;
-            let timeOnly = (dateObj && !isNaN(dateObj.getTime()))
-              ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
-              : '-';
+            let timeOnly = (dateObj && !isNaN(dateObj.getTime())) ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : '-';
 
-            let subTxs = txs.slice(currentIdxInTxs);
             let sameCurrBalance = 0;
-            subTxs.forEach(stx => {
-              let scurr = String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-              if (scurr !== curr) return;
+            txs.slice(currentIdxInTxs).forEach(stx => {
+              if (String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase() !== curr) return;
               let sdir = String(getVal(stx, ['Direction', 'direction']) || '');
               let samt = parseFloat(getVal(stx, ['Amount', 'amount'])) || 0;
               if (sdir.includes("بستانکار")) sameCurrBalance += samt;
@@ -2948,135 +2246,85 @@ ${liveBal}`;
 
             let balStatus = sameCurrBalance > 0 ? 'بست.' : (sameCurrBalance < 0 ? 'بده.' : 'تسویه');
             let balColor = sameCurrBalance > 0 ? '#047857' : (sameCurrBalance < 0 ? '#b91c1c' : '#475569');
-            let balanceStr = sameCurrBalance === 0
-              ? `۰ ${curr} (تسویه)`
-              : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
-
+            let balanceStr = sameCurrBalance === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(sameCurrBalance))} ${curr}`;
             let isCreditor = dir.includes('بستانکار');
-            let rowBg = isCreditor ? '#f0fdf4' : '#fff5f5';
-            let dirColor = isCreditor ? '#047857' : '#b91c1c';
 
-            rowsHtml += `
-              <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromAccountDetail('${txId}')">
+            return `
+              <tr style="background:${isCreditor ? '#f0fdf4' : '#fff5f5'}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromAccountDetail('${txId}')">
                 <td style="text-align:center; font-weight:900; color:#334155;">${rowNum}</td>
-                <td style="text-align:center;">
-                  <div style="font-weight:800; color:#0f172a; font-size:0.73rem;">${opType}</div>
-                  <div style="font-size:0.65rem; color:#475569;">⏰ ${timeOnly}</div>
-                </td>
-                <td style="text-align:center;">
-                  <span style="color:${dirColor}; font-weight:900; font-size:0.72rem;">${dir}</span>
-                </td>
-                <td style="text-align:right; font-weight:900; color:${dirColor}; font-size:0.75rem;">
-                  <div>${amt}</div>
-                  <div style="font-size:0.64rem; color:#334155;">${curr}</div>
-                </td>
-                <td style="text-align:right; font-weight:900; color:${balColor}; font-size:0.74rem;">
-                  <div>${balanceStr}</div>
-                  <div style="font-size:0.64rem;">${sameCurrBalance !== 0 ? balStatus : ''}</div>
-                </td>
+                <td style="text-align:center;"><div style="font-weight:800; color:#0f172a; font-size:0.73rem;">${opType}</div><div style="font-size:0.65rem; color:#475569;">⏰ ${timeOnly}</div></td>
+                <td style="text-align:center;"><span style="color:${isCreditor ? '#047857' : '#b91c1c'}; font-weight:900; font-size:0.72rem;">${dir}</span></td>
+                <td style="text-align:right; font-weight:900; color:${isCreditor ? '#047857' : '#b91c1c'}; font-size:0.75rem;"><div>${amt}</div><div style="font-size:0.64rem; color:#334155;">${curr}</div></td>
+                <td style="text-align:right; font-weight:900; color:${balColor}; font-size:0.74rem;"><div>${balanceStr}</div><div style="font-size:0.64rem;">${sameCurrBalance !== 0 ? balStatus : ''}</div></td>
               </tr>
             `;
-          });
+          }).join('');
 
           container.innerHTML += `
             <div style="margin-bottom:12px; border-top:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1; background:#ffffff; box-shadow:var(--shadow-sm);">
               <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 0.83rem;">
-                <span>📅 تاریخ: ${dayKey}</span>
-                <span style="font-size: 0.76rem; color: #cbd5e1;">${formatEnNum(dayTxs.length)} تراکنش</span>
+                <span>📅 تاریخ: ${dayKey}</span><span style="font-size: 0.76rem; color: #cbd5e1;">${formatEnNum(dayTxs.length)} تراکنش</span>
               </div>
-              <div style="width:100%;">
-                <table class="compact-ledger-table">
-                  <thead>
-                    <tr>
-                      <th style="width:9%; text-align:center;">#</th>
-                      <th style="width:24%; text-align:center;">نوع / ساعت</th>
-                      <th style="width:17%; text-align:center;">جهت</th>
-                      <th style="width:25%; text-align:right;">مبلغ</th>
-                      <th style="width:25%; text-align:right;">مانده حساب</th>
-                    </tr>
-                  </thead>
-                  <tbody>${rowsHtml}</tbody>
-                </table>
-              </div>
+              <table class="compact-ledger-table">
+                <thead><tr><th style="width:9%; text-align:center;">#</th><th style="width:24%; text-align:center;">نوع / ساعت</th><th style="width:17%; text-align:center;">جهت</th><th style="width:25%; text-align:right;">مبلغ</th><th style="width:25%; text-align:right;">مانده حساب</th></tr></thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
             </div>
           `;
         });
       }
 
-      let statsHtml = '';
-      for (let curr in accCurrencies) {
+      let statsHtml = Object.keys(accCurrencies).map(curr => {
         let net = accCurrencies[curr].credit - accCurrencies[curr].debit;
         let isCreditor = net > 0;
         let bgStyle = isCreditor ? "background:rgba(240,253,244,0.9); color:#15803d;" : "background:rgba(254,242,242,0.9); color:#dc2626;";
         let label = net > 0 ? `بستانکار: ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار: ${formatEnMoney(Math.abs(net))} ${curr}` : "تسویه حساب کامل");
-
-        statsHtml += `
+        return `
           <div class="stat-card">
             <div class="stat-row"><span style="font-weight:900;">ارز: ${curr}</span><span style="font-weight:900;">مانده: <b>${formatEnMoney(net)}</b></span></div>
             <div class="stat-row" style="font-size:0.85rem; color:#475569;">کل بستانکار: ${formatEnMoney(accCurrencies[curr].credit)} | کل بدهکار: ${formatEnMoney(accCurrencies[curr].debit)}</div>
             <div class="stat-badge" style="${bgStyle}">${label}</div>
           </div>
         `;
-      }
+      }).join('');
+
       document.getElementById("accountStatsGrid").innerHTML = statsHtml || '<div style="text-align:center;">بدون بیلان</div>';
     }
 
     function selectTransaction(txId) {
       selectedTxId = txId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
-      if(!tx) return;
+      if (!tx) return;
 
       let accId = String(getVal(tx, ['AccountID', 'accountid']) || currentAccountId);
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
       let accName = acc ? String(getVal(acc, ['Name', 'name'])) : currentAccountName;
-
       let dir = String(getVal(tx, ['Direction', 'direction']) || '');
       let amtNum = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
       let amtStr = formatEnMoney(amtNum);
       let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-      
       let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
       let dateObj = rawDate ? new Date(rawDate) : null;
-      let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
-        `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
-        formatEnNum(String(rawDate).split('T')[0]);
-
+      let formattedTime = (dateObj && !isNaN(dateObj.getTime())) ? `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : formatEnNum(String(rawDate).split('T')[0]);
       let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
       let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
-      let accountTxs = allTransactions
-        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
-        .slice()
-        .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0;
-          if (isNaN(db)) db = 0;
-          return db - da;
-        });
-
+      let accountTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId)).slice().sort((a, b) => (new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime() || 0) - (new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime() || 0));
       let txIndex = accountTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
       let subTxsAfter = txIndex !== -1 ? accountTxs.slice(txIndex) : accountTxs;
-      
+
       let balanceAfter = 0;
       subTxsAfter.forEach(stx => {
-        let scurr = String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-        if (scurr !== curr) return;
+        if (String(getVal(stx, ['Currency', 'currency']) || 'AFN').toUpperCase() !== curr) return;
         let sdir = String(getVal(stx, ['Direction', 'direction']) || '');
         let samt = parseFloat(getVal(stx, ['Amount', 'amount'])) || 0;
         if (sdir.includes("بستانکار")) balanceAfter += samt;
         if (sdir.includes("بدهکار")) balanceAfter -= samt;
       });
 
-      let balanceBefore = balanceAfter;
-      if (dir.includes("بستانکار")) {
-        balanceBefore -= amtNum;
-      } else if (dir.includes("بدهکار")) {
-        balanceBefore += amtNum;
-      }
-
+      let balanceBefore = dir.includes("بستانکار") ? (balanceAfter - amtNum) : (dir.includes("بدهکار") ? (balanceAfter + amtNum) : balanceAfter);
       let beforeStr = balanceBefore === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balanceBefore))} ${curr} (${balanceBefore > 0 ? 'بستانکار' : 'بدهکار'})`;
       let afterStr = balanceAfter === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balanceAfter))} ${curr} (${balanceAfter > 0 ? 'بستانکار' : 'بدهکار'})`;
 
@@ -3085,56 +2333,41 @@ ${liveBal}`;
         <div class="stat-row"><span>مشتری:</span><b style="color:var(--info-color);">${accName}</b></div>
         <div class="stat-row"><span>تاریخ و زمان ثبت:</span><b>${formattedTime}</b></div>
         <div class="stat-row"><span>نوع عملیات:</span><b>${opType}</b></div>
-        <div class="stat-row"><span>جهت تراکنش:</span><b style="color:${dir.includes('بستانکار')?'#059669':'#dc2626'};">${dir}</b></div>
+        <div class="stat-row"><span>جهت تراکنش:</span><b style="color:${dir.includes('بستانکار') ? '#059669' : '#dc2626'};">${dir}</b></div>
         <div class="stat-row"><span>مبلغ تراکنش:</span><b style="font-size:1.1rem; color:var(--primary-dark);">${amtStr} ${curr}</b></div>
-        
         <div style="margin-top:10px; background:rgba(241,245,249,0.95); padding:10px; border-radius:12px; border:1px solid #cbd5e1;">
           <div class="stat-row" style="font-size:0.86rem; margin-bottom:4px;"><span>💰 مانده حساب قبل از این تراکنش:</span><b>${beforeStr}</b></div>
-          <div class="stat-row" style="font-size:0.86rem; margin-bottom:0;"><span>📊 مانده نهایی حساب پس از این تراکنش:</span><b style="color:${balanceAfter>=0?'#047857':'#b91c1c'};">${afterStr}</b></div>
+          <div class="stat-row" style="font-size:0.86rem; margin-bottom:0;"><span>📊 مانده نهایی حساب پس از این تراکنش:</span><b style="color:${balanceAfter >= 0 ? '#047857' : '#b91c1c'};">${afterStr}</b></div>
         </div>
-
         <div style="margin-top:8px; background:rgba(255,255,255,0.85); padding:10px; border-radius:12px;"><b>توضیحات / شرح:</b> ${desc || 'بدون شرح'}</div>
         ${receiptHtml}
       `;
 
-      let btnContainer = document.getElementById("txActionButtonsContainer");
-      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
-      let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
+      let transferReceiptBtn = (opType === "حواله" || opType === "انتقال")
+        ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>`
+        : '';
 
-      btnContainer.innerHTML = `
-        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">👤 رفتن به حساب شخص (${accName})</button>
-        
+      document.getElementById("txActionButtonsContainer").innerHTML = `
+        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "'")}')">👤 رفتن به حساب شخص (${accName})</button>
         <div class="flex-row" style="gap: 10px; margin-bottom:10px;">
-          <button class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()">
-            <span style="font-size:1.1rem;">✏️</span> ویرایش تراکنش
-          </button>
-          <button class="action-btn-modern btn-delete-pro" onclick="playInteractionEffect(); confirmDeleteTransaction()">
-            <span style="font-size:1.1rem;">🗑️</span> حذف تراکنش
-          </button>
+          <button class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()"><span style="font-size:1.1rem;">✏️</span> ویرایش تراکنش</button>
+          <button class="action-btn-modern btn-delete-pro" onclick="playInteractionEffect(); confirmDeleteTransaction()"><span style="font-size:1.1rem;">🗑️</span> حذف تراکنش</button>
         </div>
-
         <button class="btn btn-whatsapp" style="border-radius:14px; padding:12px;" onclick="playInteractionEffect(); sendGeneralWhatsAppReport()">💬 ارسال این تراکنش به واتساپ</button>
         ${transferReceiptBtn}
       `;
-
       switchView('viewTransactionDetail');
     }
 
     function openAddTransactionModal() {
       document.getElementById("editTransId").value = "";
       document.getElementById("txModalTitle").innerText = "ثبت تراکنش جدید";
-      document.getElementById("txAmountInput").value = "";
-      document.getElementById("txDesc").value = "";
-      document.getElementById("txReceiptInput").value = "";
-      document.getElementById("existingReceiptUrl").value = "";
+      ["txAmountInput", "txDesc", "txReceiptInput", "existingReceiptUrl"].forEach(id => document.getElementById(id).value = "");
       document.getElementById("txDateInput").value = new Date().toISOString().split('T')[0];
-
-      selectedDirectionValue = null;
-      selectedCurrencyValue = null;
+      selectedDirectionValue = null; selectedCurrencyValue = null;
       document.getElementById("btnDirCreditor").className = "btn-select-option";
       document.getElementById("btnDirDebtor").className = "btn-select-option";
       document.querySelectorAll('.btn-curr-opt').forEach(el => el.className = "btn-select-option btn-curr-opt");
-
       document.getElementById("transactionModal").style.display = "flex";
       pushModalHistory("transactionModal");
     }
@@ -3144,12 +2377,8 @@ ${liveBal}`;
       if (!tx) return;
       document.getElementById("editTransId").value = selectedTxId;
       document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
-      
-      let dirVal = getVal(tx, ['Direction', 'direction']) || "بستانکار";
-      let currVal = getVal(tx, ['Currency', 'currency']) || "AFN";
-      selectTxDirection(dirVal);
-      selectTxCurrency(currVal);
-
+      selectTxDirection(getVal(tx, ['Direction', 'direction']) || "بستانکار");
+      selectTxCurrency(getVal(tx, ['Currency', 'currency']) || "AFN");
       document.getElementById("txAmountInput").value = formatEnNum(getVal(tx, ['Amount', 'amount']) || "");
       document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
       document.getElementById("txDateInput").value = String(getVal(tx, ['Date', 'date']) || new Date().toISOString()).split('T')[0];
@@ -3166,30 +2395,20 @@ ${liveBal}`;
       document.getElementById("customMessageModal").style.display = "flex";
       pushModalHistory("customMessageModal");
     }
-    function closeCustomMessageModal() {
-      document.getElementById("customMessageModal").style.display = "none";
-    }
+    function closeCustomMessageModal() { document.getElementById("customMessageModal").style.display = "none"; }
 
     function sendCustomWhatsAppMessage() {
       let msg = document.getElementById("customWhatsAppMessageText").value.trim();
       if (!msg) { alert("لطفاً متن پیام را وارد کنید."); return; }
       closeCustomMessageModal();
-
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
-
       let encodedMessage = encodeURIComponent(msg);
-      if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      } else {
-        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-      }
+      window.open(phone ? `https://wa.me/${phone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`, '_blank');
     }
 
     async function submitTransaction() {
-      if (!_supabase) return;
       let amt = parseFloat(formatEnNum(document.getElementById("txAmountInput").value));
-
       if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
       if (!selectedCurrencyValue) { alert("لطفاً واحد پول / ارز را انتخاب کنید!"); return; }
       if (!amt || isNaN(amt) || amt <= 0) { alert("لطفاً یک مبلغ معتبر وارد کنید"); return; }
@@ -3227,33 +2446,21 @@ ${liveBal}`;
 
       let transIdToSave = editTransId || ("TX-" + formatEnNum(Math.floor(10000000 + Math.random() * 90000000)));
       const payload = {
-        TransID: transIdToSave,
-        AccountID: currentAccountId,
-        Direction: selectedDirectionValue,
-        Amount: amt,
-        Currency: selectedCurrencyValue,
-        OperationType: opType,
-        Description: desc,
-        receipt_url: receiptUrl,
-        Date: dateIsoString
+        TransID: transIdToSave, AccountID: currentAccountId, Direction: selectedDirectionValue,
+        Amount: amt, Currency: selectedCurrencyValue, OperationType: opType,
+        Description: desc, receipt_url: receiptUrl, Date: dateIsoString
       };
 
-      if (editTransId) {
-        await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
-      } else {
-        await _supabase.from('transactions').insert([payload]);
-      }
+      if (editTransId) await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
+      else await _supabase.from('transactions').insert([payload]);
 
       await loadDataFromSupabase(false);
 
       let { token, chatId: adminChatId } = getCurrentAdminTokenAndChat();
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
-      
-      if (token) {
-        let siteLinkBlock = PORTAL_SITE_URL ? `
 
-🌐 لینک بررسی آنلاین:
-${PORTAL_SITE_URL}` : '';
+      if (token) {
+        let siteLink = "https://karimi-trust-app.vercel.app/";
         let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
         let liveBalance = getAccountLiveBalanceText(currentAccountId);
         let globalSystemBalance = getSystemGlobalBalanceText();
@@ -3262,63 +2469,53 @@ ${PORTAL_SITE_URL}` : '';
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
           if (customerChatId) {
-            let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
-            if (isTransferOrRemittance) {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨
+            if (opType === "حواله" || opType === "انتقال") {
+              await sendTelegramMessage(token, customerChatId, `✨ *امانت‌داری کریمی* ✨
 
 محترم *${currentAccountName}*،
 ${actionTitle}
 
 💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})
-📅 تاریخ: ${displayDateFormatted}`;
-              let msg2 = `📜 *رسید انتقال:*
+📅 تاریخ: ${displayDateFormatted}`);
+              await sendTelegramMessage(token, customerChatId, `📜 *رسید انتقال:*
 ${desc || 'بدون مشخصات'}
 
-⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
-              let msg3 = `📊 *بیلان به‌روز حساب شما:*
-${liveBalance}${siteLinkBlock}`;
-              
-              await sendTelegramMessage(token, customerChatId, msg1);
-              await sendTelegramMessage(token, customerChatId, msg2);
-              await sendTelegramMessage(token, customerChatId, msg3);
+⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`);
+              await sendTelegramMessage(token, customerChatId, `📊 *بیلان به‌روز حساب شما:*
+${liveBalance}
+
+🌐 لینک بررسی آنلاین:
+${siteLink}`);
             } else {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨
+              await sendTelegramMessage(token, customerChatId, `✨ *امانت‌داری کریمی* ✨
 
 محترم *${currentAccountName}*،
 ${actionTitle}
 
 🔹 نوع: *${opType}* (${selectedDirectionValue})
 💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
-📅 تاریخ: ${displayDateFormatted}`;
-              let msg2 = `📊 *بیلان به‌روز حساب شما:*
-${liveBalance}${siteLinkBlock}`;
+📅 تاریخ: ${displayDateFormatted}`);
+              await sendTelegramMessage(token, customerChatId, `📊 *بیلان به‌روز حساب شما:*
+${liveBalance}
 
-              await sendTelegramMessage(token, customerChatId, msg1);
-              await sendTelegramMessage(token, customerChatId, msg2);
+🌐 لینک بررسی آنلاین:
+${siteLink}`);
             }
           }
         }
 
         if (adminChatId) {
-          let adminMsg = `🔔 *گزارش مدیریتی سیستم*
+          sendTelegramMessage(token, adminChatId, `🔔 *گزارش مدیریتی سیستم*
 
-` +
-                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
-` +
-                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})
-` +
-                         `${actionTitle} (${opType} - ${selectedDirectionValue})
-` +
-                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
-` +
-                         `📅 تاریخ: ${displayDateFormatted}
-` +
-                         `📝 شرح: ${desc || '-'}
+👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
+👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})
+${actionTitle} (${opType} - ${selectedDirectionValue})
+💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
+📅 تاریخ: ${displayDateFormatted}
+📝 شرح: ${desc || '-'}
 
-` +
-                         `📊 *موجودی کل سیستم به تفکیک ارز:*
-${globalSystemBalance}`;
-          sendTelegramMessage(token, adminChatId, adminMsg);
+📊 *موجودی کل سیستم به تفکیک ارز:*
+${globalSystemBalance}`);
         }
       }
 
@@ -3326,18 +2523,12 @@ ${globalSystemBalance}`;
     }
 
     async function deleteSingleTransaction(txIdToDelete) {
-      if (!_supabase) return;
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
-      
       const { error } = await _supabase.from('transactions').delete().eq('TransID', targetId);
-      if (error) {
-        alert("خطا در حذف تراکنش: " + error.message);
-        return;
-      }
+      if (error) { alert("خطا در حذف تراکنش: " + error.message); return; }
 
       allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
-
       await loadDataFromSupabase(false);
       alert("✅ تراکنش با موفقیت حذف شد.");
 
@@ -3352,69 +2543,43 @@ ${globalSystemBalance}`;
 
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
-          if (customerChatId) {
-            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*
+          if (customerChatId) sendTelegramMessage(token, customerChatId, `🗑️ *اخطار: تراکنش شما حذف شد!*
 
-` +
-                         `محترم *${currentAccountName}*،
-` +
-                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.
+محترم *${currentAccountName}*،
+یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.
 
-` +
-                         `📊 *بیلان جدید حساب شما:*
-${liveBalance}`;
-            sendTelegramMessage(token, customerChatId, delMsg);
-          }
+📊 *بیلان جدید حساب شما:*
+${liveBalance}`);
         }
-
         if (adminChatId) {
-          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*
+          sendTelegramMessage(token, adminChatId, `🗑️ *گزارش حذف تراکنش (مدیریتی)*
 
-` +
-                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
-` +
-                            `👥 مشتری: *${currentAccountName}*
-` +
-                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*
+👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
+👥 مشتری: *${currentAccountName}*
+مبلغ حذف‌شده: *${tAmt} ${tCurr}*
 
-` +
-                            `📊 *موجودی کل سیستم:*
-${globalSystemBalance}`;
-          sendTelegramMessage(token, adminChatId, adminDelMsg);
+📊 *موجودی کل سیستم:*
+${globalSystemBalance}`);
         }
       }
 
-      if (currentAccountId) {
-        selectAccount(currentAccountId, currentAccountName);
-      } else {
-        switchView('viewAllTransactionsPage');
-        renderGlobalTransactionsList();
-      }
+      if (currentAccountId) selectAccount(currentAccountId, currentAccountName);
+      else { switchView('viewAllTransactionsPage'); renderGlobalTransactionsList(); }
     }
 
     function shareTransferReceiptWhatsApp(targetTxId) {
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
-
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-
-      let receiptLines = [
-        `✨ *رسید انتقال* ✨`,
-        ``,
-        `${desc || 'بدون توضیحات'}`,
-        ``,
-        `⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`
-      ];
-
-      let encodedMessage = receiptLines.map(line => encodeURIComponent(line)).join('%0A');
-      window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      let lines = [`✨ *رسید انتقال* ✨`, ``, `${desc || 'بدون توضیحات'}`, ``, `⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`];
+      window.open(`https://wa.me/?text=${lines.map(l => encodeURIComponent(l)).join('%0A')}`, '_blank');
     }
 
     function sendSingleTxWhatsApp(targetTxId) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId));
-      if(!tx) return;
+      if (!tx) return;
 
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let amtVal = formatEnMoney(getVal(tx, ['Amount', 'amount']));
@@ -3422,56 +2587,28 @@ ${globalSystemBalance}`;
       let dirVal = String(getVal(tx, ['Direction', 'direction']) || '');
       let txDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-      let liveBalText = getAccountLiveBalanceText(currentAccountId);
-
       let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
 
       let lines = [
-        `✨ *امانت‌داری کریمی* ✨`,
-        `────────────────────────`,
-        `محترم آقای *${currentAccountName}*`,
-        `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`,
-        ``,
-        `📌 *جزئیات تراکنش:*`,
-        `🔹 نوع عملیات: *${opType}* (${dirVal})`,
-        `💰 مبلغ: *${amtVal} ${currVal}*`,
-        `📅 تاریخ: ${txDate}`,
+        `✨ *امانت‌داری کریمی* ✨`, `────────────────────────`,
+        `محترم آقای *${currentAccountName}*`, `با سلام، تراکنش جدیدی در حساب شما به ثبت رسید:`, ``,
+        `📌 *جزئیات تراکنش:*`, `🔹 نوع عملیات: *${opType}* (${dirVal})`, `💰 مبلغ: *${amtVal} ${currVal}*`, `📅 تاریخ: ${txDate}`,
         ...(isTransferOrRemittance ? [] : [`📝 شرح: ${desc || '-'}`]),
-        `────────────────────────`,
-        `📊 *مانده فعلی حساب شما:*`,
-        liveBalText,
-        `────────────────────────`,
-        `با تشکر، امانت‌داری کریمی 🙏`
+        `────────────────────────`, `📊 *مانده فعلی حساب شما:*`, getAccountLiveBalanceText(currentAccountId),
+        `────────────────────────`, `با تشکر، امانت‌داری کریمی 🙏`
       ];
-
-      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      } else {
-        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-      }
+      let encodedMessage = lines.map(l => encodeURIComponent(l)).join('%0A');
+      window.open(phone ? `https://wa.me/${phone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`, '_blank');
     }
 
-    function sendGeneralWhatsAppReport() {
-      sendSingleTxWhatsApp(selectedTxId);
-    }
+    function sendGeneralWhatsAppReport() { sendSingleTxWhatsApp(selectedTxId); }
 
     function sendPeriodicTransactionsWhatsApp(period) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       if (!acc) { alert("حسابی انتخاب نشده است."); return; }
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
 
-      let accTxs = allTransactions
-        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId))
-        .slice()
-        .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
-          if (isNaN(da)) da = 0;
-          if (isNaN(db)) db = 0;
-          return da - db;
-        });
-
+      let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId)).slice().sort((a, b) => (new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime() || 0) - (new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime() || 0));
       let now = new Date();
       let periodTitle = "گزارش تراکنش‌ها";
 
@@ -3479,63 +2616,35 @@ ${globalSystemBalance}`;
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
         if (!txDateStr) return true;
         let diffDays = Math.ceil(Math.abs(now - new Date(txDateStr)) / (1000 * 60 * 60 * 24));
-
-        if (period === 'today') {
-          periodTitle = "گزارش روزانه (امروز)";
-          return diffDays <= 1;
-        } else if (period === 'week') {
-          periodTitle = "گزارش هفتگی (۷ روز گذشته)";
-          return diffDays <= 7;
-        } else if (period === 'month') {
-          periodTitle = "گزارش ماهانه (۳۰ روز گذشته)";
-          return diffDays <= 30;
-        }
+        if (period === 'today') { periodTitle = "گزارش روزانه (امروز)"; return diffDays <= 1; }
+        if (period === 'week') { periodTitle = "گزارش هفتگی (۷ روز گذشته)"; return diffDays <= 7; }
+        if (period === 'month') { periodTitle = "گزارش ماهانه (۳۰ روز گذشته)"; return diffDays <= 30; }
         return true;
       });
 
-      if (filtered.length === 0) {
-        alert("هیچ تراکنشی در این بازه زمانی برای این شخص یافت نشد.");
-        return;
-      }
+      if (!filtered.length) { alert("هیچ تراکنشی در این بازه زمانی برای این شخص یافت نشد."); return; }
 
       let lastSettlementIdx = -1;
       for (let i = accTxs.length - 1; i >= 0; i--) {
         let op = String(getVal(accTxs[i], ['OperationType', 'operationtype']) || '').trim();
         let desc = String(getVal(accTxs[i], ['Description', 'description']) || '').trim();
-        if (op === 'تسویه' || desc.includes('تسویه')) {
-          lastSettlementIdx = i;
-          break;
-        }
+        if (op === 'تسویه' || desc.includes('تسویه')) { lastSettlementIdx = i; break; }
       }
 
       let finalTransactions = filtered;
       if (period === 'all' && lastSettlementIdx !== -1) {
         finalTransactions = accTxs.slice(lastSettlementIdx + 1);
-        if (finalTransactions.length === 0) {
-          finalTransactions = [accTxs[lastSettlementIdx]];
-        }
+        if (!finalTransactions.length) finalTransactions = [accTxs[lastSettlementIdx]];
       }
 
-      let settlementSummaryLine = "";
-      if (lastSettlementIdx !== -1 && period === 'all') {
-        let sTx = accTxs[lastSettlementIdx];
-        let sDate = formatEnNum(String(getVal(sTx, ['Date', 'date']) || '').split('T')[0]);
-        let sAmt = formatEnMoney(getVal(sTx, ['Amount', 'amount']));
-        let sCurr = String(getVal(sTx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-        let sDir = String(getVal(sTx, ['Direction', 'direction']) || '');
-        settlementSummaryLine = `📌 آخرین تسویه در تاریخ ${sDate} (مبلغ ${sAmt} ${sCurr} - ${sDir}) انجام شد. تراکنش‌های جدید پس از آن:`;
-      } else {
-        settlementSummaryLine = `📌 لیست تراکنش‌ها (به ترتیب از قدیم به جدید):`;
-      }
+      let settlementSummaryLine = (lastSettlementIdx !== -1 && period === 'all')
+        ? (() => {
+            let sTx = accTxs[lastSettlementIdx];
+            return `📌 آخرین تسویه در تاریخ ${formatEnNum(String(getVal(sTx, ['Date', 'date']) || '').split('T')[0])} (مبلغ ${formatEnMoney(getVal(sTx, ['Amount', 'amount']))} ${String(getVal(sTx, ['Currency', 'currency']) || 'AFN').toUpperCase()} - ${String(getVal(sTx, ['Direction', 'direction']) || '')}) انجام شد. تراکنش‌های جدید پس از آن:`;
+          })()
+        : `📌 لیست تراکنش‌ها (به ترتیب از قدیم به جدید):`;
 
-      let lines = [
-        `✨ *امانت‌داری کریمی* ✨`,
-        `👤 مشتری: *${currentAccountName}*`,
-        `📅 *${periodTitle}*`,
-        `────────────────────────`,
-        settlementSummaryLine,
-        `────────────────────────`
-      ];
+      let lines = [`✨ *امانت‌داری کریمی* ✨`, `👤 مشتری: *${currentAccountName}*`, `📅 *${periodTitle}*`, `────────────────────────`, settlementSummaryLine, `────────────────────────`];
 
       let runningBalances = {};
       finalTransactions.forEach((tx, idx) => {
@@ -3545,36 +2654,18 @@ ${globalSystemBalance}`;
         let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-
-        if (!runningBalances[curr]) runningBalances[curr] = 0;
-        if (dir.includes("بستانکار")) runningBalances[curr] += amt;
-        if (dir.includes("بدهکار")) runningBalances[curr] -= amt;
-
+        runningBalances[curr] = (runningBalances[curr] || 0) + (dir.includes("بستانکار") ? amt : (dir.includes("بدهکار") ? -amt : 0));
         let balVal = runningBalances[curr];
         let balText = balVal === 0 ? `۰ ${curr} (تسویه)` : `${formatEnMoney(Math.abs(balVal))} ${curr} (${balVal > 0 ? 'بستانکار' : 'بدهکار'})`;
-
         let lineItem = `${formatEnNum(idx + 1)}. [${date}] *${opType}* (${dir}) | ${formatEnMoney(amt)} ${curr} | مانده: ${balText}`;
-        if (desc && desc !== '-') {
-          lineItem += ` | ${desc}`;
-        }
+        if (desc && desc !== '-') lineItem += ` | ${desc}`;
         lines.push(lineItem);
       });
 
-      let liveBalText = getAccountLiveBalanceText(currentAccountId);
-      lines.push(
-        `────────────────────────`,
-        `📊 *مانده نهایی حساب شما:*
-${liveBalText}`,
-        `────────────────────────`,
-        `با تشکر از اعتماد شما 🙏`
-      );
-
-      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      } else {
-        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-      }
+      lines.push(`────────────────────────`, `📊 *مانده نهایی حساب شما:*
+${getAccountLiveBalanceText(currentAccountId)}`, `────────────────────────`, `با تشکر از اعتماد شما 🙏`);
+      let encodedMessage = lines.map(l => encodeURIComponent(l)).join('%0A');
+      window.open(phone ? `https://wa.me/${phone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`, '_blank');
     }
 
     function sendAccountBalanceWhatsApp() {
@@ -3583,30 +2674,16 @@ ${liveBalText}`,
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
 
-      let liveBalText = getAccountLiveBalanceText(currentAccountId);
-
       let lines = [
-        `✨ *امانت‌داری کریمی* ✨`,
-        `────────────────────────`,
-        `👤 *مشخصات حساب مشتری:*`,
-        `▫️ نام: *${currentAccountName}*`,
-        `🆔 کُد حساب: \`${formatEnNum(currentAccountId)}\``,
-        `📞 شماره تماس: ${phone || '-'}`,
-        `💬 چت‌آیدی: \`${chatId}\``,
-        `────────────────────────`,
-        `📊 *صورت‌حساب و مانده حساب شما:*`,
-        ``,
-        liveBalText,
-        ``,
-        ...(PORTAL_SITE_URL ? [`────────────────────────`, `🌐 لینک بررسی آنلاین حساب:`, PORTAL_SITE_URL] : [])
+        `✨ *امانت‌داری کریمی* ✨`, `────────────────────────`,
+        `👤 *مشخصات حساب مشتری:*`, `▫️ نام: *${currentAccountName}*`,
+        `🆔 کُد حساب: \`${formatEnNum(currentAccountId)}\``, `📞 شماره تماس: ${phone || '-'}`, `💬 چت‌آیدی: \`${chatId}\``,
+        `────────────────────────`, `📊 *صورت‌حساب و مانده حساب شما:*`, ``,
+        getAccountLiveBalanceText(currentAccountId), ``,
+        `────────────────────────`, `🌐 لینک بررسی آنلاین حساب:`, `https://karimi-trust-app.vercel.app/`
       ];
-
-      let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
-      if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-      } else {
-        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-      }
+      let encodedMessage = lines.map(l => encodeURIComponent(l)).join('%0A');
+      window.open(phone ? `https://wa.me/${phone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`, '_blank');
     }
   </script>
 </body>
