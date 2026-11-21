@@ -1140,29 +1140,12 @@
       }
     }
 
-    async function sendTelegramMessage(botToken, chatId, messageText) {
-      await ensureRuntimeConfig();
-      const resolvedToken = (VERCEL_BOT_TOKEN || botToken || ownerSettings.bot_token || "").trim();
+    async function sendTelegramMessage(_botToken, chatId, messageText) {
       const resolvedChatId = formatEnNum(chatId || "").trim();
-      if (!resolvedToken || !resolvedChatId || !messageText) return;
+      if (!resolvedChatId || !messageText) return false;
 
       try {
-        const apiResp = await fetch('/api/telegram', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: resolvedChatId,
-            text: messageText,
-            parse_mode: 'Markdown',
-            fallback_token: resolvedToken
-          })
-        });
-        if (apiResp.ok) return;
-      } catch (e) {}
-
-      try {
-        const url = `https://api.telegram.org/bot${resolvedToken}/sendMessage`;
-        await fetch(url, {
+        const apiResp = await fetch('/api/send-telegram', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1171,25 +1154,43 @@
             parse_mode: 'Markdown'
           })
         });
+
+        const data = await apiResp.json().catch(() => ({}));
+        if (apiResp.ok && data.ok !== false) {
+          return true;
+        }
+
+        if (apiResp.status === 400) {
+          const plainResp = await fetch('/api/send-telegram', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: resolvedChatId,
+              text: messageText,
+              parse_mode: ''
+            })
+          });
+          const plainData = await plainResp.json().catch(() => ({}));
+          if (plainResp.ok && plainData.ok !== false) return true;
+          console.error("خطای تلگرام:", plainData);
+        } else {
+          console.error("خطای /api/send-telegram:", data);
+        }
+        return false;
       } catch (err) {
-        console.log("خطا در ارسال تلگرام:", err);
+        console.error("خطای شبکه در ارسال پیام تلگرام:", err);
+        return false;
       }
     }
 
     function getCurrentAdminTokenAndChat() {
-      const sharedToken = (VERCEL_BOT_TOKEN || ownerSettings.bot_token || "").trim();
       const ownerChat = formatEnNum(ownerSettings.chat_id || "").trim();
-
-      if (!currentLoggedInAdmin) {
-        return { token: sharedToken, chatId: ownerChat };
-      }
-      if (isMasterUser(currentLoggedInAdmin)) {
-        return { token: sharedToken, chatId: ownerChat };
+      if (!currentLoggedInAdmin || isMasterUser(currentLoggedInAdmin)) {
+        return { token: "SERVER_ENV", chatId: ownerChat };
       }
       let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
-      let token = sharedToken || (found ? String(getVal(found, ['BotToken', 'bottoken']) || "").trim() : "");
       let chatId = found ? formatEnNum(String(getVal(found, ['ChatID', 'chatid']) || "")).trim() : ownerChat;
-      return { token, chatId };
+      return { token: "SERVER_ENV", chatId };
     }
 
     function getSystemGlobalBalanceText() {
