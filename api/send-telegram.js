@@ -1,15 +1,14 @@
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
   try {
-    const { chat_id, text, parse_mode = "Markdown", fallback_token = "" } = req.body || {};
-    const token = (process.env.TELEGRAM_BOT_TOKEN || fallback_token || "").trim();
+    const { chat_id, text, parse_mode = "Markdown" } = req.body || {};
+    const token = (process.env.TELEGRAM_BOT_TOKEN || "").trim();
 
     if (!token || !chat_id || !text) {
-      return res.status(400).json({ ok: false, error: "Missing token, chat_id, or text" });
+      return res.status(400).json({ ok: false, error: "Missing TELEGRAM_BOT_TOKEN, chat_id, or text" });
     }
 
     const tgResp = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
