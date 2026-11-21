@@ -29,11 +29,11 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', system-ui, sans-serif !important; direction: rtl; }
-    body { background: #e2e8f0; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px; color: var(--text-main); padding: 4px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
+    body { background: #e2e8f0; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 16px 16px; color: var(--text-main); padding: 6px; font-size: 14.5px; min-height: 100vh; padding-bottom: 80px; }
 
-    .container { width: 100%; max-width: 100%; margin: 0 auto; padding: 0; }
-    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 12px; border: 1.5px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow-card); width: 100%; }
-    .card-header { background: var(--primary-gradient); color: #fff; padding: 12px 16px; border-radius: 10px; margin: -12px -12px 12px -12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #38bdf8; }
+    .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0; }
+    .card { background: var(--card-bg); border-radius: var(--radius-md); padding: 14px; border: 1.5px solid var(--border-color); margin-bottom: 12px; box-shadow: var(--shadow-card); width: 100%; }
+    .card-header { background: var(--primary-gradient); color: #fff; padding: 12px 16px; border-radius: 10px; margin: -14px -14px 14px -14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #38bdf8; }
     
     h3 { font-size: 1.05rem; font-weight: 900; color: #fff; }
     .form-group { margin-bottom: 10px; }
@@ -54,7 +54,40 @@
     
     .btn-xs { padding: 5px 9px; font-size: 0.78rem; width: auto; border-radius: 6px; }
     .btn-sm { padding: 7px 11px; font-size: 0.82rem; width: auto; }
-    .btn-narrow-action { padding: 10px 18px; font-size: 0.92rem; font-weight: 900; border-radius: 20px; background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); }
+    .btn-narrow-action { padding: 10px 18px; font-size: 0.92rem; font-weight: 900; border-radius: 20px; background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); width: auto; }
+
+    /* تب‌های ناوبری صفحات مجزا */
+    .nav-tabs-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: #0f172a;
+      padding: 6px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+    }
+    .nav-tab-btn {
+      padding: 10px 8px;
+      border: none;
+      border-radius: 9px;
+      background: transparent;
+      color: #cbd5e1;
+      font-weight: 900;
+      font-size: 0.86rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.18s;
+    }
+    .nav-tab-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .nav-tab-btn.active {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #0f172a;
+      box-shadow: 0 3px 10px rgba(56, 189, 248, 0.4);
+    }
 
     .radio-container { display: flex; gap: 6px; }
     .btn-opt { flex: 1; padding: 10px 6px; text-align: center; background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 900; font-size: 0.88rem; user-select: none; color: #334155; transition: all 0.15s; }
@@ -63,25 +96,22 @@
     .btn-opt.active-currency { background: #0284c7 !important; border-color: #0369a1 !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
     .btn-opt-sm { padding: 8px 4px; font-size: 0.82rem; }
 
-    .stats-grid { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
-    .stat-row-item { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.04); font-size: 0.82rem; }
+    .stats-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+    .stat-row-item { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.04); font-size: 0.85rem; flex-wrap: wrap; gap: 8px; }
     .stat-row-left { font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 6px; }
-    .stat-row-right { display: flex; gap: 12px; align-items: center; font-size: 0.78rem; flex-wrap: wrap; }
+    .stat-row-right { display: flex; gap: 12px; align-items: center; font-size: 0.82rem; flex-wrap: wrap; }
 
     .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
     
     .tx-table-wrapper {
-      width: 100% !important;
-      max-width: 100% !important;
+      width: 100%;
       overflow-x: auto;
-      border-radius: 0 0 8px 8px !important;
+      border-radius: 0 0 8px 8px;
       border: 1.5px solid #cbd5e1;
       border-top: none;
       background: #ffffff;
       margin-bottom: 12px;
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
-      margin-left: 0 !important;
-      margin-right: 0 !important;
     }
     .tx-table {
       width: 100%;
@@ -143,17 +173,17 @@
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: #ffffff;
       padding: 8px 12px;
-      border-radius: 8px 8px 0 0 !important;
-      margin: 14px 0 0 0 !important;
+      border-radius: 8px 8px 0 0;
+      margin: 14px 0 0 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 0.82rem;
       font-weight: 800;
       border-right: 4px solid #38bdf8;
-      width: 100% !important;
+      width: 100%;
     }
-    .day-group-header:first-child { margin-top: 2px !important; }
+    .day-group-header:first-child { margin-top: 2px; }
     .day-group-badge { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; padding: 1px 8px; border-radius: 12px; font-size: 0.74rem; }
     
     .adv-filter-panel {
@@ -173,8 +203,9 @@
     .highlight-amount { color: #059669 !important; font-size: 1.2rem !important; font-weight: 900 !important; background: #f0fdf4; border-color: #10b981 !important; }
     .search-results { background: #fff; border: 1.5px solid var(--border-color); max-height: 160px; overflow-y: auto; border-radius: 8px; margin-top: 4px; position: absolute; width: 95%; z-index: 10; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
     .search-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; }
-    .view-section { display: none; }
+    .view-section { display: none; animation: fadeIn 0.18s ease-in-out; }
     .view-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
     .filter-collapsible { background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: none; }
     #syncIndicator { position: fixed; bottom: 16px; left: 16px; background: #0f172a; color: #38bdf8; border: 2px solid #38bdf8; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 900; z-index: 9999; display: none; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
   </style>
@@ -186,11 +217,11 @@
   <div class="container" id="appContent">
     
     <!-- هدر صرافی فعال -->
-    <div class="card" style="padding: 10px; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);">
+    <div class="card" style="padding: 10px 14px; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); margin-bottom: 8px;">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
         <div>
           <h3 id="mainHeaderTitle" style="color:var(--primary-dark); font-size:1.05rem;">🏛️ صرافی فعال</h3>
-          <span id="activeBrokerSubTitle" style="font-size:0.8rem; color:#64748b; font-weight:bold;">انتخاب نشده</span>
+          <span id="activeBrokerSubTitle" style="font-size:0.8rem; color:#64748b; font-weight:bold;">در حال اتصال به تنظیمات سرور...</span>
         </div>
         <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-info btn-xs" onclick="openBrokersListModal()">🏛️ صرافی‌ها</button>
@@ -201,12 +232,28 @@
       </div>
     </div>
 
-    <!-- داشبورد اصلی -->
-    <div id="viewDashboard" class="view-section active">
+    <!-- نوار ناوبری صفحات مجزا (آمار و مانده | دفتر تراکنش‌ها | ثبت معامله) -->
+    <div class="nav-tabs-bar" id="mainNavTabs">
+      <button type="button" class="nav-tab-btn active" id="tabBtnOverview" onclick="switchView('viewOverview')">
+        📊 آمار و مانده حساب
+      </button>
+      <button type="button" class="nav-tab-btn" id="tabBtnTransactions" onclick="switchView('viewTransactions')">
+        📜 دفتر روزانه تراکنش‌ها
+      </button>
+      <button type="button" class="nav-tab-btn" id="tabBtnNewTx" onclick="openAddTransactionView()">
+        ➕ ثبت معامله جدید
+      </button>
+    </div>
+
+    <!-- صفحه ۱: آمار و مانده حساب -->
+    <div id="viewOverview" class="view-section active">
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <h3 style="color:#0369a1; font-size:1rem;">📊 آمار و مانده حساب</h3>
-          <button class="btn btn-secondary btn-xs" onclick="toggleFilterDrawer()">🔍 فیلتر تاریخ ⚙️</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
+          <h3 style="color:#0369a1; font-size:1.02rem;">📊 خلاصه آمار و مانده حساب‌های صرافی</h3>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-danger btn-xs" style="background:#e11d48;" onclick="handleBrokerPdfClick()">📄 خروجی PDF</button>
+            <button type="button" class="btn btn-secondary btn-xs" onclick="toggleFilterDrawer()">🔍 فیلتر تاریخ ⚙️</button>
+          </div>
         </div>
         
         <div class="filter-collapsible" id="filterDrawer">
@@ -221,23 +268,26 @@
             </div>
           </div>
           <div style="text-align:left; margin-top:6px;">
-            <button class="btn btn-danger btn-xs" onclick="clearDateFilter()">🔄 پاک کردن فیلتر</button>
+            <button class="btn btn-danger btn-xs" onclick="clearDateFilter()">🔄 پاک کردن فیلتر تاریخ</button>
           </div>
         </div>
 
         <div class="stats-grid" id="brokerStatsGrid"></div>
         
-        <div style="margin-top: 12px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
           <button class="btn btn-narrow-action" onclick="openAddTransactionView()">➕ ثبت معامله جدید صرافی</button>
-          <a href="admin.html" class="btn btn-secondary btn-xs" style="text-decoration:none;" onclick="return confirmNavigation('آیا می‌خواهید از بخش صرافی خارج شوید؟')">↩️ منو</a>
+          <button class="btn btn-info btn-sm" onclick="switchView('viewTransactions')">📜 مشاهده دفتر روزانه تراکنش‌ها ←</button>
         </div>
       </div>
+    </div>
 
+    <!-- صفحه ۲: دفتر روزانه و تراکنش‌های صرافی -->
+    <div id="viewTransactions" class="view-section">
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
-          <h3 style="color:#1e1b4b; font-size:1rem;">📜 دفتر روزانه و تراکنش‌های صرافی</h3>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <span id="txCountBadge" style="font-size:0.8rem; color:#0369a1; font-weight:bold; background:#e0f2fe; padding:3px 9px; border-radius:12px;"></span>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
+          <h3 style="color:#1e1b4b; font-size:1.02rem;">📜 دفتر روزانه و تراکنش‌های صرافی</h3>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <span id="txCountBadge" style="font-size:0.8rem; color:#0369a1; font-weight:bold; background:#e0f2fe; padding:4px 10px; border-radius:12px;"></span>
             <button type="button" class="btn btn-danger btn-xs" style="background:#e11d48;" onclick="handleBrokerPdfClick()">📄 خروجی PDF</button>
             <button type="button" class="btn btn-info btn-xs" onclick="toggleAdvTxFilters()">🎛️ فیلتر پیشرفته</button>
           </div>
@@ -250,6 +300,14 @@
 
         <div id="advTxFilterPanel" class="adv-filter-panel" style="display:none;">
           <div class="adv-filter-grid">
+            <div>
+              <label style="font-size:0.75rem;">از تاریخ:</label>
+              <input type="date" id="filterDateFromTx" onchange="syncDateFilters('from', this.value)" style="padding:6px; font-size:0.82rem;">
+            </div>
+            <div>
+              <label style="font-size:0.75rem;">تا تاریخ:</label>
+              <input type="date" id="filterDateToTx" onchange="syncDateFilters('to', this.value)" style="padding:6px; font-size:0.82rem;">
+            </div>
             <div>
               <label style="font-size:0.75rem;">جهت معامله:</label>
               <select id="filterTxDirection" onchange="renderBrokerStatsAndTxs()" style="padding:6px; font-size:0.82rem;">
@@ -292,12 +350,12 @@
       </div>
     </div>
 
-    <!-- فرم ثبت / ویرایش معامله -->
+    <!-- صفحه ۳: فرم ثبت / ویرایش معامله -->
     <div id="viewTransactionForm" class="view-section">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
           <h3 id="formTitle" style="color:#0f172a; font-size:1rem;">📝 ثبت معامله جدید</h3>
-          <button class="btn btn-secondary btn-xs" onclick="attemptExitForm()">↩️ بازگشت / منو</button>
+          <button class="btn btn-secondary btn-xs" onclick="attemptExitForm()">↩️ بازگشت</button>
         </div>
         <hr style="margin: 6px 0 10px 0; border:0; border-top:1.5px solid #cbd5e1;">
 
@@ -432,18 +490,18 @@
             💾 ذخیره کامل معامله
           </button>
           <button class="btn btn-secondary btn-xs" style="padding: 12px; flex:1; text-align:center;" onclick="attemptExitForm()">
-            ↩️ منو
+            ↩️ انصراف
           </button>
         </div>
       </div>
     </div>
 
-    <!-- جزئیات تراکنش -->
+    <!-- صفحه ۴: جزئیات تراکنش -->
     <div id="viewTransactionDetail" class="view-section">
       <div class="card">
         <div class="card-header">
           <h3>🔍 جزئیات تراکنش</h3>
-          <button class="btn btn-secondary btn-xs" onclick="switchView('viewDashboard')">↩️ بازگشت</button>
+          <button class="btn btn-secondary btn-xs" onclick="switchView('viewTransactions')">↩️ بازگشت به دفتر</button>
         </div>
         <div id="txDetailCard" style="margin-top: 10px;"></div>
         <div style="margin-top: 12px; display:flex; gap:8px; flex-wrap:wrap;">
@@ -458,7 +516,7 @@
 
   </div>
 
-  <!-- مدال تنظیم چت‌آیدی تلگرام (بدون مقدار پیش‌فرض گروه) -->
+  <!-- مدال تنظیم چت‌آیدی تلگرام -->
   <div id="telegramTargetsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9800; padding:10px;">
     <div class="card" style="width:100%; max-width:450px; margin:0; max-height:85vh; overflow-y:auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -467,12 +525,12 @@
       </div>
 
       <div style="background:#f0f9ff; border:1px solid #7dd3fc; border-radius:8px; padding:8px 10px; margin-bottom:12px; font-size:0.78rem; color:#0f172a; font-weight:700; line-height:1.6;">
-        هیچ چت‌آیدی گروهی به‌صورت پیش‌فرض تنظیم نشده است. هر صرافی می‌تواند چت‌آیدی مستقل خود را در بخش «مدیریت صرافی‌ها» داشته باشد و این فیلد برای چت شخصی ادمین/صرافی استفاده می‌شود.
+        هر صرافی می‌تواند چت‌آیدی مستقل خود را در بخش «مدیریت صرافی‌ها» داشته باشد. این فیلد برای چت شخصی ادمین/صرافی در صورت نبود چت‌آیدی اختصاصی در صرافی استفاده می‌شود.
       </div>
       
       <div class="form-group">
         <label>چت‌آیدی تلگرام (اختیاری):</label>
-        <input type="text" id="personalChatIdInput" dir="ltr" placeholder="مثلاً 802655440 یا آیدی چت اختصاصی">
+        <input type="text" id="personalChatIdInput" dir="ltr" placeholder="مثلاً 802655440">
         <span class="field-hint">در صورت ثبت چت‌آیدی مستقل در خود صرافی، همان چت‌آیدی صرافی در اولویت قرار می‌گیرد.</span>
       </div>
 
@@ -512,7 +570,7 @@
       <div class="form-group">
         <label>چت‌آیدی مستقل این صرافی:</label>
         <input type="text" id="brokerChatId" dir="ltr" placeholder="چت‌آیدی اختصاصی همین صرافی">
-        <span class="field-hint">هر صرافی چت‌آیدی مستقل خود را دارد و در صورت خالی بودن، پیامی به چت پیش‌فرض گروه ارسال نمی‌شود.</span>
+        <span class="field-hint">هر صرافی چت‌آیدی مستقل خود را دارد.</span>
       </div>
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button class="btn btn-secondary btn-sm" onclick="closeBrokerModal()">انصراف</button>
@@ -556,6 +614,7 @@
   </div>
 
   <script>
+    // تنظیمات Supabase فقط از متغیرهای محیطی Vercel (/api/env) خوانده می‌شود و هیچ مقدار هاردکدشده‌ای در کد وجود ندارد
     let SUPABASE_URL = "";
     let SUPABASE_KEY = "";
     let _supabase = null;
@@ -579,6 +638,7 @@
     let activeBrokerId = null;
     let currentLoggedInAdmin = null;
     let isFormDirty = false;
+    let lastMainTabView = "viewOverview";
 
     function toEnglishDigits(str) {
       if (str === null || str === undefined) return '';
@@ -590,7 +650,7 @@
     function normalizeChatId(rawChatId) {
       if (rawChatId === null || rawChatId === undefined) return '';
       let cleaned = toEnglishDigits(String(rawChatId)).trim();
-      cleaned = cleaned.replace(/[\u200e\u200f\s]/g, '');
+      cleaned = cleaned.replace(/[‎‏\s]/g, '');
       return cleaned;
     }
 
@@ -607,19 +667,25 @@
         runtimeConfigPromise = (async () => {
           try {
             const resp = await fetch("/api/env", { cache: "no-store" });
-            if (resp.ok) {
-              const cfg = await resp.json();
-              SUPABASE_URL = String(cfg.supabaseUrl || "").trim();
-              SUPABASE_KEY = String(cfg.supabaseKey || "").trim();
+            if (!resp.ok) {
+              throw new Error(`HTTP ${resp.status}`);
             }
+            const cfg = await resp.json();
+            SUPABASE_URL = String(cfg.supabaseUrl || "").trim();
+            SUPABASE_KEY = String(cfg.supabaseKey || "").trim();
           } catch (e) {
-            console.warn("خطا در دریافت تنظیمات از /api/env:", e);
+            console.error("خطا در دریافت تنظیمات Supabase از Vercel (/api/env):", e);
+            runtimeConfigPromise = null;
+            return null;
           }
 
-          if (!SUPABASE_URL) SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
-          if (!SUPABASE_KEY) SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+          if (!SUPABASE_URL || !SUPABASE_KEY) {
+            console.error("متغیرهای محیطی SUPABASE_URL یا SUPABASE_KEY در Vercel تنظیم نشده‌اند.");
+            runtimeConfigPromise = null;
+            return null;
+          }
 
-          if (SUPABASE_URL && SUPABASE_KEY && window.supabase) {
+          if (window.supabase) {
             _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           }
           return _supabase;
@@ -657,17 +723,22 @@
         currentLoggedInAdmin = JSON.parse(savedSession);
         document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
 
-        await ensureSupabaseClient();
+        const client = await ensureSupabaseClient();
+        if (!client) {
+          document.getElementById("activeBrokerSubTitle").innerText = "⚠️ خطا در دریافت تنظیمات از سرور Vercel (/api/env)";
+          alert("⚠️ اتصال به دیتابیس برقرار نشد. لطفاً متغیرهای SUPABASE_URL و SUPABASE_KEY را در تنظیمات Vercel بررسی کنید.");
+          return;
+        }
+
         await fetchLatestAdminInfo();
         await syncTelegramTargetsFromDatabase();
-
         await loadInitialData();
       } catch(e) {
         localStorage.removeItem("adminAuthSessionData");
         window.location.href = "admin.html";
       }
 
-      window.history.replaceState({ view: 'viewDashboard' }, '');
+      window.history.replaceState({ view: 'viewOverview' }, '');
       window.onpopstate = function(event) {
         let activeSec = document.getElementById("viewTransactionForm");
         if (activeSec && activeSec.classList.contains('active') && isFormDirty) {
@@ -680,7 +751,7 @@
         if (event.state && event.state.view) {
           switchView(event.state.view, false);
         } else {
-          switchView('viewDashboard', false);
+          switchView('viewOverview', false);
         }
       };
     };
@@ -704,7 +775,7 @@
         }
       }
       isFormDirty = false;
-      switchView('viewDashboard');
+      switchView(lastMainTabView || 'viewOverview');
     }
 
     function handleLogout() {
@@ -767,7 +838,6 @@
       }
     }
 
-    // هر صرافی چت‌آیدی مستقل خود را دارد و هیچ گروه پیش‌فرضی استفاده نمی‌شود
     function getTelegramDispatchTargets(currentBroker) {
       let brokerChat = currentBroker ? normalizeChatId(currentBroker.chatid || "") : "";
       if (brokerChat) {
@@ -874,11 +944,35 @@
       finally { showSync(false); }
     }
 
+    function updateActiveNavTab(viewId) {
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (viewId === 'viewOverview') {
+        lastMainTabView = 'viewOverview';
+        document.getElementById('tabBtnOverview').classList.add('active');
+      } else if (viewId === 'viewTransactions' || viewId === 'viewTransactionDetail') {
+        lastMainTabView = 'viewTransactions';
+        document.getElementById('tabBtnTransactions').classList.add('active');
+      } else if (viewId === 'viewTransactionForm') {
+        document.getElementById('tabBtnNewTx').classList.add('active');
+      }
+    }
+
     function switchView(viewId, pushHistory = true) {
+      if (viewId !== 'viewTransactionForm') {
+        let activeSec = document.getElementById("viewTransactionForm");
+        if (activeSec && activeSec.classList.contains('active') && isFormDirty) {
+          if (!confirm("⚠️ اطلاعات این معامله ذخیره نشده است. آیا مطمئن هستید که می‌خواهید خارج شوید؟")) {
+            return;
+          }
+          isFormDirty = false;
+        }
+      }
       playBeep('click');
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      document.getElementById(viewId).classList.add('active');
-      window.scrollTo(0,0);
+      const targetEl = document.getElementById(viewId);
+      if (targetEl) targetEl.classList.add('active');
+      updateActiveNavTab(viewId);
+      window.scrollTo(0, 0);
       if (pushHistory) {
         window.history.pushState({ view: viewId }, '');
       }
@@ -888,6 +982,17 @@
       playBeep('click');
       const el = document.getElementById("filterDrawer");
       el.style.display = (el.style.display === "none" || !el.style.display) ? "block" : "none";
+    }
+
+    function syncDateFilters(which, val) {
+      if (which === 'from') {
+        document.getElementById("filterDateFrom").value = val;
+        if (document.getElementById("filterDateFromTx")) document.getElementById("filterDateFromTx").value = val;
+      } else {
+        document.getElementById("filterDateTo").value = val;
+        if (document.getElementById("filterDateToTx")) document.getElementById("filterDateToTx").value = val;
+      }
+      renderBrokerStatsAndTxs();
     }
 
     function extractDateOnly(rawDate) {
@@ -965,6 +1070,8 @@
       playBeep('click');
       document.getElementById("filterDateFrom").value = "";
       document.getElementById("filterDateTo").value = "";
+      if (document.getElementById("filterDateFromTx")) document.getElementById("filterDateFromTx").value = "";
+      if (document.getElementById("filterDateToTx")) document.getElementById("filterDateToTx").value = "";
       renderBrokerStatsAndTxs();
     }
 
@@ -972,6 +1079,8 @@
       playBeep('click');
       document.getElementById("filterDateFrom").value = "";
       document.getElementById("filterDateTo").value = "";
+      if (document.getElementById("filterDateFromTx")) document.getElementById("filterDateFromTx").value = "";
+      if (document.getElementById("filterDateToTx")) document.getElementById("filterDateToTx").value = "";
       document.getElementById("txSearchInput").value = "";
       if (document.getElementById("filterTxDirection")) document.getElementById("filterTxDirection").value = "all";
       if (document.getElementById("filterTxCurrency")) document.getElementById("filterTxCurrency").value = "all";
@@ -1047,7 +1156,7 @@
       grid.innerHTML = "";
 
       if (Object.keys(currencyTotals).length === 0) {
-        grid.innerHTML = `<div style="text-align:center; color:#64748b; font-size:0.85rem; font-weight:bold; padding:8px;">بدون آمار فعال</div>`;
+        grid.innerHTML = `<div style="text-align:center; color:#64748b; font-size:0.85rem; font-weight:bold; padding:16px;">بدون آمار فعال</div>`;
         return;
       }
 
@@ -1061,12 +1170,12 @@
         grid.innerHTML += `
           <div class="stat-row-item">
             <div class="stat-row-left">
-              <span style="background:#0f172a; color:#fff; padding:2px 8px; border-radius:6px; font-size:0.78rem;">${curr}</span>
+              <span style="background:#0f172a; color:#fff; padding:4px 10px; border-radius:8px; font-size:0.84rem;">${curr}</span>
             </div>
             <div class="stat-row-right">
               <span style="color:#059669; font-weight:800;">بستانکار: ${toEnglishDigits(cred.toLocaleString())}</span>
               <span style="color:#dc2626; font-weight:800;">بدهکار: ${toEnglishDigits(debt.toLocaleString())}</span>
-              <span style="color:${netColor}; font-weight:900; background:${net >= 0 ? '#f0fdf4' : '#fef2f2'}; padding:2px 6px; border-radius:6px;">مانده: ${toEnglishDigits(Math.abs(net).toLocaleString())} ${statusSign}</span>
+              <span style="color:${netColor}; font-weight:900; background:${net >= 0 ? '#f0fdf4' : '#fef2f2'}; padding:3px 8px; border-radius:6px; border:1px solid ${net >= 0 ? '#bbf7d0' : '#fecaca'};">مانده: ${toEnglishDigits(Math.abs(net).toLocaleString())} ${statusSign}</span>
             </div>
           </div>
         `;
@@ -1394,7 +1503,7 @@ ${verticalReport}`;
 
     async function saveBrokerTransaction() {
       const client = await ensureSupabaseClient();
-      if (!client) return;
+      if (!client) { alert("خطا در اتصال به دیتابیس"); return; }
       if (!activeBrokerId) { alert("لطفاً صرافی را انتخاب کنید"); return; }
       if (!selectedDirection) { alert("جهت معامله مشخص نشده است!"); return; }
       if (!selectedCurrency) { alert("ارز معامله انتخاب نشده است!"); return; }
@@ -1538,7 +1647,7 @@ ${verticalReport}`;
       isFormDirty = false;
       playBeep('success');
       alert("✅ معامله با موفقیت ثبت/ویرایش شد!");
-      switchView('viewDashboard');
+      switchView('viewTransactions');
       showSync(false);
     }
 
@@ -1616,7 +1725,7 @@ ${verticalReport}`;
       }
 
       playBeep('success');
-      switchView('viewDashboard');
+      switchView('viewTransactions');
       showSync(false);
       alert("✅ معامله حذف شد.");
     }
@@ -1875,7 +1984,7 @@ ${verticalReport}`;
     }
 
     // ==========================================
-    // سیستم صدور یک فایل PDF واحد با بخش‌های تفکیکی هر ارز
+    // سیستم صدور یک فایل PDF منظم و استاندارد به تفکیک ارز
     // ==========================================
     async function fetchFreshBrokerTransactionsForPdf() {
       const client = await ensureSupabaseClient();
@@ -1895,6 +2004,15 @@ ${verticalReport}`;
       return getFilteredTxs();
     }
 
+    function escapeHtml(text) {
+      if (text === null || text === undefined) return '';
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
     function buildCurrencySectionHtml(targetCurrency, currTxs, isFirstSection) {
       let chronological = sortBrokerTxsChronologically(currTxs, true);
 
@@ -1907,7 +2025,8 @@ ${verticalReport}`;
       });
       let netBalance = totalCreditor - totalDebtor;
       let netStatus = netBalance > 0 ? 'بستانکار (+)' : (netBalance < 0 ? 'بدهکار (-)' : 'تسویه (۰)');
-      let netColor = netBalance > 0 ? '#059669' : (netBalance < 0 ? '#dc2626' : '#334155');
+      let netColor = netBalance > 0 ? '#065f46' : (netBalance < 0 ? '#991b1b' : '#1e293b');
+      let netBg = netBalance > 0 ? '#ecfdf5' : (netBalance < 0 ? '#fef2f2' : '#f1f5f9');
 
       let dayGroups = [];
       let dayMap = {};
@@ -1922,120 +2041,127 @@ ${verticalReport}`;
 
       let runningBalance = 0;
       let rowCounter = 0;
-      let daysHtml = '';
+      let allRowsHtml = '';
 
       dayGroups.forEach(group => {
         let dayName = getPersianDayName(group.date);
         let dayLabel = dayName ? `${dayName} — ${toEnglishDigits(group.date)}` : toEnglishDigits(group.date);
-        let dayCount = group.items.length;
-
         let dayCred = 0;
         let dayDebt = 0;
-        let rowsHtml = '';
+
+        group.items.forEach(tx => {
+          let amt = parseFloat(tx.amount_final || tx.amount_initial) || 0;
+          if (tx.direction === 'بستانکار') dayCred += amt;
+          else dayDebt += amt;
+        });
+
+        allRowsHtml += `
+          <tr class="pdf-day-banner">
+            <td colspan="8" style="background:#1e293b; color:#ffffff; padding:5px 8px; font-weight:800; font-size:9.5pt; border:1px solid #0f172a;">
+              <table style="width:100%; border-collapse:collapse; border:none;">
+                <tr>
+                  <td style="border:none; padding:0; text-align:right; color:#ffffff; font-weight:900;">
+                    📅 ${dayLabel} <span style="color:#7dd3fc; font-weight:700;">(${toEnglishDigits(group.items.length)} تراکنش)</span>
+                  </td>
+                  <td style="border:none; padding:0; text-align:left; font-size:8.8pt;">
+                    <span style="color:#6ee7b7; margin-left:12px;">بستانکار روز: ${toEnglishDigits(dayCred.toLocaleString())} ${targetCurrency}</span>
+                    <span style="color:#fca5a5;">بدهکار روز: ${toEnglishDigits(dayDebt.toLocaleString())} ${targetCurrency}</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        `;
 
         group.items.forEach(tx => {
           rowCounter++;
           let isCred = tx.direction === 'بستانکار';
           let amt = parseFloat(tx.amount_final || tx.amount_initial) || 0;
-          if (isCred) {
-            dayCred += amt;
-            runningBalance += amt;
-          } else {
-            dayDebt += amt;
-            runningBalance -= amt;
-          }
+          if (isCred) runningBalance += amt;
+          else runningBalance -= amt;
 
           let timeStr = extractTimeOnly(tx.date);
-          let rateInfo = tx.exchange_rate ? `اولیه: ${toEnglishDigits((tx.amount_initial || 0).toLocaleString())} | نرخ: ${toEnglishDigits(tx.exchange_rate)}` : '-';
-          let balColor = runningBalance >= 0 ? '#059669' : '#dc2626';
+          let rateInfo = tx.exchange_rate
+            ? `اولیه: ${toEnglishDigits((tx.amount_initial || 0).toLocaleString())}<br>نرخ: ${toEnglishDigits(tx.exchange_rate)}`
+            : '-';
+          let balColor = runningBalance >= 0 ? '#065f46' : '#991b1b';
           let balSign = runningBalance > 0 ? '+' : (runningBalance < 0 ? '-' : '');
+          let rowBg = isCred ? '#ffffff' : '#fffafb';
 
-          rowsHtml += `
-            <tr style="border-bottom:1px solid #cbd5e1; background:${isCred ? '#f8fffb' : '#fff9f9'};">
-              <td style="padding:5px 4px; text-align:center; font-weight:800; border-left:1px solid #e2e8f0;">${toEnglishDigits(rowCounter)}</td>
-              <td style="padding:5px 5px; text-align:center; font-size:9.5px; border-left:1px solid #e2e8f0;" dir="ltr">
-                <div style="font-weight:800;">${tx.broker_tx_id}</div>
-                ${timeStr ? `<div style="color:#64748b;">${timeStr}</div>` : ''}
+          allRowsHtml += `
+            <tr class="pdf-tx-row" style="background:${rowBg};">
+              <td style="padding:5px 4px; text-align:center; font-weight:800; border:1px solid #cbd5e1;">${toEnglishDigits(rowCounter)}</td>
+              <td style="padding:5px 4px; text-align:center; font-size:8.2pt; border:1px solid #cbd5e1;" dir="ltr">
+                <div style="font-weight:800;">${escapeHtml(tx.broker_tx_id)}</div>
+                ${timeStr ? `<div style="color:#64748b; font-size:7.8pt;">${timeStr}</div>` : ''}
               </td>
-              <td style="padding:5px 5px; text-align:center; font-weight:800; border-left:1px solid #e2e8f0;">${tx.operation_type || '-'}</td>
-              <td style="padding:5px 5px; text-align:center; font-weight:900; color:${isCred ? '#059669' : '#dc2626'}; border-left:1px solid #e2e8f0;">${tx.direction}</td>
-              <td style="padding:5px 6px; text-align:left; font-weight:900; color:${isCred ? '#059669' : '#dc2626'}; border-left:1px solid #e2e8f0;" dir="ltr">
+              <td style="padding:5px 4px; text-align:center; font-weight:700; border:1px solid #cbd5e1;">${escapeHtml(tx.operation_type || '-')}</td>
+              <td style="padding:5px 4px; text-align:center; font-weight:900; color:${isCred ? '#059669' : '#dc2626'}; border:1px solid #cbd5e1;">${escapeHtml(tx.direction)}</td>
+              <td style="padding:5px 6px; text-align:left; font-weight:900; color:${isCred ? '#059669' : '#dc2626'}; border:1px solid #cbd5e1; white-space:nowrap;" dir="ltr">
                 ${toEnglishDigits(amt.toLocaleString())} ${targetCurrency}
               </td>
-              <td style="padding:5px 5px; text-align:center; font-size:9.5px; color:#475569; border-left:1px solid #e2e8f0;">${rateInfo}</td>
-              <td style="padding:5px 6px; text-align:right; font-size:10px; border-left:1px solid #e2e8f0;">
-                <div>${tx.description || '-'}</div>
-                ${tx.address_dashboard ? `<div style="color:#0284c7; font-size:9px; margin-top:2px;">مقصد: ${tx.address_dashboard}</div>` : ''}
+              <td style="padding:5px 4px; text-align:center; font-size:8pt; color:#475569; border:1px solid #cbd5e1;">${rateInfo}</td>
+              <td style="padding:5px 6px; text-align:right; font-size:8.8pt; border:1px solid #cbd5e1; word-break:break-word;">
+                <div>${escapeHtml(tx.description || '-')}</div>
+                ${tx.address_dashboard ? `<div style="color:#0284c7; font-size:8pt; margin-top:2px;">مقصد: ${escapeHtml(tx.address_dashboard)}</div>` : ''}
               </td>
-              <td style="padding:5px 6px; text-align:left; font-weight:900; color:${balColor};" dir="ltr">
+              <td style="padding:5px 6px; text-align:left; font-weight:900; color:${balColor}; border:1px solid #cbd5e1; white-space:nowrap;" dir="ltr">
                 ${toEnglishDigits(Math.abs(runningBalance).toLocaleString())} ${balSign}
               </td>
             </tr>
           `;
         });
-
-        daysHtml += `
-          <div style="margin-bottom:10px; border:1px solid #94a3b8; border-radius:7px; overflow:hidden;">
-            <div style="background:#1e293b; color:#ffffff; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; border-right:4px solid #38bdf8;">
-              <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-weight:900; font-size:11px;">📅 ${dayLabel}</span>
-                <span style="background:#38bdf8; color:#0f172a; padding:1px 8px; border-radius:10px; font-size:10px; font-weight:900;">
-                  تعداد: ${toEnglishDigits(dayCount)} تراکنش
-                </span>
-              </div>
-              <div style="font-size:10px; font-weight:800; display:flex; gap:10px;">
-                <span style="color:#6ee7b7;">بستانکار روز: ${toEnglishDigits(dayCred.toLocaleString())} ${targetCurrency}</span>
-                <span style="color:#fca5a5;">بدهکار روز: ${toEnglishDigits(dayDebt.toLocaleString())} ${targetCurrency}</span>
-              </div>
-            </div>
-
-            <table style="width:100%; border-collapse:collapse; font-size:10.5px; direction:rtl;">
-              <thead>
-                <tr style="background:#f1f5f9; color:#0f172a; border-bottom:1.5px solid #94a3b8;">
-                  <th style="padding:5px 4px; width:32px; text-align:center; border-left:1px solid #cbd5e1;">#</th>
-                  <th style="padding:5px 5px; width:82px; text-align:center; border-left:1px solid #cbd5e1;">کد / ساعت</th>
-                  <th style="padding:5px 5px; width:64px; text-align:center; border-left:1px solid #cbd5e1;">عملیات</th>
-                  <th style="padding:5px 5px; width:56px; text-align:center; border-left:1px solid #cbd5e1;">جهت</th>
-                  <th style="padding:5px 6px; width:92px; text-align:left; border-left:1px solid #cbd5e1;">مبلغ (${targetCurrency})</th>
-                  <th style="padding:5px 5px; width:95px; text-align:center; border-left:1px solid #cbd5e1;">نرخ / اولیه</th>
-                  <th style="padding:5px 6px; text-align:right; border-left:1px solid #cbd5e1;">شرح و آدرس مقصد</th>
-                  <th style="padding:5px 6px; width:92px; text-align:left;">مانده لحظه‌ای</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${rowsHtml}
-              </tbody>
-            </table>
-          </div>
-        `;
       });
 
-      const breakStyle = isFirstSection ? '' : 'page-break-before: always; break-before: page;';
+      const pageBreakClass = isFirstSection ? '' : 'pdf-page-break';
 
       return `
-        <div style="${breakStyle} margin-bottom:16px;">
-          <div style="border:1.5px solid #0f172a; border-radius:8px; padding:9px 11px; margin-bottom:10px; background:#f8fafc;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:7px;">
-              <div style="font-size:13.5px; font-weight:900; color:#0f172a;">
-                💱 بخش تفکیکی ارز: <span style="background:#0f172a; color:#38bdf8; padding:2px 10px; border-radius:6px;">${targetCurrency}</span>
-              </div>
-              <div style="font-size:10.5px; font-weight:800; color:#334155;">
-                تعداد روزها: ${toEnglishDigits(dayGroups.length)} | تعداد تراکنش‌ها: ${toEnglishDigits(chronological.length)}
-              </div>
-            </div>
-            <div style="display:flex; justify-content:space-between; gap:8px; font-size:11px; font-weight:900;">
-              <div style="flex:1; background:#ecfdf5; border:1px solid #10b981; color:#065f46; padding:5px 8px; border-radius:6px; text-align:center;">
+        <div class="${pageBreakClass}" style="margin-bottom:14px;">
+          <table style="width:100%; border-collapse:collapse; margin-bottom:8px; border:1.5px solid #0f172a; background:#f8fafc;">
+            <tr>
+              <td colspan="3" style="padding:7px 10px; border-bottom:1px solid #cbd5e1; background:#0f172a; color:#ffffff;">
+                <table style="width:100%; border-collapse:collapse;">
+                  <tr>
+                    <td style="border:none; padding:0; text-align:right; font-size:11pt; font-weight:900; color:#ffffff;">
+                      💱 صورت‌حساب تفکیکی ارز: <span style="color:#38bdf8;">${targetCurrency}</span>
+                    </td>
+                    <td style="border:none; padding:0; text-align:left; font-size:9pt; color:#e2e8f0; font-weight:700;">
+                      روزهای فعال: ${toEnglishDigits(dayGroups.length)} | تعداد تراکنش: ${toEnglishDigits(chronological.length)}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:32%; padding:7px 8px; text-align:center; background:#ecfdf5; color:#065f46; font-weight:900; font-size:9.5pt; border-left:1px solid #cbd5e1;">
                 جمع بستانکار: ${toEnglishDigits(totalCreditor.toLocaleString())} ${targetCurrency}
-              </div>
-              <div style="flex:1; background:#fef2f2; border:1px solid #ef4444; color:#991b1b; padding:5px 8px; border-radius:6px; text-align:center;">
+              </td>
+              <td style="width:32%; padding:7px 8px; text-align:center; background:#fef2f2; color:#991b1b; font-weight:900; font-size:9.5pt; border-left:1px solid #cbd5e1;">
                 جمع بدهکار: ${toEnglishDigits(totalDebtor.toLocaleString())} ${targetCurrency}
-              </div>
-              <div style="flex:1.2; background:#eff6ff; border:1.5px solid #0284c7; color:${netColor}; padding:5px 8px; border-radius:6px; text-align:center;">
-                مانده نهایی (${targetCurrency}): ${toEnglishDigits(Math.abs(netBalance).toLocaleString())} — ${netStatus}
-              </div>
-            </div>
-          </div>
-          ${daysHtml}
+              </td>
+              <td style="width:36%; padding:7px 8px; text-align:center; background:${netBg}; color:${netColor}; font-weight:900; font-size:9.8pt;">
+                مانده نهایی: ${toEnglishDigits(Math.abs(netBalance).toLocaleString())} ${targetCurrency} (${netStatus})
+              </td>
+            </tr>
+          </table>
+
+          <table class="pdf-main-table" style="width:100%; border-collapse:collapse; font-size:9pt; direction:rtl; table-layout:fixed;">
+            <thead>
+              <tr style="background:#e2e8f0; color:#0f172a;">
+                <th style="width:4%; padding:6px 3px; text-align:center; border:1px solid #94a3b8;">#</th>
+                <th style="width:12%; padding:6px 4px; text-align:center; border:1px solid #94a3b8;">کد / ساعت</th>
+                <th style="width:9%; padding:6px 4px; text-align:center; border:1px solid #94a3b8;">عملیات</th>
+                <th style="width:8%; padding:6px 4px; text-align:center; border:1px solid #94a3b8;">جهت</th>
+                <th style="width:14%; padding:6px 5px; text-align:left; border:1px solid #94a3b8;">مبلغ (${targetCurrency})</th>
+                <th style="width:12%; padding:6px 4px; text-align:center; border:1px solid #94a3b8;">نرخ / اولیه</th>
+                <th style="width:27%; padding:6px 5px; text-align:right; border:1px solid #94a3b8;">شرح و آدرس مقصد</th>
+                <th style="width:14%; padding:6px 5px; text-align:left; border:1px solid #94a3b8;">مانده لحظه‌ای</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${allRowsHtml}
+            </tbody>
+          </table>
         </div>
       `;
     }
@@ -2052,6 +2178,7 @@ ${verticalReport}`;
       }
 
       showSync(true);
+      let hostContainer = null;
       try {
         let txs = await fetchFreshBrokerTransactionsForPdf();
         if (!txs || txs.length === 0) {
@@ -2072,52 +2199,78 @@ ${verticalReport}`;
         const brokerPhone = currentBroker ? (currentBroker.phone || '') : '';
         const todayStr = toEnglishDigits(new Date().toISOString().split('T')[0]);
 
+        let dateFrom = document.getElementById("filterDateFrom").value;
+        let dateTo = document.getElementById("filterDateTo").value;
+        let periodLabel = (dateFrom || dateTo)
+          ? `بازه گزارش: ${dateFrom ? toEnglishDigits(dateFrom) : 'ابتدا'} تا ${dateTo ? toEnglishDigits(dateTo) : 'امروز'}`
+          : 'بازه گزارش: کل دوره';
+
         let sectionsHtml = '';
         currencies.forEach((curr, idx) => {
           let currTxs = txs.filter(tx => String(tx.currency || 'USD').trim().toUpperCase() === curr);
           sectionsHtml += buildCurrencySectionHtml(curr, currTxs, idx === 0);
         });
 
-        const pdfWrapper = document.createElement('div');
-        pdfWrapper.style.width = '100%';
-        pdfWrapper.style.background = '#ffffff';
-        pdfWrapper.style.color = '#0f172a';
-        pdfWrapper.style.fontFamily = "'Vazirmatn', Tahoma, sans-serif";
-        pdfWrapper.style.direction = 'rtl';
-        pdfWrapper.style.padding = '8px';
+        hostContainer = document.createElement('div');
+        hostContainer.style.position = 'fixed';
+        hostContainer.style.left = '-10000px';
+        hostContainer.style.top = '0';
+        hostContainer.style.width = '1060px';
+        hostContainer.style.background = '#ffffff';
+        hostContainer.style.zIndex = '-1';
 
-        pdfWrapper.innerHTML = `
-          <div style="border:2px solid #0f172a; border-radius:10px; padding:10px 12px; margin-bottom:12px; background:#f8fafc;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <div style="font-size:15px; font-weight:900; color:#0f172a;">🏛️ صورت‌حساب جامع تفکیکی صرافی: ${brokerName}</div>
-                <div style="font-size:10.5px; color:#475569; font-weight:700; margin-top:2px;">
-                  ${brokerCity ? `شهر: ${brokerCity} | ` : ''}${brokerPhone ? `تلفن: ${brokerPhone} | ` : ''}تاریخ صدور: ${todayStr}
-                </div>
-              </div>
-              <div style="text-align:left; font-size:10.5px; font-weight:800; color:#334155;">
-                ارزهای موجود: ${currencies.join(' ، ')} | کل تراکنش‌ها: ${toEnglishDigits(txs.length)}
-              </div>
-            </div>
+        hostContainer.innerHTML = `
+          <style>
+            .pdf-root * { box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif !important; }
+            .pdf-main-table thead { display: table-header-group; }
+            .pdf-tx-row, .pdf-day-banner { page-break-inside: avoid; break-inside: avoid; }
+            .pdf-page-break { page-break-before: always; break-before: page; }
+          </style>
+          <div class="pdf-root" id="pdfRenderTarget" style="width:1060px; background:#ffffff; color:#0f172a; direction:rtl; padding:12px 14px;">
+            <table style="width:100%; border-collapse:collapse; border:2px solid #0f172a; background:#f8fafc; margin-bottom:12px;">
+              <tr>
+                <td style="padding:10px 12px; text-align:right; border:none;">
+                  <div style="font-size:14pt; font-weight:900; color:#0f172a;">🏛️ صورت‌حساب جامع تفکیکی صرافی: ${escapeHtml(brokerName)}</div>
+                  <div style="font-size:9pt; color:#475569; font-weight:700; margin-top:4px;">
+                    ${brokerCity ? `شهر: ${escapeHtml(brokerCity)} | ` : ''}${brokerPhone ? `تلفن: ${escapeHtml(brokerPhone)} | ` : ''}${periodLabel}
+                  </div>
+                </td>
+                <td style="padding:10px 12px; text-align:left; border:none; vertical-align:middle;">
+                  <div style="font-size:9.5pt; font-weight:900; color:#0f172a;">تاریخ صدور: ${todayStr}</div>
+                  <div style="font-size:8.8pt; font-weight:700; color:#334155; margin-top:4px;">
+                    ارزها: ${currencies.join(' ، ')} | کل تراکنش‌ها: ${toEnglishDigits(txs.length)}
+                  </div>
+                </td>
+              </tr>
+            </table>
+            ${sectionsHtml}
           </div>
-          ${sectionsHtml}
         `;
 
+        document.body.appendChild(hostContainer);
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
+
+        const targetEl = hostContainer.querySelector('#pdfRenderTarget');
         const opt = {
-          margin: [7, 7, 7, 7],
+          margin: [8, 8, 8, 8],
           filename: `Statement_${brokerName.replace(/\s+/g, '_')}_${todayStr}.pdf`,
-          image: { type: 'jpeg', quality: 0.92 },
-          html2canvas: { scale: 1.5, useCORS: true, logging: false },
-          pagebreak: { mode: ['css', 'legacy'] },
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 1060 },
+          pagebreak: { mode: ['css', 'legacy'], before: '.pdf-page-break', avoid: ['.pdf-tx-row', '.pdf-day-banner'] },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
         };
 
-        await html2pdf().set(opt).from(pdfWrapper).save();
+        await html2pdf().set(opt).from(targetEl).save();
         playBeep('success');
       } catch (err) {
         console.error("خطا در تولید PDF:", err);
         alert("خطا در تولید فایل PDF رخ داد.");
       } finally {
+        if (hostContainer && hostContainer.parentNode) {
+          hostContainer.parentNode.removeChild(hostContainer);
+        }
         showSync(false);
       }
     }
