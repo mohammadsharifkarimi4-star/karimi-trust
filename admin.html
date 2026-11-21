@@ -7,6 +7,8 @@
   
   <!-- کتابخانه Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- پیکربندی اتصال از ورسل -->
+  <script src="/api/config.js"></script>
   
   <!-- فونت وزیرمتن -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -292,7 +294,6 @@
     .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
     .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 10px; }
 
-    /* دکمه‌های ویرایش و حذف تراکنش کاملاً اصلاح‌شده و تمیز */
     .action-btn-modern {
       padding: 13px 18px;
       border-radius: 16px;
@@ -521,7 +522,7 @@
       <div class="auth-title">🔐 مدیریت امانت‌داری کریمی</div>
       <div class="form-group"><label>ایمیل ادمین:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور..."></div>
-      <button class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
+      <button class="btn" id="loginSubmitBtn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
       <a href="index.html" class="back-home">← بازگشت به صفحه اصلی</a>
     </div>
   </div>
@@ -793,16 +794,17 @@
   <div id="masterSettingsModal">
     <div class="modal-card-box">
       <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را ویرایش کنید.</p>
+      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را در دیتابیس ویرایش کنید.</p>
       
+      <div class="form-group"><label>نام مالک:</label><input type="text" id="masterNameInput" placeholder="نام مالک..."></div>
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
-      <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
+      <div class="form-group"><label>رمز عبور (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توکن ربات..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
       
       <div class="flex-row" style="justify-content: flex-end; gap:10px; margin-top: 16px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
-        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
+        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک در دیتابیس</button>
       </div>
     </div>
   </div>
@@ -894,7 +896,7 @@
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="123456:ABC-DEF..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder=""></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="چت‌آیدی تلگرام..."></div>
       
       <div class="flex-row" style="gap:10px; margin-bottom:14px;">
         <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
@@ -929,24 +931,49 @@
 
   <!-- کدهای جاوااسکریپت برنامه -->
   <script>
-    const runtimeEnv = (typeof window !== "undefined" && window.__ENV__) ? window.__ENV__ : {};
-    const SUPABASE_URL = String(runtimeEnv.SUPABASE_URL || "").trim();
-    const SUPABASE_KEY = String(runtimeEnv.SUPABASE_KEY || "").trim();
-    let _supabase = (SUPABASE_URL && SUPABASE_KEY && window.supabase && typeof window.supabase.createClient === "function")
+    // دریافت تنظیمات اتصال صرفاً از ورسل (/api/config.js یا window.__VERCEL_CONFIG__ یا meta)
+    function resolveVercelRuntimeConfig() {
+      const vercelCfg = window.__VERCEL_CONFIG__ || window.VERCEL_CONFIG || window.RUNTIME_CONFIG || {};
+      const metaUrl = document.querySelector('meta[name="supabase-url"]')?.getAttribute('content') || '';
+      const metaKey = document.querySelector('meta[name="supabase-key"]')?.getAttribute('content') || '';
+
+      const supabaseUrl = String(
+        vercelCfg.SUPABASE_URL ||
+        vercelCfg.supabaseUrl ||
+        vercelCfg.NEXT_PUBLIC_SUPABASE_URL ||
+        vercelCfg.VITE_SUPABASE_URL ||
+        metaUrl ||
+        ''
+      ).trim();
+
+      const supabaseKey = String(
+        vercelCfg.SUPABASE_KEY ||
+        vercelCfg.SUPABASE_ANON_KEY ||
+        vercelCfg.supabaseKey ||
+        vercelCfg.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+        vercelCfg.VITE_SUPABASE_ANON_KEY ||
+        metaKey ||
+        ''
+      ).trim();
+
+      return { supabaseUrl, supabaseKey };
+    }
+
+    const { supabaseUrl: SUPABASE_URL, supabaseKey: SUPABASE_KEY } = resolveVercelRuntimeConfig();
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      console.error("پیکربندی اتصال سوپابیس از سمت ورسل یافت نشد.");
+    }
+    const _supabase = (SUPABASE_URL && SUPABASE_KEY && window.supabase)
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
       : null;
 
-    let MASTER_ADMIN_EMAIL = localStorage.getItem("masterEmail") || String(runtimeEnv.MASTER_EMAIL || "").trim();
-    let MASTER_ADMIN_PIN = localStorage.getItem("masterPin") || String(runtimeEnv.MASTER_PIN || "").trim();
-    let MASTER_ADMIN_TOKEN = localStorage.getItem("masterToken") || String(runtimeEnv.MASTER_BOT_TOKEN || runtimeEnv.TELEGRAM_BOT_TOKEN || "").trim();
-    let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || String(runtimeEnv.MASTER_CHAT_ID || runtimeEnv.TELEGRAM_CHAT_ID || "").trim();
-    const MASTER_ADMIN_ID = "master_owner";
-
+    // اطلاعات مالک و ادمین‌ها کاملاً از دیتابیس خوانده می‌شود (بدون کدگذاری ثابت در کلاینت)
+    let ownerRecord = null;
     let allAccounts = [];
     let allTransactions = [];
     let allAdmins = [];
     let phoneArchiveList = [];
-    let customOpTypes = ["امانت", "حواله", "انتقال", "دریافت", "پرداخت", "تسویه"];
+    let customOpTypes = [];
     let currentAccountId = null;
     let currentAccountName = "";
     let selectedTxId = null;
@@ -1002,16 +1029,27 @@
       renderDashboardMenu();
     }
 
+    function isCurrentUserOwner() {
+      if (!currentLoggedInAdmin) return false;
+      if (currentLoggedInAdmin.isOwner === true) return true;
+      if (ownerRecord) {
+        const ownerId = String(getVal(ownerRecord, ['AdminID', 'adminid', 'id']) || '').trim();
+        const ownerEmail = String(getVal(ownerRecord, ['Email', 'email']) || '').trim().toLowerCase();
+        if (ownerId && String(currentLoggedInAdmin.id).trim() === ownerId) return true;
+        if (ownerEmail && String(currentLoggedInAdmin.email || '').trim().toLowerCase() === ownerEmail) return true;
+      }
+      return false;
+    }
+
     function renderDashboardMenu() {
       const container = document.getElementById("dashboardMenuGrid");
       if (!container) return;
       container.innerHTML = "";
 
-      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      const isMaster = isCurrentUserOwner();
 
       dashboardMenuItems.forEach((item, index) => {
-        if (item.type === 'superadmin' && !isMaster) return;
-        if (item.type === 'master' && !isMaster) return;
+        if ((item.type === 'superadmin' || item.type === 'master') && !isMaster) return;
 
         let onClickAttr = "";
         if (item.type === 'standard') {
@@ -1096,14 +1134,36 @@
       }
     }
 
+    // شناسایی رکورد مالک از جدول admins (اولین رکورد یا رکوردی که AdminID/ایمیلش نقش مالک دارد)
+    function resolveOwnerAdminRecord(adminsList) {
+      if (!Array.isArray(adminsList) || adminsList.length === 0) return null;
+      const explicitOwner = adminsList.find(a => {
+        const idVal = String(getVal(a, ['AdminID', 'adminid', 'id']) || '').trim().toLowerCase();
+        const roleVal = String(getVal(a, ['Role', 'role', 'Type', 'type']) || '').trim().toLowerCase();
+        return idVal.includes('owner') || idVal.includes('master') || roleVal === 'owner' || roleVal === 'master';
+      });
+      return explicitOwner || adminsList[0];
+    }
+
     function getCurrentAdminTokenAndChat() {
-      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
-      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
-        return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      const ownerToken = ownerRecord ? String(getVal(ownerRecord, ['BotToken', 'bottoken', 'Token', 'token']) || '').trim() : '';
+      const ownerChatId = ownerRecord ? formatEnNum(getVal(ownerRecord, ['ChatID', 'chatid']) || '').trim() : '';
+
+      if (!currentLoggedInAdmin) {
+        return { token: ownerToken, chatId: ownerChatId };
       }
-      let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
-      let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
-      let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
+
+      if (isCurrentUserOwner()) {
+        return { token: ownerToken, chatId: ownerChatId };
+      }
+
+      const found = allAdmins.find(a =>
+        String(getVal(a, ['AdminID', 'adminid', 'id']) || '').trim() === String(currentLoggedInAdmin.id).trim() ||
+        String(getVal(a, ['Email', 'email']) || '').trim().toLowerCase() === String(currentLoggedInAdmin.email || '').trim().toLowerCase()
+      );
+
+      const token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || '').trim() : '';
+      const chatId = found ? formatEnNum(getVal(found, ['ChatID', 'chatid']) || '').trim() : '';
       return { token, chatId };
     }
 
@@ -1142,11 +1202,20 @@
       return parts.join('\n') || 'صفر';
     }
 
-    function openMasterSettingsModal() {
-      document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
-      document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
-      document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
-      document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
+    async function openMasterSettingsModal() {
+      if (!ownerRecord && _supabase) {
+        const { data } = await _supabase.from('admins').select('*');
+        if (data && data.length > 0) {
+          allAdmins = data;
+          ownerRecord = resolveOwnerAdminRecord(data);
+        }
+      }
+
+      document.getElementById("masterNameInput").value = ownerRecord ? (getVal(ownerRecord, ['Name', 'name']) || '') : '';
+      document.getElementById("masterEmailInput").value = ownerRecord ? (getVal(ownerRecord, ['Email', 'email']) || '') : '';
+      document.getElementById("masterPinInput").value = ownerRecord ? formatEnNum(getVal(ownerRecord, ['Pin', 'pin']) || '') : '';
+      document.getElementById("masterTokenInput").value = ownerRecord ? (getVal(ownerRecord, ['BotToken', 'bottoken']) || '') : '';
+      document.getElementById("masterChatIdInput").value = ownerRecord ? formatEnNum(getVal(ownerRecord, ['ChatID', 'chatid']) || '') : '';
       document.getElementById("masterSettingsModal").style.display = "flex";
       pushModalHistory("masterSettingsModal");
     }
@@ -1155,29 +1224,58 @@
       document.getElementById("masterSettingsModal").style.display = "none";
     }
 
-    function saveMasterSettings() {
-      let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
-      let pin = document.getElementById("masterPinInput").value.trim();
-      let token = document.getElementById("masterTokenInput").value.trim();
-      let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
+    async function saveMasterSettings() {
+      if (!_supabase) {
+        alert("اتصال دیتابیس برقرار نیست.");
+        return;
+      }
+      const name = document.getElementById("masterNameInput").value.trim() || "مالک سیستم";
+      const email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
+      const pin = formatEnNum(document.getElementById("masterPinInput").value.trim());
+      const token = document.getElementById("masterTokenInput").value.trim();
+      const chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
 
       if (!email || !pin) {
         alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
         return;
       }
 
-      MASTER_ADMIN_EMAIL = email;
-      MASTER_ADMIN_PIN = pin;
-      MASTER_ADMIN_TOKEN = token;
-      MASTER_ADMIN_CHATID = chatId;
+      const ownerId = ownerRecord
+        ? String(getVal(ownerRecord, ['AdminID', 'adminid', 'id']) || 'OWNER')
+        : 'OWNER';
 
-      localStorage.setItem("masterEmail", email);
-      localStorage.setItem("masterPin", pin);
-      localStorage.setItem("masterToken", token);
-      localStorage.setItem("masterChatId", chatId);
+      const payload = {
+        AdminID: ownerId,
+        Name: name,
+        Email: email,
+        Pin: pin,
+        BotToken: token,
+        ChatID: chatId
+      };
+
+      const { error } = ownerRecord
+        ? await _supabase.from('admins').update(payload).eq('AdminID', ownerId)
+        : await _supabase.from('admins').insert([payload]);
+
+      if (error) {
+        alert("خطا در ذخیره تنظیمات مالک در دیتابیس: " + error.message);
+        return;
+      }
+
+      const { data: refreshedAdmins } = await _supabase.from('admins').select('*');
+      if (refreshedAdmins && refreshedAdmins.length > 0) {
+        allAdmins = refreshedAdmins;
+        ownerRecord = resolveOwnerAdminRecord(refreshedAdmins);
+      }
+
+      if (currentLoggedInAdmin && currentLoggedInAdmin.isOwner) {
+        currentLoggedInAdmin.name = name;
+        currentLoggedInAdmin.email = email;
+        localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+      }
 
       closeMasterSettingsModal();
-      alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
+      alert("✅ تنظیمات مالک با موفقیت در دیتابیس ذخیره شد!");
     }
 
     function getAccountLiveBalanceText(accId) {
@@ -1207,52 +1305,7 @@
       window.history.pushState({ modal: modalId }, '');
     }
 
-    function ensureRuntimeEnvLoaded() {
-      return new Promise((resolve) => {
-        if (window.__ENV__ && (window.__ENV__.SUPABASE_URL || window.__ENV__.SUPABASE_KEY)) {
-          resolve(window.__ENV__);
-          return;
-        }
-        const script = document.createElement("script");
-        script.src = "/api/env.js?t=" + Date.now();
-        script.async = true;
-        script.onload = () => resolve(window.__ENV__ || {});
-        script.onerror = () => resolve(window.__ENV__ || {});
-        document.head.appendChild(script);
-      });
-    }
-
-    function applyRuntimeEnvValues() {
-      const envObj = (typeof window !== "undefined" && window.__ENV__) ? window.__ENV__ : {};
-      if (!localStorage.getItem("masterEmail") && envObj.MASTER_EMAIL) {
-        MASTER_ADMIN_EMAIL = String(envObj.MASTER_EMAIL).trim();
-      }
-      if (!localStorage.getItem("masterPin") && envObj.MASTER_PIN) {
-        MASTER_ADMIN_PIN = String(envObj.MASTER_PIN).trim();
-      }
-      if (!localStorage.getItem("masterToken") && (envObj.MASTER_BOT_TOKEN || envObj.TELEGRAM_BOT_TOKEN)) {
-        MASTER_ADMIN_TOKEN = String(envObj.MASTER_BOT_TOKEN || envObj.TELEGRAM_BOT_TOKEN).trim();
-      }
-      if (!localStorage.getItem("masterChatId") && (envObj.MASTER_CHAT_ID || envObj.TELEGRAM_CHAT_ID)) {
-        MASTER_ADMIN_CHATID = String(envObj.MASTER_CHAT_ID || envObj.TELEGRAM_CHAT_ID).trim();
-      }
-    }
-
-    function getSupabaseClient() {
-      if (_supabase) return _supabase;
-      const envObj = (typeof window !== "undefined" && window.__ENV__) ? window.__ENV__ : {};
-      const url = String(envObj.SUPABASE_URL || SUPABASE_URL || "").trim();
-      const key = String(envObj.SUPABASE_KEY || SUPABASE_KEY || "").trim();
-      if (url && key && window.supabase && typeof window.supabase.createClient === "function") {
-        _supabase = window.supabase.createClient(url, key);
-        return _supabase;
-      }
-      return null;
-    }
-
     window.onload = async function() {
-      await ensureRuntimeEnvLoaded();
-      applyRuntimeEnvValues();
       loadDashboardMenuOrder();
       let savedSession = localStorage.getItem("adminAuthSessionData");
       let savedArchive = localStorage.getItem("phoneArchiveData");
@@ -1292,57 +1345,70 @@
       };
     };
 
+    // احراز هویت مستقیم از جدول admins در دیتابیس
     async function handleLogin() {
-      await ensureRuntimeEnvLoaded();
-      applyRuntimeEnvValues();
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-      const pin = document.getElementById("loginPin").value.trim();
+      const pin = formatEnNum(document.getElementById("loginPin").value.trim());
 
       if (!email || !pin) {
         alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
         return;
       }
 
-      if (MASTER_ADMIN_EMAIL && MASTER_ADMIN_PIN && email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
-        currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "محمد شریف کریمی (مالک)", email: MASTER_ADMIN_EMAIL };
-        localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
-        
-        document.getElementById("authOverlay").style.display = "none";
-        document.getElementById("adminContainer").style.display = "block";
-        renderDashboardMenu();
-        await loadDataFromSupabase(true);
+      if (!_supabase) {
+        alert("اتصال به دیتابیس از طریق تنظیمات ورسل برقرار نیست.");
         return;
       }
 
+      const btn = document.getElementById("loginSubmitBtn");
+      if (btn) btn.disabled = true;
+
       try {
-        const { data: adminsData } = await (getSupabaseClient() ? getSupabaseClient().from('admins').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
-        if (adminsData) {
-          allAdmins = adminsData;
-          let foundAdmin = adminsData.find(adm => {
-            let admEmail = String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase();
-            let admPin = String(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '').trim();
-            return admEmail === email && admPin === pin;
-          });
-
-          if (foundAdmin) {
-            let adminId = String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || foundAdmin.id);
-            let adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'همکار');
-
-            currentLoggedInAdmin = { id: adminId, name: adminName, email: email };
-            localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
-
-            document.getElementById("authOverlay").style.display = "none";
-            document.getElementById("adminContainer").style.display = "block";
-            renderDashboardMenu();
-            await loadDataFromSupabase(true);
-            return;
-          }
+        const { data: adminsData, error } = await _supabase.from('admins').select('*');
+        if (error) {
+          console.error("خطا در خواندن جدول admins:", error);
+          alert("خطا در ارتباط با دیتابیس هنگام بررسی اطلاعات ورود!");
+          return;
         }
-      } catch(e) {
-        console.log("خطا در بررسی ادمین‌ها:", e);
-      }
 
-      alert("ایمیل یا رمز عبور اشتباه است!");
+        allAdmins = Array.isArray(adminsData) ? adminsData : [];
+        ownerRecord = resolveOwnerAdminRecord(allAdmins);
+
+        const foundAdmin = allAdmins.find(adm => {
+          const admEmail = String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase();
+          const admPin = formatEnNum(getVal(adm, ['Pin', 'pin']) || '').trim();
+          return admEmail === email && admPin === pin;
+        });
+
+        if (foundAdmin) {
+          const adminId = String(getVal(foundAdmin, ['AdminID', 'adminid', 'id']) || '').trim();
+          const adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'ادمین').trim();
+          const ownerId = ownerRecord ? String(getVal(ownerRecord, ['AdminID', 'adminid', 'id']) || '').trim() : '';
+          const ownerEmail = ownerRecord ? String(getVal(ownerRecord, ['Email', 'email']) || '').trim().toLowerCase() : '';
+          const isOwner = (ownerId && adminId === ownerId) || (ownerEmail && adminEmail === ownerEmail);
+
+          currentLoggedInAdmin = {
+            id: adminId,
+            name: adminName,
+            email: email,
+            isOwner: Boolean(isOwner)
+          };
+          localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+
+          document.getElementById("authOverlay").style.display = "none";
+          document.getElementById("adminContainer").style.display = "block";
+          renderDashboardMenu();
+          await loadDataFromSupabase(true);
+          return;
+        }
+
+        alert("ایمیل یا رمز عبور اشتباه است!");
+      } catch (e) {
+        console.error("خطا در ورود:", e);
+        alert("خطا در برقراری ارتباط با دیتابیس!");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
     }
 
     function handleLogout() { 
@@ -1434,7 +1500,23 @@
       if (map[curr]) document.getElementById(map[curr]).classList.add('selected-currency');
     }
 
+    // بررسی مالکیت رکورد: خالی بودن = مال مالک | پر بودن با شناسه/ایمیل ادمین = مال همان ادمین
+    function matchesOwnerOrAdminScope(creatorValue, adminRecord) {
+      const val = String(creatorValue ?? '').trim();
+      const isMaster = isCurrentUserOwner();
+      const adminId = String(adminRecord?.id ?? '').trim().toLowerCase();
+      const adminEmail = String(adminRecord?.email ?? '').trim().toLowerCase();
+
+      if (isMaster) {
+        return val === "" || val.toLowerCase() === "null" || (adminId && val.toLowerCase() === adminId) || (adminEmail && val.toLowerCase() === adminEmail);
+      }
+
+      if (!val || val.toLowerCase() === "null") return false;
+      return (adminId && val.toLowerCase() === adminId) || (adminEmail && val.toLowerCase() === adminEmail);
+    }
+
     async function loadDataFromSupabase(showLoader = true) {
+      if (!_supabase) return;
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
         indicator.innerText = "🔄 در حال دریافت اطلاعات...";
@@ -1442,51 +1524,53 @@
       }
 
       try {
-        const [accRes, txRes, opRes, admRes] = await Promise.all([
-          (getSupabaseClient() ? getSupabaseClient().from('accounts').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") })),
-          (getSupabaseClient() ? getSupabaseClient().from('transactions').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") })),
-          (getSupabaseClient() ? getSupabaseClient().from('operation_types').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") })),
-          (getSupabaseClient() ? getSupabaseClient().from('admins').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }))
+        const [accRes, txRes, admRes] = await Promise.all([
+          _supabase.from('accounts').select('*'),
+          _supabase.from('transactions').select('*'),
+          _supabase.from('admins').select('*')
         ]);
 
-        if (admRes.data) allAdmins = admRes.data;
-
-        let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-        let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
-
-        let rawAccounts = accRes.data || [];
-        
-        if (isMaster) {
-          allAccounts = rawAccounts.filter(acc => {
-            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner" || creator === "null";
-          });
-        } else {
-          allAccounts = rawAccounts.filter(acc => {
-            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-            return creator === String(currentAdminId);
-          });
+        if (admRes.data) {
+          allAdmins = admRes.data;
+          ownerRecord = resolveOwnerAdminRecord(allAdmins);
         }
+
+        const rawAccounts = accRes.data || [];
+        allAccounts = rawAccounts.filter(acc => {
+          const creator = getVal(acc, ['CreatedBy', 'createdby']);
+          return matchesOwnerOrAdminScope(creator, currentLoggedInAdmin);
+        });
 
         updatePhoneDirectoryArchive();
 
-        let rawTransactions = txRes.data || [];
-        let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
-        
+        const rawTransactions = txRes.data || [];
+        const authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
+        const currentAdminEmail = String(currentLoggedInAdmin?.email || '').trim().toLowerCase();
+        const isMaster = isCurrentUserOwner();
+
         allTransactions = rawTransactions.filter(tx => {
-          let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
-          return authorizedAccountIds.includes(txAccId);
+          const txAccId = String(getVal(tx, ['AccountID', 'accountid']));
+          if (authorizedAccountIds.includes(txAccId)) return true;
+          const assignedEmail = String(getVal(tx, ['AssignedUserEmail', 'assigneduseremail']) || '').trim().toLowerCase();
+          if (!isMaster && currentAdminEmail && assignedEmail === currentAdminEmail) return true;
+          return false;
         });
 
         allTransactions.sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
           return db - da;
         });
 
-        if (opRes.data && opRes.data.length > 0) customOpTypes = opRes.data.map(o => o.title);
+        // استخراج انواع عملیات موجود از تراکنش‌های دیتابیس بدون کدگذاری ثابت اضافی
+        const dbOpTypes = Array.from(new Set(
+          allTransactions
+            .map(t => String(getVal(t, ['OperationType', 'operationtype']) || '').trim())
+            .filter(Boolean)
+        ));
+        customOpTypes = dbOpTypes;
 
         renderDashboardStats();
         renderAccountsList(allAccounts);
@@ -1616,7 +1700,7 @@
         let accId = String(getVal(acc, ['AccountID', 'accountid']) || '');
         let name = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '');
-        let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
+        let creator = String(getVal(acc, ['CreatedBy', 'createdby']) || '').trim();
 
         if (phone) {
           let existing = phoneArchiveList.find(p => p.accId === accId || p.phone === phone);
@@ -1653,20 +1737,24 @@
     }
 
     async function uploadFileToSupabase(file, bucketName) {
-      if (!file) return null;
+      if (!file || !_supabase) return null;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const { error } = await (getSupabaseClient() ? getSupabaseClient().storage.from(bucketName).upload(fileName, file) : Promise.resolve({ data: null, error: new Error("تنظیمات فضای ذخیره‌سازی یافت نشد") }));
+      const { error } = await _supabase.storage.from(bucketName).upload(fileName, file);
       if (error) return null;
-      const { data: publicUrlData } = (getSupabaseClient() ? getSupabaseClient().storage.from(bucketName).getPublicUrl(fileName) : { data: { publicUrl: "" } });
+      const { data: publicUrlData } = _supabase.storage.from(bucketName).getPublicUrl(fileName);
       return publicUrlData.publicUrl;
     }
 
     function populateOpTypeSelect() {
       const select = document.getElementById("txOpType");
       if(!select) return;
+      const currentVal = select.value;
       select.innerHTML = "";
       customOpTypes.forEach(op => { select.innerHTML += `<option value="${op}">${op}</option>`; });
+      if (currentVal && customOpTypes.includes(currentVal)) {
+        select.value = currentVal;
+      }
     }
 
     function openOpTypeManagerModal() { 
@@ -1679,12 +1767,16 @@
     function renderOpTypesList() {
       const container = document.getElementById("opTypesListContainer");
       container.innerHTML = "";
+      if (customOpTypes.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#64748b; padding:10px;">نوع عملیاتی ثبت نشده است</div>`;
+        return;
+      }
       customOpTypes.forEach((op) => {
-        container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op}')">حذف</button></div>`;
+        container.innerHTML += `<div class="op-badge-item"><span><b>${op}</b></span><button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); removeOperationType('${op.replace(/'/g, "\\'")}')">حذف</button></div>`;
       });
     }
 
-    async function addNewOperationType() {
+    function addNewOperationType() {
       const input = document.getElementById("newOpTypeInput");
       const title = input.value.trim();
       if (!title) return;
@@ -1693,15 +1785,13 @@
         populateOpTypeSelect();
         renderOpTypesList();
         input.value = "";
-        await (getSupabaseClient() ? getSupabaseClient().from('operation_types').insert([{ title: title }]) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       }
     }
 
-    async function removeOperationType(title) {
+    function removeOperationType(title) {
       customOpTypes = customOpTypes.filter(o => o !== title);
       populateOpTypeSelect();
       renderOpTypesList();
-      await (getSupabaseClient() ? getSupabaseClient().from('operation_types').delete().eq('title', title) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
     }
 
     function openAdminManagerModal() {
@@ -1722,10 +1812,10 @@
         return;
       }
       allAdmins.forEach(adm => {
-        let admId = formatEnNum(getVal(adm, ['AdminID', 'adminid', 'id']) || adm.id);
+        let admId = formatEnNum(getVal(adm, ['AdminID', 'adminid', 'id']) || '');
         let admName = String(getVal(adm, ['Name', 'name']) || 'بدون نام');
         let admEmail = String(getVal(adm, ['Email', 'email']) || '');
-        let admPin = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '');
+        let admPin = formatEnNum(getVal(adm, ['Pin', 'pin']) || '');
         let admChatId = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || '');
 
         container.innerHTML += `
@@ -1751,8 +1841,8 @@
       document.getElementById("adminModalMainTitle").innerText = "✏️ ویرایش ادمین همکار";
       document.getElementById("newAdminName").value = getVal(adm, ['Name', 'name']) || "";
       document.getElementById("newAdminEmail").value = getVal(adm, ['Email', 'email']) || "";
-      document.getElementById("newAdminPin").value = formatEnNum(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || "");
-      document.getElementById("newAdminBotToken").value = getVal(adm, ['BotToken', 'bottoken', 'Token', 'token']) || "";
+      document.getElementById("newAdminPin").value = formatEnNum(getVal(adm, ['Pin', 'pin']) || "");
+      document.getElementById("newAdminBotToken").value = getVal(adm, ['BotToken', 'bottoken']) || "";
       document.getElementById("newAdminChatId").value = formatEnNum(getVal(adm, ['ChatID', 'chatid']) || "");
       
       document.getElementById("adminSaveBtn").innerText = "💾 ذخیره تغییرات ادمین";
@@ -1772,6 +1862,7 @@
     }
 
     async function saveAdminAccount() {
+      if (!_supabase) return;
       let editId = document.getElementById("editAdminId").value;
       let name = document.getElementById("newAdminName").value.trim();
       let email = document.getElementById("newAdminEmail").value.trim().toLowerCase();
@@ -1795,16 +1886,16 @@
       };
 
       if (editId) {
-        const { error } = await (getSupabaseClient() ? getSupabaseClient().from('admins').update(payload).eq('AdminID', editId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+        const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
         if (error) { alert("خطا در ویرایش: " + error.message); return; }
         alert("✅ اطلاعات ادمین با موفقیت ویرایش شد!");
       } else {
-        const { error } = await (getSupabaseClient() ? getSupabaseClient().from('admins').insert([payload]) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+        const { error } = await _supabase.from('admins').insert([payload]);
         if (error) { alert("خطا در ایجاد ادمین: " + error.message); return; }
         alert("✅ ادمین جدید با موفقیت ایجاد شد!");
 
         if (botToken && chatId) {
-          let siteLink = "https://karimi-trust-app.vercel.app/";
+          let siteLink = window.location.origin;
           let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨\n\n` +
                            `سلام *${name}* عزیز،\n` +
                            `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.\n\n` +
@@ -1816,16 +1907,23 @@
       }
 
       cancelEditAdmin();
-      const { data } = await (getSupabaseClient() ? getSupabaseClient().from('admins').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
-      if (data) allAdmins = data;
+      const { data } = await _supabase.from('admins').select('*');
+      if (data) {
+        allAdmins = data;
+        ownerRecord = resolveOwnerAdminRecord(allAdmins);
+      }
       renderAdminsList();
     }
 
     async function deleteAdminAccount(admId) {
+      if (!_supabase) return;
       if (!confirm("آیا از حذف دسترسی این ادمین مطمئن هستید؟")) return;
-      await (getSupabaseClient() ? getSupabaseClient().from('admins').delete().eq('AdminID', admId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
-      const { data } = await (getSupabaseClient() ? getSupabaseClient().from('admins').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
-      if (data) allAdmins = data;
+      await _supabase.from('admins').delete().eq('AdminID', admId);
+      const { data } = await _supabase.from('admins').select('*');
+      if (data) {
+        allAdmins = data;
+        ownerRecord = resolveOwnerAdminRecord(allAdmins);
+      }
       renderAdminsList();
     }
 
@@ -1887,14 +1985,7 @@
       const summaryBox = document.getElementById("phoneDirectorySummary");
       container.innerHTML = "";
 
-      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
-
-      let filteredList = list.filter(item => {
-        if (isMaster) return true;
-        let creator = String(item.creator || '').trim();
-        return creator === String(currentAdminId);
-      });
+      let filteredList = list.filter(item => matchesOwnerOrAdminScope(item.creator, currentLoggedInAdmin));
 
       summaryBox.innerHTML = `
         <div class="stat-row">
@@ -2069,8 +2160,8 @@
       const selectedAccFilter = filterEl ? filterEl.value : "all";
 
       let sortedTxs = allTransactions.slice().sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
         if (isNaN(da)) da = 0;
         if (isNaN(db)) db = 0;
         return db - da;
@@ -2100,7 +2191,7 @@
 
       const groupsByDay = {};
       sortedTxs.forEach(tx => {
-        let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+        let rawDate = getVal(tx, ['Date', 'date']) || '';
         let dateObj = rawDate ? new Date(rawDate) : null;
         let dayKey = (dateObj && !isNaN(dateObj.getTime()))
           ? formatEnNum(dateObj.toISOString().split('T')[0])
@@ -2139,7 +2230,7 @@
           const rowNum = formatEnNum(totalCount - globalCounter);
           globalCounter++;
 
-          let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
+          let txId = String(getVal(tx, ['TransID', 'transid']) || '');
           let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
           let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
           let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
@@ -2147,19 +2238,19 @@
           let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
           let dir = String(getVal(tx, ['Direction', 'direction']) || '');
-          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+          let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
 
           let currentAccTxs = allTransactions
             .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId)
             .slice()
             .sort((a, b) => {
-              let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-              let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+              let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
+              let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
               if (isNaN(da)) da = 0;
               if (isNaN(db)) db = 0;
               return db - da;
             });
-          let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === txId);
+          let txIndex = currentAccTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === txId);
           let subTxs = txIndex !== -1 ? currentAccTxs.slice(txIndex) : currentAccTxs;
 
           let sameCurrBalance = 0;
@@ -2260,7 +2351,7 @@
 
       let filteredTxs = allTransactions.filter(tx => {
         let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
-        if (opType !== "حواله" && opType !== "انتقال") return false;
+        if (!opType.includes("حواله") && !opType.includes("انتقال")) return false;
         if (period === "all") return true;
         let txDateStr = String(getVal(tx, ['Date', 'date']) || '').split('T')[0];
         if (!txDateStr) return false;
@@ -2286,8 +2377,8 @@
       });
 
       filteredTxs.sort((a, b) => {
-        let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-        let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+        let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
+        let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
         if (isNaN(da)) da = 0;
         if (isNaN(db)) db = 0;
         return db - da;
@@ -2314,7 +2405,7 @@
         let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
         let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-        let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+        let rawDate = getVal(tx, ['Date', 'date']) || '';
         let dateObj = rawDate ? new Date(rawDate) : null;
         let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
           `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
@@ -2632,7 +2723,6 @@
 
     function closeAccountModal() { document.getElementById("accountModal").style.display = "none"; }
 
-    // توابع استاندارد و قطعی حذف با استفاده از confirm بومی مرورگر جهت رفع کامل باگ عدم پاسخگویی
     function confirmDeleteAccountModal() {
       if (!confirm("⚠️ آیا از حذف این حساب اطمینان دارید؟ شماره تلفن مشتری در بانک شماره‌ها باقی خواهد ماند.")) return;
       deleteCurrentAccount();
@@ -2655,6 +2745,7 @@
     }
 
     async function saveAccount() {
+      if (!_supabase) return;
       let editId = document.getElementById("editAccountId").value;
       let accName = document.getElementById("modalAccountName").value;
       let accPhone = formatEnNum(document.getElementById("modalAccountPhone").value);
@@ -2671,11 +2762,14 @@
       }
 
       let accountId = editId ? editId : "ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000));
-      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
-
       let oldAcc = editId ? allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId)) : null;
       let oldChatId = oldAcc ? formatEnNum(getVal(oldAcc, ['ChatID', 'chatid']) || '').trim() : '';
       let isNewChatIdAdded = accChatId && (!oldChatId || oldChatId !== accChatId);
+
+      // منطق مالکیت: اگر کاربر مالک است CreatedBy خالی (null) ثبت شود، اگر ادمین دیگر است AdminID او ثبت شود
+      const createdByValue = isCurrentUserOwner()
+        ? null
+        : String(currentLoggedInAdmin?.id || '').trim();
 
       const payload = { 
         AccountID: accountId, 
@@ -2683,16 +2777,16 @@
         Phone: accPhone, 
         ChatID: accChatId,
         Photo: photoUrl,
-        CreatedBy: String(currentAdminId)
+        CreatedBy: createdByValue
       };
 
       if (editId) {
-        await (getSupabaseClient() ? getSupabaseClient().from('accounts').update(payload).eq('AccountID', editId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+        await _supabase.from('accounts').update(payload).eq('AccountID', editId);
       } else {
-        await (getSupabaseClient() ? getSupabaseClient().from('accounts').insert([payload]) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+        await _supabase.from('accounts').insert([payload]);
         let { token } = getCurrentAdminTokenAndChat();
         if (token && accChatId) {
-          let siteLink = "https://karimi-trust-app.vercel.app/";
+          let siteLink = window.location.origin;
           let msg = `✨ *امانت‌داری کریمی* ✨\n\n` +
                     `حساب شما با موفقیت ایجاد شد.\n` +
                     `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.\n` +
@@ -2716,7 +2810,7 @@
           await sendTelegramMessage(token, accChatId, historyHeader);
 
           for (let tx of accTxs) {
-            let tType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+            let tType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
             let tDir = String(getVal(tx, ['Direction', 'direction']) || '');
             let tAmt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
             let tCurr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
@@ -2739,6 +2833,7 @@
     }
 
     async function deleteCurrentAccount() {
+      if (!_supabase) return;
       let accIdToDelete = currentAccountId;
       
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
@@ -2749,8 +2844,8 @@
 
       currentAccountId = null;
       switchView('viewAccounts');
-      await (getSupabaseClient() ? getSupabaseClient().from('accounts').delete().eq('AccountID', accIdToDelete) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
-      await (getSupabaseClient() ? getSupabaseClient().from('transactions').delete().eq('AccountID', accIdToDelete) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+      await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
+      await _supabase.from('transactions').delete().eq('AccountID', accIdToDelete);
       await loadDataFromSupabase(true);
       alert("✅ حساب با موفقیت حذف شد.");
     }
@@ -2788,8 +2883,8 @@
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
         .slice()
         .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
           return db - da;
@@ -2813,7 +2908,7 @@
       } else {
         const groupsByDay = {};
         txs.forEach(tx => {
-          let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+          let rawDate = getVal(tx, ['Date', 'date']) || '';
           let dateObj = rawDate ? new Date(rawDate) : null;
           let dayKey = (dateObj && !isNaN(dateObj.getTime()))
             ? formatEnNum(dateObj.toISOString().split('T')[0])
@@ -2834,13 +2929,13 @@
             const currentIdxInTxs = globalCounter;
             globalCounter++;
 
-            let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
+            let txId = String(getVal(tx, ['TransID', 'transid']) || '');
             let dir = String(getVal(tx, ['Direction', 'direction']) || '');
             let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
             let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
-            let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+            let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
 
-            let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+            let rawDate = getVal(tx, ['Date', 'date']) || '';
             let dateObj = rawDate ? new Date(rawDate) : null;
             let timeOnly = (dateObj && !isNaN(dateObj.getTime()))
               ? `${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}`
@@ -2934,7 +3029,7 @@
 
     function selectTransaction(txId) {
       selectedTxId = txId;
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
       if(!tx) return;
 
       let accId = String(getVal(tx, ['AccountID', 'accountid']) || currentAccountId);
@@ -2948,27 +3043,27 @@
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       
-      let rawDate = getVal(tx, ['Date', 'date', 'created_at']) || '';
+      let rawDate = getVal(tx, ['Date', 'date']) || '';
       let dateObj = rawDate ? new Date(rawDate) : null;
       let formattedTime = dateObj && !isNaN(dateObj.getTime()) ? 
         `${formatEnNum(dateObj.toISOString().split('T')[0])} - ${formatEnNum(String(dateObj.getHours()).padStart(2, '0'))}:${formatEnNum(String(dateObj.getMinutes()).padStart(2, '0'))}` : 
         formatEnNum(String(rawDate).split('T')[0]);
 
-      let receiptUrl = getVal(tx, ['receipt_url', 'Receipt_URL']);
+      let receiptUrl = getVal(tx, ['receipt_url']);
       let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
       let accountTxs = allTransactions
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
         .slice()
         .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
           return db - da;
         });
 
-      let txIndex = accountTxs.findIndex(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(txId));
+      let txIndex = accountTxs.findIndex(t => String(getVal(t, ['TransID', 'transid'])) === String(txId));
       let subTxsAfter = txIndex !== -1 ? accountTxs.slice(txIndex) : accountTxs;
       
       let balanceAfter = 0;
@@ -3009,7 +3104,7 @@
       `;
 
       let btnContainer = document.getElementById("txActionButtonsContainer");
-      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+      let isTransferOrRemittance = (opType.includes("حواله") || opType.includes("انتقال"));
       let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
 
       btnContainer.innerHTML = `
@@ -3051,7 +3146,7 @@
     }
 
     function openEditTransactionModal() {
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(selectedTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(selectedTxId));
       if (!tx) return;
       document.getElementById("editTransId").value = selectedTxId;
       document.getElementById("txModalTitle").innerText = "ویرایش تراکنش";
@@ -3062,10 +3157,10 @@
       selectTxCurrency(currVal);
 
       document.getElementById("txAmountInput").value = formatEnNum(getVal(tx, ['Amount', 'amount']) || "");
-      document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "امانت";
+      document.getElementById("txOpType").value = getVal(tx, ['OperationType', 'operationtype']) || "";
       document.getElementById("txDateInput").value = String(getVal(tx, ['Date', 'date']) || new Date().toISOString()).split('T')[0];
       document.getElementById("txDesc").value = (getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
-      document.getElementById("existingReceiptUrl").value = getVal(tx, ['receipt_url', 'Receipt_URL']) || "";
+      document.getElementById("existingReceiptUrl").value = getVal(tx, ['receipt_url']) || "";
       document.getElementById("transactionModal").style.display = "flex";
       pushModalHistory("transactionModal");
     }
@@ -3098,6 +3193,7 @@
     }
 
     async function submitTransaction() {
+      if (!_supabase) return;
       let amt = parseFloat(formatEnNum(document.getElementById("txAmountInput").value));
 
       if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
@@ -3122,8 +3218,8 @@
 
       let dateIsoString;
       if (editTransId) {
-        let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(editTransId));
-        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date', 'created_at']) || new Date().toISOString()) : new Date().toISOString();
+        let existingTx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(editTransId));
+        dateIsoString = existingTx ? (getVal(existingTx, ['Date', 'date']) || new Date().toISOString()) : new Date().toISOString();
       } else {
         let now = new Date();
         if (txDateInputVal) {
@@ -3136,6 +3232,9 @@
       }
 
       let transIdToSave = editTransId || ("TX-" + formatEnNum(Math.floor(10000000 + Math.random() * 90000000)));
+      const accObj = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
+      const assignedEmail = accObj ? String(getVal(accObj, ['AssignedUserEmail', 'assigneduseremail']) || currentLoggedInAdmin?.email || '').trim() : String(currentLoggedInAdmin?.email || '').trim();
+
       const payload = {
         TransID: transIdToSave,
         AccountID: currentAccountId,
@@ -3144,14 +3243,15 @@
         Currency: selectedCurrencyValue,
         OperationType: opType,
         Description: desc,
+        AssignedUserEmail: assignedEmail || null,
         receipt_url: receiptUrl,
         Date: dateIsoString
       };
 
       if (editTransId) {
-        await (getSupabaseClient() ? getSupabaseClient().from('transactions').update(payload).eq('TransID', editTransId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+        await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
       } else {
-        await (getSupabaseClient() ? getSupabaseClient().from('transactions').insert([payload]) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+        await _supabase.from('transactions').insert([payload]);
       }
 
       await loadDataFromSupabase(false);
@@ -3160,7 +3260,7 @@
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       
       if (token) {
-        let siteLink = "https://karimi-trust-app.vercel.app/";
+        let siteLink = window.location.origin;
         let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
         let liveBalance = getAccountLiveBalanceText(currentAccountId);
         let globalSystemBalance = getSystemGlobalBalanceText();
@@ -3169,7 +3269,7 @@
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
           if (customerChatId) {
-            let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+            let isTransferOrRemittance = (opType.includes("حواله") || opType.includes("انتقال"));
             if (isTransferOrRemittance) {
               let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
               let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
@@ -3205,16 +3305,17 @@
     }
 
     async function deleteSingleTransaction(txIdToDelete) {
+      if (!_supabase) return;
       let targetId = txIdToDelete || selectedTxId;
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetId));
       
-      const { error } = await (getSupabaseClient() ? getSupabaseClient().from('transactions').delete().eq('TransID', targetId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+      const { error } = await _supabase.from('transactions').delete().eq('TransID', targetId);
       if (error) {
         alert("خطا در حذف تراکنش: " + error.message);
         return;
       }
 
-      allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) !== String(targetId));
+      allTransactions = allTransactions.filter(t => String(getVal(t, ['TransID', 'transid'])) !== String(targetId));
 
       await loadDataFromSupabase(false);
       alert("✅ تراکنش با موفقیت حذف شد.");
@@ -3258,7 +3359,7 @@
     }
 
     function shareTransferReceiptWhatsApp(targetTxId) {
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId || selectedTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId || selectedTxId));
       if (!tx) return;
 
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
@@ -3278,7 +3379,7 @@
     function sendSingleTxWhatsApp(targetTxId) {
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       let phone = acc ? formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '') : '';
-      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetTxId));
+      let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid'])) === String(targetTxId));
       if(!tx) return;
 
       let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
@@ -3289,7 +3390,7 @@
       let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
-      let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
+      let isTransferOrRemittance = (opType.includes("حواله") || opType.includes("انتقال"));
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
@@ -3330,8 +3431,8 @@
         .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(currentAccountId))
         .slice()
         .sort((a, b) => {
-          let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
-          let db = new Date(getVal(b, ['Date', 'date', 'created_at']) || 0).getTime();
+          let da = new Date(getVal(a, ['Date', 'date']) || 0).getTime();
+          let db = new Date(getVal(b, ['Date', 'date']) || 0).getTime();
           if (isNaN(da)) da = 0;
           if (isNaN(db)) db = 0;
           return da - db;
@@ -3367,7 +3468,7 @@
       for (let i = accTxs.length - 1; i >= 0; i--) {
         let op = String(getVal(accTxs[i], ['OperationType', 'operationtype']) || '').trim();
         let desc = String(getVal(accTxs[i], ['Description', 'description']) || '').trim();
-        if (op === 'تسویه' || desc.includes('تسویه')) {
+        if (op.includes('تسویه') || desc.includes('تسویه')) {
           lastSettlementIdx = i;
           break;
         }
@@ -3405,7 +3506,7 @@
       let runningBalances = {};
       finalTransactions.forEach((tx, idx) => {
         let date = formatEnNum(String(getVal(tx, ['Date', 'date']) || '').split('T')[0]);
-        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
+        let opType = String(getVal(tx, ['OperationType', 'operationtype']) || '');
         let dir = String(getVal(tx, ['Direction', 'direction']) || '');
         let amt = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
         let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -3446,7 +3547,7 @@
       if (!acc) return;
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
-      let siteLink = "https://karimi-trust-app.vercel.app/";
+      let siteLink = window.location.origin;
 
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
