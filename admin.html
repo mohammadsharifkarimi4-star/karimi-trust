@@ -894,7 +894,7 @@
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="123456:ABC-DEF..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="802655440"></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder=""></div>
       
       <div class="flex-row" style="gap:10px; margin-bottom:14px;">
         <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
@@ -929,14 +929,17 @@
 
   <!-- کدهای جاوااسکریپت برنامه -->
   <script>
-    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
-    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const runtimeEnv = (typeof window !== "undefined" && window.__ENV__) ? window.__ENV__ : {};
+    const SUPABASE_URL = String(runtimeEnv.SUPABASE_URL || "").trim();
+    const SUPABASE_KEY = String(runtimeEnv.SUPABASE_KEY || "").trim();
+    let _supabase = (SUPABASE_URL && SUPABASE_KEY && window.supabase && typeof window.supabase.createClient === "function")
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+      : null;
 
-    let MASTER_ADMIN_EMAIL = localStorage.getItem("masterEmail") || "mohammadsharifkarimi4@gmail.com";
-    let MASTER_ADMIN_PIN = localStorage.getItem("masterPin") || "77218731";
-    let MASTER_ADMIN_TOKEN = localStorage.getItem("masterToken") || "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
-    let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || "802655440";
+    let MASTER_ADMIN_EMAIL = localStorage.getItem("masterEmail") || String(runtimeEnv.MASTER_EMAIL || "").trim();
+    let MASTER_ADMIN_PIN = localStorage.getItem("masterPin") || String(runtimeEnv.MASTER_PIN || "").trim();
+    let MASTER_ADMIN_TOKEN = localStorage.getItem("masterToken") || String(runtimeEnv.MASTER_BOT_TOKEN || runtimeEnv.TELEGRAM_BOT_TOKEN || "").trim();
+    let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || String(runtimeEnv.MASTER_CHAT_ID || runtimeEnv.TELEGRAM_CHAT_ID || "").trim();
     const MASTER_ADMIN_ID = "master_owner";
 
     let allAccounts = [];
@@ -1204,7 +1207,52 @@
       window.history.pushState({ modal: modalId }, '');
     }
 
+    function ensureRuntimeEnvLoaded() {
+      return new Promise((resolve) => {
+        if (window.__ENV__ && (window.__ENV__.SUPABASE_URL || window.__ENV__.SUPABASE_KEY)) {
+          resolve(window.__ENV__);
+          return;
+        }
+        const script = document.createElement("script");
+        script.src = "/api/env.js?t=" + Date.now();
+        script.async = true;
+        script.onload = () => resolve(window.__ENV__ || {});
+        script.onerror = () => resolve(window.__ENV__ || {});
+        document.head.appendChild(script);
+      });
+    }
+
+    function applyRuntimeEnvValues() {
+      const envObj = (typeof window !== "undefined" && window.__ENV__) ? window.__ENV__ : {};
+      if (!localStorage.getItem("masterEmail") && envObj.MASTER_EMAIL) {
+        MASTER_ADMIN_EMAIL = String(envObj.MASTER_EMAIL).trim();
+      }
+      if (!localStorage.getItem("masterPin") && envObj.MASTER_PIN) {
+        MASTER_ADMIN_PIN = String(envObj.MASTER_PIN).trim();
+      }
+      if (!localStorage.getItem("masterToken") && (envObj.MASTER_BOT_TOKEN || envObj.TELEGRAM_BOT_TOKEN)) {
+        MASTER_ADMIN_TOKEN = String(envObj.MASTER_BOT_TOKEN || envObj.TELEGRAM_BOT_TOKEN).trim();
+      }
+      if (!localStorage.getItem("masterChatId") && (envObj.MASTER_CHAT_ID || envObj.TELEGRAM_CHAT_ID)) {
+        MASTER_ADMIN_CHATID = String(envObj.MASTER_CHAT_ID || envObj.TELEGRAM_CHAT_ID).trim();
+      }
+    }
+
+    function getSupabaseClient() {
+      if (_supabase) return _supabase;
+      const envObj = (typeof window !== "undefined" && window.__ENV__) ? window.__ENV__ : {};
+      const url = String(envObj.SUPABASE_URL || SUPABASE_URL || "").trim();
+      const key = String(envObj.SUPABASE_KEY || SUPABASE_KEY || "").trim();
+      if (url && key && window.supabase && typeof window.supabase.createClient === "function") {
+        _supabase = window.supabase.createClient(url, key);
+        return _supabase;
+      }
+      return null;
+    }
+
     window.onload = async function() {
+      await ensureRuntimeEnvLoaded();
+      applyRuntimeEnvValues();
       loadDashboardMenuOrder();
       let savedSession = localStorage.getItem("adminAuthSessionData");
       let savedArchive = localStorage.getItem("phoneArchiveData");
@@ -1245,6 +1293,8 @@
     };
 
     async function handleLogin() {
+      await ensureRuntimeEnvLoaded();
+      applyRuntimeEnvValues();
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
       const pin = document.getElementById("loginPin").value.trim();
 
@@ -1253,7 +1303,7 @@
         return;
       }
 
-      if (email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
+      if (MASTER_ADMIN_EMAIL && MASTER_ADMIN_PIN && email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
         currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "محمد شریف کریمی (مالک)", email: MASTER_ADMIN_EMAIL };
         localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
         
@@ -1265,7 +1315,7 @@
       }
 
       try {
-        const { data: adminsData } = await _supabase.from('admins').select('*');
+        const { data: adminsData } = await (getSupabaseClient() ? getSupabaseClient().from('admins').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
         if (adminsData) {
           allAdmins = adminsData;
           let foundAdmin = adminsData.find(adm => {
@@ -1393,10 +1443,10 @@
 
       try {
         const [accRes, txRes, opRes, admRes] = await Promise.all([
-          _supabase.from('accounts').select('*'),
-          _supabase.from('transactions').select('*'),
-          _supabase.from('operation_types').select('*'),
-          _supabase.from('admins').select('*')
+          (getSupabaseClient() ? getSupabaseClient().from('accounts').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") })),
+          (getSupabaseClient() ? getSupabaseClient().from('transactions').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") })),
+          (getSupabaseClient() ? getSupabaseClient().from('operation_types').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") })),
+          (getSupabaseClient() ? getSupabaseClient().from('admins').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }))
         ]);
 
         if (admRes.data) allAdmins = admRes.data;
@@ -1519,7 +1569,7 @@
           let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
           let isSelected = String(currentSelected) === String(accId);
           html += `
-            <div class="ledger-picker-item ${isSelected ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('${accId}', '${accName.replace(/'/g, "\'")}')">
+            <div class="ledger-picker-item ${isSelected ? 'active-opt' : ''}" onclick="playInteractionEffect(); selectGlobalLedgerAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">
               <div>
                 <div style="font-weight:900; color:#0f172a; font-size:0.86rem;">${accName}</div>
                 <div style="font-size:0.74rem; color:#475569;" dir="ltr">📞 ${accPhone}</div>
@@ -1606,9 +1656,9 @@
       if (!file) return null;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const { error } = await _supabase.storage.from(bucketName).upload(fileName, file);
+      const { error } = await (getSupabaseClient() ? getSupabaseClient().storage.from(bucketName).upload(fileName, file) : Promise.resolve({ data: null, error: new Error("تنظیمات فضای ذخیره‌سازی یافت نشد") }));
       if (error) return null;
-      const { data: publicUrlData } = _supabase.storage.from(bucketName).getPublicUrl(fileName);
+      const { data: publicUrlData } = (getSupabaseClient() ? getSupabaseClient().storage.from(bucketName).getPublicUrl(fileName) : { data: { publicUrl: "" } });
       return publicUrlData.publicUrl;
     }
 
@@ -1643,7 +1693,7 @@
         populateOpTypeSelect();
         renderOpTypesList();
         input.value = "";
-        await _supabase.from('operation_types').insert([{ title: title }]);
+        await (getSupabaseClient() ? getSupabaseClient().from('operation_types').insert([{ title: title }]) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       }
     }
 
@@ -1651,7 +1701,7 @@
       customOpTypes = customOpTypes.filter(o => o !== title);
       populateOpTypeSelect();
       renderOpTypesList();
-      await _supabase.from('operation_types').delete().eq('title', title);
+      await (getSupabaseClient() ? getSupabaseClient().from('operation_types').delete().eq('title', title) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
     }
 
     function openAdminManagerModal() {
@@ -1745,11 +1795,11 @@
       };
 
       if (editId) {
-        const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
+        const { error } = await (getSupabaseClient() ? getSupabaseClient().from('admins').update(payload).eq('AdminID', editId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
         if (error) { alert("خطا در ویرایش: " + error.message); return; }
         alert("✅ اطلاعات ادمین با موفقیت ویرایش شد!");
       } else {
-        const { error } = await _supabase.from('admins').insert([payload]);
+        const { error } = await (getSupabaseClient() ? getSupabaseClient().from('admins').insert([payload]) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
         if (error) { alert("خطا در ایجاد ادمین: " + error.message); return; }
         alert("✅ ادمین جدید با موفقیت ایجاد شد!");
 
@@ -1766,15 +1816,15 @@
       }
 
       cancelEditAdmin();
-      const { data } = await _supabase.from('admins').select('*');
+      const { data } = await (getSupabaseClient() ? getSupabaseClient().from('admins').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       if (data) allAdmins = data;
       renderAdminsList();
     }
 
     async function deleteAdminAccount(admId) {
       if (!confirm("آیا از حذف دسترسی این ادمین مطمئن هستید؟")) return;
-      await _supabase.from('admins').delete().eq('AdminID', admId);
-      const { data } = await _supabase.from('admins').select('*');
+      await (getSupabaseClient() ? getSupabaseClient().from('admins').delete().eq('AdminID', admId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+      const { data } = await (getSupabaseClient() ? getSupabaseClient().from('admins').select('*') : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       if (data) allAdmins = data;
       renderAdminsList();
     }
@@ -1977,7 +2027,7 @@
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
         listEl.innerHTML += `
-          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
+          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\\'")}')">
             <div class="stat-row" style="margin:0;">
               <span style="font-weight:900; color:var(--primary-dark);">${accName}</span>
               <span style="font-size:0.85rem; color:#475569;">کُد: ${accId} | ${accPhone}</span>
@@ -2133,7 +2183,7 @@
           let dirColor = isCreditor ? '#047857' : '#b91c1c';
 
           rowsHtml += `
-            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
+            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\\'")}')">
               <td style="text-align:center; font-weight:900; color:#334155;">${rowNum}</td>
               <td style="text-align:right;">
                 <div style="font-weight:900; color:var(--primary-dark); font-size:0.76rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
@@ -2637,9 +2687,9 @@
       };
 
       if (editId) {
-        await _supabase.from('accounts').update(payload).eq('AccountID', editId);
+        await (getSupabaseClient() ? getSupabaseClient().from('accounts').update(payload).eq('AccountID', editId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       } else {
-        await _supabase.from('accounts').insert([payload]);
+        await (getSupabaseClient() ? getSupabaseClient().from('accounts').insert([payload]) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
         let { token } = getCurrentAdminTokenAndChat();
         if (token && accChatId) {
           let siteLink = "https://karimi-trust-app.vercel.app/";
@@ -2699,8 +2749,8 @@
 
       currentAccountId = null;
       switchView('viewAccounts');
-      await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
-      await _supabase.from('transactions').delete().eq('AccountID', accIdToDelete);
+      await (getSupabaseClient() ? getSupabaseClient().from('accounts').delete().eq('AccountID', accIdToDelete) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
+      await (getSupabaseClient() ? getSupabaseClient().from('transactions').delete().eq('AccountID', accIdToDelete) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       await loadDataFromSupabase(true);
       alert("✅ حساب با موفقیت حذف شد.");
     }
@@ -2963,7 +3013,7 @@
       let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
 
       btnContainer.innerHTML = `
-        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">👤 رفتن به حساب شخص (${accName})</button>
+        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">👤 رفتن به حساب شخص (${accName})</button>
         
         <div class="flex-row" style="gap: 10px; margin-bottom:10px;">
           <button class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()">
@@ -3099,9 +3149,9 @@
       };
 
       if (editTransId) {
-        await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
+        await (getSupabaseClient() ? getSupabaseClient().from('transactions').update(payload).eq('TransID', editTransId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       } else {
-        await _supabase.from('transactions').insert([payload]);
+        await (getSupabaseClient() ? getSupabaseClient().from('transactions').insert([payload]) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       }
 
       await loadDataFromSupabase(false);
@@ -3158,7 +3208,7 @@
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
-      const { error } = await _supabase.from('transactions').delete().eq('TransID', targetId);
+      const { error } = await (getSupabaseClient() ? getSupabaseClient().from('transactions').delete().eq('TransID', targetId) : Promise.resolve({ data: null, error: new Error("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد") }));
       if (error) {
         alert("خطا در حذف تراکنش: " + error.message);
         return;
@@ -3398,7 +3448,7 @@
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
       let siteLink = "https://karimi-trust-app.vercel.app/";
 
-      let liveBalText = getAccountLiveBalanceTest(currentAccountId);
+      let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
       let lines = [
         `✨ *امانت‌داری کریمی* ✨`,
