@@ -38,6 +38,7 @@
     h3 { font-size: 1.05rem; font-weight: 900; color: #fff; }
     .form-group { margin-bottom: 10px; }
     label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 4px; color: #1e293b; }
+    .field-hint { display: block; font-size: 0.73rem; color: #475569; font-weight: 600; margin-top: 3px; line-height: 1.45; }
     input, select, textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; font-weight: 700; outline: none; background: #fff; transition: all 0.2s; }
     input:focus, select:focus, textarea:focus { border-color: #0284c7; box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2); }
     
@@ -69,7 +70,6 @@
 
     .customer-box { background: #f0f9ff; border: 2px dashed var(--info-color); padding: 14px; border-radius: 12px; margin-top: 12px; display: none; position: relative; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1); }
     
-    /* رفع کامل حاشیه‌های خالی و تمام صفحه کردن جدول و هدر روزانه مشابه بخش ادمین */
     .tx-table-wrapper {
       width: 100% !important;
       max-width: 100% !important;
@@ -194,7 +194,7 @@
         </div>
         <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-info btn-xs" onclick="openBrokersListModal()">🏛️ صرافی‌ها</button>
-          <button class="btn btn-warning btn-xs" style="color:#000; font-weight:900;" onclick="openStandaloneTokenModal()">⚙️ مدیریت توکن و تنظیمات</button>
+          <button class="btn btn-warning btn-xs" style="color:#000; font-weight:900;" onclick="openTelegramTargetsModal()">⚙️ مقصد تلگرام (شخصی / گروه)</button>
           <a href="admin.html" class="btn btn-secondary btn-xs" onclick="return confirmNavigation('آیا می‌خواهید از صفحه صرافی خارج شوید؟')">👥 مشتریان</a>
           <button class="btn btn-danger btn-xs" onclick="handleLogout()">خروج</button>
         </div>
@@ -458,32 +458,42 @@
 
   </div>
 
-  <!-- مدال مدیریت توکن و تنظیمات -->
-  <div id="standaloneTokenModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9800; padding:10px;">
-    <div class="card" style="width:100%; max-width:440px; margin:0; max-height:85vh; overflow-y:auto;">
+  <!-- مدال مدیریت مقصد تلگرام (آیدی شخصی و گروه با توکن عمومی سرور) -->
+  <div id="telegramTargetsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9800; padding:10px;">
+    <div class="card" style="width:100%; max-width:450px; margin:0; max-height:85vh; overflow-y:auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="color:#0f172a; font-size:1.05rem;" id="standaloneModalTitle">⚙️ مدیریت توکن و تنظیمات ربات</h3>
-        <button class="btn btn-danger btn-xs" onclick="closeStandaloneTokenModal()">✕</button>
+        <h3 style="color:#0f172a; font-size:1.05rem;" id="telegramTargetsModalTitle">⚙️ مقصدهای تلگرام (شخصی و گروه)</h3>
+        <button class="btn btn-danger btn-xs" onclick="closeTelegramTargetsModal()">✕</button>
+      </div>
+
+      <div style="background:#f0f9ff; border:1px solid #7dd3fc; border-radius:8px; padding:8px 10px; margin-bottom:12px; font-size:0.78rem; color:#0f172a; font-weight:700; line-height:1.6;">
+        ارسال پیام از طریق مسیر عمومی سرور (<code>/api/send-telegram</code>) انجام می‌شود. می‌توانید گزارش را به <b>آیدی چت شخصی</b>، <b>گروه/سوپرگروه</b> (با <code>-100...</code>) یا <b>هر دو</b> بفرستید.
       </div>
       
       <div class="form-group">
-        <label>توکن ربات تلگرام:</label>
-        <input type="text" id="standaloneTokenInput" dir="ltr" placeholder="مثلا 8900776593:AAG...">
+        <label>آیدی چت شخصی (اختیاری):</label>
+        <input type="text" id="personalChatIdInput" dir="ltr" placeholder="مثلاً 802655440">
+        <span class="field-hint">شناسه عددی چت خصوصی در تلگرام (اعداد فارسی/عربی خودکار انگلیسی می‌شوند).</span>
       </div>
 
       <div class="form-group">
-        <label>چت‌آیدی مقصد (شخصی/گروه/کانال):</label>
-        <input type="text" id="standaloneChatIdInput" dir="ltr" placeholder="مثلا 802655440">
+        <label>آیدی چت گروه / سوپرگروه (اختیاری):</label>
+        <input type="text" id="groupChatIdInput" dir="ltr" placeholder="مثلاً -1001234567890">
+        <span class="field-hint">برای گروه یا سوپرگروه معمولاً با <code>-100</code> شروع می‌شود و ربات باید عضو گروه باشد.</span>
       </div>
 
       <div class="form-group">
-        <label>رمز عبور اختصاصی (PIN):</label>
-        <input type="text" id="standalonePinInput" dir="ltr" placeholder="رمز عبور...">
+        <label>مقصد پیش‌فرض گزارش‌ها:</label>
+        <select id="defaultChatTargetMode">
+          <option value="both">هم چت شخصی و هم گروه (در صورت ثبت هر دو)</option>
+          <option value="personal">فقط چت شخصی</option>
+          <option value="group">فقط گروه / سوپرگروه</option>
+        </select>
       </div>
 
       <div style="display:flex; gap:8px; margin-top:14px;">
-        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="closeStandaloneTokenModal()">انصراف</button>
-        <button class="btn btn-sm" style="flex:2;" onclick="saveStandaloneTokenSettings()">💾 ذخیره تنظیمات</button>
+        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="closeTelegramTargetsModal()">انصراف</button>
+        <button class="btn btn-sm" style="flex:2;" onclick="saveTelegramTargetsSettings()">💾 ذخیره مقصدها</button>
       </div>
     </div>
   </div>
@@ -508,15 +518,16 @@
 
   <!-- مدال ویرایش/افزودن صرافی -->
   <div id="brokerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9600; padding:10px;">
-    <div class="card" style="width:100%; max-width:400px; margin:0;">
+    <div class="card" style="width:100%; max-width:420px; margin:0;">
       <h3 id="brokerModalTitle" style="color:#0f172a; font-size:1rem;">افزودن صرافی جدید</h3>
       <input type="hidden" id="editBrokerModalId">
       <div class="form-group" style="margin-top:8px;"><label>نام صرافی:</label><input type="text" id="brokerName"></div>
       <div class="form-group"><label>تلفن تماس / واتساپ:</label><input type="text" id="brokerPhone" dir="ltr"></div>
       <div class="form-group"><label>شهر:</label><input type="text" id="brokerCity"></div>
       <div class="form-group">
-        <label>چت‌آیدی تلگرام:</label>
-        <input type="text" id="brokerChatId" dir="ltr" placeholder="ChatID...">
+        <label>چت‌آیدی تلگرام (شخصی یا گروه):</label>
+        <input type="text" id="brokerChatId" dir="ltr" placeholder="شخصی: 802655440 یا گروه: -1001234567890">
+        <span class="field-hint">می‌توانید آیدی چت شخصی یا آیدی گروه/سوپرگروه (با <code>-100</code>) را وارد کنید.</span>
       </div>
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button class="btn btn-secondary btn-sm" onclick="closeBrokerModal()">انصراف</button>
@@ -559,7 +570,6 @@
     </div>
   </div>
 
-
   <!-- مدال صدور PDF پویا به تفکیک ارز -->
   <div id="pdfCurrencyModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.65); justify-content:center; align-items:center; z-index:9900; padding:12px;">
     <div class="card" style="width:100%; max-width:420px; margin:0; border:2px solid #38bdf8;">
@@ -578,14 +588,13 @@
   </div>
 
   <script>
-    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
-    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let SUPABASE_URL = "";
+    let SUPABASE_KEY = "";
+    let _supabase = null;
+    let runtimeConfigPromise = null;
 
     const MASTER_ADMIN_EMAIL = "mohammadsharifkarimi4@gmail.com";
     const MASTER_ADMIN_ID = "master_owner";
-    const MASTER_ADMIN_TOKEN = "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
-    const MASTER_ADMIN_CHATID = "802655440";
 
     let allBrokers = [];
     let allAccounts = [];
@@ -608,6 +617,47 @@
       return String(str).replace(/[۰-۹٠-٩]/g, function (d) {
         return d.charCodeAt(0) >= 1776 ? d.charCodeAt(0) - 1776 : d.charCodeAt(0) - 1632;
       });
+    }
+
+    function normalizeChatId(rawChatId) {
+      if (rawChatId === null || rawChatId === undefined) return '';
+      let cleaned = toEnglishDigits(String(rawChatId)).trim();
+      cleaned = cleaned.replace(/[\u200e\u200f\s]/g, '');
+      return cleaned;
+    }
+
+    function formatChatTargetLabel(chatId) {
+      let norm = normalizeChatId(chatId);
+      if (!norm || norm === '-') return '-';
+      let isGroup = norm.startsWith('-100') || (norm.startsWith('-') && norm.length > 10);
+      return `${norm} (${isGroup ? 'گروه' : 'شخصی'})`;
+    }
+
+    async function ensureSupabaseClient() {
+      if (_supabase) return _supabase;
+      if (!runtimeConfigPromise) {
+        runtimeConfigPromise = (async () => {
+          try {
+            const resp = await fetch("/api/env", { cache: "no-store" });
+            if (resp.ok) {
+              const cfg = await resp.json();
+              SUPABASE_URL = String(cfg.supabaseUrl || "").trim();
+              SUPABASE_KEY = String(cfg.supabaseKey || "").trim();
+            }
+          } catch (e) {
+            console.warn("خطا در دریافت تنظیمات از /api/env:", e);
+          }
+
+          if (!SUPABASE_URL) SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
+          if (!SUPABASE_KEY) SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+
+          if (SUPABASE_URL && SUPABASE_KEY && window.supabase) {
+            _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          }
+          return _supabase;
+        })();
+      }
+      return await runtimeConfigPromise;
     }
 
     function playBeep(type = 'click') {
@@ -638,9 +688,10 @@
       try {
         currentLoggedInAdmin = JSON.parse(savedSession);
         document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
-        
+
+        await ensureSupabaseClient();
         await fetchLatestAdminInfo();
-        await syncAdminTokenFromDatabase();
+        await syncTelegramTargetsFromDatabase();
 
         await loadInitialData();
       } catch(e) {
@@ -698,12 +749,13 @@
     }
 
     async function fetchLatestAdminInfo() {
-      if (!currentLoggedInAdmin) return;
+      const client = await ensureSupabaseClient();
+      if (!client || !currentLoggedInAdmin) return;
       let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
       if (isMaster) return;
 
       try {
-        const { data: admins } = await _supabase.from('admins').select('*');
+        const { data: admins } = await client.from('admins').select('*');
         if (admins) {
           let found = admins.find(a => String(a.AdminID || a.adminid || a.id) === String(currentLoggedInAdmin.id));
           if (found) {
@@ -720,99 +772,111 @@
         adminKey = isMaster ? "master_owner" : String(currentLoggedInAdmin.AdminID || currentLoggedInAdmin.adminid || currentLoggedInAdmin.id);
       }
       return {
-        tokenKey: `broker_standalone_token_${adminKey}`,
-        chatIdKey: `broker_standalone_chatid_${adminKey}`,
-        pinKey: `broker_standalone_pin_${adminKey}`
+        personalChatKey: `broker_personal_chatid_${adminKey}`,
+        groupChatKey: `broker_group_chatid_${adminKey}`,
+        targetModeKey: `broker_chat_target_mode_${adminKey}`
       };
     }
 
-    async function syncAdminTokenFromDatabase() {
+    async function syncTelegramTargetsFromDatabase() {
       if (!currentLoggedInAdmin) return;
-      let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-      if (isMaster) return;
-
       let keys = getAdminStorageKeys();
-      if (!localStorage.getItem(keys.tokenKey)) {
-        let botToken = currentLoggedInAdmin.BotToken || currentLoggedInAdmin.bottoken || currentLoggedInAdmin.Token || currentLoggedInAdmin.token;
-        let chatId = currentLoggedInAdmin.ChatID || currentLoggedInAdmin.chatid;
-        if (botToken) localStorage.setItem(keys.tokenKey, botToken);
-        if (chatId) localStorage.setItem(keys.chatIdKey, chatId);
+      let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+
+      if (!localStorage.getItem(keys.personalChatKey)) {
+        let dbChat = normalizeChatId(currentLoggedInAdmin.ChatID || currentLoggedInAdmin.chatid || "");
+        if (dbChat) {
+          localStorage.setItem(keys.personalChatKey, dbChat);
+        } else if (isMaster) {
+          const client = await ensureSupabaseClient();
+          if (client) {
+            try {
+              const { data } = await client.from('owner_settings').select('chat_id').eq('id', MASTER_ADMIN_ID).maybeSingle();
+              if (data && data.chat_id) {
+                localStorage.setItem(keys.personalChatKey, normalizeChatId(data.chat_id));
+              }
+            } catch (e) {}
+          }
+        }
       }
     }
 
-    function getCurrentAdminTokenAndChat() {
-      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
-      
-      let isMaster = currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+    function getTelegramDispatchTargets(currentBroker) {
       let keys = getAdminStorageKeys();
-      
-      let independentToken = localStorage.getItem(keys.tokenKey);
-      let independentChatId = localStorage.getItem(keys.chatIdKey);
+      let personalChat = normalizeChatId(localStorage.getItem(keys.personalChatKey) || "");
+      let groupChat = normalizeChatId(localStorage.getItem(keys.groupChatKey) || "");
+      let mode = localStorage.getItem(keys.targetModeKey) || "both";
+      let brokerChat = currentBroker ? normalizeChatId(currentBroker.chatid || "") : "";
 
-      if (isMaster) {
-        return {
-          token: independentToken ? independentToken.trim() : MASTER_ADMIN_TOKEN,
-          chatId: independentChatId ? independentChatId.trim() : MASTER_ADMIN_CHATID
-        };
+      let targets = [];
+      const addTarget = (id) => {
+        let n = normalizeChatId(id);
+        if (n && !targets.includes(n)) targets.push(n);
+      };
+
+      if (mode === "personal") {
+        addTarget(personalChat || brokerChat);
+      } else if (mode === "group") {
+        let brokerIsGroup = brokerChat.startsWith('-');
+        addTarget(groupChat || (brokerIsGroup ? brokerChat : ""));
       } else {
-        let dbToken = currentLoggedInAdmin.BotToken || currentLoggedInAdmin.bottoken || currentLoggedInAdmin.Token || currentLoggedInAdmin.token || MASTER_ADMIN_TOKEN;
-        let dbChatId = currentLoggedInAdmin.ChatID || currentLoggedInAdmin.chatid || MASTER_ADMIN_CHATID;
-
-        let token = independentToken ? independentToken.trim() : dbToken;
-        let chatId = independentChatId ? independentChatId.trim() : dbChatId;
-        return { token, chatId };
+        addTarget(personalChat);
+        addTarget(groupChat);
+        addTarget(brokerChat);
       }
+
+      return targets;
     }
 
-    function openStandaloneTokenModal() {
+    function openTelegramTargetsModal() {
       playBeep('click');
       let keys = getAdminStorageKeys();
       let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-      
-      document.getElementById("standaloneModalTitle").innerText = isMaster ? "⚙️ تنظیمات توکن مالک سیستم" : `⚙️ تنظیمات توکن ادمین (${currentLoggedInAdmin ? currentLoggedInAdmin.Name || currentLoggedInAdmin.name || 'همکار' : ''})`;
-      
-      let defaultToken = isMaster ? MASTER_ADMIN_TOKEN : (currentLoggedInAdmin.BotToken || currentLoggedInAdmin.bottoken || currentLoggedInAdmin.Token || currentLoggedInAdmin.token || "");
-      let defaultChatId = isMaster ? MASTER_ADMIN_CHATID : (currentLoggedInAdmin.ChatID || currentLoggedInAdmin.chatid || "");
+      let adminLabel = currentLoggedInAdmin ? (currentLoggedInAdmin.Name || currentLoggedInAdmin.name || 'همکار') : '';
+      document.getElementById("telegramTargetsModalTitle").innerText = isMaster
+        ? "⚙️ مقصدهای تلگرام مالک (شخصی و گروه)"
+        : `⚙️ مقصدهای تلگرام ادمین (${adminLabel})`;
 
-      document.getElementById("standaloneTokenInput").value = localStorage.getItem(keys.tokenKey) || defaultToken;
-      document.getElementById("standaloneChatIdInput").value = localStorage.getItem(keys.chatIdKey) || defaultChatId;
-      document.getElementById("standalonePinInput").value = localStorage.getItem(keys.pinKey) || "";
-      document.getElementById("standaloneTokenModal").style.display = "flex";
+      document.getElementById("personalChatIdInput").value = normalizeChatId(localStorage.getItem(keys.personalChatKey) || "");
+      document.getElementById("groupChatIdInput").value = normalizeChatId(localStorage.getItem(keys.groupChatKey) || "");
+      document.getElementById("defaultChatTargetMode").value = localStorage.getItem(keys.targetModeKey) || "both";
+      document.getElementById("telegramTargetsModal").style.display = "flex";
     }
 
-    function closeStandaloneTokenModal() {
-      document.getElementById("standaloneTokenModal").style.display = "none";
+    function closeTelegramTargetsModal() {
+      document.getElementById("telegramTargetsModal").style.display = "none";
     }
 
-    async function saveStandaloneTokenSettings() {
-      let t = document.getElementById("standaloneTokenInput").value.trim();
-      let c = document.getElementById("standaloneChatIdInput").value.trim();
-      let p = document.getElementById("standalonePinInput").value.trim();
+    async function saveTelegramTargetsSettings() {
+      let personalId = normalizeChatId(document.getElementById("personalChatIdInput").value);
+      let groupId = normalizeChatId(document.getElementById("groupChatIdInput").value);
+      let mode = document.getElementById("defaultChatTargetMode").value || "both";
 
-      if (!t || !c) {
-        alert("لطفاً توکن و چت‌آیدی را وارد کنید.");
+      if (!personalId && !groupId) {
+        alert("لطفاً حداقل آیدی چت شخصی یا آیدی گروه را وارد کنید.");
         return;
       }
 
       let keys = getAdminStorageKeys();
-      localStorage.setItem(keys.tokenKey, t);
-      localStorage.setItem(keys.chatIdKey, c);
-      localStorage.setItem(keys.pinKey, p);
+      localStorage.setItem(keys.personalChatKey, personalId);
+      localStorage.setItem(keys.groupChatKey, groupId);
+      localStorage.setItem(keys.targetModeKey, mode);
 
       playBeep('success');
-      alert("✅ تنظیمات اختصاصی شما با موفقیت ذخیره شد!");
-      closeStandaloneTokenModal();
+      alert("✅ مقصدهای تلگرام (چت شخصی و/یا گروه) ذخیره شدند!");
+      closeTelegramTargetsModal();
     }
 
     async function loadInitialData() {
-      if (!currentLoggedInAdmin) return;
+      const client = await ensureSupabaseClient();
+      if (!client || !currentLoggedInAdmin) return;
       showSync(true);
       try {
         const [bRes, aRes, opRes, admRes] = await Promise.all([
-          _supabase.from('brokers').select('*'),
-          _supabase.from('accounts').select('*'),
-          _supabase.from('operation_types').select('*'),
-          _supabase.from('admins').select('*')
+          client.from('brokers').select('*'),
+          client.from('accounts').select('*'),
+          client.from('operation_types').select('*'),
+          client.from('admins').select('*')
         ]);
         let rawBrokers = bRes.data || [];
         let rawAccounts = aRes.data || [];
@@ -936,7 +1000,8 @@
     }
 
     async function loadBrokerTransactions() {
-      if (!activeBrokerId) return;
+      const client = await ensureSupabaseClient();
+      if (!client || !activeBrokerId) return;
 
       localStorage.setItem("lastActiveBrokerId", activeBrokerId);
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
@@ -946,7 +1011,7 @@
 
       loadBrokerAddressesFromDatabase(currentBroker);
 
-      const { data } = await _supabase.from('broker_transactions').select('*').eq('broker_id', activeBrokerId);
+      const { data } = await client.from('broker_transactions').select('*').eq('broker_id', activeBrokerId);
       brokerTxs = sortBrokerTxsChronologically(data || [], true);
       
       renderBrokerStatsAndTxs();
@@ -1381,16 +1446,15 @@ ${diffText ? `\n📝 *تغییرات انجام شده:*\n_${diffText}_\n` : ''}
 • آدرس مقصد: _${txObj.address_dashboard || '-'}_
 ${verticalReport}`;
 
-      let { token, chatId } = getCurrentAdminTokenAndChat();
-      
-      await sendTelegramMessage(token, chatId, msgText);
-
-      if (currentBroker && currentBroker.chatid && String(currentBroker.chatid).trim() !== String(chatId).trim()) {
-        await sendTelegramMessage(token, currentBroker.chatid, msgText);
+      let targets = getTelegramDispatchTargets(currentBroker);
+      for (let chatId of targets) {
+        await sendTelegramMessage("", chatId, msgText);
       }
     }
 
     async function saveBrokerTransaction() {
+      const client = await ensureSupabaseClient();
+      if (!client) return;
       if (!activeBrokerId) { alert("لطفاً صرافی را انتخاب کنید"); return; }
       if (!selectedDirection) { alert("جهت معامله مشخص نشده است!"); return; }
       if (!selectedCurrency) { alert("ارز معامله انتخاب نشده است!"); return; }
@@ -1451,7 +1515,7 @@ ${verticalReport}`;
         address_dashboard: address
       };
 
-      let qRes = editId ? await _supabase.from('broker_transactions').update(brokerTxObj).eq('broker_tx_id', editId) : await _supabase.from('broker_transactions').insert([brokerTxObj]);
+      let qRes = editId ? await client.from('broker_transactions').update(brokerTxObj).eq('broker_tx_id', editId) : await client.from('broker_transactions').insert([brokerTxObj]);
       if (qRes.error) { alert("خطا: " + qRes.error.message); showSync(false); return; }
 
       let targetCustId = document.getElementById("selectedCustId").value;
@@ -1466,13 +1530,15 @@ ${verticalReport}`;
             Phone: document.getElementById("custPhoneInput").value.trim(),
             CreatedBy: currentAdminId
           };
-          await _supabase.from('accounts').insert([newAccObj]);
+          await client.from('accounts').insert([newAccObj]);
 
           let currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
-          let { token } = getCurrentAdminTokenAndChat();
-          if (currentBroker && currentBroker.chatid && token) {
-            let openAccMsg = `🎉 *حساب شما افتتاح شد*\n🏛️ صرافی: *${currentBroker.name}*\n👤 نام مشتری: *${custName}*\n📅 تاریخ افتتاح: \`${toEnglishDigits(new Date().toISOString().split('T')[0])}\`\n_تراکنش‌های ثبت‌شده از زمان افتتاح حساب و مانده حساب فعال شد._`;
-            sendTelegramMessage(token, currentBroker.chatid, openAccMsg);
+          let targets = getTelegramDispatchTargets(currentBroker);
+          if (targets.length > 0) {
+            let openAccMsg = `🎉 *حساب شما افتتاح شد*\n🏛️ صرافی: *${currentBroker ? currentBroker.name : 'صرافی'}*\n👤 نام مشتری: *${custName}*\n📅 تاریخ افتتاح: \`${toEnglishDigits(new Date().toISOString().split('T')[0])}\`\n_تراکنش‌های ثبت‌شده از زمان افتتاح حساب و مانده حساب فعال شد._`;
+            for (let chatId of targets) {
+              await sendTelegramMessage("", chatId, openAccMsg);
+            }
           }
         }
 
@@ -1505,10 +1571,10 @@ ${verticalReport}`;
         };
 
         if (editCustTxId) {
-          await _supabase.from('transactions').update(custTxObj).eq('TransID', editCustTxId);
+          await client.from('transactions').update(custTxObj).eq('TransID', editCustTxId);
         } else {
           custTxObj.TransID = "TX-" + Math.floor(10000000 + Math.random() * 90000000);
-          await _supabase.from('transactions').insert([custTxObj]);
+          await client.from('transactions').insert([custTxObj]);
         }
       }
 
@@ -1594,11 +1660,13 @@ ${verticalReport}`;
     }
 
     async function deleteBrokerTx() {
+      const client = await ensureSupabaseClient();
+      if (!client) return;
       if (!confirm("آیا از حذف این معامله اطمینان دارید؟")) return;
       showSync(true);
       
       const tx = brokerTxs.find(t => String(t.broker_tx_id) === String(selectedBrokerTxId));
-      await _supabase.from('broker_transactions').delete().eq('broker_tx_id', selectedBrokerTxId);
+      await client.from('broker_transactions').delete().eq('broker_tx_id', selectedBrokerTxId);
       
       await loadBrokerTransactions();
 
@@ -1647,7 +1715,7 @@ ${verticalReport}`;
           <div style="background:#f8fafc; border:1.5px solid var(--border-color); padding:10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
             <div>
               <div style="font-weight:900; font-size:0.9rem; color:#0f172a;">${b.name} (${b.city || 'بدون شهر'})</div>
-              <div style="font-size:0.78rem; color:#64748b; font-weight:700;">تلفن: ${b.phone || '-'} | چت‌آیدی: ${b.chatid || '-'}</div>
+              <div style="font-size:0.78rem; color:#64748b; font-weight:700;">تلفن: ${b.phone || '-'} | چت‌آیدی: ${formatChatTargetLabel(b.chatid)}</div>
             </div>
             <div style="display:flex; gap:6px;">
               <button class="btn btn-warning btn-xs" onclick="openBrokerModal(true, '${b.broker_id}')">✏️ ویرایش</button>
@@ -1671,9 +1739,9 @@ ${verticalReport}`;
         document.getElementById("brokerModalTitle").innerText = "✏️ ویرایش اطلاعات صرافی";
         document.getElementById("editBrokerModalId").value = b.broker_id;
         document.getElementById("brokerName").value = b.name || "";
-        document.getElementById("brokerPhone").value = b.phone || "";
+        document.getElementById("brokerPhone").value = toEnglishDigits(b.phone || "");
         document.getElementById("brokerCity").value = b.city || "";
-        document.getElementById("brokerChatId").value = b.chatid || "";
+        document.getElementById("brokerChatId").value = normalizeChatId(b.chatid || "");
       } else {
         document.getElementById("brokerModalTitle").innerText = "➕ افزودن صرافی جدید";
         document.getElementById("editBrokerModalId").value = "";
@@ -1688,6 +1756,8 @@ ${verticalReport}`;
     function closeBrokerModal() { document.getElementById("brokerModal").style.display = "none"; }
 
     async function saveBrokerInfo() {
+      const client = await ensureSupabaseClient();
+      if (!client) return;
       const name = document.getElementById("brokerName").value.trim();
       if (!name) { alert("نام صرافی الزامی است"); return; }
       
@@ -1696,18 +1766,18 @@ ${verticalReport}`;
 
       const bObj = {
         name: name,
-        phone: document.getElementById("brokerPhone").value.trim(),
+        phone: toEnglishDigits(document.getElementById("brokerPhone").value.trim()),
         city: document.getElementById("brokerCity").value.trim(),
-        chatid: document.getElementById("brokerChatId").value.trim(),
+        chatid: normalizeChatId(document.getElementById("brokerChatId").value),
         CreatedBy: currentAdminId
       };
 
       showSync(true);
       if (editId) {
-        await _supabase.from('brokers').update(bObj).eq('broker_id', editId);
+        await client.from('brokers').update(bObj).eq('broker_id', editId);
       } else {
         bObj.broker_id = "BRK-" + Math.floor(1000 + Math.random() * 9000);
-        await _supabase.from('brokers').insert([bObj]);
+        await client.from('brokers').insert([bObj]);
         activeBrokerId = bObj.broker_id;
       }
 
@@ -1719,10 +1789,12 @@ ${verticalReport}`;
     }
 
     async function deleteSpecificBroker(brokerId) {
+      const client = await ensureSupabaseClient();
+      if (!client) return;
       if (!confirm("آیا از حذف این صرافی و تمامی اطلاعات آن اطمینان دارید؟")) return;
 
       showSync(true);
-      await _supabase.from('brokers').delete().eq('broker_id', brokerId);
+      await client.from('brokers').delete().eq('broker_id', brokerId);
       if (activeBrokerId === brokerId) activeBrokerId = null;
       await loadInitialData();
       renderBrokersListModalContent();
@@ -1753,19 +1825,21 @@ ${verticalReport}`;
       });
     }
     async function addNewOperationType() {
+      const client = await ensureSupabaseClient();
       const val = document.getElementById("newOpTypeInput").value.trim();
       if (!val || customOpTypes.includes(val)) return;
       customOpTypes.push(val);
       populateOpTypeSelect();
       renderOpTypesList();
       document.getElementById("newOpTypeInput").value = "";
-      await _supabase.from('operation_types').insert([{ title: val }]);
+      if (client) await client.from('operation_types').insert([{ title: val }]);
     }
     async function removeOpType(op) {
+      const client = await ensureSupabaseClient();
       customOpTypes = customOpTypes.filter(o => o !== op);
       populateOpTypeSelect();
       renderOpTypesList();
-      await _supabase.from('operation_types').delete().eq('title', op);
+      if (client) await client.from('operation_types').delete().eq('title', op);
     }
 
     function loadBrokerAddressesFromDatabase(currentBroker) {
@@ -1781,10 +1855,11 @@ ${verticalReport}`;
     }
 
     async function syncBrokerAddressesToDatabase() {
-      if (!activeBrokerId) return;
+      const client = await ensureSupabaseClient();
+      if (!client || !activeBrokerId) return;
       showSync(true);
       let jsonAddr = JSON.stringify(savedAddresses);
-      await _supabase.from('brokers').update({ addresses: jsonAddr }).eq('broker_id', activeBrokerId);
+      await client.from('brokers').update({ addresses: jsonAddr }).eq('broker_id', activeBrokerId);
       
       const bObj = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
       if (bObj) bObj.addresses = jsonAddr;
@@ -1823,30 +1898,50 @@ ${verticalReport}`;
       renderSavedAddresses();
     }
 
-    async function sendTelegramMessage(botToken, chatId, messageText) {
-      if (!botToken || !chatId) return;
+    async function sendTelegramMessage(_botToken, chatId, messageText) {
+      const resolvedChatId = normalizeChatId(chatId);
+      if (!resolvedChatId || !messageText) return false;
       try {
-        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        const resp = await fetch('/api/send-telegram', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            chat_id: chatId,
+            chat_id: resolvedChatId,
             text: messageText,
             parse_mode: 'Markdown'
           })
         });
-      } catch (err) { console.log("خطای ارسال تلگرام:", err); }
-    }
+        const data = await resp.json().catch(() => ({}));
+        if (resp.ok && data.ok !== false) return true;
 
+        if (resp.status === 400) {
+          const plainResp = await fetch('/api/send-telegram', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: resolvedChatId,
+              text: messageText,
+              parse_mode: ''
+            })
+          });
+          const plainData = await plainResp.json().catch(() => ({}));
+          if (plainResp.ok && plainData.ok !== false) return true;
+        }
+        return false;
+      } catch (err) {
+        console.warn("خطای ارسال تلگرام:", err);
+        return false;
+      }
+    }
 
     // ==========================================
     // سیستم صدور PDF پویا به تفکیک ارز و روز
     // ==========================================
     async function fetchFreshBrokerTransactionsForPdf() {
-      if (!activeBrokerId) return [];
+      const client = await ensureSupabaseClient();
+      if (!client || !activeBrokerId) return [];
       try {
-        // دریافت مستقیم و بدون کش از دیتابیس برای اطمینان از وجود جدیدترین تراکنش‌ها
-        const { data, error } = await _supabase
+        const { data, error } = await client
           .from('broker_transactions')
           .select('*')
           .eq('broker_id', activeBrokerId);
@@ -1875,7 +1970,6 @@ ${verticalReport}`;
         return;
       }
 
-      // شناسایی پویا ارزهای موجود در تراکنش‌ها
       let currenciesSet = new Set();
       txs.forEach(tx => {
         let c = String(tx.currency || 'USD').trim().toUpperCase();
@@ -1943,7 +2037,6 @@ ${verticalReport}`;
       let currTxs = allFilteredTxs.filter(tx => String(tx.currency || 'USD').trim().toUpperCase() === targetCurrency);
       if (currTxs.length === 0) return;
 
-      // مرتب‌سازی صعودی (قدیمی‌ترین به جدیدترین) برای محاسبه تراز تجمعی و گزارش روزانه
       let chronological = sortBrokerTxsChronologically(currTxs, true);
 
       const currentBroker = allBrokers.find(b => String(b.broker_id) === String(activeBrokerId));
@@ -1963,7 +2056,6 @@ ${verticalReport}`;
       let netStatus = netBalance > 0 ? 'بستانکار (+)' : (netBalance < 0 ? 'بدهکار (-)' : 'تسویه (۰)');
       let netColor = netBalance > 0 ? '#059669' : (netBalance < 0 ? '#dc2626' : '#334155');
 
-      // گروه‌بندی تراکنش‌ها بر اساس روز
       let dayGroups = [];
       let dayMap = {};
       chronological.forEach(tx => {
@@ -2031,7 +2123,6 @@ ${verticalReport}`;
 
         daysHtml += `
           <div style="margin-bottom:14px; border:1.5px solid #94a3b8; border-radius:8px; overflow:hidden; page-break-inside:avoid;">
-            <!-- نوار حاشیه و هدر روز به همراه اشاره دقیق به تعداد تراکنش‌های آن روز -->
             <div style="background:#1e293b; color:#ffffff; padding:7px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; border-right:5px solid #38bdf8;">
               <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-weight:900; font-size:12px;">📅 ${dayLabel}</span>
