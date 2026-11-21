@@ -4,7 +4,8 @@ export default function handler(req, res) {
 
   const envPayload = {
     SUPABASE_URL: process.env.SUPABASE_URL || "",
-    SUPABASE_KEY: process.env.SUPABASE_KEY || ""
+    SUPABASE_KEY: process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || "",
+    MASTER_OWNER: process.env.MASTER_OWNER || "محمد شریف کریمی"
   };
 
   res.status(200).send(`window.__ENV__ = ${JSON.stringify(envPayload)};`);
