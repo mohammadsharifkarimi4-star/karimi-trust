@@ -761,6 +761,71 @@
       display: none;
       box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }
+
+    /* دکمه بسیار ریز بازگشت به صفحه قبل در پایین صفحه سمت راست */
+    .tiny-back-corner-btn {
+      position: fixed;
+      bottom: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      color: #475569;
+      font-size: 0.68rem;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 9400;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+      opacity: 0.78;
+      transition: opacity 0.15s, transform 0.15s, background 0.15s;
+      line-height: 1;
+      padding: 0;
+    }
+    .tiny-back-corner-btn:hover {
+      opacity: 1;
+      background: #ffffff;
+      color: #0f172a;
+    }
+    .tiny-back-corner-btn:active {
+      transform: scale(0.9);
+    }
+
+    /* فیلدهای قابل بزرگ و کوچک شدن (کش آمدن عمودی و افقی/عمودی) برای توضیحات و آدرس */
+    .resizable-field-textarea {
+      resize: vertical;
+      min-height: 54px;
+      max-height: 260px;
+      height: 56px;
+      line-height: 1.5;
+      overflow-y: auto;
+    }
+    .resizable-field-textarea.address-resizable {
+      min-height: 46px;
+      max-height: 200px;
+      height: 46px;
+    }
+
+    /* جمع‌شونده بودن جدول/دفتر تراکنش‌ها در تب ثبت و دفتر */
+    .ledger-collapsible-body {
+      display: none;
+      margin-top: 8px;
+    }
+    .ledger-collapsible-body.is-open {
+      display: block;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .ledger-toggle-trigger-btn {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      border: 1.5px solid #334155;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14);
+    }
+
   </style>
 </head>
 <body>
@@ -832,7 +897,7 @@
           <div class="quick-action-icon" style="color:#dc2626; border-color:rgba(239,68,68,0.35);">⬆️</div>
           <span class="quick-action-label">ثبت بدهکار</span>
         </div>
-        <div class="quick-action-item" onclick="switchView('viewRegisterAndLedger')">
+        <div class="quick-action-item" onclick="switchView('viewRegisterAndLedger'); toggleLedgerTableVisibility(true);">
           <div class="quick-action-icon" style="color:#0284c7; border-color:rgba(2,132,199,0.35);">📜</div>
           <span class="quick-action-label">دفتر کامل</span>
         </div>
@@ -862,7 +927,10 @@
       <div class="glass-card" id="txFormCard">
         <div class="section-header-row" style="border-bottom:1.5px solid #f1f5f9; padding-bottom:10px;">
           <div class="section-title" id="formTitle">📝 ثبت معامله جدید صرافی</div>
-          <button type="button" class="btn btn-secondary btn-xs" id="btnResetForm" onclick="resetTransactionFormClean()">🔄 فرم جدید</button>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <a href="admin.html" class="btn btn-info btn-xs" onclick="return confirmNavigation('آیا می‌خواهید به بخش مشتریان بروید؟')">👥 مشتریان</a>
+            <button type="button" class="btn btn-secondary btn-xs" id="btnResetForm" onclick="resetTransactionFormClean()">🔄 فرم جدید</button>
+          </div>
         </div>
 
         <input type="hidden" id="editBrokerTxId">
@@ -925,14 +993,14 @@
 
         <div class="grid-2">
           <div class="form-group">
-            <label>شرح / توضیحات:</label>
-            <input type="text" id="txDesc" placeholder="توضیحات معامله..." oninput="markFormDirty()">
+            <label>شرح / توضیحات (قابل کشیدن و بزرگ‌شدن):</label>
+            <textarea id="txDesc" class="resizable-field-textarea" placeholder="توضیحات معامله... (گوشه پایین را بکشید)" oninput="markFormDirty()"></textarea>
           </div>
           <div class="form-group">
-            <label>آدرس مقصد:</label>
-            <div style="display:flex; gap:5px;">
-              <input type="text" id="txAddress" placeholder="انتخاب یا تایپ آدرس..." oninput="markFormDirty()">
-              <button type="button" class="btn btn-secondary btn-xs" onclick="openAddressDashboardModal()">📂</button>
+            <label>آدرس مقصد (قابل کشیدن و بزرگ‌شدن):</label>
+            <div style="display:flex; gap:5px; align-items:flex-start;">
+              <textarea id="txAddress" class="resizable-field-textarea address-resizable" style="flex:1;" placeholder="انتخاب یا تایپ آدرس... (قابل کشیدن)" oninput="markFormDirty()"></textarea>
+              <button type="button" class="btn btn-secondary btn-xs" style="height:46px;" onclick="openAddressDashboardModal()">📂</button>
             </div>
           </div>
         </div>
@@ -1002,18 +1070,25 @@
         </div>
       </div>
 
-      <!-- بخش دوم (بلافاصله زیر فرم ثبت): دفتر روزانه و لیست تراکنش‌ها -->
+      <!-- بخش دوم (بلافاصله زیر فرم ثبت): دفتر روزانه و لیست تراکنش‌ها (بسته تا زمان زدن دکمه) -->
       <div class="glass-card" id="ledgerListCard">
-        <div class="section-header-row">
+        <div class="section-header-row" style="margin-bottom:0;">
           <div class="section-title">
             📜 دفتر روزانه تراکنش‌ها
             <span id="txCountBadge" style="font-size:0.76rem; color:#059669; font-weight:900; background:#d1fae5; padding:3px 10px; border-radius:20px;"></span>
           </div>
-          <div style="display:flex; align-items:center; gap:6px;">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-xs ledger-toggle-trigger-btn" id="toggleLedgerTableBtn" onclick="toggleLedgerTableVisibility()">
+              📂 باز کردن جدول تراکنش‌ها
+            </button>
             <button type="button" class="btn btn-danger btn-xs" style="background:#e11d48;" onclick="handleBrokerPdfClick()">📄 PDF</button>
-            <button type="button" class="btn btn-info btn-xs" onclick="toggleAdvTxFilters()">🎛️ فیلتر</button>
           </div>
         </div>
+
+        <div id="ledgerCollapsibleBody" class="ledger-collapsible-body">
+          <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+            <button type="button" class="btn btn-info btn-xs" onclick="toggleAdvTxFilters()">🎛️ فیلتر پیشرفته</button>
+          </div>
 
         <div class="form-group" style="margin-bottom:8px; position:relative;">
           <input type="text" id="txSearchInput" placeholder="🔍 جستجو در تراکنش‌ها (مبلغ، شرح، کد، آدرس، تاریخ)..." oninput="renderBrokerStatsAndTxs()" style="padding-left:36px;">
@@ -1069,6 +1144,7 @@
         </div>
 
         <div id="brokerTxList" style="width:100%;"></div>
+        </div>
       </div>
 
     </section>
@@ -1133,17 +1209,6 @@
           <span class="menu-chevron">‹</span>
         </div>
 
-        <a href="admin.html" class="menu-item-card" onclick="return confirmNavigation('آیا می‌خواهید به بخش مدیریت مشتریان بروید؟')">
-          <div class="menu-item-right">
-            <div class="menu-item-icon-box">👥</div>
-            <div class="menu-item-texts">
-              <h4>بخش مشتریان و حساب‌ها</h4>
-              <p>بازگشت به داشبورد اصلی مشتریان و دفتر کل</p>
-            </div>
-          </div>
-          <span class="menu-chevron">‹</span>
-        </a>
-
         <div class="menu-item-card" onclick="handleLogout()">
           <div class="menu-item-right">
             <div class="menu-item-icon-box danger">🚪</div>
@@ -1181,8 +1246,11 @@
 
   </div>
 
+  <!-- دکمه بسیار ریز بازگشت به صفحه قبل در پایین صفحه سمت راست -->
+  <button type="button" class="tiny-back-corner-btn" id="tinyBackCornerBtn" onclick="goBackPreviousView()" title="بازگشت به صفحه قبل">↩</button>
+
   <!-- نوار ناوبری پایین صفحه (Bottom Navigation Bar) -->
-  <nav class="bottom-nav-shell" id="bottomNavBar">
+  <nav class="bottom-nav-shell" id="bottomNavBar" style="grid-template-columns: repeat(4, 1fr); max-width: 620px;">
     <button type="button" class="bottom-nav-btn active" id="navBtnHome" onclick="switchView('viewOverview')">
       <span class="nav-ico">🏠</span>
       <span>صفحه اصلی</span>
@@ -1191,6 +1259,10 @@
       <span class="nav-ico">📝</span>
       <span>ثبت و دفتر</span>
     </button>
+    <a href="admin.html" class="bottom-nav-btn" id="navBtnCustomers" onclick="return confirmNavigation('آیا می‌خواهید به بخش مشتریان بروید؟')" style="text-decoration:none;">
+      <span class="nav-ico">👥</span>
+      <span>مشتریان</span>
+    </a>
     <button type="button" class="bottom-nav-btn" id="navBtnAccount" onclick="switchView('viewAccountMenu')">
       <span class="nav-ico">👤</span>
       <span>مدیریت و منو</span>
@@ -1610,11 +1682,64 @@
       }
     }
 
+
+    let isLedgerTableOpen = false;
+    let previousViewId = null;
+    let currentViewId = 'viewOverview';
+
+    function toggleLedgerTableVisibility(forceOpen = null) {
+      playBeep('click');
+      const bodyEl = document.getElementById("ledgerCollapsibleBody");
+      const btnEl = document.getElementById("toggleLedgerTableBtn");
+      if (!bodyEl) return;
+
+      if (typeof forceOpen === 'boolean') {
+        isLedgerTableOpen = forceOpen;
+      } else {
+        isLedgerTableOpen = !isLedgerTableOpen;
+      }
+
+      if (isLedgerTableOpen) {
+        bodyEl.classList.add("is-open");
+        if (btnEl) btnEl.innerHTML = "🔼 بستن جدول تراکنش‌ها";
+      } else {
+        bodyEl.classList.remove("is-open");
+        if (btnEl) btnEl.innerHTML = "📂 باز کردن جدول تراکنش‌ها";
+      }
+    }
+
+    function goBackPreviousView() {
+      playBeep('click');
+      if (isFormDirty) {
+        if (!confirm("تراکنش در حال پر شدن است و ذخیره نشده است. آیا می‌خواهید خارج شوید؟")) {
+          return;
+        }
+        isFormDirty = false;
+      }
+      if (previousViewId && previousViewId !== currentViewId) {
+        switchView(previousViewId, true);
+      } else if (currentViewId !== 'viewOverview') {
+        switchView('viewOverview', true);
+      } else if (window.history.length > 1) {
+        window.history.back();
+      }
+    }
+
     function switchView(viewId, pushHistory = true) {
       playBeep('click');
+      if (currentViewId && currentViewId !== viewId) {
+        previousViewId = currentViewId;
+      }
+      currentViewId = viewId;
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       const targetEl = document.getElementById(viewId);
       if (targetEl) targetEl.classList.add('active');
+      if (viewId === 'viewRegisterAndLedger' && !isLedgerTableOpen) {
+        const bodyEl = document.getElementById("ledgerCollapsibleBody");
+        const btnEl = document.getElementById("toggleLedgerTableBtn");
+        if (bodyEl) bodyEl.classList.remove("is-open");
+        if (btnEl) btnEl.innerHTML = "📂 باز کردن جدول تراکنش‌ها";
+      }
       updateActiveBottomNav(viewId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (pushHistory) {
