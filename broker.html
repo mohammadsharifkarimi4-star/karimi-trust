@@ -925,14 +925,17 @@
 
       <!-- بخش اول: فرم ثبت / ویرایش معامله -->
       <div class="glass-card" id="txFormCard">
-        <div class="section-header-row" style="border-bottom:1.5px solid #f1f5f9; padding-bottom:10px;">
+        <div class="section-header-row" style="border-bottom:1.5px solid #f1f5f9; padding-bottom:10px; margin-bottom:0;">
           <div class="section-title" id="formTitle">📝 ثبت معامله جدید صرافی</div>
-          <div style="display:flex; align-items:center; gap:6px;">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-xs" id="toggleTxFormBtn" onclick="toggleTransactionFormVisibility()">
+              ➕ ایجاد تراکنش
+            </button>
             <a href="admin.html" class="btn btn-info btn-xs" onclick="return confirmNavigation('آیا می‌خواهید به بخش مشتریان بروید؟')">👥 مشتریان</a>
-            <button type="button" class="btn btn-secondary btn-xs" id="btnResetForm" onclick="resetTransactionFormClean()">🔄 فرم جدید</button>
           </div>
         </div>
 
+        <div id="txFormCollapsibleBody" class="ledger-collapsible-body" style="margin-top:12px;">
         <input type="hidden" id="editBrokerTxId">
 
         <div class="grid-2">
@@ -1064,9 +1067,10 @@
           <button type="button" class="btn" style="padding: 12px; font-size: 0.96rem; flex:2;" onclick="saveBrokerTransaction()">
             💾 ذخیره کامل معامله
           </button>
-          <button type="button" class="btn btn-secondary btn-xs" style="padding: 12px; flex:1;" onclick="resetTransactionFormClean()">
-            انصراف
+          <button type="button" class="btn btn-secondary btn-xs" style="padding: 12px; flex:1;" onclick="resetTransactionFormClean(false); toggleTransactionFormVisibility(false);">
+            انصراف و بستن
           </button>
+        </div>
         </div>
       </div>
 
@@ -1684,8 +1688,30 @@
 
 
     let isLedgerTableOpen = false;
+    let isTxFormOpen = false;
     let previousViewId = null;
     let currentViewId = 'viewOverview';
+
+    function toggleTransactionFormVisibility(forceOpen = null) {
+      playBeep('click');
+      const bodyEl = document.getElementById("txFormCollapsibleBody");
+      const btnEl = document.getElementById("toggleTxFormBtn");
+      if (!bodyEl) return;
+
+      if (typeof forceOpen === 'boolean') {
+        isTxFormOpen = forceOpen;
+      } else {
+        isTxFormOpen = !isTxFormOpen;
+      }
+
+      if (isTxFormOpen) {
+        bodyEl.classList.add("is-open");
+        if (btnEl) btnEl.innerHTML = "🔼 بستن فرم تراکنش";
+      } else {
+        bodyEl.classList.remove("is-open");
+        if (btnEl) btnEl.innerHTML = "➕ ایجاد تراکنش";
+      }
+    }
 
     function toggleLedgerTableVisibility(forceOpen = null) {
       playBeep('click');
@@ -1734,11 +1760,19 @@
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       const targetEl = document.getElementById(viewId);
       if (targetEl) targetEl.classList.add('active');
-      if (viewId === 'viewRegisterAndLedger' && !isLedgerTableOpen) {
-        const bodyEl = document.getElementById("ledgerCollapsibleBody");
-        const btnEl = document.getElementById("toggleLedgerTableBtn");
-        if (bodyEl) bodyEl.classList.remove("is-open");
-        if (btnEl) btnEl.innerHTML = "📂 باز کردن جدول تراکنش‌ها";
+      if (viewId === 'viewRegisterAndLedger') {
+        if (!isLedgerTableOpen) {
+          const bodyEl = document.getElementById("ledgerCollapsibleBody");
+          const btnEl = document.getElementById("toggleLedgerTableBtn");
+          if (bodyEl) bodyEl.classList.remove("is-open");
+          if (btnEl) btnEl.innerHTML = "📂 باز کردن جدول تراکنش‌ها";
+        }
+        if (!isTxFormOpen) {
+          const formBodyEl = document.getElementById("txFormCollapsibleBody");
+          const formBtnEl = document.getElementById("toggleTxFormBtn");
+          if (formBodyEl) formBodyEl.classList.remove("is-open");
+          if (formBtnEl) formBtnEl.innerHTML = "➕ ایجاد تراکنش";
+        }
       }
       updateActiveBottomNav(viewId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1751,7 +1785,12 @@
       resetTransactionFormClean(false);
       setDirection(directionPreset);
       isFormDirty = false;
+      isTxFormOpen = true;
       switchView('viewRegisterAndLedger');
+      const bodyEl = document.getElementById("txFormCollapsibleBody");
+      const btnEl = document.getElementById("toggleTxFormBtn");
+      if (bodyEl) bodyEl.classList.add("is-open");
+      if (btnEl) btnEl.innerHTML = "🔼 بستن فرم تراکنش";
       setTimeout(() => {
         const amtInput = document.getElementById("amtInitial");
         if (amtInput) amtInput.focus();
@@ -2490,6 +2529,7 @@ ${verticalReport}`;
       }
 
       resetTransactionFormClean(false);
+      toggleTransactionFormVisibility(false);
       playBeep('success');
       showSync(false);
       alert("✅ معامله با موفقیت ثبت/ویرایش شد و در دفتر پایین درج گردید!");
@@ -2548,7 +2588,12 @@ ${verticalReport}`;
       setCalcMode('divide');
       document.getElementById("customerBox").style.display = "none";
 
+      isTxFormOpen = true;
       switchView('viewRegisterAndLedger');
+      const bodyEl = document.getElementById("txFormCollapsibleBody");
+      const btnEl = document.getElementById("toggleTxFormBtn");
+      if (bodyEl) bodyEl.classList.add("is-open");
+      if (btnEl) btnEl.innerHTML = "🔼 بستن فرم تراکنش";
       isFormDirty = false;
     }
 
