@@ -15,24 +15,38 @@
 
   <style>
     :root {
-      --primary-dark: #0f172a;
-      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      --glass-bg: rgba(255, 255, 255, 0.25);
-      --glass-border: rgba(255, 255, 255, 0.4);
-      --glass-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15);
+      --primary-dark: #0b132b;
+      --primary-navy: #1c2541;
+      --primary-blue: #2563eb;
+      --primary-indigo: #4f46e5;
+      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #4f46e5 55%, #7c3aed 100%);
+      --glass-bg: rgba(255, 255, 255, 0.72);
+      --glass-bg-strong: rgba(255, 255, 255, 0.92);
+      --glass-border: rgba(255, 255, 255, 0.75);
+      --glass-shadow: 0 14px 36px rgba(15, 23, 42, 0.12);
       --accent-green: #10b981;
-      --accent-green-dark: #059669;
-      --card-bg: rgba(255, 255, 255, 0.88);
+      --accent-green-dark: #047857;
+      --accent-green-soft: #ecfdf5;
+      --card-bg: rgba(255, 255, 255, 0.90);
       --text-main: #0f172a;
-      --border-color: rgba(255, 255, 255, 0.6);
+      --text-muted: #475569;
+      --border-color: rgba(203, 213, 225, 0.7);
       --danger-color: #ef4444;
+      --danger-dark: #b91c1c;
+      --danger-soft: #fef2f2;
       --warning-color: #f59e0b;
+      --warning-dark: #b45309;
       --info-color: #0284c7;
+      --info-dark: #0369a1;
       --whatsapp-color: #25d366;
-      --whatsapp-dark: #128c7e;
-      --shadow-sm: 0 8px 25px rgba(0, 0, 0, 0.08);
-      --shadow-md: 0 15px 35px rgba(0, 0, 0, 0.12);
-      --radius-md: 20px;
+      --whatsapp-dark: #075e54;
+      --shadow-sm: 0 6px 20px rgba(15, 23, 42, 0.07);
+      --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.14);
+      --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.24);
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-xl: 30px;
     }
 
     * {
@@ -46,110 +60,262 @@
       font-variant-numeric: tabular-nums;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      background: linear-gradient(135deg, #6ee7b7 0%, #3b82f6 25%, #9333ea 50%, #f43f5e 75%, #f59e0b 100%);
+      background:
+        radial-gradient(circle at 12% 15%, rgba(56, 189, 248, 0.35), transparent 42%),
+        radial-gradient(circle at 88% 18%, rgba(168, 85, 247, 0.32), transparent 44%),
+        radial-gradient(circle at 22% 85%, rgba(16, 185, 129, 0.30), transparent 45%),
+        radial-gradient(circle at 82% 82%, rgba(244, 63, 94, 0.24), transparent 42%),
+        linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #172554 100%);
       background-attachment: fixed;
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
       color: var(--text-main);
       padding: 0;
       margin: 0;
       font-size: 14px;
       min-height: 100vh;
-      width: 100vw;
+      width: 100%;
       overflow-x: hidden;
-      padding-bottom: 70px;
-    }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      padding-bottom: 92px;
+      line-height: 1.65;
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(14px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: translateY(18px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-      70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55), 0 12px 28px rgba(4, 120, 87, 0.45); }
+      70% { box-shadow: 0 0 0 18px rgba(16, 185, 129, 0), 0 12px 28px rgba(4, 120, 87, 0.45); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 12px 28px rgba(4, 120, 87, 0.45); }
     }
 
+    @keyframes floatSoft {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+
+    /* صفحه ورود لوکس */
     #authOverlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px);
-      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 16px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.28), transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.22), transparent 45%),
+        rgba(11, 19, 43, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 9999; padding: 18px;
     }
+
     .auth-card {
-      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
-      width: 100%; max-width: 400px; padding: 26px; border-radius: 24px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      animation: fadeInUp 0.3s ease-out;
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 250, 252, 0.93) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      width: 100%; max-width: 420px; padding: 28px 24px; border-radius: 28px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      display: flex; flex-direction: column; gap: 15px;
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      animation: fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
     }
-    .auth-title { font-size: 1.25rem; font-weight: 900; text-align: center; color: var(--primary-dark); }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #10b981, #2563eb, #7c3aed, #f59e0b);
+    }
+
+    .auth-badge-top {
+      align-self: center;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .auth-title {
+      font-size: 1.3rem;
+      font-weight: 900;
+      text-align: center;
+      color: var(--primary-dark);
+      margin-top: 2px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+      font-weight: 600;
+      margin-top: -8px;
+    }
 
     .container { max-width: 100%; width: 100%; display: none; margin: 0; padding: 0; }
 
     .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 250, 252, 0.90) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: 0;
       padding: 16px;
       box-shadow: var(--shadow-md);
       border: none;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.65);
       margin-bottom: 0;
       width: 100%;
       min-height: 100vh;
-      animation: fadeInUp 0.25s ease-out;
+      animation: fadeInUp 0.28s ease-out;
     }
 
+    /* هدر شیشه‌ای مدرن و یکپارچه با دکمه بازگشت اختصاصی در هر صفحه */
     .card-header-styled {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.95) 55%, rgba(23, 37, 84, 0.96) 100%);
       color: #ffffff;
-      padding: 14px 16px;
-      border-radius: 16px;
-      margin: -16px -16px 16px -16px;
+      padding: 13px 15px;
+      border-radius: 20px;
+      margin: -4px 0 16px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      gap: 10px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      position: sticky;
+      top: 8px;
+      z-index: 900;
+      backdrop-filter: blur(16px);
     }
-    .card-header-styled h3 { color: #ffffff !important; margin: 0 !important; font-size: 1.05rem; font-weight: 800; }
 
+    .card-header-styled h3 {
+      color: #ffffff !important;
+      margin: 0 !important;
+      font-size: 1.02rem;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .header-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .header-title-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .page-back-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.14);
+      hover-background: rgba(255, 255, 255, 0.24);
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-radius: 13px;
+      padding: 7px 12px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .page-back-pill:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: translateX(-2px);
+    }
+
+    .page-back-pill:active {
+      transform: scale(0.95);
+    }
+
+    .page-back-pill.light-pill {
+      background: #f1f5f9;
+      color: #0f172a !important;
+      border: 1.5px solid #cbd5e1;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    .page-back-pill.light-pill:hover {
+      background: #e2e8f0;
+    }
+
+    .modal-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+
+    .modal-top-bar h3 {
+      margin: 0 !important;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+    }
+
+    /* منوی داشبورد پیشرفته و شناور */
     .dashboard-floating-grid {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      padding: 10px 0;
+      gap: 12px;
+      padding: 6px 0 18px 0;
     }
 
     .floating-glass-btn {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 2px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      border-radius: 20px;
-      padding: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.88) 100%);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1.5px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      border-radius: 22px;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
       text-align: right;
       user-select: none;
       position: relative;
     }
+
+    .floating-glass-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.20), inset 0 1px 0 rgba(255, 255, 255, 1);
+      border-color: rgba(59, 130, 246, 0.45);
+    }
+
     .floating-glass-btn:active {
-      transform: scale(0.97);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transform: scale(0.98);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.14);
     }
 
     .floating-glass-btn .content-box {
@@ -157,37 +323,88 @@
       align-items: center;
       gap: 14px;
       flex: 1;
+      min-width: 0;
     }
 
-    .floating-glass-btn .icon { font-size: 1.8rem; background: rgba(59, 130, 246, 0.12); padding: 10px; border-radius: 14px; }
-    .floating-glass-btn .title { font-weight: 900; font-size: 1rem; color: var(--primary-dark); }
+    .floating-glass-btn .icon {
+      font-size: 1.55rem;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.14) 0%, rgba(79, 70, 229, 0.16) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.22);
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      flex-shrink: 0;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .floating-glass-btn .title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .floating-glass-btn .title {
+      font-weight: 900;
+      font-size: 0.98rem;
+      color: var(--primary-dark);
+      line-height: 1.35;
+    }
+
+    .floating-glass-btn .subtitle-hint {
+      font-size: 0.74rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .menu-chevron {
+      color: #94a3b8;
+      font-size: 1rem;
+      font-weight: 900;
+      margin-left: 2px;
+    }
 
     .menu-sort-controls {
       display: flex;
-      gap: 6px;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
     }
+
     .sort-btn {
-      background: rgba(15, 23, 42, 0.1);
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.07);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      width: 30px;
+      height: 26px;
+      border-radius: 9px;
       font-weight: 900;
+      font-size: 0.72rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--primary-dark);
-      transition: all 0.2s;
+      transition: all 0.18s ease;
     }
-    .sort-btn:active { background: rgba(15, 23, 42, 0.2); transform: scale(0.9); }
 
+    .sort-btn:hover { background: rgba(37, 99, 235, 0.14); color: #1d4ed8; }
+    .sort-btn:active { background: rgba(15, 23, 42, 0.22); transform: scale(0.9); }
+
+    /* پنل ناوبری دایره‌ای / ۵-کلیدی حساب مشتری */
     .nokia-nav-container {
       position: relative;
       width: 100%;
-      max-width: 320px;
-      height: 220px;
-      margin: 15px auto;
+      max-width: 340px;
+      height: 236px;
+      margin: 18px auto;
+      padding: 10px;
+      border-radius: 32px;
+      background: linear-gradient(145deg, rgba(241, 245, 249, 0.85) 0%, rgba(226, 232, 240, 0.72) 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.9), 0 14px 30px rgba(15, 23, 42, 0.10);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -195,10 +412,10 @@
 
     .nokia-center-btn {
       position: absolute;
-      width: 92px;
-      height: 92px;
+      width: 96px;
+      height: 96px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      background: linear-gradient(145deg, #10b981 0%, #059669 55%, #047857 100%);
       color: #ffffff;
       display: flex;
       flex-direction: column;
@@ -207,23 +424,26 @@
       font-weight: 900;
       font-size: 0.82rem;
       text-align: center;
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+      box-shadow: 0 10px 28px rgba(5, 150, 105, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.45);
       border: 4px solid #ffffff;
       cursor: pointer;
       z-index: 10;
-      animation: pulseGlow 2s infinite;
+      animation: pulseGlow 2.4s infinite;
       transition: transform 0.2s ease;
+      gap: 2px;
     }
-    .nokia-center-btn:active { transform: scale(0.92); }
+
+    .nokia-center-btn:hover { transform: scale(1.04); }
+    .nokia-center-btn:active { transform: scale(0.93); }
 
     .nokia-corner-btn {
       position: absolute;
-      width: 125px;
-      height: 75px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border: 1.5px solid rgba(255, 255, 255, 0.9);
-      box-shadow: var(--shadow-sm);
+      width: 130px;
+      height: 80px;
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid #e2e8f0;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -236,186 +456,470 @@
       padding: 6px;
       gap: 4px;
     }
-    .nokia-corner-btn:active { transform: scale(0.95); background: #ffffff; }
 
-    .nokia-btn-top-right { top: 10px; right: 10px; border-radius: 18px 18px 40px 18px; }
-    .nokia-btn-top-left { top: 10px; left: 10px; border-radius: 18px 18px 18px 40px; }
-    .nokia-btn-bottom-right { bottom: 10px; right: 10px; border-radius: 18px 40px 18px 18px; }
-    .nokia-btn-bottom-left { bottom: 10px; left: 10px; border-radius: 40px 18px 18px 18px; }
+    .nokia-corner-btn:hover {
+      transform: translateY(-2px);
+      border-color: #93c5fd;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.14);
+    }
+
+    .nokia-corner-btn:active { transform: scale(0.95); background: #f1f5f9; }
+
+    .nokia-btn-top-right { top: 12px; right: 12px; border-radius: 20px 20px 42px 20px; }
+    .nokia-btn-top-left { top: 12px; left: 12px; border-radius: 20px 20px 20px 42px; }
+    .nokia-btn-bottom-right { bottom: 12px; right: 12px; border-radius: 20px 42px 20px 20px; }
+    .nokia-btn-bottom-left { bottom: 12px; left: 12px; border-radius: 42px 20px 20px 20px; }
 
     h3 { font-size: 1.05rem; font-weight: 900; color: var(--primary-dark); margin-bottom: 12px; }
     .form-group { margin-bottom: 14px; }
-    label { display: block; font-size: 0.9rem; font-weight: 800; margin-bottom: 6px; color: #1e293b; }
+    label { display: block; font-size: 0.88rem; font-weight: 800; margin-bottom: 6px; color: #1e293b; }
 
     input, select, textarea {
-      width: 100%; padding: 12px 14px; border: 2px solid rgba(203, 213, 225, 0.8); border-radius: 14px;
-      font-size: 0.98rem; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-      outline: none; transition: all 0.2s ease; font-weight: 700; color: #0f172a;
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.8px solid #cbd5e1;
+      border-radius: 15px;
+      font-size: 0.96rem;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      outline: none;
+      transition: all 0.2s ease;
+      font-weight: 700;
+      color: #0f172a;
+      box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.04);
     }
+
     input:focus, select:focus, textarea:focus {
-      border-color: var(--info-color);
+      border-color: var(--primary-blue);
       background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.16);
     }
-    textarea { resize: vertical; min-height: 80px; }
+
+    textarea { resize: vertical; min-height: 82px; }
 
     .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
     .btn-select-option {
-      flex: 1; min-width: 70px; padding: 11px 6px; text-align: center; background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px); border: 2px solid rgba(203, 213, 225, 0.9); border-radius: 14px; font-size: 0.92rem;
-      font-weight: 900; cursor: pointer; transition: all 0.2s ease; user-select: none; color: #334155;
+      flex: 1;
+      min-width: 72px;
+      padding: 11px 8px;
+      text-align: center;
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 1.8px solid #cbd5e1;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      color: #334155;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
     }
+
+    .btn-select-option:hover {
+      border-color: #94a3b8;
+      transform: translateY(-1px);
+    }
+
     .btn-select-option.selected-creditor {
-      background: #ecfdf5 !important; border-color: var(--accent-green) !important; color: var(--accent-green-dark) !important;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      background: linear-gradient(145deg, #ecfdf5 0%, #d1fae5 100%) !important;
+      border-color: var(--accent-green) !important;
+      color: var(--accent-green-dark) !important;
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
     }
+
     .btn-select-option.selected-debtor {
-      background: #fef2f2 !important; border-color: var(--danger-color) !important; color: var(--danger-color) !important;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      background: linear-gradient(145deg, #fef2f2 0%, #fee2e2 100%) !important;
+      border-color: var(--danger-color) !important;
+      color: var(--danger-dark) !important;
+      box-shadow: 0 6px 18px rgba(239, 68, 68, 0.28);
     }
+
     .btn-select-option.selected-currency {
-      background: #f0f9ff !important; border-color: var(--info-color) !important; color: var(--info-color) !important;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
+      background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%) !important;
+      border-color: var(--primary-blue) !important;
+      color: #1d4ed8 !important;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
     }
 
     .btn {
-      padding: 11px 16px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: none;
-      border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 0.92rem;
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
-      box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35); transition: all 0.15s ease; user-select: none;
+      padding: 11px 16px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 0.92rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      box-shadow: 0 8px 22px rgba(5, 150, 105, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      transition: all 0.18s ease;
+      user-select: none;
+      text-decoration: none;
     }
+
+    .btn:hover { filter: brightness(1.04); transform: translateY(-1px); }
     .btn:active { transform: scale(0.97); }
-    .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35); }
-    .btn-secondary { background: linear-gradient(135deg, #475569 0%, #334155 100%); box-shadow: 0 6px 20px rgba(71, 85, 105, 0.35); }
-    .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35); }
-    .btn-info { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35); }
-    .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
-    .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 10px; }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 8px 22px rgba(220, 38, 38, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #475569 0%, #334155 100%);
+      box-shadow: 0 6px 18px rgba(51, 65, 85, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 22px rgba(217, 119, 6, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .btn-info {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      box-shadow: 0 8px 22px rgba(2, 132, 199, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 22px rgba(18, 140, 126, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .btn-sm {
+      padding: 7px 13px;
+      font-size: 0.8rem;
+      width: auto;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+      border-radius: 12px;
+    }
 
     .action-btn-modern {
       padding: 13px 18px;
       border-radius: 16px;
       font-weight: 900;
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       cursor: pointer;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.25);
       transition: all 0.2s ease;
       width: 100%;
       user-select: none;
     }
+
+    .action-btn-modern:hover { transform: translateY(-1px); }
     .action-btn-modern:active { transform: scale(0.97); }
+
     .btn-edit-pro {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       color: #ffffff;
-      box-shadow: 0 8px 22px rgba(245, 158, 11, 0.4);
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.35);
     }
+
     .btn-delete-pro {
       background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
       color: #ffffff;
-      box-shadow: 0 8px 22px rgba(239, 68, 68, 0.4);
+      box-shadow: 0 10px 24px rgba(239, 68, 68, 0.35);
     }
 
+    /* دکمه‌های شناور پایین صفحه */
     .floating-create-account-btn {
-      position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white;
-      padding: 13px 22px; border-radius: 35px; font-weight: 900; font-size: 0.98rem;
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5); z-index: 5000; border: 2px solid rgba(255,255,255,0.6); cursor: pointer;
-      display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      color: #ffffff;
+      padding: 13px 22px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.95rem;
+      box-shadow: 0 14px 32px rgba(4, 120, 87, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      z-index: 5000;
+      border: 2px solid rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(12px);
+      transition: all 0.2s ease;
     }
+
+    .floating-create-account-btn:hover { transform: translateY(-2px); }
     .floating-create-account-btn:active { transform: scale(0.95); }
 
     .floating-search-trigger {
-      position: fixed; bottom: 20px; right: 20px; width: 54px; height: 54px;
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5); z-index: 6000; cursor: pointer; border: 2px solid rgba(255,255,255,0.6);
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 14px 32px rgba(29, 78, 216, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      z-index: 6000;
+      cursor: pointer;
+      border: 2px solid rgba(255, 255, 255, 0.75);
+      transition: all 0.2s ease;
     }
 
+    .floating-search-trigger:hover { transform: translateY(-2px) scale(1.04); }
+    .floating-search-trigger:active { transform: scale(0.94); }
+
+    /* مودال‌ها و دیالوگ‌ها */
     #searchDrawerModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px);
-      z-index: 99999; display: none; justify-content: center; align-items: center; padding: 12px;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(11, 19, 43, 0.76);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 99999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 14px;
       overflow-y: auto;
     }
+
     .modal-card-box {
-      background: #ffffff;
-      width: 100%; max-width: 420px; border-radius: 24px; padding: 20px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.35); max-height: 90vh; overflow-y: auto;
-      border: 1px solid rgba(255,255,255,0.8);
-      animation: fadeInUp 0.25s ease-out;
+      background: linear-gradient(175deg, #ffffff 0%, #f8fafc 100%);
+      width: 100%;
+      max-width: 440px;
+      border-radius: 26px;
+      padding: 20px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      animation: modalPop 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .stats-grid { display: flex; flex-direction: column; gap: 10px; }
+    /* کارت‌های آمار و حساب */
+    .stats-grid { display: flex; flex-direction: column; gap: 11px; }
+
     .stat-card {
-      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
-      border-radius: var(--radius-md); padding: 12px 14px; box-shadow: var(--shadow-sm);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.90) 100%);
+      backdrop-filter: blur(14px);
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 13px 15px;
+      box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
-    .stat-row { display: flex; justify-content: space-between; font-size: 0.92rem; margin-bottom: 4px; align-items: center; }
-    .stat-badge { text-align: center; padding: 8px 12px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-row:last-child { margin-bottom: 0; }
+
+    .stat-badge {
+      text-align: center;
+      padding: 8px 12px;
+      border-radius: 13px;
+      font-weight: 900;
+      font-size: 0.92rem;
+      margin-top: 8px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 4px 12px rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+    }
 
     .account-item-card, .tx-item-card, .phone-item-card {
-      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.95); 
-      border-radius: var(--radius-md); padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow-sm); 
-      display: flex; flex-direction: column; gap: 8px; cursor: pointer; user-select: none; transition: all 0.15s ease; width: 100%;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.90) 100%);
+      backdrop-filter: blur(14px);
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 14px 15px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      width: 100%;
     }
-    .account-item-card:active, .tx-item-card:active, .phone-item-card:active { border-color: var(--info-color); background: #ffffff; }
 
-    .tx-item-card.tx-creditor { background: rgba(240, 253, 244, 0.95); border-color: #a7f3d0; }
-    .tx-item-card.tx-debtor { background: rgba(254, 242, 242, 0.95); border-color: #fecaca; }
+    .account-item-card:hover, .tx-item-card:hover, .phone-item-card:hover {
+      transform: translateY(-2px);
+      border-color: #93c5fd;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.12);
+    }
 
-    .account-item-header { display: flex; justify-content: space-between; align-items: center; }
-    .account-name-title { font-size: 1.1rem; font-weight: 900; color: var(--primary-dark); }
+    .account-item-card:active, .tx-item-card:active, .phone-item-card:active {
+      border-color: var(--info-color);
+      background: #ffffff;
+    }
+
+    .tx-item-card.tx-creditor {
+      background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%);
+      border-color: #86efac;
+    }
+
+    .tx-item-card.tx-debtor {
+      background: linear-gradient(145deg, #fef2f2 0%, #fee2e2 100%);
+      border-color: #fca5a5;
+    }
+
+    .account-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .account-name-title {
+      font-size: 1.06rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+    }
 
     .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .back-home { display: block; text-align: center; margin-top: 20px; color: #ffffff; text-decoration: none; font-size: 0.88rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-    .currency-badge { display: inline-block; padding: 4px 10px; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(203, 213, 225, 0.8); border-radius: 8px; font-size: 0.82rem; margin: 2px; font-weight: 900; }
+
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+      margin: 18px auto 8px auto;
+      padding: 9px 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 800;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+    }
+
+    .back-home:hover { background: rgba(255, 255, 255, 0.24); }
+
+    .auth-card .back-home {
+      color: #1e293b;
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      margin-top: 6px;
+    }
+
+    .currency-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      margin: 2px;
+      font-weight: 900;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    }
 
     .view-section { display: none; }
     .view-section.active { display: block; }
 
     #syncIndicator {
-      position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white;
-      padding: 9px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 900;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: none; z-index: 8000; border: 1px solid rgba(255,255,255,0.5);
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #0f172a 0%, #047857 100%);
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+      display: none;
+      z-index: 100000;
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      white-space: nowrap;
     }
 
-    .profile-img-preview { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--accent-green); background: #ffffff; }
-    .receipt-img-preview { width: 100%; max-height: 240px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.8); margin-top: 10px; background: #ffffff; }
-    .op-badge-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(255, 255, 255, 0.9); border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(203,213,225,0.8); }
+    .profile-img-preview {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2.5px solid #34d399;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .receipt-img-preview {
+      width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      border-radius: 14px;
+      border: 1.5px solid #cbd5e1;
+      margin-top: 10px;
+      background: #f8fafc;
+      padding: 6px;
+    }
+
+    .op-badge-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 13px;
+      background: #ffffff;
+      border-radius: 14px;
+      margin-bottom: 8px;
+      border: 1.5px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    }
 
     .client-info-header-box {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%);
-      backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+      border: 1.5px solid #dbeafe;
       border-radius: var(--radius-md);
-      padding: 14px;
+      padding: 14px 16px;
       margin-bottom: 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
+      box-shadow: var(--shadow-sm);
     }
 
     .batch-summary-card {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: #ffffff;
-      padding: 14px;
-      border-radius: 16px;
+      padding: 15px 16px;
+      border-radius: 18px;
       margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .deleted-account-badge {
       display: inline-block;
       background: #fef2f2;
-      color: #ef4444;
+      color: #dc2626;
       border: 1px solid #fecaca;
       padding: 3px 10px;
-      border-radius: 8px;
-      font-size: 0.8rem;
+      border-radius: 9px;
+      font-size: 0.78rem;
       font-weight: 900;
     }
 
@@ -424,44 +928,59 @@
       margin-right: -16px;
       width: calc(100% + 32px);
     }
+
     .compact-ledger-table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
       font-size: 0.74rem;
     }
+
     .compact-ledger-table th {
       background: #f1f5f9;
-      color: #1e293b;
+      color: #0f172a;
       border-bottom: 2px solid #cbd5e1;
       border-left: 1px solid #e2e8f0;
-      padding: 7px 3px;
+      padding: 8px 4px;
       font-weight: 900;
       font-size: 0.71rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .compact-ledger-table th:last-child,
     .compact-ledger-table td:last-child {
       border-left: none;
     }
+
     .compact-ledger-table td {
-      padding: 7px 3px;
-      border-bottom: 1px solid #cbd5e1;
-      border-left: 1px solid #e2e8f0;
+      padding: 8px 4px;
+      border-bottom: 1px solid #e2e8f0;
+      border-left: 1px solid #f1f5f9;
       vertical-align: middle;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .compact-ledger-table tr:active {
-      filter: brightness(0.95);
+
+    .compact-ledger-table tr {
+      transition: filter 0.15s ease;
     }
+
+    .compact-ledger-table tr:hover {
+      filter: brightness(0.97);
+    }
+
+    .compact-ledger-table tr:active {
+      filter: brightness(0.94);
+    }
+
     .ledger-customer-picker {
       position: relative;
       margin-bottom: 10px;
     }
+
     .ledger-picker-dropdown {
       position: absolute;
       top: 100%;
@@ -469,16 +988,17 @@
       right: 0;
       background: #ffffff;
       border: 1.5px solid #cbd5e1;
-      border-radius: 14px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
+      border-radius: 16px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.24);
       z-index: 500;
-      max-height: 240px;
+      max-height: 245px;
       overflow-y: auto;
-      margin-top: 4px;
+      margin-top: 5px;
       display: none;
     }
+
     .ledger-picker-item {
-      padding: 9px 12px;
+      padding: 10px 13px;
       border-bottom: 1px solid #f1f5f9;
       cursor: pointer;
       display: flex;
@@ -486,16 +1006,64 @@
       align-items: center;
       transition: background 0.15s;
     }
+
     .ledger-picker-item:last-child {
       border-bottom: none;
     }
+
     .ledger-picker-item:hover, .ledger-picker-item.active-opt {
       background: #eff6ff;
+    }
+
+    /* پاسخگویی دسکتاپ و نمایشگرهای بزرگ */
+    @media (min-width: 768px) {
+      body { font-size: 15px; }
+      .container {
+        max-width: 860px;
+        margin: 18px auto 0 auto;
+        padding: 0 16px 40px 16px;
+      }
+      .card {
+        border-radius: var(--radius-lg);
+        padding: 22px;
+        min-height: auto;
+        border: 1.5px solid rgba(255, 255, 255, 0.82);
+        box-shadow: var(--shadow-lg);
+      }
+      .edge-to-edge-wrapper {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .compact-ledger-table {
+        font-size: 0.84rem;
+      }
+      .compact-ledger-table th {
+        font-size: 0.8rem;
+        padding: 10px 8px;
+      }
+      .compact-ledger-table td {
+        padding: 10px 8px;
+      }
+      .nokia-nav-container {
+        max-width: 390px;
+        height: 256px;
+      }
+      .nokia-corner-btn {
+        width: 150px;
+        height: 86px;
+        font-size: 0.86rem;
+      }
+      .modal-card-box {
+        max-width: 500px;
+        padding: 24px;
+      }
     }
   </style>
 </head>
 <body>
-
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
 
   <div class="floating-search-trigger" onclick="playInteractionEffect(); openSearchDrawer()" title="جستجوی سریع">🔍</div>
@@ -503,9 +1071,9 @@
   <!-- کشوی جستجو -->
   <div id="searchDrawerModal" onclick="closeSearchDrawerOnBack(event)">
     <div class="modal-card-box" style="margin-top: 20px;" onclick="event.stopPropagation()">
-      <div class="flex-row" style="justify-content: space-between; margin-bottom: 10px;">
+      <div class="modal-top-bar">
         <h3>🔍 جستجوی هوشمند</h3>
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeSearchDrawer()">✕ بستن</button>
+        <button type="button" class="page-back-pill light-pill" onclick="playInteractionEffect(); closeSearchDrawer()">→ بازگشت</button>
       </div>
       <div class="form-group" style="margin-bottom: 0;">
         <input type="text" id="drawerSearchInput" placeholder="نام مشتری، تلفن، کُد حساب یا کد تراکنش..." oninput="handleDrawerSearch()">
@@ -517,7 +1085,9 @@
   <!-- صفحه ورود -->
   <div id="authOverlay">
     <div class="auth-card">
+      <div class="auth-badge-top">امانت‌داری کریمی • پنل مدیریت</div>
       <div class="auth-title">🔐 مدیریت امانت‌داری کریمی</div>
+      <div class="auth-subtitle">ورود امن به سیستم حسابداری و مدیریت دفاتر</div>
       <div class="form-group"><label>ایمیل ادمین:</label><input type="email" id="loginEmail" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="loginPin" dir="ltr" placeholder="رمز عبور..."></div>
       <button class="btn" onclick="playInteractionEffect(); handleLogin()">ورود به پنل مدیریت</button>
@@ -531,8 +1101,11 @@
     <div id="viewDashboard" class="view-section active">
       <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0; min-height: auto;">
         <div class="card-header-styled">
-          <h3>🏛️ مدیریت امانت‌داری کریمی</h3>
-          <div class="flex-row">
+          <div class="header-title-group">
+            <a href="index.html" class="page-back-pill" onclick="playInteractionEffect()" title="بازگشت به صفحه اصلی">→ بازگشت</a>
+            <h3 class="header-title-text">🏛️ مدیریت امانت‌داری کریمی</h3>
+          </div>
+          <div class="flex-row" style="flex-shrink: 0;">
             <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); loadDataFromSupabase(true)">🔄 همگام‌سازی</button>
             <button class="btn btn-danger btn-sm" onclick="playInteractionEffect(); handleLogout()">خروج</button>
           </div>
@@ -546,8 +1119,11 @@
     <div id="viewGlobalStatsPage" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <h3>📊 آمار و گزارشات کلی سیستم</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); goBackFromView('viewGlobalStatsPage')">→ بازگشت</button>
+            <h3 class="header-title-text">📊 آمار و گزارشات کلی سیستم</h3>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
         </div>
         <h3 style="font-size:1rem; margin-bottom:8px;">موجودی‌های فعال (مانده زنده)</h3>
         <div class="stats-grid" id="globalStatsGrid"></div>
@@ -567,8 +1143,11 @@
     <div id="viewPhoneDirectoryPage" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <h3>📞 بانک کامل شماره‌ها و مخاطبین</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); goBackFromView('viewPhoneDirectoryPage')">→ بازگشت</button>
+            <h3 class="header-title-text">📞 بانک کامل شماره‌ها و مخاطبین</h3>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
         </div>
 
         <div class="form-group" style="position: relative; margin-bottom: 12px;">
@@ -576,7 +1155,7 @@
           <button type="button" id="clearPhoneSearchBtn" onclick="playInteractionEffect(); clearPhoneSearch()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.95rem; cursor: pointer; color: #64748b; display: none;">✕</button>
         </div>
 
-        <div id="phoneDirectorySummary" class="stat-card" style="background:rgba(240,249,255,0.9); border-color:var(--info-color); margin-bottom:12px;"></div>
+        <div id="phoneDirectorySummary" class="stat-card" style="background:rgba(240,249,255,0.95); border-color:#7dd3fc; margin-bottom:12px;"></div>
         <div id="phoneDirectoryContainer"></div>
       </div>
     </div>
@@ -585,10 +1164,13 @@
     <div id="viewAllTransactionsPage" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <h3>📜 دفتر کل مرکزی تراکنش‌ها</h3>
-          <div class="flex-row" style="gap:6px;">
-            <button class="btn btn-sm" style="background:var(--accent-green);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ ایجاد تراکنش</button>
-            <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); goBackFromView('viewAllTransactionsPage')">→ بازگشت</button>
+            <h3 class="header-title-text">📜 دفتر کل مرکزی تراکنش‌ها</h3>
+          </div>
+          <div class="flex-row" style="gap:6px; flex-shrink: 0;">
+            <button class="btn btn-sm" style="background:linear-gradient(135deg, #10b981 0%, #059669 100%);" onclick="playInteractionEffect(); openGlobalSelectAccountModal()">➕ ایجاد تراکنش</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
           </div>
         </div>
 
@@ -614,8 +1196,11 @@
     <div id="viewTransfersReport" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <h3>📜 گزارش پیشرفته حواله‌ها / انتقال‌ها</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); goBackFromView('viewTransfersReport')">→ بازگشت</button>
+            <h3 class="header-title-text">📜 گزارش پیشرفته حواله‌ها / انتقال‌ها</h3>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">آمار کلی</button>
         </div>
         <div class="form-group">
           <label>فیلتر زمانی موارد:</label>
@@ -628,7 +1213,7 @@
           </select>
         </div>
 
-        <div id="customDateRangeBox" style="display: none; background: rgba(248,250,252,0.9); border: 1.5px solid rgba(255,255,255,0.8); padding: 12px; border-radius: 14px; margin-bottom: 12px;">
+        <div id="customDateRangeBox" style="display: none; background: rgba(248,250,252,0.95); border: 1.5px solid #cbd5e1; padding: 12px; border-radius: 16px; margin-bottom: 12px;">
           <div class="flex-row" style="gap: 10px;">
             <div style="flex:1;">
               <label style="font-size: 0.85rem;">از تاریخ:</label>
@@ -641,7 +1226,7 @@
           </div>
         </div>
 
-        <div id="transferSummaryHeader" class="stat-card" style="background:rgba(236,253,245,0.9); border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
+        <div id="transferSummaryHeader" class="stat-card" style="background:rgba(236,253,245,0.95); border-color:#6ee7b7; margin-bottom:10px;"></div>
         <div id="transfersReportContainer"></div>
       </div>
     </div>
@@ -650,16 +1235,19 @@
     <div id="viewDebtorsReport" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <h3>🔴 لیست و فیلتر بدهکاران (انتخاب چندتایی)</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); goBackFromView('viewDebtorsReport')">→ بازگشت</button>
+            <h3 class="header-title-text">🔴 لیست و فیلتر بدهکاران (انتخاب چندتایی)</h3>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">آمار کلی</button>
         </div>
 
         <div id="debtorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
-          <h4 style="margin-bottom:8px; font-size:1rem;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
+          <h4 style="margin-bottom:8px; font-size:1rem; color:#ffffff;">📊 مجموع بدهکاری افراد انتخاب‌شده:</h4>
           <div id="debtorsBatchSummaryContent"></div>
         </div>
 
-        <div id="debtorsSummaryHeader" class="stat-card" style="background:rgba(254,242,242,0.9); border-color:var(--danger-color); margin-bottom:10px;"></div>
+        <div id="debtorsSummaryHeader" class="stat-card" style="background:rgba(254,242,242,0.95); border-color:#fca5a5; margin-bottom:10px;"></div>
         <div id="debtorsContainer"></div>
       </div>
     </div>
@@ -668,16 +1256,19 @@
     <div id="viewCreditorsReport" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <h3>🟢 لیست و فیلتر بستانکاران (انتخاب چندتایی)</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">← بازگشت</button>
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); goBackFromView('viewCreditorsReport')">→ بازگشت</button>
+            <h3 class="header-title-text">🟢 لیست و فیلتر بستانکاران (انتخاب چندتایی)</h3>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewGlobalStatsPage')">آمار کلی</button>
         </div>
 
         <div id="creditorsBatchSummaryBox" class="batch-summary-card" style="display:none;">
-          <h4 style="margin-bottom:8px; font-size:1rem;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
+          <h4 style="margin-bottom:8px; font-size:1rem; color:#ffffff;">📊 مجموع بستانکاری افراد انتخاب‌شده:</h4>
           <div id="creditorsBatchSummaryContent"></div>
         </div>
 
-        <div id="creditorsSummaryHeader" class="stat-card" style="background:rgba(240,253,244,0.9); border-color:var(--accent-green-dark); margin-bottom:10px;"></div>
+        <div id="creditorsSummaryHeader" class="stat-card" style="background:rgba(240,253,244,0.95); border-color:#86efac; margin-bottom:10px;"></div>
         <div id="creditorsContainer"></div>
       </div>
     </div>
@@ -686,8 +1277,11 @@
     <div id="viewAccounts" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <h3>👥 لیست کامل حساب‌ها</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">← منو</button>
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); goBackFromView('viewAccounts')">→ بازگشت</button>
+            <h3 class="header-title-text">👥 لیست کامل حساب‌ها</h3>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
         </div>
         <div class="form-group" style="position: relative;">
           <input type="text" id="searchAccountInput" placeholder="🔍 جستجو در حساب‌ها..." oninput="advancedSearchAccounts()" style="padding-left: 38px;">
@@ -705,16 +1299,17 @@
     <div id="viewAccountDetail" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <div class="flex-row">
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); goBackFromView('viewAccountDetail')">→ بازگشت</button>
             <img id="detailAccountPhoto" src="" class="profile-img-preview" style="display:none;">
-            <h3 id="detailAccountTitle">جزئیات حساب</h3>
+            <h3 id="detailAccountTitle" class="header-title-text">جزئیات حساب</h3>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewAccounts')">← حساب‌ها</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewAccounts')">حساب‌ها</button>
         </div>
 
         <div class="client-info-header-box" id="clientFullDetailsBox"></div>
 
-        <div class="stat-card" style="background: rgba(240,253,244,0.95); border-color: var(--accent-green); margin-bottom: 14px;">
+        <div class="stat-card" style="background: rgba(240,253,244,0.96); border-color: #86efac; margin-bottom: 14px;">
           <label style="font-size:0.86rem; color:#065f46; margin-bottom:8px;"><b>📲 ارسال گزارش تراکنش‌های شخص به واتساپ خودش:</b></label>
           <div class="flex-row" style="gap:6px; flex-wrap:wrap;">
             <button class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="playInteractionEffect(); sendPeriodicTransactionsWhatsApp('today')">☀️ روزانه</button>
@@ -762,22 +1357,30 @@
     <div id="viewTransactionDetail" class="view-section">
       <div class="card" style="min-height: 100vh;">
         <div class="card-header-styled">
-          <h3>🔍 جزئیات کامل تراکنش</h3>
-          <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); returnFromTransactionDetail()">← بازگشت</button>
+          <div class="header-title-group">
+            <button type="button" class="page-back-pill" onclick="playInteractionEffect(); returnFromTransactionDetail()">→ بازگشت</button>
+            <h3 class="header-title-text">🔍 جزئیات کامل تراکنش</h3>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); switchView('viewDashboard')">منو</button>
         </div>
-        <div id="txDetailCard"></div>
+        <div id="txDetailCard" class="stat-card" style="margin-bottom: 12px;"></div>
         <div style="margin-top: 14px;" id="txActionButtonsContainer"></div>
       </div>
     </div>
 
-    <a href="index.html" class="back-home">← بازگشت به صفحه اصلی سایت</a>
+    <div style="text-align: center;">
+      <a href="index.html" class="back-home">← بازگشت به صفحه اصلی سایت</a>
+    </div>
   </div>
 
   <!-- مودال پیام سفارشی -->
-  <div id="customMessageModal">
-    <div class="modal-card-box">
-      <h3>✉️ ارسال پیام دستی به مشتری</h3>
-      <p style="font-size:0.9rem; color:#475569; margin-bottom:12px; font-weight:700;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
+  <div id="customMessageModal" onclick="if(event.target.id==='customMessageModal') closeCustomMessageModal()">
+    <div class="modal-card-box" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
+        <h3>✉️ ارسال پیام دستی به مشتری</h3>
+        <button type="button" class="page-back-pill light-pill" onclick="playInteractionEffect(); closeCustomMessageModal()">→ بازگشت</button>
+      </div>
+      <p style="font-size:0.88rem; color:#475569; margin-bottom:12px; font-weight:700;">متن دلخواه خود را بنویسید تا مستقیماً به واتساپ مشتری منتقل شود:</p>
       <div class="form-group">
         <textarea id="customWhatsAppMessageText" placeholder="متن پیام شما..." style="min-height: 120px;"></textarea>
       </div>
@@ -789,10 +1392,13 @@
   </div>
 
   <!-- مودال تنظیمات مالک در دیتابیس -->
-  <div id="masterSettingsModal">
-    <div class="modal-card-box">
-      <h3>⚙️ تنظیمات اختصاصی مالک</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">اطلاعات ورود و چت‌آیدی مالک مستقیم در جدول <code>owner_settings</code> ذخیره می‌شوند (توکن ربات از متغیر محیطی <code>TELEGRAM_BOT_TOKEN</code> ورسل خوانده می‌شود).</p>
+  <div id="masterSettingsModal" onclick="if(event.target.id==='masterSettingsModal') closeMasterSettingsModal()">
+    <div class="modal-card-box" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
+        <h3>⚙️ تنظیمات اختصاصی مالک</h3>
+        <button type="button" class="page-back-pill light-pill" onclick="playInteractionEffect(); closeMasterSettingsModal()">→ بازگشت</button>
+      </div>
+      <p style="font-size: 0.88rem; color: #475569; margin-bottom: 14px; font-weight:700;">اطلاعات ورود و چت‌آیدی مالک مستقیم در جدول <code>owner_settings</code> ذخیره می‌شوند (توکن ربات از متغیر محیطی <code>TELEGRAM_BOT_TOKEN</code> ورسل خوانده می‌شود).</p>
       
       <div class="form-group"><label>نام مالک:</label><input type="text" id="masterNameInput" placeholder="نام مالک..."></div>
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
@@ -801,15 +1407,18 @@
       
       <div class="flex-row" style="justify-content: flex-end; gap:10px; margin-top: 16px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
-        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
+        <button class="btn btn-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
       </div>
     </div>
   </div>
 
   <!-- مودال ثبت / ویرایش تراکنش -->
-  <div id="transactionModal">
-    <div class="modal-card-box">
-      <h3 id="txModalTitle" style="margin-bottom:12px;">ثبت تراکنش جدید</h3>
+  <div id="transactionModal" onclick="if(event.target.id==='transactionModal') closeTransactionModal()">
+    <div class="modal-card-box" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
+        <h3 id="txModalTitle">ثبت تراکنش جدید</h3>
+        <button type="button" class="page-back-pill light-pill" onclick="playInteractionEffect(); closeTransactionModal()">→ بازگشت</button>
+      </div>
       <input type="hidden" id="editTransId">
 
       <div class="form-group"><label>۱. تاریخ تراکنش:</label><input type="date" id="txDateInput"></div>
@@ -849,11 +1458,11 @@
   </div>
 
   <!-- مودال انتخاب حساب قابل جستجو جهت ثبت تراکنش از دفتر کل -->
-  <div id="globalSelectAccountModal">
-    <div class="modal-card-box">
-      <div class="flex-row" style="justify-content:space-between; margin-bottom:10px;">
+  <div id="globalSelectAccountModal" onclick="if(event.target.id==='globalSelectAccountModal') closeGlobalSelectAccountModal()">
+    <div class="modal-card-box" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
         <h3>👤 انتخاب حساب مشتری</h3>
-        <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">✕ بستن</button>
+        <button type="button" class="page-back-pill light-pill" onclick="playInteractionEffect(); closeGlobalSelectAccountModal()">→ بازگشت</button>
       </div>
       <div class="form-group">
         <input type="text" id="globalAccountPickerInput" placeholder="🔍 جستجوی سریع نام، تلفن یا کُد حساب..." oninput="renderGlobalAccountPickerList()">
@@ -863,9 +1472,12 @@
   </div>
 
   <!-- مودال مدیریت انواع عملیات -->
-  <div id="opTypeManagerModal">
-    <div class="modal-card-box">
-      <h3>⚙️ مدیریت انواع عملیات</h3>
+  <div id="opTypeManagerModal" onclick="if(event.target.id==='opTypeManagerModal') closeOpTypeManagerModal()">
+    <div class="modal-card-box" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
+        <h3>⚙️ مدیریت انواع عملیات</h3>
+        <button type="button" class="page-back-pill light-pill" onclick="playInteractionEffect(); closeOpTypeManagerModal()">→ بازگشت</button>
+      </div>
       <div class="form-group" style="margin-top:10px;">
         <label>عنوان عملیات جدید:</label>
         <div class="flex-row">
@@ -873,7 +1485,7 @@
           <button class="btn btn-sm" style="width: auto;" onclick="playInteractionEffect(); addNewOperationType()">+ افزودن</button>
         </div>
       </div>
-      <hr style="margin: 12px 0;">
+      <hr style="margin: 12px 0; border: none; border-top: 1px solid #e2e8f0;">
       <label>لیست انواع عملیات فعال:</label>
       <div id="opTypesListContainer" style="margin-top:8px;"></div>
       <div class="flex-row" style="justify-content: flex-end; margin-top:12px;">
@@ -883,11 +1495,14 @@
   </div>
 
   <!-- مودال مدیریت ادمین‌های همکار -->
-  <div id="adminManagerModal">
-    <div class="modal-card-box">
-      <h3 id="adminModalMainTitle">🛡️ ایجاد و مدیریت ادمین‌های همکار</h3>
+  <div id="adminManagerModal" onclick="if(event.target.id==='adminManagerModal') closeAdminManagerModal()">
+    <div class="modal-card-box" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
+        <h3 id="adminModalMainTitle">🛡️ ایجاد و مدیریت ادمین‌های همکار</h3>
+        <button type="button" class="page-back-pill light-pill" onclick="playInteractionEffect(); closeAdminManagerModal()">→ بازگشت</button>
+      </div>
       <input type="hidden" id="editAdminId">
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px; font-weight:700;">در این بخش می‌توانید برای همکاران ایمیل، رمز عبور و چت‌آیدی اختصاصی بسازید (توکن ربات از متغیر محیطی ورسل استفاده می‌شود).</p>
+      <p style="font-size: 0.88rem; color: #475569; margin-bottom: 12px; font-weight:700;">در این بخش می‌توانید برای همکاران ایمیل، رمز عبور و چت‌آیدی اختصاصی بسازید (توکن ربات از متغیر محیطی ورسل استفاده می‌شود).</p>
       
       <div class="form-group"><label>نام ادمین / همکار:</label><input type="text" id="newAdminName" placeholder="نام ادمین..."></div>
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
@@ -895,11 +1510,11 @@
       <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="802655440"></div>
       
       <div class="flex-row" style="gap:10px; margin-bottom:14px;">
-        <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
+        <button class="btn" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
         <button class="btn btn-secondary btn-sm" style="flex:1; display:none;" id="adminCancelEditBtn" onclick="playInteractionEffect(); cancelEditAdmin()">انصراف</button>
       </div>
 
-      <hr style="margin: 12px 0;">
+      <hr style="margin: 12px 0; border: none; border-top: 1px solid #e2e8f0;">
       <label><b>لیست ادمین‌های همکار فعال در سیستم:</b></label>
       <div id="adminsListContainer" style="margin-top:8px;"></div>
 
@@ -910,9 +1525,12 @@
   </div>
 
   <!-- مودال حساب جدید / ویرایش حساب -->
-  <div id="accountModal">
-    <div class="modal-card-box">
-      <h3 id="modalAccountTitle">حساب جدید</h3>
+  <div id="accountModal" onclick="if(event.target.id==='accountModal') closeAccountModal()">
+    <div class="modal-card-box" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
+        <h3 id="modalAccountTitle">حساب جدید</h3>
+        <button type="button" class="page-back-pill light-pill" onclick="playInteractionEffect(); closeAccountModal()">→ بازگشت</button>
+      </div>
       <input type="hidden" id="editAccountId">
       <div class="form-group"><label>نام مشتری:</label><input type="text" id="modalAccountName" placeholder="نام مشتری..."></div>
       <div class="form-group"><label>تلفن:</label><input type="text" id="modalAccountPhone" dir="ltr" placeholder="07..."></div>
@@ -925,8 +1543,7 @@
     </div>
   </div>
 
-  <!-- کدهای جاوااسکریپت برنامه -->
-  <script>
+<script>
     let SUPABASE_URL = "";
     let SUPABASE_KEY = "";
     let VERCEL_BOT_TOKEN = "";
@@ -1087,15 +1704,31 @@
           extraStyle = "background: linear-gradient(135deg, rgba(254,243,199,0.95) 0%, rgba(253,230,138,0.95) 100%); border-color: #f59e0b;";
         }
 
+        const hintsMap = {
+          'viewGlobalStatsPage': 'مانده زنده، حواله‌ها، بدهکاران و بستانکاران',
+          'viewAccounts': 'مدیریت حساب‌ها، ایجاد، ویرایش و بیلان',
+          'viewAllTransactions': 'مرور روزانه و جستجوی سریع کل تراکنش‌ها',
+          'viewPhoneDirectory': 'آرشیو شماره‌ها و دسترسی سریع به واتساپ',
+          'viewOpTypeManager': 'افزودن یا حذف دسته‌بندی عملیات مالی',
+          'superAdminMenu': 'ساخت و مدیریت دسترسی ادمین‌های همکار',
+          'masterSettingsMenu': 'مشخصات ورود، ایمیل و چت‌آیدی مالک',
+          'ownerBrokerMenu': 'ورود به بخش کارگزاری‌ها و دفاتر همکار'
+        };
+        const subHint = hintsMap[item.id] || 'ورود به بخش';
+
         container.innerHTML += `
           <div class="floating-glass-btn" style="${extraStyle}">
             <div class="content-box" onclick="playInteractionEffect(); ${onClickAttr}">
               <span class="icon">${item.icon}</span>
-              <span class="title" ${item.type === 'master' ? 'style="color:#92400e;"' : ''}>${item.title}</span>
+              <div class="title-wrap">
+                <span class="title" ${item.type === 'master' ? 'style="color:#92400e;"' : ''}>${item.title}</span>
+                <span class="subtitle-hint">${subHint}</span>
+              </div>
             </div>
+            <span class="menu-chevron">‹</span>
             <div class="menu-sort-controls">
-              <button class="sort-btn" onclick="event.stopPropagation(); playInteractionEffect(); moveMenuItem(${index}, -1)" title="انتقال به بالا">⬆️</button>
-              <button class="sort-btn" onclick="event.stopPropagation(); playInteractionEffect(); moveMenuItem(${index}, 1)" title="انتقال به پایین">⬇️</button>
+              <button class="sort-btn" onclick="event.stopPropagation(); playInteractionEffect(); moveMenuItem(${index}, -1)" title="انتقال به بالا">▲</button>
+              <button class="sort-btn" onclick="event.stopPropagation(); playInteractionEffect(); moveMenuItem(${index}, 1)" title="انتقال به پایین">▼</button>
             </div>
           </div>
         `;
@@ -1445,10 +2078,50 @@
       location.reload(); 
     }
 
+    let viewNavigationStack = ['viewDashboard'];
+
     function switchView(viewId, pushHistory = true) {
+      const currentActive = document.querySelector('.view-section.active');
+      const prevId = currentActive ? currentActive.id : null;
+
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      document.getElementById(viewId).classList.add('active');
+      const targetEl = document.getElementById(viewId);
+      if (targetEl) targetEl.classList.add('active');
+
+      if (prevId && prevId !== viewId) {
+        if (viewNavigationStack[viewNavigationStack.length - 1] !== prevId) {
+          viewNavigationStack.push(prevId);
+        }
+      }
+      if (viewId === 'viewDashboard') {
+        viewNavigationStack = ['viewDashboard'];
+      }
+
       if (pushHistory) window.history.pushState({ view: viewId }, '');
+      window.scrollTo(0, 0);
+    }
+
+    function goBackFromView(currentViewId) {
+      const fallbackMap = {
+        'viewGlobalStatsPage': 'viewDashboard',
+        'viewPhoneDirectoryPage': 'viewDashboard',
+        'viewAllTransactionsPage': 'viewDashboard',
+        'viewAccounts': 'viewDashboard',
+        'viewTransfersReport': 'viewGlobalStatsPage',
+        'viewDebtorsReport': 'viewGlobalStatsPage',
+        'viewCreditorsReport': 'viewGlobalStatsPage',
+        'viewAccountDetail': 'viewAccounts',
+        'viewTransactionDetail': txDetailReturnView || 'viewAccountDetail'
+      };
+
+      while (viewNavigationStack.length > 0 && viewNavigationStack[viewNavigationStack.length - 1] === currentViewId) {
+        viewNavigationStack.pop();
+      }
+
+      const prevView = viewNavigationStack.pop() || fallbackMap[currentViewId] || 'viewDashboard';
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      const targetEl = document.getElementById(prevView);
+      if (targetEl) targetEl.classList.add('active');
       window.scrollTo(0, 0);
     }
 
