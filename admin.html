@@ -292,7 +292,6 @@
     .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
     .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; box-shadow: none; border-radius: 10px; }
 
-    /* دکمه‌های ویرایش و حذف تراکنش کاملاً اصلاح‌شده و تمیز */
     .action-btn-modern {
       padding: 13px 18px;
       border-radius: 16px;
@@ -789,20 +788,21 @@
     </div>
   </div>
 
-  <!-- مودال تنظیمات و توکن مالک -->
+  <!-- مودال تنظیمات و توکن مالک (خواندن و ذخیره مستقیم از دیتابیس) -->
   <div id="masterSettingsModal">
     <div class="modal-card-box">
       <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را ویرایش کنید.</p>
+      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">اطلاعات ورود، توکن ربات تلگرام، چت‌آیدی و لینک سایت مستقیماً از دیتابیس خوانده و ذخیره می‌شوند.</p>
       
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توکن ربات..."></div>
       <div class="form-group"><label>چت‌آیدی تلگرام مالک:</label><input type="text" id="masterChatIdInput" dir="ltr" placeholder="چت‌آیدی..."></div>
+      <div class="form-group"><label>لینک سایت / پورتال:</label><input type="url" id="masterSiteUrlInput" dir="ltr" placeholder="https://..."></div>
       
       <div class="flex-row" style="justify-content: flex-end; gap:10px; margin-top: 16px;">
         <button class="btn btn-secondary btn-sm" onclick="playInteractionEffect(); closeMasterSettingsModal()">انصراف</button>
-        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره تنظیمات مالک</button>
+        <button class="btn btn-sm" style="background: var(--warning-color); color:#fff;" onclick="playInteractionEffect(); saveMasterSettings()">💾 ذخیره در دیتابیس</button>
       </div>
     </div>
   </div>
@@ -893,8 +893,8 @@
       <div class="form-group"><label>نام ادمین / همکار:</label><input type="text" id="newAdminName" placeholder="نام ادمین..."></div>
       <div class="form-group"><label>ایمیل ورود:</label><input type="email" id="newAdminEmail" dir="ltr" placeholder="email@domain.com"></div>
       <div class="form-group"><label>کد عبور (PIN):</label><input type="password" id="newAdminPin" dir="ltr" placeholder="رمز عبور..."></div>
-      <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="123456:ABC-DEF..."></div>
-      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="802655440"></div>
+      <div class="form-group"><label>توکن ربات تلگرام ادمین:</label><input type="text" id="newAdminBotToken" dir="ltr" placeholder="Bot Token..."></div>
+      <div class="form-group"><label>چت‌آیدی تلگرام ادمین:</label><input type="text" id="newAdminChatId" dir="ltr" placeholder="Chat ID..."></div>
       
       <div class="flex-row" style="gap:10px; margin-bottom:14px;">
         <button class="btn" style="background: var(--accent-green-dark); flex:2;" id="adminSaveBtn" onclick="playInteractionEffect(); saveAdminAccount()">➕ ثبت و ایجاد ادمین جدید</button>
@@ -927,16 +927,43 @@
     </div>
   </div>
 
-  <!-- کدهای جاوااسکریپت برنامه -->
+  <!-- کدهای جاوااسکریپت برنامه (بدون مقادیر حساس هاردکدشده و خوانش مستقیم از دیتابیس) -->
   <script>
-    const SUPABASE_URL = "https://zpehwkvtbiceurfpafiw.supabase.co";
-    const SUPABASE_KEY = "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    function resolveRuntimeConfig() {
+      const winCfg = (typeof window !== 'undefined' && window.__APP_CONFIG__) ? window.__APP_CONFIG__ : {};
+      const urlParams = new URLSearchParams(window.location.search);
 
-    let MASTER_ADMIN_EMAIL = localStorage.getItem("masterEmail") || "mohammadsharifkarimi4@gmail.com";
-    let MASTER_ADMIN_PIN = localStorage.getItem("masterPin") || "77218731";
-    let MASTER_ADMIN_TOKEN = localStorage.getItem("masterToken") || "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
-    let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || "802655440";
+      const supabaseUrl = (
+        winCfg.SUPABASE_URL ||
+        urlParams.get('sb_url') ||
+        sessionStorage.getItem('runtime_sb_url') ||
+        ''
+      ).trim();
+
+      const supabaseKey = (
+        winCfg.SUPABASE_KEY ||
+        urlParams.get('sb_key') ||
+        sessionStorage.getItem('runtime_sb_key') ||
+        ''
+      ).trim();
+
+      if (supabaseUrl) sessionStorage.setItem('runtime_sb_url', supabaseUrl);
+      if (supabaseKey) sessionStorage.setItem('runtime_sb_key', supabaseKey);
+
+      return { supabaseUrl, supabaseKey };
+    }
+
+    const runtimeCfg = resolveRuntimeConfig();
+    const _supabase = (runtimeCfg.supabaseUrl && runtimeCfg.supabaseKey && typeof supabase !== 'undefined')
+      ? supabase.createClient(runtimeCfg.supabaseUrl, runtimeCfg.supabaseKey)
+      : null;
+
+    let masterConfigRecordId = null;
+    let MASTER_ADMIN_EMAIL = "";
+    let MASTER_ADMIN_PIN = "";
+    let MASTER_ADMIN_TOKEN = "";
+    let MASTER_ADMIN_CHATID = "";
+    let PORTAL_SITE_URL = "";
     const MASTER_ADMIN_ID = "master_owner";
 
     let allAccounts = [];
@@ -967,7 +994,7 @@
     ];
 
     function loadDashboardMenuOrder() {
-      let savedOrder = localStorage.getItem("dashboardMenuOrder");
+      let savedOrder = sessionStorage.getItem("dashboardMenuOrder");
       if (savedOrder) {
         try {
           let ids = JSON.parse(savedOrder);
@@ -986,7 +1013,7 @@
 
     function saveDashboardMenuOrder() {
       let ids = dashboardMenuItems.map(m => m.id);
-      localStorage.setItem("dashboardMenuOrder", JSON.stringify(ids));
+      sessionStorage.setItem("dashboardMenuOrder", JSON.stringify(ids));
     }
 
     function moveMenuItem(index, direction) {
@@ -1004,7 +1031,13 @@
       if (!container) return;
       container.innerHTML = "";
 
-      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let isMaster = Boolean(
+        currentLoggedInAdmin &&
+        (
+          currentLoggedInAdmin.id === MASTER_ADMIN_ID ||
+          (MASTER_ADMIN_EMAIL && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase())
+        )
+      );
 
       dashboardMenuItems.forEach((item, index) => {
         if (item.type === 'superadmin' && !isMaster) return;
@@ -1075,6 +1108,27 @@
       }
     }
 
+    async function fetchMasterConfigFromDatabase() {
+      if (!_supabase) return null;
+      const candidateTables = ['owner_settings', 'system_settings', 'app_settings', 'master_config'];
+      for (const tbl of candidateTables) {
+        try {
+          const { data, error } = await _supabase.from(tbl).select('*').limit(1);
+          if (!error && Array.isArray(data) && data.length > 0) {
+            const row = data[0];
+            masterConfigRecordId = { table: tbl, id: row.id ?? row.ID ?? row.Id ?? null };
+            MASTER_ADMIN_EMAIL = String(getVal(row, ['MasterEmail', 'master_email', 'email', 'Email']) || '').trim().toLowerCase();
+            MASTER_ADMIN_PIN = String(getVal(row, ['MasterPin', 'master_pin', 'pin', 'Pin', 'password', 'Password']) || '').trim();
+            MASTER_ADMIN_TOKEN = String(getVal(row, ['MasterToken', 'master_token', 'bot_token', 'BotToken', 'token', 'Token']) || '').trim();
+            MASTER_ADMIN_CHATID = formatEnNum(String(getVal(row, ['MasterChatID', 'master_chat_id', 'chat_id', 'ChatID']) || '').trim());
+            PORTAL_SITE_URL = String(getVal(row, ['SiteUrl', 'site_url', 'PortalUrl', 'portal_url', 'url']) || '').trim();
+            return row;
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
+
     async function sendTelegramMessage(botToken, chatId, messageText) {
       if (!botToken || !chatId) return;
       try {
@@ -1099,8 +1153,8 @@
         return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
       }
       let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
-      let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
-      let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
+      let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || '') : '';
+      let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || '') : '';
       return { token, chatId };
     }
 
@@ -1136,14 +1190,17 @@
         let val = totalsByCurrency[curr];
         parts.push(`▫️ ${curr}: ${formatEnMoney(val)}`);
       }
-      return parts.join('\n') || 'صفر';
+      return parts.join('
+') || 'صفر';
     }
 
-    function openMasterSettingsModal() {
+    async function openMasterSettingsModal() {
+      await fetchMasterConfigFromDatabase();
       document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
       document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
       document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
       document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
+      document.getElementById("masterSiteUrlInput").value = PORTAL_SITE_URL;
       document.getElementById("masterSettingsModal").style.display = "flex";
       pushModalHistory("masterSettingsModal");
     }
@@ -1152,14 +1209,40 @@
       document.getElementById("masterSettingsModal").style.display = "none";
     }
 
-    function saveMasterSettings() {
+    async function saveMasterSettings() {
+      if (!_supabase) {
+        alert("اتصال دیتابیس برقرار نیست.");
+        return;
+      }
       let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
       let pin = document.getElementById("masterPinInput").value.trim();
       let token = document.getElementById("masterTokenInput").value.trim();
       let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
+      let siteUrl = document.getElementById("masterSiteUrlInput").value.trim();
 
       if (!email || !pin) {
         alert("ایمیل و رمز عبور مالک نمی‌تواند خالی باشد.");
+        return;
+      }
+
+      const targetTable = masterConfigRecordId ? masterConfigRecordId.table : 'owner_settings';
+      const payload = {
+        master_email: email,
+        master_pin: pin,
+        bot_token: token,
+        chat_id: chatId,
+        site_url: siteUrl
+      };
+
+      let saveRes;
+      if (masterConfigRecordId && masterConfigRecordId.id !== null) {
+        saveRes = await _supabase.from(targetTable).update(payload).eq('id', masterConfigRecordId.id);
+      } else {
+        saveRes = await _supabase.from(targetTable).insert([payload]);
+      }
+
+      if (saveRes.error) {
+        alert("خطا در ذخیره تنظیمات در دیتابیس: " + saveRes.error.message);
         return;
       }
 
@@ -1167,14 +1250,11 @@
       MASTER_ADMIN_PIN = pin;
       MASTER_ADMIN_TOKEN = token;
       MASTER_ADMIN_CHATID = chatId;
+      PORTAL_SITE_URL = siteUrl;
 
-      localStorage.setItem("masterEmail", email);
-      localStorage.setItem("masterPin", pin);
-      localStorage.setItem("masterToken", token);
-      localStorage.setItem("masterChatId", chatId);
-
+      await fetchMasterConfigFromDatabase();
       closeMasterSettingsModal();
-      alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
+      alert("✅ تنظیمات مالک مستقیماً در دیتابیس ذخیره شد!");
     }
 
     function getAccountLiveBalanceText(accId) {
@@ -1195,9 +1275,14 @@
         let deb = currs[curr].debit;
         let net = cred - deb;
         let status = net > 0 ? `بستانکار (+): ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار (-): ${formatEnMoney(Math.abs(net))} ${curr}` : `تسویه کامل (0)`);
-        textParts.push(`🔹 *واحد ارز: ${curr}*\n  ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}\n  ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}\n  📌 *وضعیت مانده: ${status}*`);
+        textParts.push(`🔹 *واحد ارز: ${curr}*
+  ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}
+  ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}
+  📌 *وضعیت مانده: ${status}*`);
       }
-      return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
+      return textParts.join('
+
+') || 'تراکنشی ثبت نشده است';
     }
 
     function pushModalHistory(modalId) {
@@ -1206,8 +1291,8 @@
 
     window.onload = async function() {
       loadDashboardMenuOrder();
-      let savedSession = localStorage.getItem("adminAuthSessionData");
-      let savedArchive = localStorage.getItem("phoneArchiveData");
+      let savedSession = sessionStorage.getItem("adminAuthSessionData");
+      let savedArchive = sessionStorage.getItem("phoneArchiveData");
       if (savedArchive) {
         try { phoneArchiveList = JSON.parse(savedArchive); } catch(e) {}
       }
@@ -1218,10 +1303,11 @@
           document.getElementById("authOverlay").style.display = "none";
           document.getElementById("adminContainer").style.display = "block";
           
+          await fetchMasterConfigFromDatabase();
           renderDashboardMenu();
           await loadDataFromSupabase(true);
         } catch(e) {
-          localStorage.removeItem("adminAuthSessionData");
+          sessionStorage.removeItem("adminAuthSessionData");
         }
       }
 
@@ -1245,6 +1331,11 @@
     };
 
     async function handleLogin() {
+      if (!_supabase) {
+        alert("تنظیمات اتصال به دیتابیس در محیط اجرا یافت نشد.");
+        return;
+      }
+
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
       const pin = document.getElementById("loginPin").value.trim();
 
@@ -1253,9 +1344,11 @@
         return;
       }
 
-      if (email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
-        currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "محمد شریف کریمی (مالک)", email: MASTER_ADMIN_EMAIL };
-        localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+      await fetchMasterConfigFromDatabase();
+
+      if (MASTER_ADMIN_EMAIL && MASTER_ADMIN_PIN && email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
+        currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "مالک سیستم", email: MASTER_ADMIN_EMAIL };
+        sessionStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
         
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("adminContainer").style.display = "block";
@@ -1279,7 +1372,7 @@
             let adminName = String(getVal(foundAdmin, ['Name', 'name']) || 'همکار');
 
             currentLoggedInAdmin = { id: adminId, name: adminName, email: email };
-            localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+            sessionStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
 
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("adminContainer").style.display = "block";
@@ -1296,7 +1389,7 @@
     }
 
     function handleLogout() { 
-      localStorage.removeItem("adminAuthSessionData"); 
+      sessionStorage.removeItem("adminAuthSessionData"); 
       location.reload(); 
     }
 
@@ -1385,6 +1478,7 @@
     }
 
     async function loadDataFromSupabase(showLoader = true) {
+      if (!_supabase) return;
       const indicator = document.getElementById("syncIndicator");
       if (showLoader && indicator) {
         indicator.innerText = "🔄 در حال دریافت اطلاعات...";
@@ -1392,6 +1486,8 @@
       }
 
       try {
+        await fetchMasterConfigFromDatabase();
+
         const [accRes, txRes, opRes, admRes] = await Promise.all([
           _supabase.from('accounts').select('*'),
           _supabase.from('transactions').select('*'),
@@ -1401,7 +1497,13 @@
 
         if (admRes.data) allAdmins = admRes.data;
 
-        let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+        let isMaster = Boolean(
+          currentLoggedInAdmin &&
+          (
+            currentLoggedInAdmin.id === MASTER_ADMIN_ID ||
+            (MASTER_ADMIN_EMAIL && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase())
+          )
+        );
         let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
 
         let rawAccounts = accRes.data || [];
@@ -1587,7 +1689,7 @@
         }
       });
 
-      localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
+      sessionStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
     }
 
     function getVal(obj, keys) {
@@ -1603,7 +1705,7 @@
     }
 
     async function uploadFileToSupabase(file, bucketName) {
-      if (!file) return null;
+      if (!file || !_supabase) return null;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       const { error } = await _supabase.storage.from(bucketName).upload(fileName, file);
@@ -1637,7 +1739,7 @@
     async function addNewOperationType() {
       const input = document.getElementById("newOpTypeInput");
       const title = input.value.trim();
-      if (!title) return;
+      if (!title || !_supabase) return;
       if (!customOpTypes.includes(title)) {
         customOpTypes.push(title);
         populateOpTypeSelect();
@@ -1648,6 +1750,7 @@
     }
 
     async function removeOperationType(title) {
+      if (!_supabase) return;
       customOpTypes = customOpTypes.filter(o => o !== title);
       populateOpTypeSelect();
       renderOpTypesList();
@@ -1722,6 +1825,7 @@
     }
 
     async function saveAdminAccount() {
+      if (!_supabase) return;
       let editId = document.getElementById("editAdminId").value;
       let name = document.getElementById("newAdminName").value.trim();
       let email = document.getElementById("newAdminEmail").value.trim().toLowerCase();
@@ -1754,13 +1858,21 @@
         alert("✅ ادمین جدید با موفقیت ایجاد شد!");
 
         if (botToken && chatId) {
-          let siteLink = "https://karimi-trust-app.vercel.app/";
-          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨\n\n` +
-                           `سلام *${name}* عزیز،\n` +
-                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.\n\n` +
-                           `📧 ایمیل ورود: \`${email}\`\n` +
-                           `🔑 رمز عبور: \`${pin}\`\n\n` +
-                           `🌐 لینک ورود به سایت:\n${siteLink}`;
+          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨
+
+` +
+                           `سلام *${name}* عزیز،
+` +
+                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.
+
+` +
+                           `📧 ایمیل ورود: \`${email}\`
+` +
+                           `🔑 رمز عبور: \`${pin}\`` +
+                           (PORTAL_SITE_URL ? `
+
+🌐 لینک ورود به سایت:
+${PORTAL_SITE_URL}` : '');
           sendTelegramMessage(botToken, chatId, welcomeMsg);
         }
       }
@@ -1772,6 +1884,7 @@
     }
 
     async function deleteAdminAccount(admId) {
+      if (!_supabase) return;
       if (!confirm("آیا از حذف دسترسی این ادمین مطمئن هستید؟")) return;
       await _supabase.from('admins').delete().eq('AdminID', admId);
       const { data } = await _supabase.from('admins').select('*');
@@ -1837,7 +1950,13 @@
       const summaryBox = document.getElementById("phoneDirectorySummary");
       container.innerHTML = "";
 
-      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let isMaster = Boolean(
+        currentLoggedInAdmin &&
+        (
+          currentLoggedInAdmin.id === MASTER_ADMIN_ID ||
+          (MASTER_ADMIN_EMAIL && currentLoggedInAdmin.email && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase())
+        )
+      );
       let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
 
       let filteredList = list.filter(item => {
@@ -1977,7 +2096,7 @@
         let accName = String(getVal(acc, ['Name', 'name']) || 'بدون نام');
         let accPhone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '-');
         listEl.innerHTML += `
-          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\\'")}')">
+          <div class="account-item-card" style="padding:10px 12px; margin-bottom:8px;" onclick="selectAccountAndOpenNewTx('${accId}', '${accName.replace(/'/g, "\'")}')">
             <div class="stat-row" style="margin:0;">
               <span style="font-weight:900; color:var(--primary-dark);">${accName}</span>
               <span style="font-size:0.85rem; color:#475569;">کُد: ${accId} | ${accPhone}</span>
@@ -2133,7 +2252,7 @@
           let dirColor = isCreditor ? '#047857' : '#b91c1c';
 
           rowsHtml += `
-            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\\'")}')">
+            <tr style="background:${rowBg}; cursor:pointer;" onclick="playInteractionEffect(); openTxFromGlobalLedger('${txId}', '${accId}', '${accName.replace(/'/g, "\'")}')">
               <td style="text-align:center; font-weight:900; color:#334155;">${rowNum}</td>
               <td style="text-align:right;">
                 <div style="font-weight:900; color:var(--primary-dark); font-size:0.76rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
@@ -2604,6 +2723,7 @@
     }
 
     async function saveAccount() {
+      if (!_supabase) return;
       let editId = document.getElementById("editAccountId").value;
       let accName = document.getElementById("modalAccountName").value;
       let accPhone = formatEnNum(document.getElementById("modalAccountPhone").value);
@@ -2641,16 +2761,26 @@
         await _supabase.from('accounts').insert([payload]);
         let { token } = getCurrentAdminTokenAndChat();
         if (token && accChatId) {
-          let siteLink = "https://karimi-trust-app.vercel.app/";
-          let msg = `✨ *امانت‌داری کریمی* ✨\n\n` +
-                    `حساب شما با موفقیت ایجاد شد.\n` +
-                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.\n` +
-                    `📌 اطلاعات حساب شما:\n` +
-                    `👤 نام: ${accName}\n` +
-                    `🆔 کُد حساب: \`${accountId}\`\n` +
-                    `📞 شماره تماس: ${accPhone || '-'}\n` +
-                    `💬 چت‌آیدی: \`${accChatId}\`\n\n` +
-                    `🌐 لینک بررسی حساب:\n${siteLink}`;
+          let msg = `✨ *امانت‌داری کریمی* ✨
+
+` +
+                    `حساب شما با موفقیت ایجاد شد.
+` +
+                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.
+` +
+                    `📌 اطلاعات حساب شما:
+` +
+                    `👤 نام: ${accName}
+` +
+                    `🆔 کُد حساب: \`${accountId}\`
+` +
+                    `📞 شماره تماس: ${accPhone || '-'}
+` +
+                    `💬 چت‌آیدی: \`${accChatId}\`` +
+                    (PORTAL_SITE_URL ? `
+
+🌐 لینک بررسی حساب:
+${PORTAL_SITE_URL}` : '');
           sendTelegramMessage(token, accChatId, msg);
         }
       }
@@ -2661,7 +2791,11 @@
         let { token } = getCurrentAdminTokenAndChat();
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accountId));
         if (token && accChatId) {
-          let historyHeader = `✨ *امانت‌داری کریمی* ✨\n\nسلام *${accName}* عزیز،\nچت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:\n────────────────────────`;
+          let historyHeader = `✨ *امانت‌داری کریمی* ✨
+
+سلام *${accName}* عزیز،
+چت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:
+────────────────────────`;
           await sendTelegramMessage(token, accChatId, historyHeader);
 
           for (let tx of accTxs) {
@@ -2672,12 +2806,17 @@
             let tDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
             let tDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
 
-            let txLine = `📅 تاریخ: ${tDate}\n🔹 نوع: *${tType}* (${tDir})\n💰 مبلغ: *${tAmt} ${tCurr}*\n📝 شرح: ${tDesc || '-'}\n-------------------`;
+            let txLine = `📅 تاریخ: ${tDate}
+🔹 نوع: *${tType}* (${tDir})
+💰 مبلغ: *${tAmt} ${tCurr}*
+📝 شرح: ${tDesc || '-'}
+-------------------`;
             await sendTelegramMessage(token, accChatId, txLine);
           }
 
           let liveBal = getAccountLiveBalanceText(accountId);
-          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*\n${liveBal}`;
+          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*
+${liveBal}`;
           await sendTelegramMessage(token, accChatId, balMsg);
         }
       }
@@ -2688,12 +2827,13 @@
     }
 
     async function deleteCurrentAccount() {
+      if (!_supabase) return;
       let accIdToDelete = currentAccountId;
       
       let archiveItem = phoneArchiveList.find(p => p.accId === accIdToDelete);
       if (archiveItem) {
         archiveItem.isDeleted = true;
-        localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
+        sessionStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
       }
 
       currentAccountId = null;
@@ -2962,7 +3102,7 @@
       let transferReceiptBtn = isTransferOrRemittance ? `<button class="btn btn-info" style="margin-top:8px; border-radius:14px; padding:12px;" onclick="playInteractionEffect(); shareTransferReceiptWhatsApp('${txId}')">📄 ارسال رسید انتقال به واتساپ</button>` : '';
 
       btnContainer.innerHTML = `
-        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\\'")}')">👤 رفتن به حساب شخص (${accName})</button>
+        <button class="btn btn-info" style="margin-bottom:10px; border-radius:14px; padding:12px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="playInteractionEffect(); selectAccount('${accId}', '${accName.replace(/'/g, "\'")}')">👤 رفتن به حساب شخص (${accName})</button>
         
         <div class="flex-row" style="gap: 10px; margin-bottom:10px;">
           <button class="action-btn-modern btn-edit-pro" onclick="playInteractionEffect(); openEditTransactionModal()">
@@ -3047,6 +3187,7 @@
     }
 
     async function submitTransaction() {
+      if (!_supabase) return;
       let amt = parseFloat(formatEnNum(document.getElementById("txAmountInput").value));
 
       if (!selectedDirectionValue) { alert("لطفاً جهت تراکنش (بستانکار یا بدهکار) را انتخاب کنید!"); return; }
@@ -3109,7 +3250,10 @@
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(currentAccountId));
       
       if (token) {
-        let siteLink = "https://karimi-trust-app.vercel.app/";
+        let siteLinkBlock = PORTAL_SITE_URL ? `
+
+🌐 لینک بررسی آنلاین:
+${PORTAL_SITE_URL}` : '';
         let actionTitle = editTransId ? "⚠️ تراکنش ویرایش شد:" : "📌 تراکنش جدید ثبت شد:";
         let liveBalance = getAccountLiveBalanceText(currentAccountId);
         let globalSystemBalance = getSystemGlobalBalanceText();
@@ -3120,16 +3264,34 @@
           if (customerChatId) {
             let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
             if (isTransferOrRemittance) {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
-              let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
-              let msg3 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+              let msg1 = `✨ *امانت‌داری کریمی* ✨
+
+محترم *${currentAccountName}*،
+${actionTitle}
+
+💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})
+📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📜 *رسید انتقال:*
+${desc || 'بدون مشخصات'}
+
+⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
+              let msg3 = `📊 *بیلان به‌روز حساب شما:*
+${liveBalance}${siteLinkBlock}`;
               
               await sendTelegramMessage(token, customerChatId, msg1);
               await sendTelegramMessage(token, customerChatId, msg2);
               await sendTelegramMessage(token, customerChatId, msg3);
             } else {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n🔹 نوع: *${opType}* (${selectedDirectionValue})\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n📅 تاریخ: ${displayDateFormatted}`;
-              let msg2 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+              let msg1 = `✨ *امانت‌داری کریمی* ✨
+
+محترم *${currentAccountName}*،
+${actionTitle}
+
+🔹 نوع: *${opType}* (${selectedDirectionValue})
+💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
+📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📊 *بیلان به‌روز حساب شما:*
+${liveBalance}${siteLinkBlock}`;
 
               await sendTelegramMessage(token, customerChatId, msg1);
               await sendTelegramMessage(token, customerChatId, msg2);
@@ -3138,14 +3300,24 @@
         }
 
         if (adminChatId) {
-          let adminMsg = `🔔 *گزارش مدیریتی سیستم*\n\n` +
-                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
-                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})\n` +
-                         `${actionTitle} (${opType} - ${selectedDirectionValue})\n` +
-                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n` +
-                         `📅 تاریخ: ${displayDateFormatted}\n` +
-                         `📝 شرح: ${desc || '-'}\n\n` +
-                         `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
+          let adminMsg = `🔔 *گزارش مدیریتی سیستم*
+
+` +
+                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
+` +
+                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})
+` +
+                         `${actionTitle} (${opType} - ${selectedDirectionValue})
+` +
+                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
+` +
+                         `📅 تاریخ: ${displayDateFormatted}
+` +
+                         `📝 شرح: ${desc || '-'}
+
+` +
+                         `📊 *موجودی کل سیستم به تفکیک ارز:*
+${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminMsg);
         }
       }
@@ -3154,6 +3326,7 @@
     }
 
     async function deleteSingleTransaction(txIdToDelete) {
+      if (!_supabase) return;
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
@@ -3180,20 +3353,33 @@
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
           if (customerChatId) {
-            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*\n\n` +
-                         `محترم *${currentAccountName}*،\n` +
-                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.\n\n` +
-                         `📊 *بیلان جدید حساب شما:*\n${liveBalance}`;
+            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*
+
+` +
+                         `محترم *${currentAccountName}*،
+` +
+                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.
+
+` +
+                         `📊 *بیلان جدید حساب شما:*
+${liveBalance}`;
             sendTelegramMessage(token, customerChatId, delMsg);
           }
         }
 
         if (adminChatId) {
-          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*\n\n` +
-                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
-                            `👥 مشتری: *${currentAccountName}*\n` +
-                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*\n\n` +
-                            `📊 *موجودی کل سیستم:*\n${globalSystemBalance}`;
+          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*
+
+` +
+                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
+` +
+                            `👥 مشتری: *${currentAccountName}*
+` +
+                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*
+
+` +
+                            `📊 *موجودی کل سیستم:*
+${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminDelMsg);
         }
       }
@@ -3377,7 +3563,8 @@
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
       lines.push(
         `────────────────────────`,
-        `📊 *مانده نهایی حساب شما:*\n${liveBalText}`,
+        `📊 *مانده نهایی حساب شما:*
+${liveBalText}`,
         `────────────────────────`,
         `با تشکر از اعتماد شما 🙏`
       );
@@ -3395,7 +3582,6 @@
       if (!acc) return;
       let phone = formatEnNum(getVal(acc, ['Phone', 'phone']) || '').replace(/\D/g, '');
       let chatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '-');
-      let siteLink = "https://karimi-trust-app.vercel.app/";
 
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
 
@@ -3412,9 +3598,7 @@
         ``,
         liveBalText,
         ``,
-        `────────────────────────`,
-        `🌐 لینک بررسی آنلاین حساب:`,
-        siteLink
+        ...(PORTAL_SITE_URL ? [`────────────────────────`, `🌐 لینک بررسی آنلاین حساب:`, PORTAL_SITE_URL] : [])
       ];
 
       let encodedMessage = lines.map(line => encodeURIComponent(line)).join('%0A');
