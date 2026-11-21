@@ -793,8 +793,9 @@
   <div id="masterSettingsModal">
     <div class="modal-card-box">
       <h3>⚙️ تنظیمات و توکن اختصاصی مالک</h3>
-      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را ویرایش کنید.</p>
+      <p style="font-size: 0.9rem; color: #475569; margin-bottom: 14px; font-weight:700;">در این بخش می‌توانید اطلاعات ورود، توکن ربات تلگرام و چت‌آیدی خود را در دیتابیس ویرایش کنید.</p>
       
+      <div class="form-group"><label>نام مالک:</label><input type="text" id="masterNameInput" placeholder="نام مالک..."></div>
       <div class="form-group"><label>ایمیل مالک:</label><input type="email" id="masterEmailInput" dir="ltr" placeholder="ایمیل..."></div>
       <div class="form-group"><label>رمز عبور جدید (PIN):</label><input type="text" id="masterPinInput" dir="ltr" placeholder="رمز عبور..."></div>
       <div class="form-group"><label>توکن ربات تلگرام مالک:</label><input type="text" id="masterTokenInput" dir="ltr" placeholder="توکن ربات..."></div>
@@ -929,31 +930,22 @@
 
   <!-- کدهای جاوااسکریپت برنامه -->
   <script>
-    let SUPABASE_URL = "";
-    let SUPABASE_KEY = "";
-    let _supabase = null;
+    // پیکربندی ارتباط با Supabase (در صورت تزریق متغیرهای محیطی در Vercel از آن‌ها استفاده می‌کند و در غیر این صورت به مقادیر پیش‌فرض پروژه بازمی‌گردد)
+    const SUPABASE_URL = (typeof window !== "undefined" && window.NEXT_PUBLIC_SUPABASE_URL) || "https://zpehwkvtbiceurfpafiw.supabase.co";
+    const SUPABASE_KEY = (typeof window !== "undefined" && window.NEXT_PUBLIC_SUPABASE_ANON_KEY) || "sb_publishable__ZK44kWZES328UQJ7P_zzw_tZoc465D";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function ensureSupabaseClient() {
-      if (_supabase) return _supabase;
-      try {
-        const resp = await fetch("/api/env", { cache: "no-store" });
-        if (resp.ok) {
-          const cfg = await resp.json();
-          SUPABASE_URL = (cfg.supabaseUrl || "").trim();
-          SUPABASE_KEY = (cfg.supabaseKey || "").trim();
-        }
-      } catch (e) {}
-      if (SUPABASE_URL && SUPABASE_KEY && window.supabase && typeof window.supabase.createClient === "function") {
-        _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
-      return _supabase;
-    }
-
-    let MASTER_ADMIN_EMAIL = localStorage.getItem("masterEmail") || "mohammadsharifkarimi4@gmail.com";
-    let MASTER_ADMIN_PIN = localStorage.getItem("masterPin") || "77218731";
-    let MASTER_ADMIN_TOKEN = localStorage.getItem("masterToken") || "8900776593:AAG1OBNUY_4oo5VJ7Ohmrz9EgHYNmQeGH3Y";
-    let MASTER_ADMIN_CHATID = localStorage.getItem("masterChatId") || "802655440";
     const MASTER_ADMIN_ID = "master_owner";
+
+    // تنظیمات مالک و توکن‌ها فقط در دیتابیس (جدول owner_settings) نگهداری می‌شوند و از دل کد حذف شده‌اند
+    let ownerSettings = {
+      id: MASTER_ADMIN_ID,
+      name: "",
+      email: "",
+      pin: "",
+      bot_token: "",
+      chat_id: ""
+    };
 
     let allAccounts = [];
     let allTransactions = [];
@@ -981,6 +973,77 @@
       { id: 'masterSettingsMenu', title: 'تنظیمات و توکن مالک', icon: '⚙️', type: 'master', action: 'openMasterSettingsModal()' },
       { id: 'ownerBrokerMenu', title: 'مدیریت کارگزاری‌ها و دفاتر همکار', icon: '🏢', type: 'broker', action: 'handleBrokerNavigation()' }
     ];
+
+    function getVal(obj, keys) {
+      if(!obj) return '';
+      for (let k of keys) {
+        if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
+        let lower = k.toLowerCase();
+        for (let prop in obj) {
+          if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") return obj[prop];
+        }
+      }
+      return '';
+    }
+
+    // دریافت و همگام‌سازی اطلاعات مالک از جدول owner_settings در دیتابیس
+    async function fetchOwnerSettingsFromDB() {
+      try {
+        const { data, error } = await _supabase
+          .from('owner_settings')
+          .select('*')
+          .eq('id', MASTER_ADMIN_ID)
+          .maybeSingle();
+
+        if (!error && data) {
+          ownerSettings = {
+            id: String(getVal(data, ['id']) || MASTER_ADMIN_ID),
+            name: String(getVal(data, ['name']) || 'مالک'),
+            email: String(getVal(data, ['email']) || '').trim().toLowerCase(),
+            pin: String(getVal(data, ['pin']) || '').trim(),
+            bot_token: String(getVal(data, ['bot_token', 'bottoken']) || '').trim(),
+            chat_id: String(getVal(data, ['chat_id', 'chatid']) || '').trim()
+          };
+          return ownerSettings;
+        }
+
+        // در صورت عدم تطابق دقیق id با master_owner، اولین رکورد جدول owner_settings را بررسی می‌کند
+        const { data: fallbackList } = await _supabase
+          .from('owner_settings')
+          .select('*')
+          .limit(1);
+
+        if (fallbackList && fallbackList.length > 0) {
+          const row = fallbackList[0];
+          ownerSettings = {
+            id: String(getVal(row, ['id']) || MASTER_ADMIN_ID),
+            name: String(getVal(row, ['name']) || 'مالک'),
+            email: String(getVal(row, ['email']) || '').trim().toLowerCase(),
+            pin: String(getVal(row, ['pin']) || '').trim(),
+            bot_token: String(getVal(row, ['bot_token', 'bottoken']) || '').trim(),
+            chat_id: String(getVal(row, ['chat_id', 'chatid']) || '').trim()
+          };
+        }
+      } catch (e) {
+        console.log("خطا در دریافت تنظیمات مالک از دیتابیس:", e);
+      }
+      return ownerSettings;
+    }
+
+    function isMasterUser(adminObj = currentLoggedInAdmin) {
+      if (!adminObj) return false;
+      if (String(adminObj.id) === MASTER_ADMIN_ID) return true;
+      if (ownerSettings.email && adminObj.email && String(adminObj.email).trim().toLowerCase() === ownerSettings.email.toLowerCase()) {
+        return true;
+      }
+      return false;
+    }
+
+    // قانون تعلق تراکنش‌های خالی/بدون سازنده به مالک
+    function isEmptyOrOwnerCreator(creatorVal) {
+      const val = String(creatorVal === undefined || creatorVal === null ? '' : creatorVal).trim().toLowerCase();
+      return val === "" || val === "null" || val === "undefined" || val === MASTER_ADMIN_ID.toLowerCase();
+    }
 
     function loadDashboardMenuOrder() {
       let savedOrder = localStorage.getItem("dashboardMenuOrder");
@@ -1020,7 +1083,7 @@
       if (!container) return;
       container.innerHTML = "";
 
-      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let isMaster = isMasterUser();
 
       dashboardMenuItems.forEach((item, index) => {
         if (item.type === 'superadmin' && !isMaster) return;
@@ -1110,13 +1173,16 @@
     }
 
     function getCurrentAdminTokenAndChat() {
-      if (!currentLoggedInAdmin) return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
-      if (currentLoggedInAdmin.id === MASTER_ADMIN_ID) {
-        return { token: MASTER_ADMIN_TOKEN, chatId: MASTER_ADMIN_CHATID };
+      const fallbackToken = ownerSettings.bot_token || "";
+      const fallbackChat = ownerSettings.chat_id || "";
+
+      if (!currentLoggedInAdmin) return { token: fallbackToken, chatId: fallbackChat };
+      if (isMasterUser(currentLoggedInAdmin)) {
+        return { token: fallbackToken, chatId: fallbackChat };
       }
       let found = allAdmins.find(a => String(getVal(a, ['AdminID', 'adminid', 'id'])) === String(currentLoggedInAdmin.id));
-      let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || MASTER_ADMIN_TOKEN) : MASTER_ADMIN_TOKEN;
-      let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || MASTER_ADMIN_CHATID) : MASTER_ADMIN_CHATID;
+      let token = found ? String(getVal(found, ['BotToken', 'bottoken', 'Token', 'token']) || fallbackToken) : fallbackToken;
+      let chatId = found ? String(getVal(found, ['ChatID', 'chatid']) || fallbackChat) : fallbackChat;
       return { token, chatId };
     }
 
@@ -1152,14 +1218,17 @@
         let val = totalsByCurrency[curr];
         parts.push(`▫️ ${curr}: ${formatEnMoney(val)}`);
       }
-      return parts.join('\n') || 'صفر';
+      return parts.join('
+') || 'صفر';
     }
 
-    function openMasterSettingsModal() {
-      document.getElementById("masterEmailInput").value = MASTER_ADMIN_EMAIL;
-      document.getElementById("masterPinInput").value = MASTER_ADMIN_PIN;
-      document.getElementById("masterTokenInput").value = MASTER_ADMIN_TOKEN;
-      document.getElementById("masterChatIdInput").value = MASTER_ADMIN_CHATID;
+    async function openMasterSettingsModal() {
+      await fetchOwnerSettingsFromDB();
+      document.getElementById("masterNameInput").value = ownerSettings.name || "";
+      document.getElementById("masterEmailInput").value = ownerSettings.email || "";
+      document.getElementById("masterPinInput").value = ownerSettings.pin || "";
+      document.getElementById("masterTokenInput").value = ownerSettings.bot_token || "";
+      document.getElementById("masterChatIdInput").value = ownerSettings.chat_id || "";
       document.getElementById("masterSettingsModal").style.display = "flex";
       pushModalHistory("masterSettingsModal");
     }
@@ -1168,9 +1237,10 @@
       document.getElementById("masterSettingsModal").style.display = "none";
     }
 
-    function saveMasterSettings() {
+    async function saveMasterSettings() {
+      let name = document.getElementById("masterNameInput").value.trim() || "مالک";
       let email = document.getElementById("masterEmailInput").value.trim().toLowerCase();
-      let pin = document.getElementById("masterPinInput").value.trim();
+      let pin = formatEnNum(document.getElementById("masterPinInput").value.trim());
       let token = document.getElementById("masterTokenInput").value.trim();
       let chatId = formatEnNum(document.getElementById("masterChatIdInput").value.trim());
 
@@ -1179,18 +1249,39 @@
         return;
       }
 
-      MASTER_ADMIN_EMAIL = email;
-      MASTER_ADMIN_PIN = pin;
-      MASTER_ADMIN_TOKEN = token;
-      MASTER_ADMIN_CHATID = chatId;
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) { indicator.innerText = "🔄 در حال ذخیره تنظیمات در دیتابیس..."; indicator.style.display = "block"; }
 
-      localStorage.setItem("masterEmail", email);
-      localStorage.setItem("masterPin", pin);
-      localStorage.setItem("masterToken", token);
-      localStorage.setItem("masterChatId", chatId);
+      const targetId = ownerSettings.id || MASTER_ADMIN_ID;
+      const payload = {
+        id: targetId,
+        name: name,
+        email: email,
+        pin: pin,
+        bot_token: token,
+        chat_id: chatId
+      };
+
+      const { error } = await _supabase
+        .from('owner_settings')
+        .upsert(payload, { onConflict: 'id' });
+
+      if (indicator) indicator.style.display = "none";
+
+      if (error) {
+        alert("خطا در ذخیره تنظیمات مالک در دیتابیس: " + error.message);
+        return;
+      }
+
+      ownerSettings = { ...payload };
+      if (currentLoggedInAdmin && isMasterUser(currentLoggedInAdmin)) {
+        currentLoggedInAdmin.name = name;
+        currentLoggedInAdmin.email = email;
+        localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
+      }
 
       closeMasterSettingsModal();
-      alert("✅ تنظیمات مالک با موفقیت ذخیره شد!");
+      alert("✅ تنظیمات مالک با موفقیت در دیتابیس ذخیره شد!");
     }
 
     function getAccountLiveBalanceText(accId) {
@@ -1211,9 +1302,14 @@
         let deb = currs[curr].debit;
         let net = cred - deb;
         let status = net > 0 ? `بستانکار (+): ${formatEnMoney(Math.abs(net))} ${curr}` : (net < 0 ? `بدهکار (-): ${formatEnMoney(Math.abs(net))} ${curr}` : `تسویه کامل (0)`);
-        textParts.push(`🔹 *واحد ارز: ${curr}*\n  ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}\n  ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}\n  📌 *وضعیت مانده: ${status}*`);
+        textParts.push(`🔹 *واحد ارز: ${curr}*
+  ▫️ مجموع بستانکاری: ${formatEnMoney(cred)} ${curr}
+  ▫️ مجموع بدهکاری: ${formatEnMoney(deb)} ${curr}
+  📌 *وضعیت مانده: ${status}*`);
       }
-      return textParts.join('\n\n') || 'تراکنشی ثبت نشده است';
+      return textParts.join('
+
+') || 'تراکنشی ثبت نشده است';
     }
 
     function pushModalHistory(modalId) {
@@ -1221,8 +1317,9 @@
     }
 
     window.onload = async function() {
-      await ensureSupabaseClient();
       loadDashboardMenuOrder();
+      await fetchOwnerSettingsFromDB();
+
       let savedSession = localStorage.getItem("adminAuthSessionData");
       let savedArchive = localStorage.getItem("phoneArchiveData");
       if (savedArchive) {
@@ -1263,15 +1360,25 @@
 
     async function handleLogin() {
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-      const pin = document.getElementById("loginPin").value.trim();
+      const pin = formatEnNum(document.getElementById("loginPin").value.trim());
 
       if (!email || !pin) {
         alert("لطفاً ایمیل و رمز عبور را وارد کنید.");
         return;
       }
 
-      if (email === MASTER_ADMIN_EMAIL.toLowerCase() && pin === MASTER_ADMIN_PIN) {
-        currentLoggedInAdmin = { id: MASTER_ADMIN_ID, name: "محمد شریف کریمی (مالک)", email: MASTER_ADMIN_EMAIL };
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) { indicator.innerText = "🔄 در حال بررسی اطلاعات ورود..."; indicator.style.display = "block"; }
+
+      await fetchOwnerSettingsFromDB();
+
+      if (ownerSettings.email && ownerSettings.pin && email === ownerSettings.email.toLowerCase() && pin === formatEnNum(ownerSettings.pin)) {
+        if (indicator) indicator.style.display = "none";
+        currentLoggedInAdmin = {
+          id: ownerSettings.id || MASTER_ADMIN_ID,
+          name: ownerSettings.name || "مالک",
+          email: ownerSettings.email
+        };
         localStorage.setItem("adminAuthSessionData", JSON.stringify(currentLoggedInAdmin));
         
         document.getElementById("authOverlay").style.display = "none";
@@ -1282,14 +1389,13 @@
       }
 
       try {
-        const client = await ensureSupabaseClient();
-        if (!client) { alert('ارتباط با تنظیمات سرور برقرار نشد.'); return; }
-        const { data: adminsData } = await client.from('admins').select('*');
+        const { data: adminsData } = await _supabase.from('admins').select('*');
+        if (indicator) indicator.style.display = "none";
         if (adminsData) {
           allAdmins = adminsData;
           let foundAdmin = adminsData.find(adm => {
             let admEmail = String(getVal(adm, ['Email', 'email']) || '').trim().toLowerCase();
-            let admPin = String(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '').trim();
+            let admPin = formatEnNum(String(getVal(adm, ['Pin', 'pin', 'Password', 'password']) || '').trim());
             return admEmail === email && admPin === pin;
           });
 
@@ -1308,6 +1414,7 @@
           }
         }
       } catch(e) {
+        if (indicator) indicator.style.display = "none";
         console.log("خطا در بررسی ادمین‌ها:", e);
       }
 
@@ -1411,10 +1518,10 @@
       }
 
       try {
-        const client = await ensureSupabaseClient();
-        if (!client) { if (indicator) indicator.style.display = 'none'; return; }
+        await fetchOwnerSettingsFromDB();
+
         const [accRes, txRes, opRes, admRes] = await Promise.all([
-          client.from('accounts').select('*'),
+          _supabase.from('accounts').select('*'),
           _supabase.from('transactions').select('*'),
           _supabase.from('operation_types').select('*'),
           _supabase.from('admins').select('*')
@@ -1422,15 +1529,15 @@
 
         if (admRes.data) allAdmins = admRes.data;
 
-        let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+        let isMaster = isMasterUser();
         let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
 
         let rawAccounts = accRes.data || [];
         
         if (isMaster) {
           allAccounts = rawAccounts.filter(acc => {
-            let creator = String(getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']) || '').trim();
-            return creator === MASTER_ADMIN_ID || creator === "" || creator === "master_owner" || creator === "null";
+            let creator = getVal(acc, ['CreatedBy', 'createdby', 'AdminID', 'adminid']);
+            return isEmptyOrOwnerCreator(creator);
           });
         } else {
           allAccounts = rawAccounts.filter(acc => {
@@ -1444,8 +1551,13 @@
         let rawTransactions = txRes.data || [];
         let authorizedAccountIds = allAccounts.map(a => String(getVal(a, ['AccountID', 'accountid'])));
         
+        // در هر جایی که جدول تراکنش باشد، اگر سازنده/ادمین آن خالی باشد نیز مربوط به مالک می‌شود
         allTransactions = rawTransactions.filter(tx => {
           let txAccId = String(getVal(tx, ['AccountID', 'accountid']));
+          let txCreator = getVal(tx, ['CreatedBy', 'createdby', 'AdminID', 'adminid']);
+          if (isMaster && isEmptyOrOwnerCreator(txCreator)) {
+            return true;
+          }
           return authorizedAccountIds.includes(txAccId);
         });
 
@@ -1611,27 +1723,13 @@
       localStorage.setItem("phoneArchiveData", JSON.stringify(phoneArchiveList));
     }
 
-    function getVal(obj, keys) {
-      if(!obj) return '';
-      for (let k of keys) {
-        if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
-        let lower = k.toLowerCase();
-        for (let prop in obj) {
-          if (prop.toLowerCase() === lower && obj[prop] !== undefined && obj[prop] !== null && obj[prop] !== "") return obj[prop];
-        }
-      }
-      return '';
-    }
-
     async function uploadFileToSupabase(file, bucketName) {
       if (!file) return null;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const client = await ensureSupabaseClient();
-      if (!client) return null;
-      const { error } = await client.storage.from(bucketName).upload(fileName, file);
+      const { error } = await _supabase.storage.from(bucketName).upload(fileName, file);
       if (error) return null;
-      const { data: publicUrlData } = client.storage.from(bucketName).getPublicUrl(fileName);
+      const { data: publicUrlData } = _supabase.storage.from(bucketName).getPublicUrl(fileName);
       return publicUrlData.publicUrl;
     }
 
@@ -1666,7 +1764,7 @@
         populateOpTypeSelect();
         renderOpTypesList();
         input.value = "";
-        await (await ensureSupabaseClient()).from('operation_types').insert([{ title: title }]);
+        await _supabase.from('operation_types').insert([{ title: title }]);
       }
     }
 
@@ -1674,7 +1772,7 @@
       customOpTypes = customOpTypes.filter(o => o !== title);
       populateOpTypeSelect();
       renderOpTypesList();
-      await (await ensureSupabaseClient()).from('operation_types').delete().eq('title', title);
+      await _supabase.from('operation_types').delete().eq('title', title);
     }
 
     function openAdminManagerModal() {
@@ -1768,36 +1866,45 @@
       };
 
       if (editId) {
-        const { error } = await (await ensureSupabaseClient()).from('admins').update(payload).eq('AdminID', editId);
+        const { error } = await _supabase.from('admins').update(payload).eq('AdminID', editId);
         if (error) { alert("خطا در ویرایش: " + error.message); return; }
         alert("✅ اطلاعات ادمین با موفقیت ویرایش شد!");
       } else {
-        const { error } = await (await ensureSupabaseClient()).from('admins').insert([payload]);
+        const { error } = await _supabase.from('admins').insert([payload]);
         if (error) { alert("خطا در ایجاد ادمین: " + error.message); return; }
         alert("✅ ادمین جدید با موفقیت ایجاد شد!");
 
         if (botToken && chatId) {
           let siteLink = "https://karimi-trust-app.vercel.app/";
-          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨\n\n` +
-                           `سلام *${name}* عزیز،\n` +
-                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.\n\n` +
-                           `📧 ایمیل ورود: \`${email}\`\n` +
-                           `🔑 رمز عبور: \`${pin}\`\n\n` +
-                           `🌐 لینک ورود به سایت:\n${siteLink}`;
+          let welcomeMsg = `✨ *تبریک، حساب مدیریتی شما ایجاد شد* ✨
+
+` +
+                           `سلام *${name}* عزیز،
+` +
+                           `پنل مدیریت امانت‌داری کریمی برای شما فعال گردید.
+
+` +
+                           `📧 ایمیل ورود: \`${email}\`
+` +
+                           `🔑 رمز عبور: \`${pin}\`
+
+` +
+                           `🌐 لینک ورود به سایت:
+${siteLink}`;
           sendTelegramMessage(botToken, chatId, welcomeMsg);
         }
       }
 
       cancelEditAdmin();
-      const { data } = await (await ensureSupabaseClient()).from('admins').select('*');
+      const { data } = await _supabase.from('admins').select('*');
       if (data) allAdmins = data;
       renderAdminsList();
     }
 
     async function deleteAdminAccount(admId) {
       if (!confirm("آیا از حذف دسترسی این ادمین مطمئن هستید؟")) return;
-      await (await ensureSupabaseClient()).from('admins').delete().eq('AdminID', admId);
-      const { data } = await (await ensureSupabaseClient()).from('admins').select('*');
+      await _supabase.from('admins').delete().eq('AdminID', admId);
+      const { data } = await _supabase.from('admins').select('*');
       if (data) allAdmins = data;
       renderAdminsList();
     }
@@ -1860,11 +1967,11 @@
       const summaryBox = document.getElementById("phoneDirectorySummary");
       container.innerHTML = "";
 
-      let isMaster = currentLoggedInAdmin && currentLoggedInAdmin.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+      let isMaster = isMasterUser();
       let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : "";
 
       let filteredList = list.filter(item => {
-        if (isMaster) return true;
+        if (isMaster) return isEmptyOrOwnerCreator(item.creator);
         let creator = String(item.creator || '').trim();
         return creator === String(currentAdminId);
       });
@@ -2114,8 +2221,9 @@
 
           let txId = String(getVal(tx, ['TransID', 'transid']) || getVal(tx, ['id']) || '');
           let accId = String(getVal(tx, ['AccountID', 'accountid']) || '');
+          let txCreator = getVal(tx, ['CreatedBy', 'createdby', 'AdminID', 'adminid']);
           let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === accId);
-          let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "مشتری نامشخص";
+          let accName = acc ? String(getVal(acc, ['Name', 'name'])) : (isEmptyOrOwnerCreator(txCreator) ? (ownerSettings.name || "مالک") : "مشتری نامشخص");
 
           let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
           let curr = String(getVal(tx, ['Currency', 'currency']) || 'AFN').toUpperCase();
@@ -2123,7 +2231,14 @@
           let opType = String(getVal(tx, ['OperationType', 'operationtype']) || 'امانت');
 
           let currentAccTxs = allTransactions
-            .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === accId)
+            .filter(t => {
+              let tAcc = String(getVal(t, ['AccountID', 'accountid']) || '');
+              let tCre = getVal(t, ['CreatedBy', 'createdby', 'AdminID', 'adminid']);
+              if (!accId && isEmptyOrOwnerCreator(txCreator)) {
+                return !tAcc && isEmptyOrOwnerCreator(tCre);
+              }
+              return tAcc === accId;
+            })
             .slice()
             .sort((a, b) => {
               let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
@@ -2160,7 +2275,7 @@
               <td style="text-align:center; font-weight:900; color:#334155;">${rowNum}</td>
               <td style="text-align:right;">
                 <div style="font-weight:900; color:var(--primary-dark); font-size:0.76rem; overflow:hidden; text-overflow:ellipsis;">${accName}</div>
-                <div style="font-size:0.65rem; color:#475569;">${formatEnNum(accId)}</div>
+                <div style="font-size:0.65rem; color:#475569;">${formatEnNum(accId || (ownerSettings.id || MASTER_ADMIN_ID))}</div>
               </td>
               <td style="text-align:center;">
                 <div style="color:${dirColor}; font-weight:900; font-size:0.72rem;">${dir}</div>
@@ -2282,8 +2397,9 @@
 
       filteredTxs.forEach((tx) => {
         let accId = formatEnNum(getVal(tx, ['AccountID', 'accountid']) || '');
+        let txCreator = getVal(tx, ['CreatedBy', 'createdby', 'AdminID', 'adminid']);
         let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-        let accName = acc ? String(getVal(acc, ['Name', 'name'])) : "نامشخص";
+        let accName = acc ? String(getVal(acc, ['Name', 'name'])) : (isEmptyOrOwnerCreator(txCreator) ? (ownerSettings.name || "مالک") : "نامشخص");
         let amt = formatEnMoney(getVal(tx, ['Amount', 'amount']));
         let curr = String(getVal(tx, ['Currency', 'currency']) || '').toUpperCase();
         let desc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
@@ -2644,7 +2760,7 @@
       }
 
       let accountId = editId ? editId : "ACC-" + formatEnNum(Math.floor(100000 + Math.random() * 900000));
-      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : MASTER_ADMIN_ID;
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : (ownerSettings.id || MASTER_ADMIN_ID);
 
       let oldAcc = editId ? allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(editId)) : null;
       let oldChatId = oldAcc ? formatEnNum(getVal(oldAcc, ['ChatID', 'chatid']) || '').trim() : '';
@@ -2660,21 +2776,32 @@
       };
 
       if (editId) {
-        await (await ensureSupabaseClient()).from('accounts').update(payload).eq('AccountID', editId);
+        await _supabase.from('accounts').update(payload).eq('AccountID', editId);
       } else {
-        await (await ensureSupabaseClient()).from('accounts').insert([payload]);
+        await _supabase.from('accounts').insert([payload]);
         let { token } = getCurrentAdminTokenAndChat();
         if (token && accChatId) {
           let siteLink = "https://karimi-trust-app.vercel.app/";
-          let msg = `✨ *امانت‌داری کریمی* ✨\n\n` +
-                    `حساب شما با موفقیت ایجاد شد.\n` +
-                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.\n` +
-                    `📌 اطلاعات حساب شما:\n` +
-                    `👤 نام: ${accName}\n` +
-                    `🆔 کُد حساب: \`${accountId}\`\n` +
-                    `📞 شماره تماس: ${accPhone || '-'}\n` +
-                    `💬 چت‌آیدی: \`${accChatId}\`\n\n` +
-                    `🌐 لینک بررسی حساب:\n${siteLink}`;
+          let msg = `✨ *امانت‌داری کریمی* ✨
+
+` +
+                    `حساب شما با موفقیت ایجاد شد.
+` +
+                    `مشتری گرامی *${accName}*، از اعتماد شما سپاسگزاریم.
+` +
+                    `📌 اطلاعات حساب شما:
+` +
+                    `👤 نام: ${accName}
+` +
+                    `🆔 کُد حساب: \`${accountId}\`
+` +
+                    `📞 شماره تماس: ${accPhone || '-'}
+` +
+                    `💬 چت‌آیدی: \`${accChatId}\`
+
+` +
+                    `🌐 لینک بررسی حساب:
+${siteLink}`;
           sendTelegramMessage(token, accChatId, msg);
         }
       }
@@ -2685,7 +2812,11 @@
         let { token } = getCurrentAdminTokenAndChat();
         let accTxs = allTransactions.filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accountId));
         if (token && accChatId) {
-          let historyHeader = `✨ *امانت‌داری کریمی* ✨\n\nسلام *${accName}* عزیز،\nچت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:\n────────────────────────`;
+          let historyHeader = `✨ *امانت‌داری کریمی* ✨
+
+سلام *${accName}* عزیز،
+چت‌آیدی تلگرام شما روی سیستم ثبت شد. در ادامه کل تاریخچه و سابقه معاملات شما ارسال می‌گردد:
+────────────────────────`;
           await sendTelegramMessage(token, accChatId, historyHeader);
 
           for (let tx of accTxs) {
@@ -2696,12 +2827,17 @@
             let tDate = formatEnNum(getVal(tx, ['Date', 'date']) || '').split('T')[0];
             let tDesc = String(getVal(tx, ['Description', 'description']) || '').replaceAll('+', ' ');
 
-            let txLine = `📅 تاریخ: ${tDate}\n🔹 نوع: *${tType}* (${tDir})\n💰 مبلغ: *${tAmt} ${tCurr}*\n📝 شرح: ${tDesc || '-'}\n-------------------`;
+            let txLine = `📅 تاریخ: ${tDate}
+🔹 نوع: *${tType}* (${tDir})
+💰 مبلغ: *${tAmt} ${tCurr}*
+📝 شرح: ${tDesc || '-'}
+-------------------`;
             await sendTelegramMessage(token, accChatId, txLine);
           }
 
           let liveBal = getAccountLiveBalanceText(accountId);
-          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*\n${liveBal}`;
+          let balMsg = `📊 *بیلان نهایی و وضعیت فعلی حساب شما:*
+${liveBal}`;
           await sendTelegramMessage(token, accChatId, balMsg);
         }
       }
@@ -2722,8 +2858,8 @@
 
       currentAccountId = null;
       switchView('viewAccounts');
-      await (await ensureSupabaseClient()).from('accounts').delete().eq('AccountID', accIdToDelete);
-      await (await ensureSupabaseClient()).from('transactions').delete().eq('AccountID', accIdToDelete);
+      await _supabase.from('accounts').delete().eq('AccountID', accIdToDelete);
+      await _supabase.from('transactions').delete().eq('AccountID', accIdToDelete);
       await loadDataFromSupabase(true);
       alert("✅ حساب با موفقیت حذف شد.");
     }
@@ -2911,8 +3047,9 @@
       if(!tx) return;
 
       let accId = String(getVal(tx, ['AccountID', 'accountid']) || currentAccountId);
+      let txCreator = getVal(tx, ['CreatedBy', 'createdby', 'AdminID', 'adminid']);
       let acc = allAccounts.find(a => String(getVal(a, ['AccountID', 'accountid'])) === String(accId));
-      let accName = acc ? String(getVal(acc, ['Name', 'name'])) : currentAccountName;
+      let accName = acc ? String(getVal(acc, ['Name', 'name'])) : (currentAccountName || (isEmptyOrOwnerCreator(txCreator) ? (ownerSettings.name || "مالک") : "مشتری"));
 
       let dir = String(getVal(tx, ['Direction', 'direction']) || '');
       let amtNum = parseFloat(getVal(tx, ['Amount', 'amount'])) || 0;
@@ -2931,7 +3068,14 @@
       let receiptHtml = receiptUrl ? `<div style="margin-top:8px;"><b>عکس رسید:</b><br><a href="${receiptUrl}" target="_blank"><img src="${receiptUrl}" class="receipt-img-preview"></a></div>` : '';
 
       let accountTxs = allTransactions
-        .filter(t => String(getVal(t, ['AccountID', 'accountid'])) === String(accId))
+        .filter(t => {
+          let tAcc = String(getVal(t, ['AccountID', 'accountid']) || '');
+          let tCre = getVal(t, ['CreatedBy', 'createdby', 'AdminID', 'adminid']);
+          if (!accId && isEmptyOrOwnerCreator(txCreator)) {
+            return !tAcc && isEmptyOrOwnerCreator(tCre);
+          }
+          return tAcc === String(accId);
+        })
         .slice()
         .sort((a, b) => {
           let da = new Date(getVal(a, ['Date', 'date', 'created_at']) || 0).getTime();
@@ -3108,6 +3252,7 @@
         }
       }
 
+      let currentAdminId = currentLoggedInAdmin ? currentLoggedInAdmin.id : (ownerSettings.id || MASTER_ADMIN_ID);
       let transIdToSave = editTransId || ("TX-" + formatEnNum(Math.floor(10000000 + Math.random() * 90000000)));
       const payload = {
         TransID: transIdToSave,
@@ -3118,13 +3263,14 @@
         OperationType: opType,
         Description: desc,
         receipt_url: receiptUrl,
-        Date: dateIsoString
+        Date: dateIsoString,
+        CreatedBy: String(currentAdminId)
       };
 
       if (editTransId) {
-        await (await ensureSupabaseClient()).from('transactions').update(payload).eq('TransID', editTransId);
+        await _supabase.from('transactions').update(payload).eq('TransID', editTransId);
       } else {
-        await (await ensureSupabaseClient()).from('transactions').insert([payload]);
+        await _supabase.from('transactions').insert([payload]);
       }
 
       await loadDataFromSupabase(false);
@@ -3144,16 +3290,40 @@
           if (customerChatId) {
             let isTransferOrRemittance = (opType === "حواله" || opType === "انتقال");
             if (isTransferOrRemittance) {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})\n📅 تاریخ: ${displayDateFormatted}`;
-              let msg2 = `📜 *رسید انتقال:*\n${desc || 'بدون مشخصات'}\n\n⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
-              let msg3 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+              let msg1 = `✨ *امانت‌داری کریمی* ✨
+
+محترم *${currentAccountName}*،
+${actionTitle}
+
+💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}* (${selectedDirectionValue})
+📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📜 *رسید انتقال:*
+${desc || 'بدون مشخصات'}
+
+⚠️ *برای گرفتن پول داشتن اسناد الزامی است*`;
+              let msg3 = `📊 *بیلان به‌روز حساب شما:*
+${liveBalance}
+
+🌐 لینک بررسی آنلاین:
+${siteLink}`;
               
               await sendTelegramMessage(token, customerChatId, msg1);
               await sendTelegramMessage(token, customerChatId, msg2);
               await sendTelegramMessage(token, customerChatId, msg3);
             } else {
-              let msg1 = `✨ *امانت‌داری کریمی* ✨\n\nمحترم *${currentAccountName}*،\n${actionTitle}\n\n🔹 نوع: *${opType}* (${selectedDirectionValue})\n💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n📅 تاریخ: ${displayDateFormatted}`;
-              let msg2 = `📊 *بیلان به‌روز حساب شما:*\n${liveBalance}\n\n🌐 لینک بررسی آنلاین:\n${siteLink}`;
+              let msg1 = `✨ *امانت‌داری کریمی* ✨
+
+محترم *${currentAccountName}*،
+${actionTitle}
+
+🔹 نوع: *${opType}* (${selectedDirectionValue})
+💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
+📅 تاریخ: ${displayDateFormatted}`;
+              let msg2 = `📊 *بیلان به‌روز حساب شما:*
+${liveBalance}
+
+🌐 لینک بررسی آنلاین:
+${siteLink}`;
 
               await sendTelegramMessage(token, customerChatId, msg1);
               await sendTelegramMessage(token, customerChatId, msg2);
@@ -3162,14 +3332,24 @@
         }
 
         if (adminChatId) {
-          let adminMsg = `🔔 *گزارش مدیریتی سیستم*\n\n` +
-                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
-                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})\n` +
-                         `${actionTitle} (${opType} - ${selectedDirectionValue})\n` +
-                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*\n` +
-                         `📅 تاریخ: ${displayDateFormatted}\n` +
-                         `📝 شرح: ${desc || '-'}\n\n` +
-                         `📊 *موجودی کل سیستم به تفکیک ارز:*\n${globalSystemBalance}`;
+          let adminMsg = `🔔 *گزارش مدیریتی سیستم*
+
+` +
+                         `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
+` +
+                         `👥 مشتری: *${currentAccountName}* (کُد: ${formatEnNum(currentAccountId)})
+` +
+                         `${actionTitle} (${opType} - ${selectedDirectionValue})
+` +
+                         `💰 مبلغ: *${formatEnMoney(amt)} ${selectedCurrencyValue}*
+` +
+                         `📅 تاریخ: ${displayDateFormatted}
+` +
+                         `📝 شرح: ${desc || '-'}
+
+` +
+                         `📊 *موجودی کل سیستم به تفکیک ارز:*
+${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminMsg);
         }
       }
@@ -3181,7 +3361,7 @@
       let targetId = txIdToDelete || selectedTxId;
       let tx = allTransactions.find(t => String(getVal(t, ['TransID', 'transid']) || getVal(t, ['id'])) === String(targetId));
       
-      const { error } = await (await ensureSupabaseClient()).from('transactions').delete().eq('TransID', targetId);
+      const { error } = await _supabase.from('transactions').delete().eq('TransID', targetId);
       if (error) {
         alert("خطا در حذف تراکنش: " + error.message);
         return;
@@ -3204,20 +3384,33 @@
         if (acc) {
           let customerChatId = formatEnNum(getVal(acc, ['ChatID', 'chatid']) || '').trim();
           if (customerChatId) {
-            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*\n\n` +
-                         `محترم *${currentAccountName}*،\n` +
-                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.\n\n` +
-                         `📊 *بیلان جدید حساب شما:*\n${liveBalance}`;
+            let delMsg = `🗑️ *اخطار: تراکنش شما حذف شد!*
+
+` +
+                         `محترم *${currentAccountName}*،
+` +
+                         `یک تراکنش با مبلغ *${tAmt} ${tCurr}* از حساب شما حذف گردید.
+
+` +
+                         `📊 *بیلان جدید حساب شما:*
+${liveBalance}`;
             sendTelegramMessage(token, customerChatId, delMsg);
           }
         }
 
         if (adminChatId) {
-          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*\n\n` +
-                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}\n` +
-                            `👥 مشتری: *${currentAccountName}*\n` +
-                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*\n\n` +
-                            `📊 *موجودی کل سیستم:*\n${globalSystemBalance}`;
+          let adminDelMsg = `🗑️ *گزارش حذف تراکنش (مدیریتی)*
+
+` +
+                            `👤 ادمین: ${currentLoggedInAdmin ? currentLoggedInAdmin.name : 'مدیر'}
+` +
+                            `👥 مشتری: *${currentAccountName}*
+` +
+                            `مبلغ حذف‌شده: *${tAmt} ${tCurr}*
+
+` +
+                            `📊 *موجودی کل سیستم:*
+${globalSystemBalance}`;
           sendTelegramMessage(token, adminChatId, adminDelMsg);
         }
       }
@@ -3401,7 +3594,8 @@
       let liveBalText = getAccountLiveBalanceText(currentAccountId);
       lines.push(
         `────────────────────────`,
-        `📊 *مانده نهایی حساب شما:*\n${liveBalText}`,
+        `📊 *مانده نهایی حساب شما:*
+${liveBalText}`,
         `────────────────────────`,
         `با تشکر از اعتماد شما 🙏`
       );
