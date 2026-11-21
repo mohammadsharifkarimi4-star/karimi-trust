@@ -14,27 +14,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      /* پالت الهام‌گرفته از کیف‌پول مالی با سفیدی کنترل‌شده و طیف سبز زمردی و سنگ مرمر ملایم */
-      --bg-canvas: #e9efe9;
-      --bg-canvas-grad: linear-gradient(160deg, #e5ede6 0%, #edf2ed 45%, #e3ebe6 100%);
-      --surface-soft: #f4f7f4;
-      --surface-card: #f8faf8;
+        :root {
+      /* پالت الهام‌گرفته از تصاویر کیف‌پول: پس‌زمینه خاکستری-سبز بسیار ملایم، کارت‌های سفید برجسته و سبز زمردی */
+      --bg-canvas: #eef2ef;
+      --bg-canvas-grad: linear-gradient(180deg, #e7efe9 0%, #f2f5f3 48%, #ebf0ec 100%);
+      --surface-soft: #f5f7f6;
+      --surface-card: #ffffff;
       --surface-elevated: #ffffff;
-      --surface-tint-green: #e3f0e7;
-      --surface-tint-mint: #ebf4ee;
+      --surface-tint-green: #e3f3ea;
+      --surface-tint-mint: #eef7f1;
 
       --emerald-primary: #14965c;
       --emerald-dark: #0c6e43;
       --emerald-deep: #084d2e;
       --emerald-soft: rgba(20, 150, 92, 0.12);
-      --emerald-glow: 0 10px 26px rgba(12, 110, 67, 0.22);
+      --emerald-glow: 0 8px 22px rgba(12, 110, 67, 0.18);
 
       --ink-primary: #13221b;
-      --ink-secondary: #46584f;
-      --ink-muted: #6d7f76;
-      --border-subtle: #d4e0d8;
-      --border-card: #dce7e0;
+      --ink-secondary: #495a51;
+      --ink-muted: #718279;
+      --border-subtle: #d8e2dc;
+      --border-card: #e3ebe6;
 
       --credit-green: #0d8a52;
       --credit-bg: #e7f6ee;
@@ -51,14 +51,13 @@
       --whatsapp-green: #22c55e;
       --whatsapp-dark: #128c7e;
 
-      --shadow-card: 0 6px 20px rgba(19, 34, 27, 0.06);
-      --shadow-float: 0 12px 28px rgba(19, 34, 27, 0.14);
-      --radius-xl: 24px;
+      --shadow-card: 0 4px 16px rgba(19, 34, 27, 0.05);
+      --shadow-float: 0 10px 24px rgba(19, 34, 27, 0.12);
+      --radius-xl: 22px;
       --radius-lg: 18px;
       --radius-md: 14px;
       --radius-sm: 10px;
     }
-
 
     * {
       box-sizing: border-box;
@@ -71,7 +70,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-
     html, body {
       background: var(--bg-canvas);
       background-image: var(--bg-canvas-grad);
@@ -82,15 +80,13 @@
       width: 100%;
       max-width: 100vw;
       overflow-x: hidden;
-      padding-bottom: 88px;
+      padding-bottom: 84px;
     }
-
 
     @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
 
     @keyframes softPulse {
       0% { box-shadow: 0 0 0 0 rgba(20, 150, 92, 0.35); }
@@ -98,8 +94,7 @@
       100% { box-shadow: 0 0 0 0 rgba(20, 150, 92, 0); }
     }
 
-
-    /* صفحه ورود الهام‌گرفته از تم سبز ملایم */
+    /* صفحه ورود */
     #authOverlay {
       position: fixed;
       inset: 0;
@@ -110,7 +105,6 @@
       z-index: 9999;
       padding: 16px;
     }
-
 
     .auth-card {
       background: var(--surface-card);
@@ -126,7 +120,6 @@
       animation: fadeSlideIn 0.28s ease-out;
     }
 
-
     .auth-brand-badge {
       width: 56px;
       height: 56px;
@@ -141,14 +134,12 @@
       box-shadow: var(--emerald-glow);
     }
 
-
     .auth-title {
       font-size: 1.2rem;
       font-weight: 900;
       text-align: center;
       color: var(--ink-primary);
     }
-
 
     .auth-subtitle {
       font-size: 0.8rem;
@@ -157,7 +148,6 @@
       margin-top: -6px;
     }
 
-
     .container {
       max-width: 680px;
       width: 100%;
@@ -165,7 +155,6 @@
       margin: 0 auto;
       padding: 0;
     }
-
 
     .card {
       background: var(--surface-card);
@@ -178,8 +167,7 @@
       animation: fadeSlideIn 0.22s ease-out;
     }
 
-
-    /* هدر بالای صفحات داخلی و داشبورد */
+    /* هدر بالای صفحات داخلی */
     .card-header-styled {
       background: linear-gradient(135deg, var(--emerald-dark) 0%, var(--emerald-primary) 100%);
       color: #ffffff;
@@ -191,9 +179,8 @@
       align-items: center;
       gap: 8px;
       box-shadow: var(--emerald-glow);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.22);
     }
-
 
     .card-header-styled h3 {
       color: #ffffff !important;
@@ -203,14 +190,12 @@
       line-height: 1.35;
     }
 
-
-    /* هدر ویژه داشبورد شبیه کارت کیف‌پول تصویر */
-    /* --- هدر و کارت شاخص کیف‌پول --- */
+    /* هدر کاربری و کارت شاخص کیف‌پول شبیه تصویر اول و سوم */
     .wallet-top-bar {
-      background: var(--surface-tint-mint);
-      border: 1px solid var(--border-subtle);
+      background: #ffffff;
+      border: 1px solid var(--border-card);
       border-radius: var(--radius-lg);
-      padding: 12px 14px;
+      padding: 11px 13px;
       margin-bottom: 12px;
       display: flex;
       align-items: center;
@@ -219,7 +204,6 @@
       box-shadow: var(--shadow-card);
     }
 
-
     .wallet-user-info {
       display: flex;
       align-items: center;
@@ -227,32 +211,28 @@
       min-width: 0;
     }
 
-
     .wallet-avatar-circle {
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
+      background: var(--emerald-primary);
       color: #ffffff;
       font-weight: 900;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(20, 150, 92, 0.25);
     }
 
-
     .wallet-greeting {
-      font-size: 0.74rem;
-      color: var(--ink-secondary);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
       font-weight: 700;
     }
 
-
     .wallet-brand-name {
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       font-weight: 900;
       color: var(--ink-primary);
       white-space: nowrap;
@@ -260,54 +240,51 @@
       text-overflow: ellipsis;
     }
 
-
+    /* کارت اصلی موجودی / کیف‌پول با هلال و واترمارک شبیه تصویر */
     .wallet-hero-card {
-      background: linear-gradient(135deg, #d7ede0 0%, #e7f3ec 60%, #dcebe2 100%);
-      border: 1.5px solid #b9dac7;
-      border-radius: var(--radius-xl);
-      padding: 16px;
+      background: linear-gradient(145deg, #d7eee0 0%, #e7f4ec 55%, #dcf0e4 100%);
+      border: 1.5px solid #bfe0cc;
+      border-radius: 22px;
+      padding: 15px 16px;
       margin-bottom: 14px;
       position: relative;
       overflow: hidden;
       box-shadow: var(--shadow-card);
     }
 
-
-    .wallet-hero-card::after {
-      content: "ک";
+    .wallet-hero-card::before {
+      content: "";
       position: absolute;
-      left: -14px;
-      bottom: -24px;
-      font-size: 7.5rem;
-      font-weight: 900;
-      color: rgba(20, 150, 92, 0.08);
-      line-height: 1;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      border: 22px solid rgba(20, 150, 92, 0.08);
+      left: -58px;
+      bottom: -68px;
       pointer-events: none;
-      user-select: none;
     }
-
 
     .wallet-hero-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
     }
-
 
     .wallet-pill-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--surface-elevated);
+      background: #ffffff;
       color: var(--emerald-dark);
-      border: 1px solid #c5e0d0;
+      border: 1px solid #c5e2d1;
       padding: 5px 11px;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 900;
     }
-
 
     .wallet-quick-actions {
       display: grid;
@@ -316,9 +293,8 @@
       margin-bottom: 14px;
     }
 
-
     .wallet-quick-tile {
-      background: var(--surface-tint-mint);
+      background: #ffffff;
       border: 1px solid var(--border-card);
       border-radius: var(--radius-md);
       padding: 10px 6px;
@@ -329,15 +305,13 @@
       gap: 6px;
       cursor: pointer;
       transition: transform 0.16s ease, background 0.16s ease;
-      box-shadow: 0 3px 10px rgba(19, 34, 27, 0.04);
+      box-shadow: var(--shadow-card);
     }
-
 
     .wallet-quick-tile:active {
       transform: scale(0.96);
-      background: var(--surface-tint-green);
+      background: var(--surface-tint-mint);
     }
-
 
     .wallet-quick-icon {
       width: 38px;
@@ -352,15 +326,13 @@
       font-weight: 900;
     }
 
-
     .wallet-quick-label {
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       font-weight: 800;
       color: var(--ink-primary);
       text-align: center;
       line-height: 1.25;
     }
-
 
     .section-kicker-row {
       display: flex;
@@ -369,36 +341,32 @@
       margin: 4px 2px 10px;
     }
 
-
     .section-kicker-title {
       font-size: 0.92rem;
       font-weight: 900;
       color: var(--ink-primary);
     }
 
-
     .section-kicker-sub {
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       color: var(--ink-muted);
       font-weight: 700;
     }
 
-
-    /* ردیف‌های منوی داشبورد با سفیدی متعادل */
+    /* کارت‌های منوی داشبورد: یک ردیف افقی کامل، سفید/نرم، با علامت < سمت چپ شبیه تصویر دوم */
     .dashboard-floating-grid {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
       padding: 2px 0 8px;
     }
 
-
     .floating-glass-btn {
-      background: var(--surface-card);
-      border: 1.5px solid var(--border-card);
+      background: #ffffff;
+      border: 1px solid var(--border-card);
       box-shadow: var(--shadow-card);
-      border-radius: var(--radius-lg);
-      padding: 12px 13px;
+      border-radius: 16px;
+      padding: 11px 13px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -407,80 +375,81 @@
       transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
       text-align: right;
       user-select: none;
-      position: relative;
+      width: 100%;
     }
 
-
     .floating-glass-btn:active {
-      transform: scale(0.98);
+      transform: scale(0.985);
       background: var(--surface-tint-mint);
       border-color: var(--emerald-primary);
     }
 
-
     .floating-glass-btn .content-box {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 11px;
       flex: 1;
       min-width: 0;
     }
 
-
     .floating-glass-btn .icon {
-      font-size: 1.35rem;
+      font-size: 1.2rem;
       background: var(--surface-tint-green);
       color: var(--emerald-dark);
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
 
-
     .floating-glass-btn .title {
       font-weight: 900;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--ink-primary);
       line-height: 1.35;
+      flex: 1;
+      min-width: 0;
     }
-
 
     .menu-sort-controls {
       display: flex;
-      gap: 5px;
+      align-items: center;
+      gap: 4px;
       flex-shrink: 0;
     }
 
+    .menu-chevron {
+      color: var(--ink-muted);
+      font-weight: 900;
+      font-size: 0.9rem;
+      padding: 0 4px;
+    }
 
     .sort-btn {
       background: var(--surface-soft);
       border: 1px solid var(--border-subtle);
-      width: 30px;
-      height: 30px;
-      border-radius: 9px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
       font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--ink-primary);
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       transition: all 0.15s;
     }
-
 
     .sort-btn:active {
       background: var(--surface-tint-green);
       transform: scale(0.92);
     }
 
-
     /* کنترل دایره‌ای عملیات در جزئیات حساب */
-    /* --- کنترل دایره‌ای عملیات حساب --- */
     .nokia-nav-container {
       position: relative;
       width: 100%;
@@ -495,7 +464,6 @@
       border-radius: 28px;
       padding: 8px;
     }
-
 
     .nokia-center-btn {
       position: absolute;
@@ -512,7 +480,7 @@
       font-size: 0.78rem;
       text-align: center;
       box-shadow: var(--emerald-glow);
-      border: 3.5px solid var(--surface-elevated);
+      border: 3.5px solid #ffffff;
       cursor: pointer;
       z-index: 10;
       animation: softPulse 2.4s infinite;
@@ -520,14 +488,13 @@
       gap: 2px;
     }
 
-
     .nokia-center-btn:active { transform: scale(0.93); }
 
     .nokia-corner-btn {
       position: absolute;
       width: 122px;
       height: 74px;
-      background: var(--surface-elevated);
+      background: #ffffff;
       border: 1.5px solid var(--border-subtle);
       box-shadow: var(--shadow-card);
       display: flex;
@@ -543,12 +510,10 @@
       gap: 3px;
     }
 
-
     .nokia-corner-btn:active {
       transform: scale(0.95);
       background: var(--surface-tint-green);
     }
-
 
     .nokia-btn-top-right { top: 10px; right: 10px; border-radius: 16px 16px 34px 16px; }
     .nokia-btn-top-left { top: 10px; left: 10px; border-radius: 16px 16px 16px 34px; }
@@ -562,7 +527,6 @@
       margin-bottom: 10px;
     }
 
-
     .form-group { margin-bottom: 12px; }
 
     label {
@@ -573,27 +537,24 @@
       color: var(--ink-primary);
     }
 
-
     input, select, textarea {
       width: 100%;
       padding: 11px 13px;
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-md);
       font-size: 0.92rem;
-      background: var(--surface-elevated);
+      background: #ffffff;
       outline: none;
       transition: all 0.18s ease;
       font-weight: 700;
       color: var(--ink-primary);
     }
 
-
     input:focus, select:focus, textarea:focus {
       border-color: var(--emerald-primary);
       background: #ffffff;
       box-shadow: 0 0 0 3px rgba(20, 150, 92, 0.15);
     }
-
 
     textarea { resize: vertical; min-height: 76px; }
 
@@ -615,13 +576,11 @@
       color: var(--ink-secondary);
     }
 
-
     .btn-select-option.selected-creditor {
       background: var(--credit-bg) !important;
       border-color: var(--credit-green) !important;
       color: var(--credit-green) !important;
     }
-
 
     .btn-select-option.selected-debtor {
       background: var(--debit-bg) !important;
@@ -629,13 +588,11 @@
       color: var(--debit-red) !important;
     }
 
-
     .btn-select-option.selected-currency {
       background: var(--info-bg) !important;
       border-color: var(--info-blue) !important;
       color: var(--info-blue) !important;
     }
-
 
     .btn {
       padding: 10px 14px;
@@ -651,18 +608,17 @@
       justify-content: center;
       gap: 7px;
       width: 100%;
-      box-shadow: 0 4px 14px rgba(12, 110, 67, 0.24);
+      box-shadow: 0 4px 14px rgba(12, 110, 67, 0.22);
       transition: transform 0.14s ease, opacity 0.14s ease;
       user-select: none;
     }
 
-
     .btn:active { transform: scale(0.97); }
-    .btn-danger { background: linear-gradient(135deg, #e04343 0%, #b82929 100%); box-shadow: 0 4px 14px rgba(214, 59, 59, 0.24); }
-    .btn-secondary { background: linear-gradient(135deg, #4b5d54 0%, #33423b 100%); box-shadow: 0 4px 12px rgba(51, 66, 59, 0.2); }
-    .btn-warning { background: linear-gradient(135deg, #e09612 0%, #b87606 100%); color: #ffffff; box-shadow: 0 4px 14px rgba(212, 136, 6, 0.24); }
-    .btn-info { background: linear-gradient(135deg, #1673b8 0%, #0f568c 100%); box-shadow: 0 4px 14px rgba(22, 115, 184, 0.24); }
-    .btn-whatsapp { background: linear-gradient(135deg, #1ea854 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 4px 14px rgba(18, 140, 126, 0.24); }
+    .btn-danger { background: linear-gradient(135deg, #e04343 0%, #b82929 100%); box-shadow: 0 4px 14px rgba(214, 59, 59, 0.22); }
+    .btn-secondary { background: linear-gradient(135deg, #4b5d54 0%, #33423b 100%); box-shadow: 0 4px 12px rgba(51, 66, 59, 0.18); }
+    .btn-warning { background: linear-gradient(135deg, #e09612 0%, #b87606 100%); color: #ffffff; box-shadow: 0 4px 14px rgba(212, 136, 6, 0.22); }
+    .btn-info { background: linear-gradient(135deg, #1673b8 0%, #0f568c 100%); box-shadow: 0 4px 14px rgba(22, 115, 184, 0.22); }
+    .btn-whatsapp { background: linear-gradient(135deg, #1ea854 0%, #128c7e 100%); color: #ffffff; box-shadow: 0 4px 14px rgba(18, 140, 126, 0.22); }
     .btn-sm { padding: 6px 11px; font-size: 0.78rem; width: auto; box-shadow: none; border-radius: 10px; }
 
     .action-btn-modern {
@@ -681,15 +637,14 @@
       user-select: none;
     }
 
-
     .action-btn-modern:active { transform: scale(0.97); }
     .btn-edit-pro { background: linear-gradient(135deg, #e09612 0%, #b87606 100%); color: #ffffff; }
     .btn-delete-pro { background: linear-gradient(135deg, #e04343 0%, #b82929 100%); color: #ffffff; }
 
-    /* دکمه شناور ایجاد حساب جدید (بالای نوار پایین در سمت چپ) */
+    /* دکمه ایجاد حساب جدید */
     .floating-create-account-btn {
       position: fixed;
-      bottom: 72px;
+      bottom: 70px;
       left: 14px;
       background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
       color: #ffffff;
@@ -699,128 +654,62 @@
       font-size: 0.84rem;
       box-shadow: var(--shadow-float);
       z-index: 4500;
-      border: 1.5px solid rgba(255, 255, 255, 0.5);
+      border: 1.5px solid rgba(255, 255, 255, 0.6);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-
     .floating-create-account-btn:active { transform: scale(0.95); }
 
-    /* دکمه سرچ کوچک و قابل تحرک در هر جای صفحه (همراه با دکمه کشو/پنل کنار صفحه) */
-    /* --- ابزارک سرچ قابل‌تحرک و دکمه بازگشت ریز --- */
-    .draggable-search-dock {
-      position: fixed;
-      top: 58%;
-      left: 12px;
-      z-index: 6200;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--surface-card);
-      border: 1.5px solid var(--emerald-primary);
-      border-radius: 999px;
-      padding: 4px 6px;
-      box-shadow: var(--shadow-float);
-      touch-action: none;
-      user-select: none;
-    }
-
-
-    .draggable-search-dock.dragging {
-      opacity: 0.92;
-      transform: scale(1.04);
-      border-color: var(--info-blue);
-    }
-
-
-    .floating-search-trigger {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-dark) 100%);
-      color: #ffffff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.95rem;
-      border: none;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-
-    .side-search-sheet-btn {
-      width: 30px;
-      height: 30px;
-      background: var(--surface-tint-green);
-      color: var(--emerald-dark);
-      border: 1px solid #b9dac7;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.78rem;
-      font-weight: 900;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-
-    /* دکمه بسیار ریز و کوچک بازگشت به مرحله عقب در پایین ثابت به سمت راست (نزدیک بازگشت اصلی گوشی) */
+    /* دکمه بسیار ریز بازگشت به مرحله عقب در پایین ثابت به سمت راست (نزدیک بازگشت اصلی گوشی) */
     .tiny-back-step-btn {
       position: fixed;
-      bottom: 8px;
-      right: 10px;
-      width: 30px;
-      height: 26px;
-      border-radius: 8px;
-      background: rgba(19, 34, 27, 0.78);
-      color: #e9efe9;
+      bottom: 9px;
+      right: 6px;
+      width: 26px;
+      height: 24px;
+      border-radius: 7px;
+      background: rgba(19, 34, 27, 0.82);
+      color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.25);
-      font-size: 0.76rem;
+      font-size: 0.72rem;
       font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 6500;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
       transition: transform 0.14s ease, background 0.14s ease;
     }
-
 
     .tiny-back-step-btn:active {
       transform: scale(0.9);
       background: var(--emerald-dark);
     }
 
-
-    /* نوار ناوبری پایینی الهام‌گرفته از اپ کیف‌پول */
-    /* --- نوار ناوبری پایین --- */
+    /* نوار ناوبری پایین ۵ دکمه‌ای الهام‌گرفته از تصاویر (صفحه اصلی، جستجو، دفتر کل، حساب‌ها، گزارشات) */
     .wallet-bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       height: 60px;
-      background: var(--surface-card);
+      background: #ffffff;
       border-top: 1px solid var(--border-subtle);
       display: none;
       align-items: center;
       justify-content: space-around;
-      padding: 4px 44px 4px 8px;
+      padding: 4px 36px 4px 6px;
       z-index: 4000;
       box-shadow: 0 -4px 16px rgba(19, 34, 27, 0.06);
     }
 
-
     .wallet-bottom-nav.visible {
       display: flex;
     }
-
 
     .wallet-nav-item {
       flex: 1;
@@ -834,12 +723,11 @@
       align-items: center;
       justify-content: center;
       gap: 2px;
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       font-weight: 800;
       cursor: pointer;
       transition: all 0.15s ease;
     }
-
 
     .wallet-nav-item.active-nav {
       background: var(--surface-tint-green);
@@ -847,14 +735,12 @@
       font-weight: 900;
     }
 
-
     .wallet-nav-icon {
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       line-height: 1;
     }
 
-
-    /* کشوی کناری / مدال جستجو */
+    /* مودال‌ها و پنل‌ها */
     #searchDrawerModal, #transactionModal, #customMessageModal, #masterSettingsModal, #globalSelectAccountModal, #opTypeManagerModal, #adminManagerModal, #accountModal {
       position: fixed;
       inset: 0;
@@ -868,26 +754,8 @@
       overflow-y: auto;
     }
 
-
-    #searchDrawerModal.side-docked {
-      justify-content: flex-start;
-      align-items: stretch;
-      padding: 0;
-    }
-
-
-    #searchDrawerModal.side-docked .modal-card-box {
-      max-width: 340px;
-      width: 86%;
-      height: 100vh;
-      max-height: 100vh;
-      border-radius: 0 22px 22px 0;
-      margin-top: 0;
-    }
-
-
     .modal-card-box {
-      background: var(--surface-card);
+      background: #ffffff;
       width: 100%;
       max-width: 420px;
       border-radius: var(--radius-xl);
@@ -899,17 +767,15 @@
       animation: fadeSlideIn 0.2s ease-out;
     }
 
-
     .stats-grid { display: flex; flex-direction: column; gap: 9px; }
 
     .stat-card {
-      background: var(--surface-elevated);
+      background: #ffffff;
       border: 1px solid var(--border-card);
       border-radius: var(--radius-md);
       padding: 11px 13px;
       box-shadow: var(--shadow-card);
     }
-
 
     .stat-row {
       display: flex;
@@ -920,7 +786,6 @@
       gap: 8px;
     }
 
-
     .stat-badge {
       text-align: center;
       padding: 7px 10px;
@@ -930,9 +795,8 @@
       margin-top: 6px;
     }
 
-
     .account-item-card, .tx-item-card, .phone-item-card {
-      background: var(--surface-elevated);
+      background: #ffffff;
       border: 1px solid var(--border-card);
       border-radius: var(--radius-md);
       padding: 12px;
@@ -947,12 +811,10 @@
       width: 100%;
     }
 
-
     .account-item-card:active, .tx-item-card:active, .phone-item-card:active {
       border-color: var(--emerald-primary);
       background: var(--surface-tint-mint);
     }
-
 
     .tx-item-card.tx-creditor { background: var(--credit-bg); border-color: var(--credit-border); }
     .tx-item-card.tx-debtor { background: var(--debit-bg); border-color: var(--debit-border); }
@@ -965,13 +827,11 @@
       flex-wrap: wrap;
     }
 
-
     .account-name-title {
       font-size: 0.98rem;
       font-weight: 900;
       color: var(--ink-primary);
     }
-
 
     .flex-row { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
 
@@ -985,7 +845,6 @@
       font-weight: 800;
     }
 
-
     .currency-badge {
       display: inline-block;
       padding: 3px 9px;
@@ -996,7 +855,6 @@
       margin: 2px;
       font-weight: 900;
     }
-
 
     .view-section { display: none; }
     .view-section.active { display: block; }
@@ -1018,16 +876,14 @@
       border: 1px solid rgba(255, 255, 255, 0.16);
     }
 
-
     .profile-img-preview {
       width: 44px;
       height: 44px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid var(--emerald-primary);
-      background: var(--surface-elevated);
+      background: #ffffff;
     }
-
 
     .receipt-img-preview {
       width: 100%;
@@ -1038,7 +894,6 @@
       margin-top: 8px;
       background: var(--surface-soft);
     }
-
 
     .op-badge-item {
       display: flex;
@@ -1051,7 +906,6 @@
       border: 1px solid var(--border-subtle);
     }
 
-
     .client-info-header-box {
       background: var(--surface-tint-mint);
       border: 1px solid var(--border-subtle);
@@ -1063,7 +917,6 @@
       gap: 6px;
     }
 
-
     .batch-summary-card {
       background: linear-gradient(135deg, #163024 0%, #0e1f17 100%);
       color: #ffffff;
@@ -1072,7 +925,6 @@
       margin-bottom: 12px;
       box-shadow: var(--shadow-card);
     }
-
 
     .deleted-account-badge {
       display: inline-block;
@@ -1085,13 +937,11 @@
       font-weight: 900;
     }
 
-
     .edge-to-edge-wrapper {
       margin-left: -14px;
       margin-right: -14px;
       width: calc(100% + 28px);
     }
-
 
     .compact-ledger-table {
       width: 100%;
@@ -1099,7 +949,6 @@
       table-layout: fixed;
       font-size: 0.74rem;
     }
-
 
     .compact-ledger-table th {
       background: var(--surface-soft);
@@ -1114,12 +963,10 @@
       text-overflow: ellipsis;
     }
 
-
     .compact-ledger-table th:last-child,
     .compact-ledger-table td:last-child {
       border-left: none;
     }
-
 
     .compact-ledger-table td {
       padding: 7px 3px;
@@ -1131,7 +978,6 @@
       white-space: nowrap;
     }
 
-
     .compact-ledger-table tr:active { filter: brightness(0.96); }
 
     .ledger-customer-picker { position: relative; margin-bottom: 10px; }
@@ -1141,7 +987,7 @@
       top: 100%;
       left: 0;
       right: 0;
-      background: var(--surface-elevated);
+      background: #ffffff;
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-float);
@@ -1151,7 +997,6 @@
       margin-top: 4px;
       display: none;
     }
-
 
     .ledger-picker-item {
       padding: 9px 12px;
@@ -1163,7 +1008,6 @@
       transition: background 0.14s;
     }
 
-
     .ledger-picker-item:last-child { border-bottom: none; }
     .ledger-picker-item:hover, .ledger-picker-item.active-opt { background: var(--surface-tint-mint); }
   </style>
@@ -1171,12 +1015,6 @@
 <body>
 
   <div id="syncIndicator">🔄 در حال دریافت اطلاعات...</div>
-
-  <!-- دکمه سرچ کوچک و قابل تحرک در هر جای صفحه + باز کردن کشو در کنار صفحه -->
-  <div id="draggableSearchDock" class="draggable-search-dock" title="بکشید تا جابه‌جا شود یا برای جستجو بزنید">
-    <button type="button" class="floating-search-trigger" onclick="handleSearchDockClick('modal')" title="جستجوی سریع">🔍</button>
-    <button type="button" class="side-search-sheet-btn" onclick="handleSearchDockClick('side')" title="باز کردن جستجو در کنار صفحه">◧</button>
-  </div>
 
   <!-- دکمه بسیار ریز بازگشت به مرحله عقب در پایین ثابت به سمت راست -->
   <button type="button" id="tinyBackStepBtn" class="tiny-back-step-btn" onclick="playInteractionEffect(); stepBackNavigation()" title="بازگشت به مرحله قبل">↩</button>
@@ -1499,6 +1337,10 @@
     <button type="button" class="wallet-nav-item active-nav" id="navBtnDashboard" onclick="playInteractionEffect(); switchView('viewDashboard')">
       <span class="wallet-nav-icon">🏠</span>
       <span>صفحه اصلی</span>
+    </button>
+    <button type="button" class="wallet-nav-item" id="navBtnSearch" onclick="playInteractionEffect(); openSearchDrawer('modal')">
+      <span class="wallet-nav-icon">🔍</span>
+      <span>جستجو</span>
     </button>
     <button type="button" class="wallet-nav-item" id="navBtnAccounts" onclick="playInteractionEffect(); switchView('viewAccounts')">
       <span class="wallet-nav-icon">👥</span>
@@ -1843,22 +1685,21 @@
           onClickAttr = item.action;
         }
 
-
         let extraStyle = "";
         if (item.type === 'master') {
-          extraStyle = "background: linear-gradient(135deg, rgba(254,243,199,0.95) 0%, rgba(253,230,138,0.95) 100%); border-color: #f59e0b;";
+          extraStyle = "background: #fffbeb; border-color: #f59e0b;";
         }
 
-
         container.innerHTML += `
-          <div class="floating-glass-btn" style="${extraStyle}">
-            <div class="content-box" onclick="playInteractionEffect(); ${onClickAttr}">
+          <div class="floating-glass-btn" style="${extraStyle}" onclick="playInteractionEffect(); ${onClickAttr}">
+            <div class="content-box">
               <span class="icon">${item.icon}</span>
               <span class="title" ${item.type === 'master' ? 'style="color:#92400e;"' : ''}>${item.title}</span>
             </div>
-            <div class="menu-sort-controls">
-              <button class="sort-btn" onclick="event.stopPropagation(); playInteractionEffect(); moveMenuItem(${index}, -1)" title="انتقال به بالا">⬆️</button>
-              <button class="sort-btn" onclick="event.stopPropagation(); playInteractionEffect(); moveMenuItem(${index}, 1)" title="انتقال به پایین">⬇️</button>
+            <div class="menu-sort-controls" onclick="event.stopPropagation()">
+              <button type="button" class="sort-btn" onclick="playInteractionEffect(); moveMenuItem(${index}, -1)" title="انتقال به بالا">⬆️</button>
+              <button type="button" class="sort-btn" onclick="playInteractionEffect(); moveMenuItem(${index}, 1)" title="انتقال به پایین">⬇️</button>
+              <span class="menu-chevron">‹</span>
             </div>
           </div>
         `;
