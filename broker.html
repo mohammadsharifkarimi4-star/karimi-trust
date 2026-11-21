@@ -51,7 +51,7 @@
       background-attachment: fixed;
       color: var(--text-dark);
       min-height: 100vh;
-      padding: 10px 10px 96px 10px;
+      padding: 10px 10px 108px 10px;
       font-size: 14.5px;
     }
 
@@ -765,10 +765,10 @@
     /* دکمه بسیار ریز بازگشت به صفحه قبل در پایین صفحه سمت راست */
     .tiny-back-corner-btn {
       position: fixed;
-      bottom: 8px;
-      right: 8px;
-      width: 24px;
-      height: 24px;
+      bottom: 2px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
       border-radius: 7px;
       background: rgba(255, 255, 255, 0.88);
       border: 1px solid rgba(148, 163, 184, 0.65);
@@ -991,16 +991,16 @@
           </div>
         </div>
 
-        <div class="grid-2">
-          <div class="form-group">
-            <label>شرح / توضیحات (قابل کشیدن و بزرگ‌شدن):</label>
-            <textarea id="txDesc" class="resizable-field-textarea" placeholder="توضیحات معامله... (گوشه پایین را بکشید)" oninput="markFormDirty()"></textarea>
+        <div class="full-width-stack-fields" style="display:flex; flex-direction:column; gap:14px; margin-top:10px; margin-bottom:16px;">
+          <div class="form-group" style="width:100%; margin-bottom:4px;">
+            <label>شرح / توضیحات (تمام‌عرض - قابل کشیدن و بزرگ‌شدن):</label>
+            <textarea id="txDesc" class="resizable-field-textarea" style="width:100%; min-height:68px;" placeholder="توضیحات معامله... (گوشه پایین را بکشید)" oninput="markFormDirty()"></textarea>
           </div>
-          <div class="form-group">
-            <label>آدرس مقصد (قابل کشیدن و بزرگ‌شدن):</label>
-            <div style="display:flex; gap:5px; align-items:flex-start;">
-              <textarea id="txAddress" class="resizable-field-textarea address-resizable" style="flex:1;" placeholder="انتخاب یا تایپ آدرس... (قابل کشیدن)" oninput="markFormDirty()"></textarea>
-              <button type="button" class="btn btn-secondary btn-xs" style="height:46px;" onclick="openAddressDashboardModal()">📂</button>
+          <div class="form-group" style="width:100%; margin-bottom:4px;">
+            <label>آدرس مقصد (تمام‌عرض - قابل کشیدن و بزرگ‌شدن):</label>
+            <div style="display:flex; gap:6px; align-items:flex-start; width:100%;">
+              <textarea id="txAddress" class="resizable-field-textarea address-resizable" style="flex:1; width:100%; min-height:62px;" placeholder="انتخاب یا تایپ آدرس... (قابل کشیدن)" oninput="markFormDirty()"></textarea>
+              <button type="button" class="btn btn-secondary btn-xs" style="height:62px; padding:0 12px;" onclick="openAddressDashboardModal()">📂</button>
             </div>
           </div>
         </div>
